@@ -1,0 +1,20 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.endpoints .Values.sumologic.metrics.enabled }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-controller-manager
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-controller-manager
+    k8s-app: kube-controller-manager
+{{ include "sumologic.labels.common" . | indent 4 }}
+  namespace: kube-system
+subsets:
+  - addresses:
+      {{- range .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.endpoints }}
+      - ip: {{ . }}
+      {{- end }}
+    ports:
+      - name: http-metrics
+        port: {{  .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.service.port }}
+        protocol: TCP
+{{- end }}

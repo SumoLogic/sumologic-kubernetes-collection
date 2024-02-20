@@ -1,0 +1,43 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "sumologic.fullname" . }}-apiserver
+  namespace: {{ template "sumologic.namespace" . }}
+  labels:
+    app: {{ template "sumologic.name" . }}-apiserver
+  {{- with .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{ include "sumologic.labels.common" . | indent 4 }}
+spec:
+  {{- include "servicemonitor.scrapeLimits" .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor | nindent 2 }}
+  endpoints:
+  - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.interval }}
+    interval: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.proxyUrl }}
+    proxyUrl: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.proxyUrl }}
+    {{- end }}
+    port: https
+    scheme: https
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.metricRelabelings | indent 6) . }}
+{{- end }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.relabelings }}
+    relabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.relabelings | indent 6) . }}
+{{- end }}
+    tlsConfig:
+      caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      serverName: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.tlsConfig.serverName }}
+      insecureSkipVerify: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.tlsConfig.insecureSkipVerify }}
+  jobLabel: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.jobLabel }}
+  namespaceSelector:
+    matchNames:
+    - default
+  selector:
+{{ toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeApiServer.serviceMonitor.selector | indent 4 }}
+{{- end}}

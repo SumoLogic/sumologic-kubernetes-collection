@@ -1,0 +1,20 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.endpoints .Values.sumologic.metrics.enabled }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-scheduler
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-scheduler
+    k8s-app: kube-scheduler
+{{ include "sumologic.labels.common" . | indent 4 }}
+  namespace: kube-system
+subsets:
+  - addresses:
+      {{- range .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.endpoints }}
+      - ip: {{ . }}
+      {{- end }}
+    ports:
+      - name: http-metrics
+        port: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.service.port }}
+        protocol: TCP
+{{- end }}

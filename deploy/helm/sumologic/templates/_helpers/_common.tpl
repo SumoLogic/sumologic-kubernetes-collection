@@ -311,6 +311,7 @@ If dryRun=true, we do not create any chart labels.
 chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 release: "{{ .Release.Name }}"
 heritage: "{{ .Release.Service }}"
+app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 {{- end -}}
 

@@ -1,0 +1,27 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.service.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-scheduler
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-scheduler
+    jobLabel: kube-scheduler
+{{ include "sumologic.labels.common" . | indent 4 }}
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+    - name: http-metrics
+      port: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.service.targetPort }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.endpoints }}{{- else }}
+  selector:
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.service.selector }}
+{{ toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.service.selector | indent 4 }}
+    {{- else}}
+    component: kube-scheduler
+    {{- end}}
+{{- end }}
+  type: ClusterIP
+{{- end -}}

@@ -1,0 +1,40 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "sumologic.fullname" . }}-coredns
+  namespace: {{ template "sumologic.namespace" . }}
+  labels:
+    app: {{ template "sumologic.name" . }}-coredns
+  {{- with .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{ include "sumologic.labels.common" . | indent 4 }}
+spec:
+  jobLabel: jobLabel
+  {{- include "servicemonitor.scrapeLimits" .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor | nindent 2 }}
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.name" . }}-coredns
+      release: {{ $.Release.Name | quote }}
+  namespaceSelector:
+    matchNames:
+      - "kube-system"
+  endpoints:
+  - port: http-metrics
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.interval}}
+    interval: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.interval }}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.proxyUrl }}
+    proxyUrl: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.proxyUrl}}
+    {{- end }}
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.relabelings }}
+    relabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.serviceMonitor.relabelings | indent 4) . }}
+{{- end }}
+{{- end }}

@@ -717,6 +717,466 @@ sumologic:
         selector:
           matchLabels:
             app: kube-prometheus-stack-prometheus
+    
+    k8sComponentServiceMonitors:
+      kubeApiServer:
+        enabled: true
+        tlsConfig:
+          serverName: kubernetes
+          insecureSkipVerify: false
+        serviceMonitor:
+          ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+          ##
+          interval: ""
+
+          ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
+          ##
+          sampleLimit: 0
+
+          ## TargetLimit defines a limit on the number of scraped targets that will be accepted.
+          ##
+          targetLimit: 0
+
+          ## Per-scrape limit on number of labels that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelLimit: 0
+
+          ## Per-scrape limit on length of labels name that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelNameLengthLimit: 0
+
+          ## Per-scrape limit on length of labels value that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelValueLengthLimit: 0
+
+          ## proxyUrl: URL of a proxy that should be used for scraping.
+          ##
+          proxyUrl: ""
+
+          jobLabel: component
+          selector:
+            matchLabels:
+              component: apiserver
+              provider: kubernetes
+
+          ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
+          ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
+          ##
+          metricRelabelings:
+            - action: keep
+              regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum))
+              sourceLabels: [__name__]
+
+          ## RelabelConfigs to apply to samples before scraping
+          ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
+          ##
+          relabelings: []
+          # - sourceLabels:
+          #     - __meta_kubernetes_namespace
+          #     - __meta_kubernetes_service_name
+          #     - __meta_kubernetes_endpoint_port_name
+          #   action: keep
+          #   regex: default;kubernetes;https
+          # - targetLabel: __address__
+          #   replacement: kubernetes.default.svc:443
+
+          ## Additional labels
+          ##
+          additionalLabels: {}
+          #  foo: bar
+
+      kubeControllerManager:
+        enabled: true
+
+        ## If your kube controller manager is not deployed as a pod, specify IPs it can be found on
+        ##
+        endpoints: []
+        # - 10.141.4.22
+        # - 10.141.4.23
+        # - 10.141.4.24
+
+        ## If using kubeControllerManager.endpoints only the port and targetPort are used
+        ##
+        service:
+          enabled: true
+          port: 10257
+          targetPort: 10257
+          # selector:
+          #   component: kube-controller-manager
+
+        serviceMonitor:
+          enabled: true
+          ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+          ##
+          interval: ""
+
+          ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
+          ##
+          sampleLimit: 0
+
+          ## TargetLimit defines a limit on the number of scraped targets that will be accepted.
+          ##
+          targetLimit: 0
+
+          ## Per-scrape limit on number of labels that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelLimit: 0
+
+          ## Per-scrape limit on length of labels name that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelNameLengthLimit: 0
+
+          ## Per-scrape limit on length of labels value that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelValueLengthLimit: 0
+
+          ## proxyUrl: URL of a proxy that should be used for scraping.
+          ##
+          proxyUrl: ""
+
+          ## Enable scraping kube-controller-manager over https.
+          ## Requires proper certs (not self-signed) and delegated authentication/authorization checks.
+          ## If null or unset, the value is determined dynamically based on target Kubernetes version.
+          ##
+          https: true
+
+          # Skip TLS certificate validation when scraping
+          insecureSkipVerify: false
+
+          # Name of the server to use when validating TLS certificate
+          serverName: null
+
+          ## see docs/scraped_metrics.md
+          ## controller manager metrics
+          ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
+          ## e.g.
+          ## cloudprovider_aws_api_request_duration_seconds_bucket
+          ## cloudprovider_aws_api_request_duration_seconds_count
+          ## cloudprovider_aws_api_request_duration_seconds_sum
+          metricRelabelings:
+            - action: keep
+              regex: (?:cloudprovider_.*_api_request_duration_seconds.*)
+              sourceLabels: [__name__]
+          relabelings: []
+          # - sourceLabels: [__meta_kubernetes_pod_node_name]
+          #   separator: ;
+          #   regex: ^(.*)$
+          #   targetLabel: nodename
+          #   replacement: $1
+          #   action: replace
+
+          ## Additional labels
+          ##
+          #  foo: bar
+          additionalLabels: {}
+
+      coreDns:
+        enabled: true
+        service:
+          enabled: true
+          port: 9153
+          targetPort: 9153
+          # selector:
+          #   k8s-app: kube-dns
+        serviceMonitor:
+          enabled: true
+          ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+          ##
+          interval: ""
+
+          ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
+          ##
+          sampleLimit: 0
+
+          ## TargetLimit defines a limit on the number of scraped targets that will be accepted.
+          ##
+          targetLimit: 0
+
+          ## Per-scrape limit on number of labels that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelLimit: 0
+
+          ## Per-scrape limit on length of labels name that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelNameLengthLimit: 0
+
+          ## Per-scrape limit on length of labels value that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelValueLengthLimit: 0
+
+          ## proxyUrl: URL of a proxy that should be used for scraping.
+          ##
+          proxyUrl: ""
+
+          ## see docs/scraped_metrics.md
+          ## coredns:
+          ## coredns_cache_entries
+          ## coredns_cache_hits_total
+          ## coredns_cache_misses_total
+          ## coredns_dns_request_duration_seconds_count
+          ## coredns_dns_request_duration_seconds_sum
+          ## coredns_dns_requests_total
+          ## coredns_dns_responses_total
+          ## coredns_forward_requests_total
+          ## coredns_proxy_request_duration_seconds_count
+          ## coredns_proxy_request_duration_seconds_sum
+          ## coredns_proxy_request_duration_seconds_bucket
+          ## process_cpu_seconds_total
+          ## process_open_fds
+          ## process_resident_memory_bytes
+          ## process_cpu_seconds_total
+          ## process_open_fds
+          ## process_resident_memory_bytes
+          metricRelabelings:
+            - action: keep
+              regex: (?:coredns_cache_(entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes)|coredns_proxy_request_duration_seconds_(sum|count|bucket))
+              sourceLabels: [__name__]
+          # - action: keep
+          #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+          #   sourceLabels: [__name__]
+
+          ## RelabelConfigs to apply to samples before scraping
+          ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
+          ##
+          relabelings: []
+          # - sourceLabels: [__meta_kubernetes_pod_node_name]
+          #   separator: ;
+          #   regex: ^(.*)$
+          #   targetLabel: nodename
+          #   replacement: $1
+          #   action: replace
+
+          ## Additional labels
+          ##
+          additionalLabels: {}
+          #  foo: bar
+
+      kubeEtcd:
+        enabled: true
+
+        ## If your etcd is not deployed as a pod, specify IPs it can be found on
+        ##
+        endpoints: []
+        # - 10.141.4.22
+        # - 10.141.4.23
+        # - 10.141.4.24
+
+        ## Etcd service. If using kubeEtcd.endpoints only the port and targetPort are used
+        ##
+        service:
+          enabled: true
+          port: 2381
+          targetPort: 2381
+          # selector:
+          #   component: etcd
+
+        ## Configure secure access to the etcd cluster by loading a secret into prometheus and
+        ## specifying security configuration below. For example, with a secret named etcd-client-cert
+        ##
+        ## serviceMonitor:
+        ##   scheme: https
+        ##   insecureSkipVerify: false
+        ##   serverName: localhost
+        ##   caFile: /etc/prometheus/secrets/etcd-client-cert/etcd-ca
+        ##   certFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client
+        ##   keyFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client-key
+        ##
+        serviceMonitor:
+          enabled: true
+          ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+          ##
+          interval: ""
+
+          ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
+          ##
+          sampleLimit: 0
+
+          ## TargetLimit defines a limit on the number of scraped targets that will be accepted.
+          ##
+          targetLimit: 0
+
+          ## Per-scrape limit on number of labels that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelLimit: 0
+
+          ## Per-scrape limit on length of labels name that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelNameLengthLimit: 0
+
+          ## Per-scrape limit on length of labels value that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelValueLengthLimit: 0
+
+          ## proxyUrl: URL of a proxy that should be used for scraping.
+          ##
+          proxyUrl: ""
+          scheme: http
+          insecureSkipVerify: false
+          serverName: ""
+          caFile: ""
+          certFile: ""
+          keyFile: ""
+
+          ## see docs/scraped_metrics.md
+          ## etcd_request_cache_get_duration_seconds_count
+          ## etcd_request_cache_get_duration_seconds_sum
+          ## etcd_request_cache_add_duration_seconds_count
+          ## etcd_request_cache_add_duration_seconds_sum
+          ## etcd_request_cache_add_latencies_summary_count
+          ## etcd_request_cache_add_latencies_summary_sum
+          ## etcd_request_cache_get_latencies_summary_count
+          ## etcd_request_cache_get_latencies_summary_sum
+          ## etcd_helper_cache_hit_count
+          ## etcd_helper_cache_hit_total
+          ## etcd_helper_cache_miss_count
+          ## etcd_helper_cache_miss_total
+          ## etcd server:
+          ## etcd_mvcc_db_total_size_in_bytes
+          ## etcd_debugging_store_expires_total
+          ## etcd_debugging_store_watchers
+          ## etcd_disk_backend_commit_duration_seconds_bucket
+          ## etcd_disk_wal_fsync_duration_seconds_bucket
+          ## etcd_grpc_proxy_cache_hits_total
+          ## etcd_grpc_proxy_cache_misses_total
+          ## etcd_network_client_grpc_received_bytes_total
+          ## etcd_network_client_grpc_sent_bytes_total
+          ## etcd_server_has_leader
+          ## etcd_server_leader_changes_seen_total
+          ## etcd_server_proposals_applied_total
+          ## etcd_server_proposals_committed_total
+          ## etcd_server_proposals_failed_total
+          ## etcd_server_proposals_pending
+          ## process_cpu_seconds_total
+          ## process_open_fds
+          ## process_resident_memory_bytes
+          metricRelabelings:
+            - action: keep
+              regex: (?:etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total)|etcd_mvcc_db_total_size_in_bytes|etcd_debugging_(store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_.*|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+              sourceLabels: [__name__]
+          # - action: keep
+          #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+          #   sourceLabels: [__name__]
+
+          ## RelabelConfigs to apply to samples before scraping
+          ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
+          ##
+          relabelings: []
+          # - sourceLabels: [__meta_kubernetes_pod_node_name]
+          #   separator: ;
+          #   regex: ^(.*)$
+          #   targetLabel: nodename
+          #   replacement: $1
+          #   action: replace
+
+          ## Additional labels
+          ##
+          additionalLabels: {}
+          #  foo: bar
+
+      kubeScheduler:
+        enabled: true
+
+        ## If your kube scheduler is not deployed as a pod, specify IPs it can be found on
+        ##
+        endpoints: []
+        # - 10.141.4.22
+        # - 10.141.4.23
+        # - 10.141.4.24
+
+        ## If using kubeScheduler.endpoints only the port and targetPort are used
+        ##
+        service:
+          enabled: true
+          ## If null or unset, the value is determined dynamically based on target Kubernetes version due to change
+          ## of default port in Kubernetes 1.23.
+          ##
+          port: 10259
+          targetPort: 10259
+          # selector:
+          #   component: kube-scheduler
+
+        serviceMonitor:
+          enabled: true
+          ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+          ##
+          interval: ""
+
+          ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
+          ##
+          sampleLimit: 0
+
+          ## TargetLimit defines a limit on the number of scraped targets that will be accepted.
+          ##
+          targetLimit: 0
+
+          ## Per-scrape limit on number of labels that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelLimit: 0
+
+          ## Per-scrape limit on length of labels name that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelNameLengthLimit: 0
+
+          ## Per-scrape limit on length of labels value that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+          ##
+          labelValueLengthLimit: 0
+
+          ## proxyUrl: URL of a proxy that should be used for scraping.
+          ##
+          proxyUrl: ""
+          ## Enable scraping kube-scheduler over https.
+          ## Requires proper certs (not self-signed) and delegated authentication/authorization checks.
+          ## If null or unset, the value is determined dynamically based on target Kubernetes version.
+          ##
+          https: true
+
+          ## Skip TLS certificate validation when scraping
+          insecureSkipVerify: false
+
+          ## Name of the server to use when validating TLS certificate
+          serverName: null
+
+          ## see docs/scraped_metrics.md
+          ##
+          ## scheduler_e2e_* is present for K8s <1.23
+          ## scheduler_e2e_scheduling_duration_seconds_bucket
+          ## scheduler_e2e_scheduling_duration_seconds_count
+          ## scheduler_e2e_scheduling_duration_seconds_sum
+          ##
+          ## scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
+          ## scheduler_scheduling_attempt_duration_seconds_bucket
+          ## scheduler_scheduling_attempt_duration_seconds_count
+          ## scheduler_scheduling_attempt_duration_seconds_sum
+          ##
+          ## scheduler_framework_extension_point_duration_seconds_bucket
+          ## scheduler_framework_extension_point_duration_seconds_count
+          ## scheduler_framework_extension_point_duration_seconds_sum
+          ## scheduler_scheduling_algorithm_duration_seconds_bucket
+          ## scheduler_scheduling_algorithm_duration_seconds_count
+          ## scheduler_scheduling_algorithm_duration_seconds_sum
+          metricRelabelings:
+            - action: keep
+              regex: (?:scheduler_(?:e2e_scheduling|scheduling_attempt|framework_extension_point|scheduling_algorithm)_duration_seconds.*)
+              sourceLabels: [__name__]
+          # - action: keep
+          #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+          #   sourceLabels: [__name__]
+
+          ## RelabelConfigs to apply to samples before scraping
+          ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#relabelconfig
+          ##
+          relabelings: []
+          # - sourceLabels: [__meta_kubernetes_pod_node_name]
+          #   separator: ;
+          #   regex: ^(.*)$
+          #   targetLabel: nodename
+          #   replacement: $1
+          #   action: replace
+
+          ## Additional labels
+          ##
+          additionalLabels: {}
+          #  foo: bar
 
     ## User-defined ServiceMonitors go here
     additionalServiceMonitors: []
@@ -755,515 +1215,6 @@ metrics-server:
   ##
   #   pullSecrets:
   #     - imagepullsecret
-
-## Configure kube-prometheus-stack
-## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-kube-prometheus-stack:
-  ## Uncomment the flag below to not install kube-prometheus-stack helm chart
-  ## as a dependency along with this helm chart.
-  ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
-  ## see https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#using-newer-kube-prometheus-stack.
-  ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
-  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
-  ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
-  # enabled: false
-
-  # global:
-  ## Reference to one or more secrets to be used when pulling images
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
-  #   imagePullSecrets:
-  #     - name: "image-pull-secret"
-
-  ## Put here the new name if you want to override the full name used for Kube Prometheus Stack components.
-  # fullnameOverride: ""
-
-  ## Put here the new namespace if you want to override the namespace used for Kube Prometheus Stack components.
-  # namespaceOverride: ""
-
-  ## Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template).
-  ## Changing this may break Sumo Logic apps.
-  # kubeTargetVersionOverride: ""
-
-  ## Labels to apply to all kube-prometheus-stack resources
-  commonLabels: {}
-
-  defaultRules:
-    rules:
-      alertmanager: false
-      etcd: false
-      configReloaders: false
-      general: false
-      k8s: false
-      kubeApiserverAvailability: false
-      kubeApiserverBurnrate: false
-      kubeApiserverHistogram: false
-      kubeApiserverSlos: false
-      kubeControllerManager: false
-      kubelet: false
-      kubeProxy: false
-      kubePrometheusGeneral: false
-      kubePrometheusNodeRecording: false
-      kubernetesApps: false
-      kubernetesResources: false
-      kubernetesStorage: false
-      kubernetesSystem: false
-      kubeSchedulerAlerting: false
-      kubeSchedulerRecording: false
-      kubeStateMetrics: false
-      network: false
-      node: false
-      nodeExporterAlerting: false
-      nodeExporterRecording: false
-      prometheus: false
-      prometheusOperator: false
-      windows: false
-
-  ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording
-  ## rules to be missing and empty panels in Sumo Logic Kubernetes apps.
-  kubeApiServer:
-    serviceMonitor:
-      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-      interval:
-      ## see docs/scraped_metrics.md
-      ## apiserver_request_count
-      ## apiserver_request_total
-      ## apiserver_request_duration_seconds_count
-      ## apiserver_request_duration_seconds_sum
-      metricRelabelings:
-        - action: keep
-          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum))
-          sourceLabels: [__name__]
-  kubelet:
-    serviceMonitor:
-      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-      interval:
-      ## Enable scraping /metrics/probes from kubelet's service
-      probes: false
-      ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
-      resource: false
-      ## see docs/scraped_metrics.md
-      ## kubelet metrics:
-      ## kubelet_docker_operations_errors
-      ## kubelet_docker_operations_errors_total
-      ## kubelet_docker_operations_duration_seconds_count
-      ## kubelet_docker_operations_duration_seconds_sum
-      ## kubelet_runtime_operations_duration_seconds_count
-      ## kubelet_runtime_operations_duration_seconds_sum
-      ## kubelet_running_container_count
-      ## kubelet_running_containers
-      ## kubelet_running_pod_count
-      ## kubelet_running_pods
-      ## kubelet_docker_operations_latency_microseconds
-      ## kubelet_docker_operations_latency_microseconds_count
-      ## kubelet_docker_operations_latency_microseconds_sum
-      ## kubelet_runtime_operations_latency_microseconds
-      ## kubelet_runtime_operations_latency_microseconds_count
-      ## kubelet_runtime_operations_latency_microseconds_sum
-      metricRelabelings:
-        - action: keep
-          regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
-          sourceLabels: [__name__]
-        - action: labeldrop
-          regex: id
-      ## see docs/scraped_metrics.md
-      ## cadvisor container metrics
-      ## container_cpu_usage_seconds_total
-      ## container_fs_limit_bytes
-      ## container_fs_usage_bytes
-      ## container_memory_working_set_bytes
-      ## container_cpu_cfs_throttled_seconds_total
-      ##
-      ## cadvisor aggregate container metrics
-      ## container_network_receive_bytes_total
-      ## container_network_transmit_bytes_total
-      cAdvisorMetricRelabelings:
-        - action: keep
-          regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
-          sourceLabels: [__name__]
-        ## Drop container metrics with container tag set to an empty string:
-        ## these are the pod aggregated container metrics which can be aggregated
-        ## in Sumo anyway. There's also some cgroup-specific time series we also
-        ## do not need.
-        - action: drop
-          sourceLabels: [__name__, container]
-          regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
-        - action: labelmap
-          regex: container_name
-          replacement: container
-        - action: drop
-          sourceLabels: [container]
-          regex: POD
-        - action: labeldrop
-          regex: (id|name)
-  kubeControllerManager:
-    serviceMonitor:
-      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-      interval:
-      ## see docs/scraped_metrics.md
-      ## controller manager metrics
-      ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
-      ## e.g.
-      ## cloudprovider_aws_api_request_duration_seconds_bucket
-      ## cloudprovider_aws_api_request_duration_seconds_count
-      ## cloudprovider_aws_api_request_duration_seconds_sum
-      metricRelabelings:
-        - action: keep
-          regex: (?:cloudprovider_.*_api_request_duration_seconds.*)
-          sourceLabels: [__name__]
-  coreDns:
-    serviceMonitor:
-      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-      interval:
-      ## see docs/scraped_metrics.md
-      ## coredns:
-      ## coredns_cache_entries
-      ## coredns_cache_hits_total
-      ## coredns_cache_misses_total
-      ## coredns_dns_request_duration_seconds_count
-      ## coredns_dns_request_duration_seconds_sum
-      ## coredns_dns_requests_total
-      ## coredns_dns_responses_total
-      ## coredns_forward_requests_total
-      ## coredns_proxy_request_duration_seconds_count
-      ## coredns_proxy_request_duration_seconds_sum
-      ## coredns_proxy_request_duration_seconds_bucket
-      ## process_cpu_seconds_total
-      ## process_open_fds
-      ## process_resident_memory_bytes
-      ## process_cpu_seconds_total
-      ## process_open_fds
-      ## process_resident_memory_bytes
-      metricRelabelings:
-        - action: keep
-          regex: (?:coredns_cache_(entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes)|coredns_proxy_request_duration_seconds_(sum|count|bucket))
-          sourceLabels: [__name__]
-  kubeEtcd:
-    serviceMonitor:
-      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-      interval:
-      ## see docs/scraped_metrics.md
-      ## etcd_request_cache_get_duration_seconds_count
-      ## etcd_request_cache_get_duration_seconds_sum
-      ## etcd_request_cache_add_duration_seconds_count
-      ## etcd_request_cache_add_duration_seconds_sum
-      ## etcd_request_cache_add_latencies_summary_count
-      ## etcd_request_cache_add_latencies_summary_sum
-      ## etcd_request_cache_get_latencies_summary_count
-      ## etcd_request_cache_get_latencies_summary_sum
-      ## etcd_helper_cache_hit_count
-      ## etcd_helper_cache_hit_total
-      ## etcd_helper_cache_miss_count
-      ## etcd_helper_cache_miss_total
-      ## etcd server:
-      ## etcd_mvcc_db_total_size_in_bytes
-      ## etcd_debugging_store_expires_total
-      ## etcd_debugging_store_watchers
-      ## etcd_disk_backend_commit_duration_seconds_bucket
-      ## etcd_disk_wal_fsync_duration_seconds_bucket
-      ## etcd_grpc_proxy_cache_hits_total
-      ## etcd_grpc_proxy_cache_misses_total
-      ## etcd_network_client_grpc_received_bytes_total
-      ## etcd_network_client_grpc_sent_bytes_total
-      ## etcd_server_has_leader
-      ## etcd_server_leader_changes_seen_total
-      ## etcd_server_proposals_applied_total
-      ## etcd_server_proposals_committed_total
-      ## etcd_server_proposals_failed_total
-      ## etcd_server_proposals_pending
-      ## process_cpu_seconds_total
-      ## process_open_fds
-      ## process_resident_memory_bytes
-      metricRelabelings:
-        - action: keep
-          regex: (?:etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total)|etcd_mvcc_db_total_size_in_bytes|etcd_debugging_(store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_.*|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
-          sourceLabels: [__name__]
-  kubeScheduler:
-    serviceMonitor:
-      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-      interval:
-      ## see docs/scraped_metrics.md
-      ##
-      ## scheduler_e2e_* is present for K8s <1.23
-      ## scheduler_e2e_scheduling_duration_seconds_bucket
-      ## scheduler_e2e_scheduling_duration_seconds_count
-      ## scheduler_e2e_scheduling_duration_seconds_sum
-      ##
-      ## scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
-      ## scheduler_scheduling_attempt_duration_seconds_bucket
-      ## scheduler_scheduling_attempt_duration_seconds_count
-      ## scheduler_scheduling_attempt_duration_seconds_sum
-      ##
-      ## scheduler_framework_extension_point_duration_seconds_bucket
-      ## scheduler_framework_extension_point_duration_seconds_count
-      ## scheduler_framework_extension_point_duration_seconds_sum
-      ## scheduler_scheduling_algorithm_duration_seconds_bucket
-      ## scheduler_scheduling_algorithm_duration_seconds_count
-      ## scheduler_scheduling_algorithm_duration_seconds_sum
-      metricRelabelings:
-        - action: keep
-          regex: (?:scheduler_(?:e2e_scheduling|scheduling_attempt|framework_extension_point|scheduling_algorithm)_duration_seconds.*)
-          sourceLabels: [__name__]
-
-  alertmanager:
-    enabled: false
-  grafana:
-    enabled: false
-    defaultDashboardsEnabled: false
-  prometheusOperator:
-    enabled: false
-    ## Labels to add to the operator pod
-    podLabels: {}
-    ## Annotations to add to the operator pod
-    podAnnotations: {}
-    ## Resource limits for prometheus operator
-    resources:
-      {}
-      # limits:
-      #   cpu: 200m
-      #   memory: 200Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 100Mi
-    ## ServiceMonitor for the Prometheus operator
-    serviceMonitor:
-      selfMonitor: false
-    admissionWebhooks:
-      enabled: false
-    tls:
-      enabled: false
-  ## Resource limits for kube-state-metrics
-  kube-state-metrics:
-    ## Put here the new name if you want to override the full name used for Kube State Metrics components.
-    # fullnameOverride: ""
-
-    nodeSelector: {}
-
-    ## Custom labels to apply to service, deployment and pods
-    customLabels: {}
-    ## Additional annotations for pods in the DaemonSet
-    podAnnotations: {}
-    resources:
-      {}
-      # limits:
-      #   cpu: 100m
-      #   memory: 64Mi
-      # requests:
-      #   cpu: 10m
-      #   memory: 32Mi
-
-    ## latest kube-prometheus-stack version that is supported on OpenShift 4.8-4.10
-    ## uses version 2.6.0 of kube-state-metrics, but this version has some critical vulnerabilities,
-    ## so we bump the image manually.
-    image:
-      tag: "v2.7.0"
-    prometheus:
-      monitor:
-        ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-        interval:
-        ## see docs/scraped_metrics.md
-        ## kube_daemonset_status_current_number_scheduled
-        ## kube_daemonset_status_desired_number_scheduled
-        ## kube_daemonset_status_number_misscheduled
-        ## kube_daemonset_status_number_unavailable
-        ## kube_deployment_spec_replicas
-        ## kube_deployment_status_replicas_available
-        ## kube_deployment_status_replicas_unavailable
-        ## kube_node_info
-        ## kube_node_status_allocatable
-        ## kube_node_status_capacity
-        ## kube_node_status_condition
-        ## kube_statefulset_metadata_generation
-        ## kube_statefulset_replicas
-        ## kube_statefulset_status_observed_generation
-        ## kube_statefulset_status_replicas
-        ## kube_hpa_spec_max_replicas
-        ## kube_hpa_spec_min_replicas
-        ## kube_hpa_status_condition
-        ## kube_hpa_status_current_replicas
-        ## kube_hpa_status_desired_replicas
-        ## kube pod state metrics
-        ## kube_pod_container_info
-        ## kube_pod_container_resource_limits
-        ## kube_pod_container_resource_requests
-        ## kube_pod_container_status_ready
-        ## kube_pod_container_status_restarts_total
-        ## kube_pod_container_status_terminated_reason
-        ## kube_pod_container_status_waiting_reason
-        ## kube_pod_status_phase
-        ## kube_pod_info
-        ## kube_service_info
-        ## kube_service_spec_external_ip
-        ## kube_service_spec_type
-        ## kube_service_status_load_balancer_ingress
-        metricRelabelings:
-          - action: keep
-            regex: (?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase|kube_pod_info|kube_service_info|kube_service_spec_external_ip|kube_service_spec_type|kube_service_status_load_balancer_ingress)
-            sourceLabels: [__name__]
-          ## Drop unnecessary labels Prometheus adds to these metrics
-          ## We don't want container=kube-state-metrics on everything
-          ## But we do want to keep these on pod metrics, which we check for via the `uid` attribute
-          - action: labeldrop
-            regex: service
-          - action: replace
-            sourceLabels: [container, uid]
-            regex: kube-state-metrics;
-            targetLabel: container
-            replacement: ""
-          - action: replace
-            sourceLabels: [pod, uid]
-            regex: ".*kube-state-metrics.*;"
-            targetLabel: pod
-            replacement: ""
-          - action: labelmap
-            regex: (pod|service)
-            replacement: service_discovery_${1}
-  ## Resource limits for prometheus node exporter
-  prometheus-node-exporter:
-    ## Put here the new name if you want to override the full name used for Prometheus Node exporter components.
-    # fullnameOverride: ""
-
-    nodeSelector: {}
-
-    ## Additional labels for pods in the DaemonSet
-    podLabels: {}
-    ## Additional annotations for pods in the DaemonSet
-    podAnnotations: {}
-    resources:
-      {}
-      # limits:
-      #   cpu: 200m
-      #   memory: 50Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 30Mi
-    prometheus:
-      monitor:
-        ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-        interval:
-        ## see docs/scraped_metrics.md
-        ## node exporter metrics
-        ## node_cpu_seconds_total
-        ## node_load1
-        ## node_load5
-        ## node_load15
-        ## node_disk_io_time_weighted_seconds_total
-        ## node_disk_io_time_seconds_total
-        ## node_vmstat_pgpgin
-        ## node_vmstat_pgpgout
-        ## node_memory_MemFree_bytes
-        ## node_memory_MemAvailable_bytes
-        ## node_memory_Cached_bytes
-        ## node_memory_Buffers_bytes
-        ## node_memory_MemTotal_bytes
-        ## node_network_receive_drop_total
-        ## node_network_transmit_drop_total
-        ## node_network_receive_bytes_total
-        ## node_network_transmit_bytes_total
-        ## node_filesystem_avail_bytes
-        ## node_filesystem_size_bytes
-        metricRelabelings:
-          - action: keep
-            regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_MemAvailable_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
-            sourceLabels: [__name__]
-  prometheus:
-    enabled: false
-    additionalServiceMonitors: []
-    prometheusSpec:
-      ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
-      ## NOTE changing the scrape interval to be >1m can result in metrics
-      ## from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
-      scrapeInterval: "30s"
-      ## Prometheus data retention period
-      retention: "1d"
-      ## Add custom pod annotations and labels to prometheus pods
-      podMetadata:
-        labels: {}
-        annotations: {}
-      nodeSelector: {}
-      ## Define resources requests and limits for single Pods.
-      resources:
-        limits:
-          cpu: 2000m
-          memory: 8Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      initContainers:
-        - name: "init-config-reloader"
-          env:
-            - name: METADATA_METRICS_SVC
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataMetrics
-            - name: NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataNamespace
-      containers:
-        - name: "config-reloader"
-          env:
-            - name: METADATA_METRICS_SVC
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataMetrics
-            - name: NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataNamespace
-
-      ## Enable WAL compression to reduce Prometheus memory consumption
-      walCompression: true
-
-      ## prometheus scrape config
-      ## rel: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
-      additionalScrapeConfigs:
-        ## scraping metrics basing on annotations:
-        ##   - prometheus.io/scrape: true - to scrape metrics from the pod
-        ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
-        ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
-        ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-        - job_name: "pod-annotations"
-          kubernetes_sd_configs:
-            - role: pod
-          relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-              action: keep
-              regex: true
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-              action: replace
-              target_label: __metrics_path__
-              regex: (.+)
-            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-              action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              target_label: __address__
-            - source_labels: [__metrics_path__]
-              separator: ;
-              regex: (.*)
-              target_label: endpoint
-              replacement: $1
-              action: replace
-            - source_labels: [__meta_kubernetes_namespace]
-              action: replace
-              target_label: namespace
-            - action: labelmap
-              regex: __meta_kubernetes_pod_label_(.+)
-            - source_labels: [__meta_kubernetes_pod_name]
-              separator: ;
-              regex: (.*)
-              target_label: pod
-              replacement: $1
-              action: replace
-      remoteWrite:
-        ## infrastructure metrics
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888/prometheus.metrics
-          remoteTimeout: 5s
 
 
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector

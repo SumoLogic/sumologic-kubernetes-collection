@@ -1,0 +1,20 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.endpoints .Values.sumologic.metrics.enabled }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-etcd
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-etcd
+    k8s-app: etcd-server
+{{ include "sumologic.labels.common" . | indent 4 }}
+  namespace: kube-system
+subsets:
+  - addresses:
+      {{- range .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.endpoints }}
+      - ip: {{ . }}
+      {{- end }}
+    ports:
+      - name: http-metrics
+        port: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.service.port }}
+        protocol: TCP
+{{- end }}

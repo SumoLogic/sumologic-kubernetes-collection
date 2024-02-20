@@ -41,13 +41,13 @@ spec:
 {{- if .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector }}
         {{ .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | toYaml | nindent 8 }}
 {{- else }}
-        release: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
       podMonitorSelector:
 {{- if .Values.sumologic.metrics.collector.otelcol.podMonitorSelector }}
         {{ .Values.sumologic.metrics.collector.otelcol.podMonitorSelector | toYaml | nindent 8 }}
 {{- else }}
-        release: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
     serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
 {{- if not (empty (include "metrics.collector.otelcol.nodeSelector" .)) }}

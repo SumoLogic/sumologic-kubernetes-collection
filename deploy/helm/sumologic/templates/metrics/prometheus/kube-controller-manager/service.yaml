@@ -1,0 +1,27 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.service.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-controller-manager
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-controller-manager
+    jobLabel: kube-controller-manager
+{{ include "sumologic.labels.common" . | indent 4 }}
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+    - name: http-metrics
+      port: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.service.targetPort }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.endpoints }}{{- else }}
+  selector:
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.service.selector }}
+{{ toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.service.selector | indent 4 }}
+    {{- else}}
+    component: kube-controller-manager
+    {{- end}}
+{{- end }}
+  type: ClusterIP
+{{- end }}
