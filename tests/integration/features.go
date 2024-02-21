@@ -154,7 +154,6 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod_labels_app.kubernetes.io/part-of":    "kube-state-metrics",
 					"pod_labels_app.kubernetes.io/version":    "\\d+\\.\\d+\\.\\d+",
 					"pod_labels_helm.sh/chart":                "kube-state-metrics-\\d+\\.\\d+\\.\\d+",
-					"pod_labels_release":                      releaseName,
 					"pod_labels_pod-template-hash":            ".+",
 					"pod":                                     fmt.Sprintf("%s-.+", deployment),
 					"replicaset":                              fmt.Sprintf("%s-.+", deployment),

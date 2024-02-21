@@ -717,7 +717,7 @@ sumologic:
         selector:
           matchLabels:
             app: kube-prometheus-stack-prometheus
-    
+
     k8sComponentServiceMonitors:
       kubeApiServer:
         enabled: true
@@ -1215,7 +1215,6 @@ metrics-server:
   ##
   #   pullSecrets:
   #     - imagepullsecret
-
 
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector
 ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector/traces.md
