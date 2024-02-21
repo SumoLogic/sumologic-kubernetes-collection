@@ -9,7 +9,7 @@ import common
 
 def get_eks_doc_from_github():
     result = requests.get(
-        "https://raw.githubusercontent.com/awsdocs/amazon-eks-user-guide/master/doc_source/kubernetes-versions.md"
+        "https://raw.githubusercontent.com/awsdocs/amazon-eks-user-guide/main/doc_source/kubernetes-versions.md"
     )
     if result.status_code == 200:
         return result.text
@@ -22,15 +22,13 @@ def get_eks_calendar_table(doc):
 
     found_calendar = False
     for line in lines:
-        if "Amazon EKS end of support" in line:
+        if "| --- |" in line:
             found_calendar = True
         elif found_calendar:
             if line != "":
                 eks_calendar_table.append(line)
             else:
                 break
-    # remove first line related to table formatting in markdown
-    eks_calendar_table = eks_calendar_table[1:]
     return eks_calendar_table
 
 
@@ -57,8 +55,8 @@ def get_eks_officially_supported_releases():
     for row in eks_calendar_table:
         elements = [x for x in row.strip().split("|") if x]
         release_version = elements[0].replace("\\", "").strip()
-        end_of_support = elements[-1].strip()
-        eof_of_support_date = parse_eks_end_of_support_date(end_of_support)
+        end_of_standard_support = elements[3].strip()
+        eof_of_support_date = parse_eks_end_of_support_date(end_of_standard_support)
         if today < eof_of_support_date:
             eks_supported_releases.append(release_version)
     return sorted(eks_supported_releases)
