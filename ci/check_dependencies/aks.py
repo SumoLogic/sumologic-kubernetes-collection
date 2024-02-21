@@ -46,11 +46,13 @@ def get_supported_releases(html_calendar):
     pd_data["AKS GA date"] = pd.to_datetime(
         pd_data["AKS GA"], format="%b %Y", errors="coerce"
     ).fillna(datetime.now() + timedelta(days=50 * 365))
-
+    pd_data["AKS Preview date"] = pd.to_datetime(
+        pd_data["AKS preview"], format="%b %Y", errors="coerce"
+    ).fillna(datetime.now() + timedelta(days=50 * 365))
     today = datetime.now()
     supported_releases = []
     for index, row in pd_data.iterrows():
-        if row["AKS GA date"] < today:
+        if row["AKS Preview date"] < today:
             dependent_version = row["Platform support"].replace("GA", "").replace("Until", "").strip()
             if dependent_version in pd_data.index:
                 dependent_version_GA_date = pd_data.loc[dependent_version][
