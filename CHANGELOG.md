@@ -7,6 +7,77 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.5.0]
+
+### Released 2024-02-21
+
+### Added
+
+- feat: add Sumo Logic Mock and debug features for logs and metrics [#3520]
+- feat(metrics): allow customizing kubelet metrics [#3528]
+
+### Changed
+
+- feat(tracesgateway): move config map from values.yaml [#3525]
+- feat(tracessampler): move tracessampler config map from values.yaml [#3526]
+- feat(otelcolinstrumentation): move otelcol-instrumentation config from values.yaml [#3529]
+- feat(sumologic-mock): support mock for cleanup process [#3532]
+- feat(sumologic-mock): use secret to store `accessId` and `accessKey` during cleanup process [#3532]
+- feat(sumologic-mock): support mock for setup process [#3532]
+- feat(sumologic-mock): use shorter name for serviceaccount [#3533]
+- chore: replace `sumologic_schema` processor with `sumologic` processor [#3534] If your values file mentions the `sumologic_schema`
+  processor, you should update the name to `sumologic`.
+- feat: rename sumologic-mock to mock in kubernets object names [#3536]
+- chore(otelcolInstrumentation): use loadbalancing exporter when traces-gateway is disabled [#3538]
+- feat(sumologic-mock): add sumologic.com/app label [#3541]
+- feat(sumologic-mock): add full support to instrumentation [#3544]
+- feat(sumologic-mock): add full support to events [#3545]
+- feat: add support for kubernetes 1.29 for AKS [#3547]
+- feat: add support for kubernetes 1.29 for EKS [#3547]
+- feat: add support for kubernetes 1.29 for KOPS [#3547]
+- chore(tracessampler): add persistence configuration" [#3551]
+- deps: update Metrics Server subchart to `6.10.0` [#3553]
+- fix(logs): do not require resources for additionalDaemonset [#3555]
+- deps: update tailing-sidecar to 0.10.0 [#3556]
+- deps: update opentelemetry-operator to 0.47.0 [#3557]
+- chore: drop support for EKS 1.24 [#3560]
+- chore: drop support for OpenShift 4.11 [#3560]
+
+### Fixed
+
+- fix: fix capabilities check for PodDisrutionBudget [#3514]
+- fix(logs): fix global tolerations for otellogs daemonset [#3523]
+- fix(debug): fix exclusion of logs scraping [#3535]
+- fix(metrics): image pull secrets for metrics collector [#3539]
+- fix: fix opentelemetry object for metrics collector [#3542]
+
+[#3520]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3520
+[#3528]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3528
+[#3525]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3525
+[#3526]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3526
+[#3529]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3529
+[#3532]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3532
+[#3533]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3533
+[#3534]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3534
+[#3536]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3536
+[#3538]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3538
+[#3541]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3541
+[#3544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3544
+[#3545]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3545
+[#3547]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3547
+[#3551]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3551
+[#3553]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3553
+[#3555]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3555
+[#3556]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3556
+[#3557]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3557
+[#3560]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3560
+[#3514]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3514
+[#3523]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3523
+[#3535]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3535
+[#3539]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3539
+[#3542]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3542
+[v4.5.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.5.0
+
 ## [v4.4.0]
 
 ### Released 2024-01-24
