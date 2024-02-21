@@ -22,7 +22,7 @@ jobs:
           python -m pip install -r ci/check_dependencies/requirements.txt
       - name: Get issue title
         run: |
-          echo "ISSUE_TITLE=$(date +%d-%m-%Y) Update Chart dependencies" >> "$GITHUB_ENV"
+          echo "ISSUE_TITLE=Update Chart dependencies $(date +%Y-%m-%d) " >> "$GITHUB_ENV"
       - name: Generate dependency report
         id: dependency-report
         run: |
