@@ -26,8 +26,6 @@ def get_minor_releases(owner, repo):
 
         minor_releases = set()
         for release in releases:
-            if "alpha" in release["name"] or "beta" in release["name"]:
-                continue
             release_name_digits = release["name"].strip("v").split(".")
             minor_releases.add(
                 "{major}.{minor}".format(
