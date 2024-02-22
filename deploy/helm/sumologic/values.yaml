@@ -2281,8 +2281,6 @@ opentelemetry-operator:
     ## for nodejs. Traces are always enabled.
     nodejs:
       image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.46.0
-      # traces:
-      #   enabled: true
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
     #   - name: OTEL_CUSTOM_ENV_VAR
