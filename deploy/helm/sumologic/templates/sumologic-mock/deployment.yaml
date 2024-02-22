@@ -29,9 +29,9 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.sumologic-mock.name.roles.serviceaccount" . }}
-{{- if not (empty (include "metadata.logs.statefulset.nodeSelector" .)) }}
+{{- if not (empty (include "sumologic-mock.deployment.nodeSelector" .)) }}
       nodeSelector:
-{{ include "metadata.logs.statefulset.nodeSelector" . | indent 8 }}
+{{ include "sumologic-mock.deployment.nodeSelector" . | indent 8 }}
 {{- end }}
 {{- if not (empty (include "sumologic-mock.deployment.tolerations" .)) }}
       tolerations:
