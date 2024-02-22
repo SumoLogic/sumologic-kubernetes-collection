@@ -36,18 +36,18 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
-{{- if .Values.otelevents.statefulset.nodeSelector }}
+{{- if not (empty (include "events.statefulset.nodeSelector" .)) }}
       nodeSelector:
-{{ toYaml .Values.otelevents.statefulset.nodeSelector | indent 8 }}
+{{ include "events.statefulset.nodeSelector" . | indent 8 }}
 {{- end }}
-{{- if .Values.otelevents.statefulset.tolerations }}
+{{- if not (empty (include "events.statefulset.tolerations" .)) }}
       tolerations:
-{{ toYaml .Values.otelevents.statefulset.tolerations | indent 8 }}
+{{ include "events.statefulset.tolerations" . | indent 8 }}
 {{- end }}
-{{- if or .Values.otelevents.statefulset.affinity  .Values.otelevents.statefulset.podAntiAffinity }}
+{{- if or (not (empty (include "events.statefulset.affinity" .))) .Values.otelevents.statefulset.podAntiAffinity }}
       affinity:
-{{- if .Values.otelevents.statefulset.affinity }}
-{{ toYaml .Values.otelevents.statefulset.affinity | indent 8 }}
+{{- if not (empty (include "otelcolInstrumentation.statefulset.affinity" .)) }}
+{{ include "otelcolInstrumentation.statefulset.affinity" . | indent 8 }}
 {{- end }}
 {{- if eq .Values.otelevents.statefulset.podAntiAffinity "hard"}}
 {{ include "pod-anti-affinity-hard" . | indent 8 }}
