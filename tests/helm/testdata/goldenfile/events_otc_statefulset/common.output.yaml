@@ -1,0 +1,144 @@
+---
+# Source: sumologic/templates/events/otelcol/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-events
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-events
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app: RELEASE-NAME-sumologic-otelcol-events
+  serviceName: RELEASE-NAME-sumologic-otelcol-events-headless
+  podManagementPolicy: "Parallel"
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
+      labels:
+        app: RELEASE-NAME-sumologic-otelcol-events
+        sumologic.com/scrape: "true"
+        sumologic.com/app: otelcol-events
+        sumologic.com/component: events
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - effect: FailTest
+          key: arbeiter
+          operator: NotEqual
+          value: arbeiter
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: NotIn
+                    values:
+                      - windows
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - RELEASE-NAME-sumologic-otelcol-logs
+                        - RELEASE-NAME-sumologic-otelcol-metrics
+                        - RELEASE-NAME-sumologic-otelcol-events
+                        - RELEASE-NAME-sumologic-otelcol-instrumentation
+                    - key: app
+                      operator: In
+                      values:
+                        - prometheus-operator-prometheus
+                topologyKey: "kubernetes.io/hostname"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: RELEASE-NAME-sumologic-otelcol-events
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: otelcol
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.92.0-sumo-0"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/etc/otel/config.yaml
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+            requests:
+              cpu: 200m
+              memory: 500Mi
+          ports:
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+            - name: pprof
+              containerPort: 1777
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 60
+            periodSeconds: 3
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/otel/config.yaml
+              subPath: config.yaml
+            - name: file-storage
+              mountPath: /var/lib/storage/events
+          env:
+            - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-events
+            - name: SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-events-otlp
+
+            - name: NO_PROXY
+              value: kubernetes.default.svc
+  volumeClaimTemplates:
+    - metadata:
+        name: file-storage
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName:
+        resources:
+          requests:
+            storage: 10Gi
