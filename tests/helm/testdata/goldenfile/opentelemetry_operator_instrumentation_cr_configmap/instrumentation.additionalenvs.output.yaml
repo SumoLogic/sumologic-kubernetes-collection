@@ -35,7 +35,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator1
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.4.0
+        image: dotnetimg
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -47,8 +47,10 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: test
+            value: dotnetval
       python:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.43b0
+        image: pythonimg
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -58,13 +60,17 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: test
+            value: pythonval
       nodejs:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.46.0
+        image: nodejsimg
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
+          - name: test
+            value: nodeval
       java:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.1.0
+        image: javaimg
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -74,6 +80,8 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: test
+            value: javaval
     ---
     apiVersion: opentelemetry.io/v1alpha1
     kind: Instrumentation
@@ -97,7 +105,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator2
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.4.0
+        image: dotnetimg
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -109,8 +117,10 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: test
+            value: dotnetval
       python:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.43b0
+        image: pythonimg
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -120,13 +130,17 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: test
+            value: pythonval
       nodejs:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.46.0
+        image: nodejsimg
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
+          - name: test
+            value: nodeval
       java:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.1.0
+        image: javaimg
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -136,3 +150,5 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: test
+            value: javaval

@@ -1,0 +1,25 @@
+opentelemetry-operator:
+  enabled: true
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator1,ot-operator2"
+  instrumentation:
+    dotnet:
+      image: dotnetimg
+      extraEnvVars:
+        - name: "test"
+          value: "dotnetval"
+    python:
+      image: pythonimg
+      extraEnvVars:
+        - name: "test"
+          value: "pythonval"
+    nodejs:
+      image: nodejsimg
+      extraEnvVars:
+        - name: "test"
+          value: "nodeval"
+    java:
+      image: javaimg
+      extraEnvVars:
+        - name: "test"
+          value: "javaval"
