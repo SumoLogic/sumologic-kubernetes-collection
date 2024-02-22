@@ -1,10 +1,10 @@
-# Deployment Guide for unreleased version
+# Deployment Guide for v4.5
 
 This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level
 metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
-- [Deployment Guide for unreleased version](#deployment-guide-for-unreleased-version)
+- [Deployment Guide for v4.5](#deployment-guide-for-v45)
   - [Solution overview](#solution-overview)
     - [Log Collection](#log-collection)
     - [Metrics Collection](#metrics-collection)
