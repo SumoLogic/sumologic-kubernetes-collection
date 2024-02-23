@@ -14,7 +14,6 @@ data:
   config.yaml: |
     exporters:
       sumologic:
-        clear_logs_timestamp: false
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
         log_format: otlp

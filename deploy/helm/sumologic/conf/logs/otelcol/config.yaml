@@ -72,7 +72,6 @@ exporters:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
     log_format: otlp
-    clear_logs_timestamp: false
     sending_queue:
       enabled: true
       num_consumers: 10
@@ -86,7 +85,6 @@ exporters:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
     log_format: otlp
-    clear_logs_timestamp: false
     sending_queue:
       enabled: true
       num_consumers: 10
