@@ -2245,25 +2245,50 @@ opentelemetry-operator:
 
   instrumentation:
     dotnet:
+      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.7.0
       traces:
         enabled: true
       metrics:
         enabled: true
+
+      ## Extra Environment Values - allows yaml definitions
+      # extraEnvVars:
+      #   - name: OTEL_CUSTOM_ENV_VAR
+      #     value: my_value
+
     java:
+      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.26.0
       traces:
         enabled: true
       metrics:
         enabled: true
+
+      ## Extra Environment Values - allows yaml definitions
+      # extraEnvVars:
+      #   - name: OTEL_CUSTOM_ENV_VAR
+      #     value: my_value
+
     python:
+      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.39b0
       traces:
         enabled: true
       metrics:
         enabled: true
+
+      ## Extra Environment Values - allows yaml definitions
+      # extraEnvVars:
+      #   - name: OTEL_CUSTOM_ENV_VAR
+      #     value: my_value
+
     ## Current instrumentation doesn't support customization
     ## for nodejs. Traces are always enabled.
-    ##nodejs:
-    ##  traces:
-    ##    enabled: true
+    nodejs:
+      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.40.0
+
+      ## Extra Environment Values - allows yaml definitions
+      # extraEnvVars:
+      #   - name: OTEL_CUSTOM_ENV_VAR
+      #     value: my_value
 
   ## Specific for OpenTelemetry Operator chart values
   admissionWebhooks:

@@ -3,7 +3,7 @@
 {{- if eq ( get $operator "instrumentationNamespaces" ) "" -}}
 {{ fail "No value for \"opentelemetry-operator.instrumentationNamespaces\".Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
 {{- else -}}
-{{- range $ns := splitList "," ( index .Values "opentelemetry-operator" "instrumentationNamespaces" ) -}}
+{{- range $ns := splitList "," $operator.instrumentationNamespaces -}}
 ---
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
@@ -19,17 +19,13 @@ spec:
     - baggage
   resource:
     addK8sUIDAttributes: false
-  sampler:
-    # work around https://github.com/open-telemetry/opentelemetry-operator/issues/1886
-    # TODO: remove this after upgrading past 0.33.0
-    type: always_on
   env:
     - name: OTEL_APPLICATION_NAMESPACE_NAME
       value: {{ $ns }}
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: application={{ $ns }}
   dotnet:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.7.0
+    image: {{ $operator.instrumentation.dotnet.image }}
     env:
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.dotnet.metrics.enabled) }}
@@ -41,8 +37,11 @@ spec:
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
+{{- if $operator.instrumentation.dotnet.extraEnvVars -}}
+{{- toYaml $operator.instrumentation.dotnet.extraEnvVars | nindent 6 -}}
+{{- end }}
   python:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.39b0
+    image: {{ $operator.instrumentation.python.image }}
     env:
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.python.metrics.enabled) }}
@@ -52,13 +51,19 @@ spec:
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
+{{- if $operator.instrumentation.python.extraEnvVars -}}
+{{- toYaml $operator.instrumentation.python.extraEnvVars | nindent 6 -}}
+{{- end }}
   nodejs:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.40.0
+    image: {{ $operator.instrumentation.nodejs.image }}
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4317
+{{- if $operator.instrumentation.nodejs.extraEnvVars -}}
+{{- toYaml $operator.instrumentation.nodejs.extraEnvVars | nindent 6 -}}
+{{- end }}
   java:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.26.0
+    image: {{ $operator.instrumentation.java.image }}
     env:
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.java.metrics.enabled) }}
@@ -68,5 +73,8 @@ spec:
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
+{{- if $operator.instrumentation.java.extraEnvVars -}}
+{{- toYaml $operator.instrumentation.java.extraEnvVars | nindent 6 -}}
+{{- end }}
 {{ end -}}
 {{- end -}}
