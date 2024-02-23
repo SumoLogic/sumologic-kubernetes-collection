@@ -13,7 +13,8 @@
 {{ $valuesYamlConfig := .Values.otelcolInstrumentation.config }}
 {{ $useValuesYamlConfig := include "useDefaultConfig" $valuesYamlConfig | trim }}
 {{ if eq $useValuesYamlConfig "true" }}
-{{ $finalConfig = include "removeMergeAndOverrideKeys" .Values.otelcolInstrumentation.config }}
+{{ $oldConfig := include "removeMergeAndOverrideKeys" .Values.otelcolInstrumentation.config | fromYaml }}
+{{ $finalConfig = mergeOverwrite $baseConfig $oldConfig }}
 {{ end }}
 apiVersion: v1
 kind: ConfigMap
@@ -25,9 +26,5 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   otelcol.instrumentation.conf.yaml: |
-  {{- if eq $useValuesYamlConfig "true" }}
-  {{- $finalConfig | nindent 4 }}
-  {{- else }}
   {{- $finalConfig | toYaml | nindent 4 }}
-  {{- end }}
 {{- end }}
