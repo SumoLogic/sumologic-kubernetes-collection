@@ -3,7 +3,6 @@ exporters:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: {{ include "sumologic.events.exporter.endpoint" . }}
     log_format: {{ include "sumologic.events.exporter.format" . }}
-    clear_logs_timestamp: false # this only affects the otlp format
     sending_queue:
       enabled: true
 {{- if .Values.sumologic.events.persistence.enabled }}
@@ -20,7 +19,6 @@ exporters:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
     log_format: {{ include "sumologic.events.exporter.format" . }}
-    clear_logs_timestamp: false # this only affects the otlp format
     sending_queue:
       enabled: true
 {{- end }}
