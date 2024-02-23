@@ -1,0 +1,49 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-scheduler
+  namespace: {{ template "sumologic.namespace" . }}
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-scheduler
+  {{- with .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{ include "sumologic.labels.common" . | indent 4 }}
+spec:
+  jobLabel: jobLabel
+  {{- include "servicemonitor.scrapeLimits" .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor | nindent 2 }}
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.name" . }}-kube-scheduler
+      release: {{ $.Release.Name | quote }}
+  namespaceSelector:
+    matchNames:
+      - "kube-system"
+  endpoints:
+  - port: http-metrics
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.interval }}
+    interval: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.interval }}
+    {{- end }}
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.proxyUrl }}
+    proxyUrl: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.proxyUrl}}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.https }}
+    scheme: https
+    tlsConfig:
+      caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      insecureSkipVerify: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.insecureSkipVerify }}
+      {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.serverName }}
+      serverName: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.serverName }}
+      {{- end}}
+    {{- end}}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.relabelings }}
+    relabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeScheduler.serviceMonitor.relabelings | indent 4) . }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,49 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-controller-manager
+  namespace: {{ template "sumologic.namespace" . }}
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-controller-manager
+  {{- with .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{ include "sumologic.labels.common" . | indent 4 }}
+spec:
+  jobLabel: jobLabel
+  {{- include "servicemonitor.scrapeLimits" .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor | nindent 2 }}
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.name" . }}-kube-controller-manager
+      release: {{ $.Release.Name | quote }}
+  namespaceSelector:
+    matchNames:
+      - "kube-system"
+  endpoints:
+  - port: http-metrics
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.interval }}
+    interval: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.interval }}
+    {{- end }}
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.proxyUrl }}
+    proxyUrl: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.proxyUrl}}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.https }}
+    scheme: https
+    tlsConfig:
+      caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      insecureSkipVerify: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.insecureSkipVerify }}
+      {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.serverName }}
+      serverName: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.serverName }}
+      {{- end }}
+    {{- end }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.relabelings }}
+    relabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeControllerManager.serviceMonitor.relabelings | indent 4) . }}
+{{- end }}
+{{- end }}

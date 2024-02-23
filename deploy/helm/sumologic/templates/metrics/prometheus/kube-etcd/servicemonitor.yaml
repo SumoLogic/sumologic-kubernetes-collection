@@ -1,0 +1,57 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-etcd
+  namespace: {{ template "sumologic.namespace" . }}
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-etcd
+  {{- with .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{ include "sumologic.labels.common" . | indent 4 }}
+spec:
+  jobLabel: jobLabel
+  {{- include "servicemonitor.scrapeLimits" .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor | nindent 4 }}
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.name" . }}-kube-etcd
+      release: {{ $.Release.Name | quote }}
+  namespaceSelector:
+    matchNames:
+      - "kube-system"
+  endpoints:
+  - port: http-metrics
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.interval }}
+    interval: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.interval }}
+    {{- end }}
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.proxyUrl }}
+    proxyUrl: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.proxyUrl}}
+    {{- end }}
+    {{- if eq .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.scheme "https" }}
+    scheme: https
+    tlsConfig:
+      {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.serverName }}
+      serverName: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.serverName }}
+      {{- end }}
+      {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.caFile }}
+      caFile: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.caFile }}
+      {{- end }}
+      {{- if  .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.certFile }}
+      certFile: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.certFile }}
+      {{- end }}
+      {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.keyFile }}
+      keyFile: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.keyFile }}
+      {{- end}}
+      insecureSkipVerify: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.insecureSkipVerify }}
+    {{- end }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.metricRelabelings | indent 4) . }}
+{{- end }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.relabelings }}
+    relabelings:
+{{ tpl (toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.serviceMonitor.relabelings | indent 4) . }}
+{{- end }}
+{{- end }}

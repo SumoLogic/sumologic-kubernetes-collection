@@ -1,0 +1,27 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.service.enabled .Values.sumologic.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.fullname" . }}-kube-etcd
+  labels:
+    app: {{ template "sumologic.name" . }}-kube-etcd
+    jobLabel: kube-etcd
+{{ include "sumologic.labels.common" . | indent 4 }}
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+    - name: http-metrics
+      port: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.service.targetPort }}
+{{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.endpoints }}{{- else }}
+  selector:
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.service.selector }}
+{{ toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.kubeEtcd.service.selector | indent 4 }}
+    {{- else}}
+    component: etcd
+    {{- end}}
+{{- end }}
+  type: ClusterIP
+{{- end -}}

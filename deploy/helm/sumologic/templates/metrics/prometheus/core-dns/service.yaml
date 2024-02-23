@@ -1,0 +1,24 @@
+{{- if and .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.enabled .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.fullname" . }}-coredns
+  labels:
+    app: {{ template "sumologic.name" . }}-coredns
+    jobLabel: coredns
+{{ include "sumologic.labels.common" . | indent 4 }}
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+    - name: http-metrics
+      port: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.service.targetPort }}
+  selector:
+    {{- if .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.service.selector }}
+{{ toYaml .Values.sumologic.metrics.k8sComponentServiceMonitors.coreDns.service.selector | indent 4 }}
+    {{- else}}
+    k8s-app: kube-dns
+    {{- end}}
+{{- end }}

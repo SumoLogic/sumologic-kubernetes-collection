@@ -26,21 +26,13 @@ sumologic:
           memory: 16Mi
     autoscaling:
       minReplicas: 1
-
-# Request less resources so that this fits on Github actions runners environment
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      resources:
-        requests:
-          cpu: 100m
-          memory: 128Mi
-  # kind exposes etcd metrics in http on a different port, and enables TLS for the default
-  # port. This change is simpler than configuring TLS for the default port.
-  # TODO: Should we use TLS for our default values.yaml here?
-  kubeEtcd:
-    service:
-      targetPort: 2381
+    k8sComponentServiceMonitors:
+      kubeControllerManager:
+        serviceMonitor:
+          insecureSkipVerify: true
+      kubeScheduler:
+        serviceMonitor:
+          insecureSkipVerify: true
 
 # Request less resources so that this fits on Github actions runners environment
 metadata:
