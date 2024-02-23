@@ -340,11 +340,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "metadata.logs.statefulset.nodeSelector" -}}
-{{- if .Values.metadata.logs.statefulset.nodeSelector -}}
-{{- toYaml .Values.metadata.logs.statefulset.nodeSelector -}}
-{{- else -}}
-{{- template "kubernetes.defaultNodeSelector" . -}}
-{{- end -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.metadata.logs.statefulset.nodeSelector)}}
 {{- end -}}
 
 {{- define "metadata.logs.statefulset.tolerations" -}}

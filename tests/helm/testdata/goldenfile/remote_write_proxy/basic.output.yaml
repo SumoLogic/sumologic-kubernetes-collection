@@ -25,6 +25,8 @@ spec:
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
+      nodeSelector:
+        kubernetes.io/os: linux
       securityContext: {}
       containers:
         - name: nginx

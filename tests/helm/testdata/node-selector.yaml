@@ -21,7 +21,12 @@ otellogs:
   daemonset:
     tolerations: []
 kube-prometheus-stack:
+  kube-state-metrics:
+    nodeSelector:
+      disktype: hdd
   prometheus-node-exporter:
+    nodeSelector:
+      disktype: hdd
     tolerations:
       - key: "key"
         value: "value"

@@ -251,11 +251,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "otelcolInstrumentation.statefulset.nodeSelector" -}}
-{{- if .Values.otelcolInstrumentation.statefulset.nodeSelector -}}
-{{- toYaml .Values.otelcolInstrumentation.statefulset.nodeSelector -}}
-{{- else -}}
-{{- template "kubernetes.defaultNodeSelector" . -}}
-{{- end -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.otelcolInstrumentation.statefulset.nodeSelector)}}
 {{- end -}}
 
 {{- define "otelcolInstrumentation.statefulset.tolerations" -}}
@@ -286,11 +282,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "tracesGateway.deployment.nodeSelector" -}}
-{{- if .Values.tracesGateway.deployment.nodeSelector -}}
-{{- toYaml .Values.tracesGateway.deployment.nodeSelector -}}
-{{- else -}}
-{{- template "kubernetes.defaultNodeSelector" . -}}
-{{- end -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.tracesGateway.deployment.nodeSelector)}}
 {{- end -}}
 
 {{- define "tracesGateway.deployment.tolerations" -}}
@@ -302,11 +294,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "tracesSampler.deployment.nodeSelector" -}}
-{{- if .Values.tracesSampler.deployment.nodeSelector -}}
-{{- toYaml .Values.tracesSampler.deployment.nodeSelector -}}
-{{- else -}}
-{{- template "kubernetes.defaultNodeSelector" . -}}
-{{- end -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.tracesSampler.deployment.nodeSelector)}}
 {{- end -}}
 
 {{- define "tracesSampler.deployment.tolerations" -}}

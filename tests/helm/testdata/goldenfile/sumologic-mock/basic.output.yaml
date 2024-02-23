@@ -29,6 +29,8 @@ spec:
         sumologic.com/app: sumologic-mock
     spec:
       serviceAccountName: RELEASE-NAME-sumologic-mock
+      nodeSelector:
+        kubernetes.io/os: linux
       securityContext: {}
       containers:
         - ports:

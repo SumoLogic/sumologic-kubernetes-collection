@@ -26,11 +26,7 @@
 {{- end -}}
 
 {{- define "sumologic-mock.deployment.nodeSelector" -}}
-{{- if .Values.debug.sumologicMock.deployment.nodeSelector -}}
-{{- toYaml .Values.debug.sumologicMock.deployment.nodeSelector -}}
-{{- else -}}
-{{- template "kubernetes.defaultNodeSelector" . -}}
-{{- end -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.debug.sumologicMock.deployment.nodeSelector)}}
 {{- end -}}
 
 {{- define "sumologic-mock.deployment.tolerations" -}}

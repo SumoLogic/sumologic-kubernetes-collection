@@ -22,6 +22,8 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: RELEASE-NAME-sumologic-setup
+      nodeSelector:
+        kubernetes.io/os: linux
       volumes:
         - name: setup
           configMap:

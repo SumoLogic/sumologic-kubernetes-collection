@@ -1037,7 +1037,8 @@ kube-prometheus-stack:
     ## Put here the new name if you want to override the full name used for Kube State Metrics components.
     # fullnameOverride: ""
 
-    nodeSelector: {}
+    nodeSelector:
+      kubernetes.io/os: linux
 
     ## Custom labels to apply to service, deployment and pods
     customLabels: {}
@@ -1123,7 +1124,8 @@ kube-prometheus-stack:
     ## Put here the new name if you want to override the full name used for Prometheus Node exporter components.
     # fullnameOverride: ""
 
-    nodeSelector: {}
+    nodeSelector:
+      kubernetes.io/os: linux
 
     ## Additional labels for pods in the DaemonSet
     podLabels: {}
@@ -1180,7 +1182,8 @@ kube-prometheus-stack:
       podMetadata:
         labels: {}
         annotations: {}
-      nodeSelector: {}
+      nodeSelector:
+        kubernetes.io/os: linux
       ## Define resources requests and limits for single Pods.
       resources:
         limits:

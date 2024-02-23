@@ -591,12 +591,18 @@ Example usage:
 {{- end }}
 {{- end -}}
 
-{{- define "pvcCleaner.job.nodeSelector" -}}
-{{- if .Values.pvcCleaner.job.nodeSelector -}}
-{{- toYaml .Values.pvcCleaner.job.nodeSelector -}}
-{{- else -}}
-{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- define "nodeSelector" -}}
+{{- $nodeSelector := dict "kubernetes.io/os" "linux" -}}
+{{- if .nodeSelector -}}
+{{- $nodeSelector = mergeOverwrite $nodeSelector .nodeSelector -}}
+{{- else if .Values.sumologic.nodeSelector -}}
+{{- $nodeSelector = mergeOverwrite $nodeSelector .Values.sumologic.nodeSelector -}}
 {{- end -}}
+{{- toYaml $nodeSelector -}}
+{{- end -}}
+
+{{- define "pvcCleaner.job.nodeSelector" -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.pvcCleaner.job.nodeSelector)}}
 {{- end -}}
 
 {{- define "pvcCleaner.job.tolerations" -}}

@@ -33,6 +33,7 @@ spec:
         - name: sumo-pull
       nodeSelector:
         disktype: ssd
+        kubernetes.io/os: linux
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
