@@ -28,7 +28,11 @@ spec:
       podMonitorSelector:
         release: RELEASE-NAME
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
+    nodeSelector:
+      kubernetes.io/os: linux
     resources: {}
+  nodeSelector:
+    kubernetes.io/os: linux
   autoscaler:
     maxReplicas: 10
     minReplicas: 1

@@ -28,6 +28,8 @@ spec:
         heritage: "Helm"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
         - name: otelcol
           image: "my_repository:my_tag"

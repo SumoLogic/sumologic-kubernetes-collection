@@ -35,6 +35,8 @@ spec:
         statefulsetLabel: statefulsetValue
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        kubernetes.io/os: linux
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

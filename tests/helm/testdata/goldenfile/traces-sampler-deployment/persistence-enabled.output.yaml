@@ -28,6 +28,8 @@ spec:
         heritage: "Helm"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
         - name: otelcol
           image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.92.0-sumo-0"
@@ -95,10 +97,10 @@ spec:
         - configMap:
             name: RELEASE-NAME-sumologic-traces-sampler
           name: otel-collector-config-vol
-        - emptyDir: {}
-          name: tmp
-        - mountPath: /var/lib/storage/tracessampler
-          name: file-storage
+        - name: tmp
+          emptyDir: {}
+        - name: file-storage
+          mountPath: /var/lib/storage/tracessampler
   volumeClaimTemplates:
     - metadata:
         name: file-storage
@@ -107,4 +109,4 @@ spec:
         storageClassName:
         resources:
           requests:
-            storage: "1Gi"
+            storage: 1Gi

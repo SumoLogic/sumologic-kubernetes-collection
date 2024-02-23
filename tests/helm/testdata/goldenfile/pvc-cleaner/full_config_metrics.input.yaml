@@ -40,6 +40,8 @@ pvcCleaner:
         cpu: 12m
     nodeSelector:
       my: node
+      # clean up kubernetes.io/os selector
+      kubernetes.io/os: null
     ## Add custom labels only to setup job pod
 
     ## Node tolerations for server scheduling to nodes with taints

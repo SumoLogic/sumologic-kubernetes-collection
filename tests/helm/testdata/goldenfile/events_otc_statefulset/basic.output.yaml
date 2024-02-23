@@ -34,6 +34,7 @@ spec:
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
       nodeSelector:
+        kubernetes.io/os: linux
         sumologic.com/kind: worker
       tolerations:
         - effect: NoSchedule

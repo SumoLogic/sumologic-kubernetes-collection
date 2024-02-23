@@ -30,6 +30,8 @@ spec:
         heritage: "Helm"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        kubernetes.io/os: linux
       # Otel agent quits if the load balancing backend (collector/samples) is
       # not ready during first connect attempt. Restart policy `Always` guarantees that
       # the agent will have a chance to retry when collector is ready.

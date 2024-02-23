@@ -27,6 +27,8 @@ spec:
         heritage: "Helm"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        kubernetes.io/os: linux
       volumes:
         - name: config-volume
           configMap:

@@ -28,7 +28,6 @@ spec:
         app.kubernetes.io/version: 0.7.0
         helm.sh/chart: metrics-server-6.10.0
     spec:
-      automountServiceAccountToken: true
       serviceAccountName: RELEASE-NAME-metrics-server
       affinity:
         podAffinity:
@@ -44,6 +43,7 @@ spec:
               weight: 1
         nodeAffinity:
 
+      automountServiceAccountToken: true
       dnsPolicy: ClusterFirst
       containers:
         - name: metrics-server

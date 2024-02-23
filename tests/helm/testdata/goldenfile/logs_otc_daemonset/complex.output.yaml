@@ -45,7 +45,7 @@ spec:
       containers:
         - args:
             - --config=/etc/otelcol/config.yaml
-          image: my_repository:my_tag
+          image: "my_repository:my_tag"
           imagePullPolicy: IfNotPresent
           name: otelcol
           livenessProbe:
@@ -110,14 +110,15 @@ spec:
               protocol: TCP
       initContainers: # ensure the host path is owned by the otel user group
         - name: changeowner
+          # yamllint disable-line rule:line-length
           image: public.ecr.aws/docker/library/busybox:1.36.0
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
-              drop:
-                - ALL
               add:
                 - CAP_CHOWN
+              drop:
+                - ALL
             privileged: true
           command:
             - "sh"

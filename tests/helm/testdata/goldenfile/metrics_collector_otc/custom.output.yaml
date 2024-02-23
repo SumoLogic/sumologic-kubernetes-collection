@@ -34,6 +34,7 @@ spec:
         pmkey: pmvalue
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
     nodeSelector:
+      kubernetes.io/os: linux
       workingGroup: production
     resources:
       limits:
@@ -56,6 +57,7 @@ spec:
                   - sumo-east1
                   - sumo-west1
   nodeSelector:
+    kubernetes.io/os: linux
     workingGroup: production
   tolerations:
     - effect: NoSchedule

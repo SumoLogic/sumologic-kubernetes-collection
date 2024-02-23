@@ -121,11 +121,7 @@ otlp
 {{- end -}}
 
 {{- define "events.statefulset.nodeSelector" -}}
-{{- if .Values.otelevents.statefulset.nodeSelector -}}
-{{- toYaml .Values.otelevents.statefulset.nodeSelector -}}
-{{- else -}}
-{{- template "kubernetes.defaultNodeSelector" . -}}
-{{- end -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.otelevents.statefulset.nodeSelector)}}
 {{- end -}}
 
 {{- define "events.statefulset.tolerations" -}}
