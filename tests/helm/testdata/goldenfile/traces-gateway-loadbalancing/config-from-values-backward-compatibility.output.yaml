@@ -20,7 +20,7 @@ data:
             sending_queue:
               enabled: true
               num_consumers: 10
-              queue_size: 10000
+              queue_size: 100000
             timeout: 10s
             tls:
               insecure: true
@@ -28,3 +28,41 @@ data:
           dns:
             hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
             port: 4317
+    extensions:
+      health_check: {}
+      memory_ballast:
+        size_mib: 512
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 512
+        send_batch_size: 256
+        timeout: 5s
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 75
+        spike_limit_percentage: 20
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    service:
+      extensions:
+      - health_check
+      - memory_ballast
+      - pprof
+      pipelines:
+        traces:
+          exporters:
+          - loadbalancing
+          processors:
+          - memory_limiter
+          - batch
+          receivers:
+          - otlp
+      telemetry:
+        logs:
+          level: info
