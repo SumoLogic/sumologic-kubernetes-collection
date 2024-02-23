@@ -159,10 +159,6 @@ sumologic.com/component: instrumentation
 {{ template "sumologic.labels.instrumentation.component" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.instrumentation.deprecated.otelcol.service" -}}
-{{ template "sumologic.fullname" . }}-otelcol
-{{- end -}}
-
 {{- define "sumologic.metadata.name.instrumentation.otelagent.service" -}}
 {{ template "sumologic.fullname" . }}-otelagent
 {{- end -}}
