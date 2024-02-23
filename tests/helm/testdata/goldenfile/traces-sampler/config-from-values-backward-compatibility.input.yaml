@@ -2,6 +2,6 @@ tracesSampler:
   config:
     merge:
     override:
-    extensions:
-      memory_ballast:
-        size_mib: 1024
+    processors:
+      cascading_filter:
+        num_traces: 10
