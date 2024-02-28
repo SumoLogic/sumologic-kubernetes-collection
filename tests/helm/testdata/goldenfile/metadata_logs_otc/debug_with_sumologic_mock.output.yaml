@@ -224,6 +224,7 @@ data:
         annotation_prefix: pod_annotations_
         collector: kubernetes
         container_annotations:
+          container_name_key: container
           enabled: false
           prefixes: []
         exclude:

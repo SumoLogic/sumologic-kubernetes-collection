@@ -43,6 +43,9 @@ const (
 	TailingSidecarTest               = "yamls/tailing-sidecar-test.yaml"
 	TailingSidecarTestDeploymentName = "test-tailing-sidecar-operator"
 
+	AnnotationsTestNamespace = "annotations-test"
+	AnnotationsTest          = "yamls/annotations-test.yaml"
+
 	NginxTelegrafMetricsTest = "yamls/nginx.yaml"
 	NginxTelegrafNamespace   = "nginx"
 

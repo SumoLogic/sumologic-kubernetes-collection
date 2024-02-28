@@ -1,0 +1,11 @@
+sumologic:
+  events:
+    enabled: false
+  metrics:
+    enabled: false
+  traces:
+    enabled: false
+  logs:
+    container:
+      perContainerAnnotationsEnabled: true
+      perContainerAnnotationPrefixes: ["sumologic.com/"]

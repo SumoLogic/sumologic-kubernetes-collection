@@ -240,6 +240,7 @@ data:
         annotation_prefix: pod_annotations_
         collector: my_collectorName
         container_annotations:
+          container_name_key: container
           enabled: false
           prefixes: []
         exclude:

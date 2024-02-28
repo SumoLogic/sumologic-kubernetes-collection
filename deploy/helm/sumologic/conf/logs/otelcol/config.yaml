@@ -382,6 +382,7 @@ processors:
     container_annotations:
       enabled: {{ .Values.sumologic.logs.container.perContainerAnnotationsEnabled }}
       prefixes: {{ toJson .Values.sumologic.logs.container.perContainerAnnotationPrefixes }}
+      container_name_key: "container"
     exclude:
       container: {{ .Values.sumologic.logs.container.excludeContainerRegex | quote }}
       namespace: {{ include "logs.excludeNamespaces" . }}
