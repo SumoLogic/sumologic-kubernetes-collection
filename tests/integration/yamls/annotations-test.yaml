@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: annotations-test
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "annotations-test"
+  namespace: "annotations-test"
+  annotations:
+    sumologic.com/include: "true"
+    sumologic.com/sourceCategory: "pod-Source-Category"
+    sumologic.com/sourceCategoryPrefix: "pod-Source-Category-Prefix"
+    sumologic.com/sourceCategoryReplaceDash: "_"
+    sumologic.com/sourceHost: "podSourceHost"
+    sumologic.com/sourceName: "podSourceName"
+    sumologic.com/container1.sourceCategory: "containerSourceCategory"
+spec:
+  containers:
+    - name: container1
+      image: bash
+      args:
+        - /usr/local/bin/bash
+        - -c
+        - >
+          i=0; for i in {1..50}; do
+            echo "example0: $i $(date)"
+            echo "example1: $i $(date)"
+            echo "example2: $i $(date)"
+            sleep 1;
+          done; while true; do
+            sleep 1;
+          done;
+    - name: container2
+      image: bash
+      args:
+        - /usr/local/bin/bash
+        - -c
+        - >
+          i=0; for i in {1..50}; do
+            echo "example0: $i $(date)"
+            echo "example1: $i $(date)"
+            echo "example2: $i $(date)"
+            sleep 1;
+          done; while true; do
+            sleep 1;
+          done;
