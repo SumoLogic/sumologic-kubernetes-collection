@@ -24,7 +24,7 @@ data:
           storage: file_storage
       sumologic/sumologic-mock:
         client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic:3000/receiver
+        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         log_format: otlp
         sending_queue:
           enabled: true

@@ -39,7 +39,7 @@ spec:
           name: sumologic-mock
           args:
             - sumologic-mock
-            - --hostname=RELEASE-NAME-sumologic-mock.sumologic
+            - --hostname=RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.
           securityContext:
             capabilities:
               drop:

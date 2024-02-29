@@ -51,7 +51,7 @@ spec:
                 name: RELEASE-NAME-sumologic-setup
           env:
             - name: SUMOLOGIC_BASE_URL
-              value: http://RELEASE-NAME-sumologic-mock.sumologic:3000/terraform/api/
+              value: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/terraform/api/
 
             - name: NO_PROXY
               value: kubernetes.default.svc

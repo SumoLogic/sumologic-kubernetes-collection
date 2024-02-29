@@ -24,7 +24,7 @@ data:
           queue_size: 10000
       otlphttp/sumologic-mock:
         compression: gzip
-        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic:3000/receiver
+        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
     extensions:
       health_check: {}
       memory_ballast:
