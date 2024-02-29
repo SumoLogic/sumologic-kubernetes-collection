@@ -70,7 +70,7 @@ true
 {{- end -}}
 
 {{- define "sumologic-mock.hostname" -}}
-{{ template "sumologic.sumologic-mock.name.service" . }}.{{ template "sumologic.namespace"  . }}
+{{ template "sumologic.sumologic-mock.name.service" . }}.{{ template "sumologic.namespace"  . }}.svc.cluster.local.
 {{- end -}}
 
 {{- define "sumologic-mock.port" -}}
