@@ -6,15 +6,12 @@
 {{- $defaultAffinity := (include "kubernetes.defaultAffinity" .) }}
 {{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
 {{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
-{{- range $name, $value := $daemonsets }}
+{{- range $name, $daemonset := $daemonsets }}
+{{- $defaultDaemonset := deepCopy $.Values.otellogs.daemonset }}
+{{- $daemonset := mergeOverwrite $defaultDaemonset $daemonset -}}
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $res := .resources }}
-{{- if not $res }}
-{{- $res = dict }}
-{{- end }}
-{{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge $res }}
 {{- $nodeSelector := "" }}
 {{- if .nodeSelector }}
 {{- $nodeSelector = (toYaml .nodeSelector) }}
@@ -39,15 +36,15 @@ kind: DaemonSet
 metadata:
   name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}
   namespace: {{ template "sumologic.namespace"  $ctx }}
-  {{- if $.Values.otellogs.daemonset.annotations }}
+  {{- if $daemonset.annotations }}
   annotations:
-{{ toYaml $.Values.otellogs.daemonset.annotations| indent 4 }}
+{{ toYaml $daemonset.annotations| indent 4 }}
 {{- end }}
   labels:
     app: {{ template "sumologic.labels.app.logs.collector.daemonset" $ctx }}
     {{- include "sumologic.labels.common" $ctx | nindent 4 }}
-{{- if $.Values.otellogs.daemonset.labels }}
-{{ toYaml $.Values.otellogs.daemonset.labels | indent 4 }}
+{{- if $daemonset.labels }}
+{{ toYaml $daemonset.labels | indent 4 }}
 {{- end }}
 spec:
   selector:
@@ -60,8 +57,8 @@ spec:
 {{- if $.Values.sumologic.podAnnotations }}
 {{ toYaml $.Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
-{{- if $.Values.otellogs.daemonset.podAnnotations }}
-{{ toYaml $.Values.otellogs.daemonset.podAnnotations | indent 8 }}
+{{- if $daemonset.podAnnotations }}
+{{ toYaml $daemonset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
         app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance | trunc 63 | trimSuffix "-" }}
@@ -70,8 +67,8 @@ spec:
 {{- if $.Values.sumologic.podLabels }}
 {{ toYaml $.Values.sumologic.podLabels | indent 8 }}
 {{- end }}
-{{- if $.Values.otellogs.daemonset.podLabels }}
-{{ toYaml $.Values.otellogs.daemonset.podLabels | indent 8 }}
+{{- if $daemonset.podLabels }}
+{{ toYaml $daemonset.podLabels | indent 8 }}
 {{- end }}
     spec:
 {{- if $nodeSelector }}
@@ -87,9 +84,9 @@ spec:
 {{ $tolerations | indent 8 }}
 {{- end }}
       securityContext:
-        {{- toYaml $.Values.otellogs.daemonset.securityContext | nindent 8 }}
-      {{- if $.Values.otellogs.daemonset.priorityClassName }}
-      priorityClassName: {{ $.Values.otellogs.daemonset.priorityClassName | quote }}
+        {{- toYaml $daemonset.securityContext | nindent 8 }}
+      {{- if $daemonset.priorityClassName }}
+      priorityClassName: {{ $daemonset.priorityClassName | quote }}
       {{- else }}
       priorityClassName: {{ include "sumologic.metadata.name.priorityclass" $ctx | quote }}
       {{- end }}
@@ -108,7 +105,7 @@ spec:
             path: /
             port: 13133 # Health Check extension default port.
         resources:
-          {{- toYaml $resources | nindent 10 }}
+          {{- toYaml $daemonset.resources | nindent 10 }}
         volumeMounts:
         - mountPath: /etc/otelcol
           name: otelcol-config
@@ -123,8 +120,8 @@ spec:
         - mountPath: /var/log/journal
           name: varlogjournal
           readOnly: true
-{{- if $.Values.otellogs.daemonset.extraVolumeMounts }}
-{{ toYaml $.Values.otellogs.daemonset.extraVolumeMounts | indent 8 }}
+{{- if $daemonset.extraVolumeMounts }}
+{{ toYaml $daemonset.extraVolumeMounts | indent 8 }}
 {{- end }}
         env:
         - name: LOGS_METADATA_SVC
@@ -136,11 +133,11 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-{{- if $.Values.otellogs.daemonset.extraEnvVars }}
-{{ toYaml $.Values.otellogs.daemonset.extraEnvVars | nindent 8 }}
+{{- if $daemonset.extraEnvVars }}
+{{ toYaml $daemonset.extraEnvVars | nindent 8 }}
 {{- end }}
         securityContext:
-          {{- toYaml $.Values.otellogs.daemonset.containers.otelcol.securityContext | nindent 10 }}
+          {{- toYaml $daemonset.containers.otelcol.securityContext | nindent 10 }}
         ports:
         - name: pprof
           containerPort: 1777
@@ -151,16 +148,16 @@ spec:
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         # yamllint disable-line rule:line-length
-        image: {{ $.Values.otellogs.daemonset.initContainers.changeowner.image.repository }}:{{ $.Values.otellogs.daemonset.initContainers.changeowner.image.tag }}
-        imagePullPolicy: {{ $.Values.otellogs.daemonset.initContainers.changeowner.image.pullPolicy }}
+        image: {{ $daemonset.initContainers.changeowner.image.repository }}:{{ $daemonset.initContainers.changeowner.image.tag }}
+        imagePullPolicy: {{ $daemonset.initContainers.changeowner.image.pullPolicy }}
         securityContext:
-          {{- toYaml $.Values.otellogs.daemonset.initContainers.changeowner.securityContext | nindent 10 }}
+          {{- toYaml $daemonset.initContainers.changeowner.securityContext | nindent 10 }}
         command:
         - "sh"
         - "-c"
         - |
           chown -R \
-            {{ $.Values.otellogs.daemonset.securityContext.fsGroup }}:{{ $.Values.otellogs.daemonset.securityContext.fsGroup }} \
+            {{ $daemonset.securityContext.fsGroup }}:{{ $daemonset.securityContext.fsGroup }} \
             /var/lib/storage/otc
         volumeMounts:
         - mountPath: /var/lib/storage/otc
@@ -189,8 +186,8 @@ spec:
           path: /var/log/journal/
           type: ""
         name: varlogjournal
-{{- if $.Values.otellogs.daemonset.extraVolumes }}
-{{ toYaml $.Values.otellogs.daemonset.extraVolumes | indent 6 }}
+{{- if $daemonset.extraVolumes }}
+{{ toYaml $daemonset.extraVolumes | indent 6 }}
 {{- end }}
       serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" $ctx }}
 {{- end }}

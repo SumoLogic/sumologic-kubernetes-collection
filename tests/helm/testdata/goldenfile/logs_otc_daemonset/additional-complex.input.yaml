@@ -1,0 +1,83 @@
+otellogs:
+  additionalDaemonSets:
+    linux:
+      nodeSelector:
+        kubernetes.io/os: linux
+      annotations:
+        name: additionalAnnotation
+      labels:
+        name: additionalLabel
+      podLabels:
+        name: additionalPodLabel
+      podAnnotations:
+        name: additionalPodAnnotation
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsUser: 0
+      priorityClassName: "prio"
+      ## Set securityContext for containers running in pods in log collector daemonset
+      containers:
+        otelcol:
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            privileged: true
+
+      ## Set securityContext for initContainers running in pods in log collector daemonset
+      initContainers:
+        changeowner:
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CAP_CHOWN
+            privileged: true
+      resources:
+        requests:
+          cpu: 2
+        limits:
+          cpu: 6
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: NotIn
+                    values:
+                      - windows
+      tolerations:
+        - key: "worker"
+          operator: "Equal"
+          value: worker
+          effect: "NoSchedule"
+
+      extraEnvVars:
+        - name: VALUE_FROM_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: secret_name
+              key: secret_key
+
+      extraVolumes:
+        - name: es-certs
+          secret:
+            defaultMode: 420
+            secretName: es-certs
+      extraVolumeMounts:
+        - name: es-certs
+          mountPath: /certs
+          readOnly: true
+  daemonset:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: NotIn
+                  values:
+                    - linux
