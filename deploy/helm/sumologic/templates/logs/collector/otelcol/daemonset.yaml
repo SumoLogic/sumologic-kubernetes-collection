@@ -7,14 +7,11 @@
 {{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
 {{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
 {{- range $name, $daemonset := $daemonsets }}
+{{- $defaultDaemonset := deepCopy $.Values.otellogs.daemonset }}
+{{- $daemonset := mergeOverwrite $defaultDaemonset $daemonset -}}
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $res := .resources }}
-{{- if not $res }}
-{{- $res = dict }}
-{{- end }}
-{{- $resources := deepCopy $daemonset.resources | merge $res }}
 {{- $nodeSelector := "" }}
 {{- if .nodeSelector }}
 {{- $nodeSelector = (toYaml .nodeSelector) }}
@@ -108,7 +105,7 @@ spec:
             path: /
             port: 13133 # Health Check extension default port.
         resources:
-          {{- toYaml $resources | nindent 10 }}
+          {{- toYaml $daemonset.resources | nindent 10 }}
         volumeMounts:
         - mountPath: /etc/otelcol
           name: otelcol-config
