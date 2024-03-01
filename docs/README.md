@@ -135,5 +135,4 @@ prometheus-windows-exporter:
 
 It will send `windows_` prefixed metrics to Sumo Logic.
 
-> [!NOTE]  
-> We currently do not have dashboards using using these metrics.
+> [!NOTE] We currently do not have dashboards using using these metrics.
