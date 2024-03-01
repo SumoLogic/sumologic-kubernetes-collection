@@ -126,6 +126,8 @@ Falco is embedded in this Helm Chart for user convenience only - Sumo Logic does
 
 ### Windows nodes support
 
+Support for Windows is experimental.
+
 Windows nodes are supported only for metrics collection. To enable it, add the following configuration to your `user-values.yaml`
 
 ```yaml
