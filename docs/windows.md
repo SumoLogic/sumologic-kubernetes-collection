@@ -1,6 +1,7 @@
 # Windows support
 
-Windows support is under evaluation. This document describes issues which should be resolved before claiming full support for windows.
+Windows support is under evaluation and is experimental. This document describes issues which should be resolved before claiming full
+support for windows.
 
 ## Running collection on windows nodes
 
