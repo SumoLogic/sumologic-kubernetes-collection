@@ -2175,7 +2175,7 @@ otelwindows:
         hostProcess: true
         runAsUserName: NT AUTHORITY\system
 
-    # This should be the IPs of your cluster's DNS service (kube-dns or core-dns).
+    ## This should be the IPs of your cluster's DNS service (kube-dns or core-dns).
     nameservers:
       - "..."
 
