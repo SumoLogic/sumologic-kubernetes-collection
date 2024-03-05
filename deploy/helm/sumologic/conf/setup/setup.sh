@@ -2,6 +2,57 @@
 
 readonly DEBUG_MODE=${DEBUG_MODE:="false"}
 readonly DEBUG_MODE_ENABLED_FLAG="true"
+readonly TEST_PVC_FILE="test-pvc-ss.yaml"
+readonly TEST_PVC_STATEFULSET="pvc-nginx"
+readonly TEST_PVC_STATEFULSET_CONFIG="apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  serviceName: \"nginx\"
+  replicas: 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: nginx
+        image: registry.k8s.io/nginx-slim:0.8
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ \"ReadWriteOnce\" ]
+      resources:
+        requests:
+          storage: 1Gi
+"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -81,6 +132,59 @@ function should_create_fields() {
     else
         return 1
     fi
+}
+
+function pvc_test_create_statefulset() {
+    echo "${TEST_PVC_STATEFULSET_CONFIG}" > ${TEST_PVC_FILE}
+
+    kubectl -n ${TEST_PVC_NAMESPACE} apply -f ${TEST_PVC_FILE}
+    if [[ $? -eq 0 ]]; then
+      return 0
+    else
+      echo "Creating statefulset failed"
+      pvc_test_cleanup
+      exit 1
+    fi
+}
+
+function pvc_test_check() {
+    local pending_pvcs
+    pending_pvcs=$(kubectl -n ${TEST_PVC_NAMESPACE} get pvc | grep -c  "Pending")
+    readonly pending_pvcs
+
+    if [[ $? -ne 0 ]]; then
+        echo "Querying pvcs failed"
+        exit 1
+    else
+        return $pending_pvcs
+    fi
+}
+
+function pvc_test_cleanup() {
+    kubectl delete -n ${TEST_PVC_NAMESPACE} -f ${TEST_PVC_FILE}
+    kubectl delete -n ${TEST_PVC_NAMESPACE} pvc "www-web-0"
+    rm ${TEST_PVC_FILE}
+}
+
+function can_create_pvc() {
+    pvc_test_create_statefulset
+    sleep 30
+    pvc_test_check
+    if [[ $? -ne 0 ]]; then
+        echo "PVC could not be created automatically"
+        exit 1
+    else
+        echo "PVC can be created automatically"
+        return 0
+    fi
+}
+
+function install_kubectl() {
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    mkdir -p ~/.local/bin
+    mv ./kubectl ~/.local/bin/kubectl
+    export PATH=$PATH:~/.local/bin
 }
 
 cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
@@ -176,3 +280,9 @@ export SUMOLOGIC_ACCESSKEY=
 export SUMOLOGIC_ACCESSID=
 
 bash /etc/terraform/custom.sh
+
+{{- if (or .Values.metadata.persistence.enabled (or .Values.sumologic.events.persistence.enabled .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled)) }}
+install_kubectl
+can_create_pvc
+pvc_test_cleanup > /dev/null
+{{- end }}

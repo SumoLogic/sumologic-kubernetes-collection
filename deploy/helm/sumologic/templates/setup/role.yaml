@@ -15,4 +15,15 @@ rules:
     resources:
       - secrets
     verbs: ["get", "list", "describe", "create", "patch"]
+  - apiGroups:
+      - ""
+      - "apps"
+      - "autoscaling"
+      - "batch"
+    resources:
+      - "pods"
+      - "persistentvolumeclaims"
+      - "statefulsets"
+      - "services"
+    verbs: ["get", "list", "describe", "create", "delete", "watch"]
 {{- end }}
