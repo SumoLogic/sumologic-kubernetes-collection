@@ -313,7 +313,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.collector.windows" -}}
-{{- template "sumologic.fullname" . }}-otelcol-windows-collector
+{{- template "sumologic.fullname" . }}-otelcol-windows-logs-collector
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}

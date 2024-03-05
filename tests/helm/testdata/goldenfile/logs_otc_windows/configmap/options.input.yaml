@@ -1,0 +1,17 @@
+sumologic:
+  logs:
+    collector:
+      otelwindows:
+        enabled: true
+    multiline:
+      enabled: false
+    systemd:
+      enabled: true
+    container:
+      enabled: false
+
+otelwindows:
+  logLevel: debug
+  daemonset:
+    nameservers:
+      - 10.100.0.10
