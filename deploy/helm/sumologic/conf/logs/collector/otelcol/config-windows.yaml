@@ -1,0 +1,318 @@
+exporters:
+  otlphttp:
+    endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
+    sending_queue:
+      queue_size: 10
+    # this improves load balancing at the cost of more network traffic
+    disable_keep_alives: true
+{{- if eq .Values.debug.logs.otelwindows.print true }}
+  debug:
+    verbosity: detailed
+{{- end }}
+
+extensions:
+  file_storage:
+    compaction:
+      directory: /var/lib/storage/otc
+      on_rebound: true
+    directory: /var/lib/storage/otc
+    timeout: 10s
+  health_check: {}
+  pprof: {}
+
+processors:
+  batch:
+    send_batch_max_size: 2000
+    send_batch_size: 1000
+    timeout: 1s
+
+{{- if .Values.sumologic.logs.systemd.enabled }}
+  ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
+  ## so they can be used by metadata processors same way like for fluentd
+  ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
+  logstransform/systemd:
+    operators:
+      - from: body._SYSTEMD_UNIT
+        to: attributes._SYSTEMD_UNIT
+        type: copy
+      - from: body.SYSLOG_FACILITY
+        to: attributes.SYSLOG_FACILITY
+        type: copy
+      - from: body._HOSTNAME
+        to: attributes._HOSTNAME
+        type: copy
+      - from: body.PRIORITY
+        to: attributes.PRIORITY
+        type: copy
+      - field: attributes["fluent.tag"]
+        type: add
+        value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
+      - field: body.__CURSOR
+        type: remove
+      - field: body.__MONOTONIC_TIMESTAMP
+        type: remove
+{{- end }}
+
+receivers:
+{{- if .Values.sumologic.logs.container.enabled }}
+  filelog/containers:
+    exclude:
+      - /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.labels.app.sumologic-mock.pod" . }}*/*/*.log
+      {{ if eq .Values.debug.logs.metadata.stopLogsIngestion true }}
+      {{ include "logs.metadata.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.logs.collector.stopLogsIngestion true }}
+      {{ include "logs.collector.files.list" . | nindent 6 }}
+      {{ end }}
+      {{ if eq .Values.debug.logs.otelwindows.stopLogsIngestion true }}
+      {{ include "logs.collector.windows.files.list" . | nindent 6 }}
+      {{ end }}
+      {{ if eq .Values.debug.metrics.metadata.stopLogsIngestion true }}
+      {{ include "metrics.metadata.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.metrics.collector.stopLogsIngestion true }}
+      {{ include "metrics.collector.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.instrumentation.otelcolInstrumentation.stopLogsIngestion true }}
+      {{ include "otelcolInstrumentation.collector.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.instrumentation.tracesGateway.stopLogsIngestion true }}
+      {{ include "tracesGateway.collector.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.instrumentation.tracesSampler.stopLogsIngestion true }}
+      {{ include "tracesSampler.collector.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.events.stopLogsIngestion true }}
+      {{ include "events.collector.files.list" . }}
+      {{ end }}
+
+{{ if lt (int (include "kubernetes.minor" .)) 24 }}
+    ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
+    ## we want to include timestamp, which is at the end of the line
+    ## Not necessary in 1.24 and later, as docker-shim is not present anymore
+    fingerprint_size: 17408
+{{ end }}
+    include:
+      - /var/log/pods/*/*/*.log
+    include_file_name: false
+    include_file_path: true
+    operators:
+      ## Detect the container runtime log format
+      ## Can be: docker-shim, CRI-O and containerd
+      - id: get-format
+        routes:
+          - expr: 'body matches "^\\{"'
+            output: parser-docker
+          - expr: 'body matches "^[^ Z]+ "'
+            output: parser-crio
+          - expr: 'body matches "^[^ Z]+Z"'
+            output: parser-containerd
+        type: router
+
+      ## Parse CRI-O format
+      - id: parser-crio
+        output: merge-cri-lines
+        parse_to: body
+        regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
+        timestamp:
+          layout: '2006-01-02T15:04:05.000000000-07:00'
+          layout_type: gotime
+          parse_from: body.time
+        type: regex_parser
+
+      ## Parse CRI-Containerd format
+      - id: parser-containerd
+        output: merge-cri-lines
+        parse_to: body
+        regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
+        timestamp:
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: body.time
+        type: regex_parser
+
+      ## Parse docker-shim format
+      ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
+      ## record.
+      ## Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
+      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
+      ## Input Timestamp: _empty_
+      ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
+      - id: parser-docker
+        output: merge-docker-lines
+        parse_to: body
+        timestamp:
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: body.time
+        type: json_parser
+
+      ## merge-docker-lines stitches back together log lines split by Docker logging driver.
+      ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
+      ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
+      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n","stream":"stdout"}
+      - id: merge-docker-lines
+        combine_field: body.log
+        combine_with: ""
+        is_last_entry: body.log matches "\n$"
+        output: strip-trailing-newline
+        source_identifier: attributes["log.file.path"]
+        type: recombine
+
+      ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
+      ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
+      ## Input Body (JSON): { "log": "ne that was split by the logging driver", "logtag": "F" }
+      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "logtag": "F" }
+      - id: merge-cri-lines
+        combine_field: body.log
+        combine_with: ""
+        is_last_entry: body.logtag == "F"
+        output: extract-metadata-from-filepath
+        overwrite_with: newest
+        source_identifier: attributes["log.file.path"]
+        type: recombine
+
+      ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
+      ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
+      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "stream": "stdout" }
+      - id: strip-trailing-newline
+        output: extract-metadata-from-filepath
+        parse_from: body.log
+        parse_to: body
+        regex: "^(?P<log>.*)\n$"
+        type: regex_parser
+
+      ## extract-metadata-from-filepath extracts data from the `log.file.path` Attribute into the Attributes
+      ## Input Attributes:
+      ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
+      ## Output Attributes:
+      ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
+      ## - container_name: "loggercontainer",
+      ## - namespace: "default",
+      ## - pod_name: "logger-multiline-4nvg4",
+      ## - run_id: "0",
+      ## - uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+      ## }
+      - id: extract-metadata-from-filepath
+        parse_from: attributes["log.file.path"]
+        regex: '^.*\\(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\\(?P<container_name>[^\._]+)\\(?P<run_id>\d+)\.log$'
+        type: regex_parser
+
+
+      ## The following actions are being performed:
+      ## - renaming attributes
+      ## - moving stream from body to attributes
+      ## - using body.log as body
+      ## Input Body (JSON): {
+      ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+      ##   "stream": "stdout",
+      ## }
+      ## Output Body (String): "2001-02-03 04:05:06 loggerlog 1 first line\n"
+      ## Input Attributes:
+      ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
+      ## - container_name: "loggercontainer",
+      ## - namespace: "default",
+      ## - pod_name: "logger-multiline-4nvg4",
+      ## - run_id: "0",
+      ## - uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+      ## Output Attributes:
+      ## - k8s.container.name: "loggercontainer"
+      ## - k8s.namespace.name: "default"
+      ## - k8s.pod.name: "logger-multiline-4nvg4"
+      ## - stream: "stdout"
+      ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
+
+      - id: move-attributes
+        from: body.stream
+        to: attributes["stream"]
+        type: move
+
+{{ if .Values.sumologic.logs.container.keep_time_attribute }}
+      - id: move-time-attribute
+        from: body.time
+        to: attributes["time"]
+        type: move
+{{ end }}
+
+      - from: attributes.container_name
+        to: attributes["k8s.container.name"]
+        type: move
+
+      - from: attributes.namespace
+        to: attributes["k8s.namespace.name"]
+        type: move
+
+      - from: attributes.pod_name
+        to: attributes["k8s.pod.name"]
+        type: move
+
+      - from: body.log
+        to: body
+        type: move
+
+      - field: attributes.run_id
+        type: remove
+
+      - field: attributes.uid
+        type: remove
+
+{{- if .Values.sumologic.logs.multiline.enabled }}
+      - id: multiline
+        default: merge-multiline-logs
+        routes:
+{{- range $i, $config := .Values.sumologic.logs.multiline.additional }}
+          - expr: {{ $config.condition | quote}}
+            output: {{ printf "merge-multiline-logs-%d" $i }}
+{{- end }}
+        type: router
+
+{{- range $i, $config := .Values.sumologic.logs.multiline.additional }}
+      - id: {{ printf "merge-multiline-logs-%d" $i }}
+        combine_field: body
+        combine_with: "\n"
+        is_first_entry: {{ printf "body matches %s" ($config.first_line_regex | quote) | quote }}
+        source_identifier: attributes["log.file.path"]
+        output: clean-up-log-file-path
+        type: recombine
+{{- end }}
+
+      ## merge-multiline-logs merges incoming log records into multiline logs.
+      ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
+      ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
+      ## Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
+      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
+      - id: merge-multiline-logs
+        combine_field: body
+        combine_with: "\n"
+        is_first_entry: {{ printf "body matches %s" (.Values.sumologic.logs.multiline.first_line_regex | quote) | quote }}
+        source_identifier: attributes["log.file.path"]
+        output: clean-up-log-file-path
+        type: recombine
+{{- end }}
+
+      - field: attributes["log.file.path"]
+        id: clean-up-log-file-path
+        type: remove
+
+    storage: file_storage
+{{- end }}
+
+service:
+  extensions:
+    - health_check
+    - file_storage
+    - pprof
+  pipelines:
+{{- if .Values.sumologic.logs.container.enabled }}
+    logs/containers:
+      exporters:
+        - otlphttp
+{{- if eq .Values.debug.logs.collector.print true }}
+        - debug
+{{- end }}
+      processors:
+        - batch
+      receivers:
+        - filelog/containers
+{{- end }}
+  telemetry:
+    logs:
+      level: {{ .Values.otelwindows.logLevel | quote }}

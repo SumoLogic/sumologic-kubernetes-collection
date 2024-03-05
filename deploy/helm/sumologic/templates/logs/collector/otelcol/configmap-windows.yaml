@@ -1,0 +1,22 @@
+{{- if eq (include "logs.collector.otelwindows.enabled" .) "true" }}
+{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otelcol/config-windows.yaml") .) | fromYaml }}
+{{ $mergeConfig := .Values.otelwindows.config.merge }}
+{{ $overrideConfig := .Values.otelwindows.config.override }}
+{{ $finalConfig := "" }}
+{{ if $overrideConfig }}
+{{ $finalConfig = $overrideConfig }}
+{{ else }}
+{{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{ end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.logs.collector.windows.configmap" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
+  labels:
+    app: {{ template "sumologic.labels.app.logs.collector.windows.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  config.yaml: |
+{{- $finalConfig | toYaml | nindent 4 }}
+{{- end }}

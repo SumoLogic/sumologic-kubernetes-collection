@@ -44,6 +44,12 @@ Example Usage:
 
 {{- define "logs.collector.otelcloudwatch.enabled" -}}
 {{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelcloudwatch.enabled true) -}}
+{{ $enabled }}
+{{- end -}}
+
+{{- define "logs.collector.otelwindows.enabled" -}}
+{{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelwindows.enabled true) -}}
+{{ $enabled }}
 {{- end -}}
 
 {{/*
@@ -142,8 +148,16 @@ Return the exporters for kubelet log pipeline.
 {{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector.windows.configmap" -}}
+{{- template "sumologic.metadata.name.logs.collector.windows" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs.collector.serviceaccount" -}}
 {{- template "sumologic.metadata.name.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.collector.windows.serviceaccount" -}}
+{{- template "sumologic.metadata.name.logs.collector.windows" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.collector.cloudwatch.serviceaccount" -}}
@@ -158,11 +172,23 @@ Return the exporters for kubelet log pipeline.
 {{- template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector.windows.daemonset" -}}
+{{- template "sumologic.metadata.name.logs.collector.windows" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs.collector.service" -}}
 {{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector.windows.service" -}}
+{{- template "sumologic.metadata.name.logs.collector.windows" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.collector" -}}
+{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.windows" -}}
 {{- template "sumologic.fullname" . }}-otelcol-logs-collector
 {{- end -}}
 
@@ -170,20 +196,40 @@ Return the exporters for kubelet log pipeline.
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs.collector.windows.configmap" -}}
+{{- template "sumologic.labels.app.logs.collector.windows" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.collector.serviceaccount" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.windows.serviceaccount" -}}
+{{- template "sumologic.labels.app.logs.collector.windows" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.daemonset" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs.collector.windows.daemonset" -}}
+{{- template "sumologic.labels.app.logs.collector.windows" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.collector.pod" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs.collector.windows.pod" -}}
+{{- template "sumologic.labels.app.logs.collector.windows" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.collector.service" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.windows.service" -}}
+{{- template "sumologic.labels.app.logs.collector.windows" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.cloudwatch.configmap" -}}
@@ -266,6 +312,10 @@ Return the exporters for kubelet log pipeline.
 {{- template "sumologic.fullname" . }}-otelcol-cloudwatch-collector
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector.windows" -}}
+{{- template "sumologic.fullname" . }}-otelcol-windows-collector
+{{- end -}}
+
 {{- define "sumologic.labels.logs" -}}
 sumologic.com/app: otelcol-logs
 sumologic.com/component: logs
@@ -273,6 +323,11 @@ sumologic.com/component: logs
 
 {{- define "sumologic.labels.logs.collector" -}}
 sumologic.com/app: otelcol-logs-collector
+sumologic.com/component: logs
+{{- end -}}
+
+{{- define "sumologic.labels.logs.collector.windows" -}}
+sumologic.com/app: otelcol-logs-windows-collector
 sumologic.com/component: logs
 {{- end -}}
 
@@ -284,6 +339,11 @@ sumologic.com/component: logs
 {{- define "sumologic.labels.scrape.logs.collector" -}}
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.logs.collector.windows" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.logs.collector.windows" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.pvcCleaner.logs" -}}
@@ -320,9 +380,21 @@ Return the otelcol log collector image
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.otellogs.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
 
+{{- define "sumologic.logs.collector.windows.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.otelwindows.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
+
 {{- define "sumologic.logs.collector.tolerations" -}}
 {{- if .Values.otellogs.daemonset.tolerations  -}}
 {{- toYaml .Values.otellogs.daemonset.tolerations  -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sumologic.logs.collector.windows.tolerations" -}}
+{{- if .Values.otelwindows.daemonset.tolerations  -}}
+{{- toYaml .Values.otelwindows.daemonset.tolerations  -}}
 {{- else -}}
 {{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
@@ -370,6 +442,21 @@ Example Usage:
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
 - /var/log/pods/{{ template "sumologic.namespace"  $ctx }}_{{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}*/*/*.log
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "logs.collector.windows.files.list" }}
+{{- if eq (include "logs.collector.otelwindows.enabled" .) "true" }}
+{{- $ctx := . }}
+{{- $instance := "" -}}
+{{- $daemonsets := dict "" $.Values.otelwindows.daemonset  -}}
+{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otelwindows.additionalDaemonSets -}}
+{{- range $name, $value := $daemonsets }}
+{{- if not (eq $name "") }}
+{{- $instance = (printf "-%s" $name ) }}
+{{- end }}
+- /var/log/pods/{{ template "sumologic.namespace"  $ctx }}_{{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.windows.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}*/*/*.log
 {{- end }}
 {{- end }}
 {{- end }}
