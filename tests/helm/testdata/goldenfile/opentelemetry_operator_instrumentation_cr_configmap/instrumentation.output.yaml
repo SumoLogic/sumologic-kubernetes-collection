@@ -35,7 +35,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator1
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.4.0
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.7.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -97,7 +97,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator2
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.4.0
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.7.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
