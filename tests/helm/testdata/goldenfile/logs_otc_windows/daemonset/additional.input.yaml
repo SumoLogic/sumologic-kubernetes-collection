@@ -1,0 +1,36 @@
+sumologic:
+  logs:
+    collector:
+      otelwindows:
+        enabled: true
+otelwindows:
+  additionalDaemonSets:
+    linux:
+      nodeSelector:
+        kubernetes.io/os: linux
+      resources:
+        requests:
+          cpu: 2
+        limits:
+          cpu: 6
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: NotIn
+                    values:
+                      - windows
+  daemonset:
+    nameservers:
+      - 10.100.0.10
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: NotIn
+                  values:
+                    - linux
