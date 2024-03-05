@@ -128,7 +128,9 @@ Falco is embedded in this Helm Chart for user convenience only - Sumo Logic does
 
 Support for Windows is experimental.
 
-Windows nodes are supported only for metrics collection. To enable it, add the following configuration to your `user-values.yaml`
+#### Merics collection
+
+Windows nodes are supported for metrics collection. To enable it, add the following configuration to your `user-values.yaml`
 
 ```yaml
 prometheus-windows-exporter:
@@ -314,3 +316,32 @@ windows_textfile_scrape_error gauge
 </details>
 
 > [!NOTE] We currently do not have dashboards using these metrics.
+
+#### Logs collection
+
+There is support for logs collection, but only container ones. In order to enable logs collection, please add the following configuration to
+your `user-values.yaml`:
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      otelwindows:
+        enabled: true
+otelwindows:
+  daemonset:
+    nameservers:
+      - ${NAMESERVER_IP}
+```
+
+where `${NAMESERVER_IP}` is a cluster DNS server IP. For the following example:
+
+```yaml
+kubectl get service kube-dns -n kube-system NAME       TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)         AGE
+kube-dns   ClusterIP   10.100.0.10   <none>        53/UDP,53/TCP   13d
+```
+
+it will be `10.100.0.10`.
+
+> [!NOTE] Nameserver will be forcefully used as primary DNS server for the whole Node. This is due to
+> [the Kubernetes limitation](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#dns-windows)
