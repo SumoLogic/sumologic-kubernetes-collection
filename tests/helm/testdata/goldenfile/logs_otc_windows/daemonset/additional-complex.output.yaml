@@ -1,5 +1,5 @@
 ---
-# Source: sumologic/templates/logs/collector/otelcol/daemonset-windows.yaml
+# Source: sumologic/templates/logs/collector/otelwindows/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -141,6 +141,10 @@ spec:
               Get-DnsClientServerAddress |
               Where-Object { $_.ServerAddresses.Count -gt 0 -and $_.AddressFamily -eq 2 } |
               ForEach-Object {
+                If ( -Not ($_.ServerAddresses.Contains("10.100.0.11")) ) {
+                  $addresses = ,"10.100.0.11" + $_.ServerAddresses;
+                  Set-DnsClientServerAddress -InterfaceIndex $_.InterfaceIndex -ServerAddresses $addresses
+                }
                 If ( -Not ($_.ServerAddresses.Contains("10.100.0.10")) ) {
                   $addresses = ,"10.100.0.10" + $_.ServerAddresses;
                   Set-DnsClientServerAddress -InterfaceIndex $_.InterfaceIndex -ServerAddresses $addresses
