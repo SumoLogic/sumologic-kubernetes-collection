@@ -79,6 +79,7 @@ otelwindows:
   daemonset:
     nameservers:
       - 10.100.0.10
+      - 10.100.0.11
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:

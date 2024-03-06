@@ -47,7 +47,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol/configmap-windows.yaml") $ctx | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelwindows/configmap.yaml") $ctx | sha256sum }}
 {{- if $.Values.sumologic.podAnnotations }}
 {{ toYaml $.Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -158,7 +158,7 @@ spec:
           Get-DnsClientServerAddress |
           Where-Object { $_.ServerAddresses.Count -gt 0 -and $_.AddressFamily -eq 2 } |
           ForEach-Object {
-{{- range $serverAddress := $daemonset.nameservers }}
+{{- range $serverAddress := reverse $daemonset.nameservers }}
             If ( -Not ($_.ServerAddresses.Contains("{{ $serverAddress }}")) ) {
               $addresses = ,"{{ $serverAddress }}" + $_.ServerAddresses;
               Set-DnsClientServerAddress -InterfaceIndex $_.InterfaceIndex -ServerAddresses $addresses
