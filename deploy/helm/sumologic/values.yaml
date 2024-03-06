@@ -300,9 +300,9 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+      ## Experimental
       otelwindows:
         enabled: false
-      ## Experimental
       otelcloudwatch:
         enabled: false
         roleArn: ""
@@ -2132,7 +2132,8 @@ otellogs:
   ##             - linux
   additionalDaemonSets: {}
 
-## Configure log collection with Otelcol for Windows
+## Experimental
+## Configure Enable OpenTelemetry Logs Collector for Windows Nodes
 otelwindows:
   ## Metrics from Collector
   metrics:
@@ -2176,6 +2177,7 @@ otelwindows:
         runAsUserName: NT AUTHORITY\system
 
     ## This should be the IPs of your cluster's DNS service (kube-dns or core-dns).
+    ## It will modify your Windows Nodes DNS settings, by setting those DNS servers as first on the list
     nameservers:
       - "..."
 
