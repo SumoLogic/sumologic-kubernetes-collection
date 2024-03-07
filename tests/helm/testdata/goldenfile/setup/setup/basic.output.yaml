@@ -33,7 +33,7 @@ spec:
             defaultMode: 0777
       containers:
         - name: setup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.11.0
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.12.0
           imagePullPolicy: IfNotPresent
           command: ["/etc/terraform/setup.sh"]
           resources:
