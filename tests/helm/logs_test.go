@@ -565,3 +565,33 @@ sumologic:
 
 	require.Equal(t, "sumologic|my_logs_namespace", otelConfig.Processors.SourceContainers.Exclude.Namespace)
 }
+
+func TestCollectorDaemonsetUpdateStrategy(t *testing.T) {
+	t.Parallel()
+
+	valuesYaml := `
+otellogs:
+  daemonset:
+    updateStrategy:
+      rollingUpdate:
+        maxUnavailable: 50%
+`
+	templatePath := "templates/logs/collector/otelcol/daemonset.yaml"
+
+	renderedTemplate, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	require.NoError(t, err)
+
+	var logsCollectorDaemonset struct {
+		Spec struct {
+			UpdateStrategy struct {
+				RollingUpdate struct {
+					MaxUnavailable string `yaml:"maxUnavailable"`
+				} `yaml:"rollingUpdate"`
+			} `yaml:"updateStrategy"`
+		}
+	}
+	err = yaml.Unmarshal([]byte(renderedTemplate), &logsCollectorDaemonset)
+	require.NoError(t, err)
+
+	require.Equal(t, "50%", logsCollectorDaemonset.Spec.UpdateStrategy.RollingUpdate.MaxUnavailable)
+}
