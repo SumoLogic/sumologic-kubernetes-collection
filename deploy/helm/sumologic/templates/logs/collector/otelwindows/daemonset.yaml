@@ -198,4 +198,8 @@ spec:
 {{- end }}
       serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.windows.serviceaccount" $ctx }}
 {{- end }}
+{{- if $daemonset.updateStrategy }}
+  updateStrategy:
+{{ toYaml $daemonset.updateStrategy | indent 4 }}
+{{- end }}
 {{- end }}
