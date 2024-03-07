@@ -585,7 +585,6 @@ otellogs:
 		Spec struct {
 			UpdateStrategy struct {
 				RollingUpdate struct {
-					MaxSurge       string `yaml:"maxSurge"`
 					MaxUnavailable string `yaml:"maxUnavailable"`
 				} `yaml:"rollingUpdate"`
 			} `yaml:"updateStrategy"`
