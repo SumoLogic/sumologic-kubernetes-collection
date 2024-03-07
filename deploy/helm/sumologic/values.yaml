@@ -2094,6 +2094,13 @@ otellogs:
     #     mountPath: /certs
     #     readOnly: true
 
+    # See https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+    # updateStrategy:
+    #   rollingUpdate:
+    #     maxSurge: 0
+    #     maxUnavailable: 1
+    #   type: RollingUpdate
+
   ## additionalDaemonSets allows to set daemonsets with affinity, nodeSelector and resources
   ## different than the main DaemonSet
   ## Be careful and set nodeAffinity for the main DaemonSet,
