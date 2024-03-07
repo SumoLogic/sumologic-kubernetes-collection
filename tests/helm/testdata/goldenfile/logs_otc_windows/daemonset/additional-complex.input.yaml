@@ -77,6 +77,11 @@ otelwindows:
           mountPath: /certs
           readOnly: true
   daemonset:
+    updateStrategy:
+      rollingUpdate:
+        maxSurge: 5
+        maxUnavailable: 13
+      type: RollingUpdate
     nameservers:
       - 10.100.0.10
       - 10.100.0.11
