@@ -34,4 +34,7 @@ TODAY="$(date +%s)"
 mv -v "${KUBECONFIG_PATH}" "${KUBECONFIG_PATH}.bkp.${TODAY}"
 cp "${CONFIG_PATH}" "${KUBECONFIG_PATH}"
 
+# Set default namespace to sumologic
+kubectl config set-context --current --namespace sumologic
+
 clean_up
