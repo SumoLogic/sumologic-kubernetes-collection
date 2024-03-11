@@ -296,9 +296,16 @@ var (
 	// we accept them, but don't fail if they're not present
 	FlakyMetrics = []string{
 		"otelcol_otelsvc_k8s_pod_deleted",
+		"otelcol_http_client_duration_bucket",
+		"otelcol_http_client_duration_count",
+		"otelcol_http_client_duration_sum",
+		"otelcol_http_client_response_size",
+		"otelcol_http_client_request_size",
 		"otelcol_http_server_duration_sum",
 		"otelcol_http_server_response_content_length",
+		"otelcol_http_server_response_size",
 		"otelcol_http_server_request_content_length",
+		"otelcol_http_server_request_size",
 		"otelcol_http_server_duration_count",
 		"otelcol_http_server_duration_bucket",
 		"otelcol_processor_batch_batch_size_trigger_send",
