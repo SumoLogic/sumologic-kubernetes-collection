@@ -8,7 +8,7 @@ metadata:
   annotations:
     name: additionalAnnotation
   labels:
-    app: RELEASE-NAME-sumologic-otelcol-logs-collector
+    app: RELEASE-NAME-sumologic-otelwindows-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
@@ -16,14 +16,14 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
+      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelwindows-logs-collector-linux
   template:
     metadata:
       annotations:
         checksum/config: "%CONFIG_CHECKSUM%"
         name: additionalPodAnnotation
       labels:
-        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
+        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelwindows-logs-collector-linux
         app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
@@ -182,7 +182,7 @@ spec:
           secret:
             defaultMode: 420
             secretName: es-certs
-      serviceAccountName: RELEASE-NAME-sumologic-otelcol-windows-logs-collector
+      serviceAccountName: RELEASE-NAME-sumologic-otelcol-logs-collector
   updateStrategy:
     rollingUpdate:
       maxSurge: 5

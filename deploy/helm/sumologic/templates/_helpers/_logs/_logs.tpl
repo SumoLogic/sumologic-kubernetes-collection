@@ -189,7 +189,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.windows" -}}
-{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- template "sumologic.fullname" . }}-otelwindows-logs-collector
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.configmap" -}}
@@ -202,10 +202,6 @@ Return the exporters for kubelet log pipeline.
 
 {{- define "sumologic.labels.app.logs.collector.serviceaccount" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.logs.collector.windows.serviceaccount" -}}
-{{- template "sumologic.labels.app.logs.collector.windows" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.daemonset" -}}
@@ -226,10 +222,6 @@ Return the exporters for kubelet log pipeline.
 
 {{- define "sumologic.labels.app.logs.collector.service" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.logs.collector.windows.service" -}}
-{{- template "sumologic.labels.app.logs.collector.windows" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.cloudwatch.configmap" -}}
