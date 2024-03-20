@@ -1,5 +1,5 @@
 ---
-# Source: sumologic/templates/logs/collector/otelcol/otelwindows/configmap.yaml
+# Source: sumologic/templates/logs/collector/otelwindows/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -32,27 +32,6 @@ data:
         send_batch_max_size: 2000
         send_batch_size: 1000
         timeout: 1s
-      logstransform/systemd:
-        operators:
-        - from: body._SYSTEMD_UNIT
-          to: attributes._SYSTEMD_UNIT
-          type: copy
-        - from: body.SYSLOG_FACILITY
-          to: attributes.SYSLOG_FACILITY
-          type: copy
-        - from: body._HOSTNAME
-          to: attributes._HOSTNAME
-          type: copy
-        - from: body.PRIORITY
-          to: attributes.PRIORITY
-          type: copy
-        - field: attributes["fluent.tag"]
-          type: add
-          value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
-        - field: body.__CURSOR
-          type: remove
-        - field: body.__MONOTONIC_TIMESTAMP
-          type: remove
     receivers:
       filelog/containers:
         exclude:
