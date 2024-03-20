@@ -183,3 +183,8 @@ spec:
             defaultMode: 420
             secretName: es-certs
       serviceAccountName: RELEASE-NAME-sumologic-otelcol-windows-logs-collector
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 5
+      maxUnavailable: 13
+    type: RollingUpdate
