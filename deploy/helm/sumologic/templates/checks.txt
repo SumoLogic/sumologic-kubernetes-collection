@@ -28,6 +28,6 @@
 {{/* Check if remote writes are defined when Prometheus is not enabled */}}
 {{- if not (index .Values "kube-prometheus-stack").prometheus.enabled }}
 {{- if ne (dig "kube-prometheus-stack" "prometheus" "prometheusSpec" "additionalRemoteWrites" nil .Values.AsMap) nil -}}
-{{- fail "\nRemote write definitions was not converted to otel metrics filters. Please follow migration guide: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#convert-prometheus-remote-writes-to-otel-metrics-filters" }}
+{{- fail "\nRemote write definitions are not supported by Otel. Please follow the migration guide: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#convert-prometheus-remote-writes-to-otel-metrics-filters" }}
 {{- end -}}
 {{- end -}}
