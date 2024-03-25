@@ -32,7 +32,7 @@ spec:
         smkey: smvalue
       podMonitorSelector:
         pmkey: pmvalue
-    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
+    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     nodeSelector:
       kubernetes.io/os: linux
       workingGroup: production

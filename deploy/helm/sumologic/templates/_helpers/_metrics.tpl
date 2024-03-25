@@ -315,8 +315,13 @@ sumologic.com/app: otelcol
 {{ template "sumologic.metadata.name.metrics.collector.opentelemetrycollector" . }}-targetallocator
 {{- end -}}
 
+{{/*
+The `-sa` suffix at the end is needed to differentiate from the ServiceAccount created by the OpenTelemetry Operator.
+We ended up deferring to the operator on this, and then had to walk this decision back, as we needed to attach our own pull secrets to this ServiceAccount.
+However, this created a conflict where Helm didn't want to overwrite the SA created by the operator. To get around this, the name was changed.
+*/}}
 {{- define "sumologic.metadata.name.metrics.targetallocator.serviceaccount" -}}
-{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
+{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}-sa
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.targetallocator.clusterrole" -}}
