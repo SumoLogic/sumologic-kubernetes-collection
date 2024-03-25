@@ -27,7 +27,7 @@ spec:
         release: RELEASE-NAME
       podMonitorSelector:
         release: RELEASE-NAME
-    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
+    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     resources: {}
   autoscaler:
     maxReplicas: 10
