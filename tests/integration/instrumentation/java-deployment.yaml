@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-app
+  labels:
+    app: java-app
+spec:
+  selector:
+    matchLabels:
+      app: java-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: java-app
+    annotations:
+      instrumentation.opentelemetry.io/inject-java: "true"
+    spec:
+      containers:
+      - name: javaapp
+        image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-java:main
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]

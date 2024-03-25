@@ -77,6 +77,15 @@ func ConfigureTestEnv(testenv env.Environment) {
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[0]),
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[1]),
 		stepfuncs.KubectlCreateNamespaceOpt(internal.OverrideNamespace),
+		// Deploy instrumentation apps
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationDotnetDep, openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationDotnetSvc, openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationJavaDep, openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationJavaSvc, openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationNodeJSDep, openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationNodeJSSvc, openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationPythonDep, openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlApplyFOpt(internal.InstrumentationPythonSvc, openTelemetryOperatorNamespaces[0]),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		stepfuncs.SetHelmOptionsTestOpt([]string{}),

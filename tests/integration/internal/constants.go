@@ -35,6 +35,15 @@ const (
 	TracesGeneratorName      = "customer-trace-tester"
 	TracesGeneratorImage     = "sumologic/kubernetes-tools:2.22.0"
 
+	InstrumentationDotnetDep = "instrumentation/dotnet-deployment.yaml"
+	InstrumentationDotnetSvc = "instrumentation/dotnet-service.yaml"
+	InstrumentationJavaDep = "instrumentation/java-deployment.yaml"
+	InstrumentationJavaSvc = "instrumentation/java-service.yaml"
+	InstrumentationNodeJSDep = "instrumentation/nodejs-deployment.yaml"
+	InstrumentationNodeJSSvc = "instrumentation/nodejs-service.yaml"
+	InstrumentationPythonDep = "instrumentation/python-deployment.yaml"
+	InstrumentationPythonSvc = "instrumentation/python-service.yaml"
+
 	MultilineLogsNamespace = "multiline-logs-generator"
 	MultilineLogsPodName   = "multiline-logs-generator"
 	MultilineLogsGenerator = "yamls/multiline-logs-generator.yaml"

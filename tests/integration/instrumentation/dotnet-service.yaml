@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dotnet-app-service
+spec:
+  selector:
+    app: dotnet-app
+  ports:
+    - protocol: TCP
+      targetPort: 80
+      port: 8080
+  type: LoadBalancer
