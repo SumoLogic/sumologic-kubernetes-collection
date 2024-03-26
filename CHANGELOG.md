@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.5.2]
+
+### Released 2024-03-26
+
+### Fixed
+
+- fix(metrics): change targetallocator ServiceAccount name [#3604]
+
+[#3604]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3604
+[v4.5.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.5.2
+
 ## [v4.5.1]
 
 ### Released 2024-02-23
