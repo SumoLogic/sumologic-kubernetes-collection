@@ -24,3 +24,9 @@
 {{- if eq (dig "fluent-bit" "enabled" false .Values.AsMap) true -}}
 {{- fail "\nFluent Bit has been removed. Please follow migration document to use Open Telemetry Collector instead: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
 {{- end -}}
+
+{{- $nameservers := (dig "otelwindows" "daemonset" "nameservers" (list "...") .Values.AsMap) -}}
+{{/* Check if Windows nameservers has been overriden  */}}
+{{- if and (eq (include "logs.collector.otelwindows.enabled" .) "true") (has "..." $nameservers) -}}
+{{- fail "\nPlease set cluster namserver for windows log collection" -}}
+{{- end -}}

@@ -593,6 +593,9 @@ Example usage:
 
 {{- define "nodeSelector" -}}
 {{- $nodeSelector := dict "kubernetes.io/os" "linux" -}}
+{{- if .defaultOs -}}
+{{- $nodeSelector = set $nodeSelector "kubernetes.io/os" .defaultOs -}}
+{{- end -}}
 {{- if .nodeSelector -}}
 {{- $nodeSelector = mergeOverwrite $nodeSelector .nodeSelector -}}
 {{- else if .Values.sumologic.nodeSelector -}}
