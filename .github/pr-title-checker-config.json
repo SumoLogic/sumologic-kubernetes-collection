@@ -5,7 +5,7 @@
   },
   "CHECKS": {
     "prefixes": [],
-    "regexp": "^(Revert \"|)(docs|fix|feat|test|deps|chore|ci)(\\(.+\\)|)(\\!|): ",
+    "regexp": "^(Revert \"|\\[Backport [^ ]+\\] |)(docs|fix|feat|test|deps|chore|ci)(\\(.+\\)|)(\\!|): ",
     "regexpFlags": "i",
     "ignoreLabels" : []
   },
