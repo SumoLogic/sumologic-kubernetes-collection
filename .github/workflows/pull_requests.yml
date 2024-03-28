@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [docs-changed]
     env:
-      PRETTIER_VERSION: 2.8.8
+      PRETTIER_VERSION: 3.2.5
     steps:
       - uses: actions/checkout@v4
       - name: install markdownlint and prettier
@@ -70,7 +70,7 @@ jobs:
   shellcheck:
     runs-on: ubuntu-22.04
     env:
-      YQ_VERSION: 4.34.1
+      YQ_VERSION: 4.43.1
       SHELLCHECK_VERSION: 0.9.0
     steps:
       - uses: actions/checkout@v4
@@ -155,13 +155,13 @@ jobs:
       - uses: actions/setup-go@v5
         if: needs.chart-changed.outputs.any_changed == 'true'
         with:
-          go-version: "1.20"
+          go-version: "1.22"
           cache: false
       - name: golangci-lint
         if: needs.chart-changed.outputs.any_changed == 'true'
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v1.53.3
+          version: v1.57.1
           working-directory: ./tests/helm/
           # Optional: golangci-lint command line arguments.
           args: --timeout=10m --verbose
@@ -177,7 +177,7 @@ jobs:
         if: needs.chart-changed.outputs.any_changed == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: "1.20"
+          go-version: "1.22"
           cache-dependency-path: "**/go.sum"
       - name: test
         if: needs.chart-changed.outputs.any_changed == 'true'

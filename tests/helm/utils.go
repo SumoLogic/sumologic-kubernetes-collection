@@ -11,14 +11,13 @@ import (
 	"strings"
 	"testing"
 
-	monitoringv1 "github.com/coreos/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/gruntwork-io/go-commons/collections"
 	"github.com/gruntwork-io/go-commons/errors"
 	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	otoperator "github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
-	prometheus "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 	corev1 "k8s.io/api/core/v1"
@@ -76,13 +75,13 @@ func GetOtelConfigFromTemplate(t *testing.T, templateContent string) string {
 
 // GetServiceMonitors returns serviceMonitors list from the given templatePath
 // In case of error it returns empty list
-func GetServiceMonitors(t *testing.T, valuesYaml string, templatePath string) []*prometheus.ServiceMonitor {
+func GetServiceMonitors(t *testing.T, valuesYaml string, templatePath string) []*monitoringv1.ServiceMonitor {
 	renderedYamlString, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
 	if err != nil {
-		return []*prometheus.ServiceMonitor{}
+		return []*monitoringv1.ServiceMonitor{}
 	}
 
-	var list prometheus.ServiceMonitorList
+	var list monitoringv1.ServiceMonitorList
 	helm.UnmarshalK8SYaml(t, renderedYamlString, &list)
 	return list.Items
 }
