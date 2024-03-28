@@ -1,11 +1,11 @@
 { pkgs ? import (
     builtins.fetchGit {
-      name = "nixos-unstable-2023-06-18";
+      name = "nixos-unstable-2024-03-28";
       url = "https://github.com/nixos/nixpkgs/";
-      # Commit hash for nixos-unstable as of 2023-06-18
+      # Commit hash for nixos-unstable as of 2024-03-28
       # `git ls-remote https://github.com/nixos/nixpkgs nixos-unstable`
       ref = "refs/heads/nixos-unstable";
-      rev = "d1250206995000485096be3bedc5660ec956c46b";
+      rev = "2726f127c15a4cc9810843b96cad73c7eb39e443";
     }
   ) {}
 }:
@@ -34,33 +34,33 @@ pkgs.mkShell {
 }
 ## Output of `make tool-versions`:
 #
-# kubectl version --client=true --short 2>/dev/null
-# Client Version: v1.27.2
-# Kustomize Version: v5.0.1
+# kubectl version --client=true 2>/dev/null
+# Client Version: v1.29.3
+# Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
 # helm version
-# version.BuildInfo{Version:"v3.12.1", GitCommit:"v3.12.1", GitTreeState:"", GoVersion:"go1.20.5"}
+# version.BuildInfo{Version:"v3.14.3", GitCommit:"v3.14.3", GitTreeState:"", GoVersion:"go1.22.1"}
 # jq --version
-# jq-1.6
+# jq-1.7.1
 # yq --version
-# yq (https://github.com/mikefarah/yq/) version v4.34.1
+# yq (https://github.com/mikefarah/yq/) version v4.43.1
 # markdown-link-check --version
-# 3.11.2
+# 3.12.1
 # markdownlint --version
-# 0.34.0
+# 0.39.0
 # prettier --version
-# 2.8.8
+# 3.2.5
 # python -V
-# Python 3.11.4
+# Python 3.11.8
 # towncrier --version
-# towncrier, version 22.12.0
+# towncrier, version 23.11.0
 # shellcheck --version
 # ShellCheck - shell script analysis tool
 # version: 0.9.0
 # license: GNU General Public License, version 3
 # website: https://www.shellcheck.net
 # golangci-lint version
-# golangci-lint has version 1.53.3 built with go1.20.5 from v1.53.3 on 19700101-00:00:00
+# golangci-lint has version 1.57.1 built with go1.22.1 from v1.57.1 on 19700101-00:00:00
 # go version
-# go version go1.20.5 linux/amd64
+# go version go1.22.1 linux/amd64
 # kind version
-# kind v0.20.0 go1.20.5 linux/amd64
+# kind v0.22.0 go1.22.1 linux/amd64

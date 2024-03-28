@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.pull_request.labels.*.name, 'skip-changelog')"
     env:
-      TOWNCRIER_VERSION: 22.12.0
+      TOWNCRIER_VERSION: 23.11.0
       PR_NUMBER: ${{ github.event.number }}
     steps:
       - uses: actions/checkout@v4
