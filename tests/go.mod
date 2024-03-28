@@ -15,7 +15,7 @@ require (
 	k8s.io/apimachinery v0.29.3
 	k8s.io/klog/v2 v2.120.1
 	k8s.io/kube-aggregator v0.29.3
-	sigs.k8s.io/e2e-framework v0.2.0
+	sigs.k8s.io/e2e-framework v0.3.0
 )
 
 require (
