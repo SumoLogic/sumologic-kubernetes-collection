@@ -152,7 +152,7 @@ markdown-link-check:
 
 .PHONE: tool-versions
 tool-versions:
-	kubectl version --client=true --short 2>/dev/null
+	kubectl version --client=true 2>/dev/null
 	helm version
 	jq --version
 	yq --version
