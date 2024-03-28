@@ -1,0 +1,11 @@
+sumologic:
+  metrics:
+    additionalServiceMonitors:
+      - name: basic-service-monitor
+        endpoints:
+          - port: 8888
+            path: /metrics
+        selector:
+          matchLabels:
+            label-key-a: label-value-a
+            label-key-b: label-value-b
