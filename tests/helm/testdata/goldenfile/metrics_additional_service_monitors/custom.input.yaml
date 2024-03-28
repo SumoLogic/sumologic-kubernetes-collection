@@ -1,0 +1,15 @@
+sumologic:
+  metrics:
+    additionalServiceMonitors:
+      - name: custom-service-monitor
+        endpoints:
+          - port: 8888
+            path: /metrics
+        namespaceSelector:
+          matchNames:
+            - custom-namespace-a
+            - custom-namespace-b
+        selector:
+          matchLabels:
+            label-key-a: label-value-a
+            label-key-b: label-value-b
