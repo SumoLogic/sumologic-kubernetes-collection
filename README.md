@@ -1,5 +1,6 @@
 # sumologic-kubernetes-collection
 
+
 This repo contains all the necessary resources to collect observability data from Kubernetes clusters and send it to Sumo Logic. Sumo Logic
 leverages [CNCF](https://www.cncf.io) supported technology including [OpenTelemetry](https://opentelemetry.io),
 [Prometheus](https://prometheus.io) and [Falco](https://www.falco.org/) to collect logs, metrics and traces from Kubernetes clusters. The
