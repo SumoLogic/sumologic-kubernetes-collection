@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.6.1]
+
+### Released 2024-03-29
+
+### Fixed
+
+- fix(metrics): use namespaceSelector from configuration for additionalServiceMonitors [#3618]
+
+[#3618]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3618
+[v4.6.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.6.1
+
 ## [v4.6.0]
 
 ### Released 2024-03-27
