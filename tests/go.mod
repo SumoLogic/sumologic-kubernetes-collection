@@ -3,7 +3,7 @@ module github.com/SumoLogic/sumologic-kubernetes-collection/tests
 go 1.22
 
 require (
-	github.com/bmatcuk/doublestar/v4 v4.4.0
+	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/gruntwork-io/go-commons v0.8.0
 	github.com/gruntwork-io/terratest v0.46.13
 	github.com/open-telemetry/opentelemetry-operator v0.96.0
