@@ -48,7 +48,7 @@ processors:
     ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
     ## Note that typically the total memory usage of process will be about 50MiB higher
     ## than this value.
-    limit_percentage: 75
+    limit_percentage: 90
 
     ## Maximum spike expected between the measurements of memory usage, in %.
     spike_limit_percentage: 20
