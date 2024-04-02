@@ -1,5 +1,5 @@
 {{- if eq (include "logs.collector.otelwindows.enabled" .) "true" }}
-{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otelwindows/config.yaml") .) | fromYaml }}
+{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otelwindows/config.yaml") (deepCopy . | merge (dict "Type" "windows" ))) | fromYaml }}
 {{ $mergeConfig := .Values.otelwindows.config.merge }}
 {{ $overrideConfig := .Values.otelwindows.config.override }}
 {{ $finalConfig := "" }}

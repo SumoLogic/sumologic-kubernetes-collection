@@ -138,7 +138,7 @@ data:
           type: router
         - combine_field: body
           combine_with: |2+
-
+    
           id: merge-multiline-logs
           is_first_entry: body matches "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
           output: clean-up-log-file-path

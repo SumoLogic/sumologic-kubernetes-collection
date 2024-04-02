@@ -28,7 +28,7 @@ processors:
 
 receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
-{{ include "logs.collector.configuration.receivers.filelog-container" (deepCopy . | merge (dict "Type" "windows" )) | nindent 2 }}
+{{ tpl (.Files.Get "conf/logs/collector/common/filelog_receiver.yaml") . | nindent 2 }}
 {{- end }}
 
 service:

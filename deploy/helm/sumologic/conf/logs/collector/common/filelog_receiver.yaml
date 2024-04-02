@@ -1,11 +1,3 @@
-{{/*
-Generate filelog receivers configuration for specific Type of Operating System.
-Available Types are "windows" and "linux"
-
-Example usage
-{{ include "logs.collector.configuration.receivers.filelog-container" (deepCopy . | merge (dict "Type" "windows" )) | nindent 2 }}
-*/}}
-{{- define "logs.collector.configuration.receivers.filelog-container" -}}
 filelog/containers:
   exclude:
     - /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.labels.app.sumologic-mock.pod" . }}*/*/*.log
@@ -250,4 +242,3 @@ filelog/containers:
       type: remove
 
   storage: file_storage
-{{- end }}
