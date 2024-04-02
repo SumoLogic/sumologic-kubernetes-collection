@@ -1,5 +1,5 @@
 ---
-# Source: sumologic/templates/logs/collector/otelwindows/daemonset.yaml
+# Source: sumologic/templates/logs/collector/otellogswindows/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -8,7 +8,7 @@ metadata:
   annotations:
     someDaemonsetAnnotation: someValue
   labels:
-    app: RELEASE-NAME-sumologic-otelwindows-logs-collector
+    app: RELEASE-NAME-sumologic-otellogswindows-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
@@ -16,14 +16,14 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelwindows-logs-collector
+      app.kubernetes.io/name: RELEASE-NAME-sumologic-otellogswindows-logs-collector
   template:
     metadata:
       annotations:
         checksum/config: "%CONFIG_CHECKSUM%"
         someAnnotation: someValue
       labels:
-        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelwindows-logs-collector
+        app.kubernetes.io/name: RELEASE-NAME-sumologic-otellogswindows-logs-collector
         app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"

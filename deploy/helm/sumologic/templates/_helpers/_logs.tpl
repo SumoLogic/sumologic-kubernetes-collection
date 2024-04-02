@@ -47,8 +47,8 @@ Example Usage:
 {{ $enabled }}
 {{- end -}}
 
-{{- define "logs.collector.otelwindows.enabled" -}}
-{{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelwindows.enabled true) -}}
+{{- define "logs.collector.otellogswindows.enabled" -}}
+{{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otellogswindows.enabled true) -}}
 {{ $enabled }}
 {{- end -}}
 
@@ -189,7 +189,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.windows" -}}
-{{- template "sumologic.fullname" . }}-otelwindows-logs-collector
+{{- template "sumologic.fullname" . }}-otellogswindows-logs-collector
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.configmap" -}}
@@ -373,7 +373,7 @@ Return the otelcol log collector image
 {{- end -}}
 
 {{- define "sumologic.logs.collector.windows.image" -}}
-{{ template "utils.getOtelImage" (dict "overrideImage" .Values.otelwindows.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.otellogswindows.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
 
 {{- define "sumologic.logs.collector.tolerations" -}}
@@ -385,8 +385,8 @@ Return the otelcol log collector image
 {{- end -}}
 
 {{- define "sumologic.logs.collector.windows.tolerations" -}}
-{{- if .Values.otelwindows.daemonset.tolerations  -}}
-{{- toYaml .Values.otelwindows.daemonset.tolerations  -}}
+{{- if .Values.otellogswindows.daemonset.tolerations  -}}
+{{- toYaml .Values.otellogswindows.daemonset.tolerations  -}}
 {{- else -}}
 {{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
@@ -439,11 +439,11 @@ Example Usage:
 {{- end }}
 
 {{- define "logs.collector.windows.files.list" }}
-{{- if eq (include "logs.collector.otelwindows.enabled" .) "true" }}
+{{- if eq (include "logs.collector.otellogswindows.enabled" .) "true" }}
 {{- $ctx := . }}
 {{- $instance := "" -}}
-{{- $daemonsets := dict "" $.Values.otelwindows.daemonset  -}}
-{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otelwindows.additionalDaemonSets -}}
+{{- $daemonsets := dict "" $.Values.otellogswindows.daemonset  -}}
+{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogswindows.additionalDaemonSets -}}
 {{- range $name, $value := $daemonsets }}
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}

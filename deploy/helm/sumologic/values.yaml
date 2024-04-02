@@ -301,7 +301,7 @@ sumologic:
       otelcol:
         enabled: true
       ## Experimental
-      otelwindows:
+      otellogswindows:
         enabled: false
       otelcloudwatch:
         enabled: false
@@ -2134,7 +2134,7 @@ otellogs:
 
 ## Experimental
 ## Configure OpenTelemetry Logs Collector for Windows Nodes
-otelwindows:
+otellogswindows:
   ## Metrics from Collector
   metrics:
     enabled: true
@@ -2591,7 +2591,7 @@ debug:
     collector:
       print: false
       stopLogsIngestion: false
-    otelwindows:
+    otellogswindows:
       print: false
       stopLogsIngestion: false
 

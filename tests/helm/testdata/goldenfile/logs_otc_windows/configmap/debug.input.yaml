@@ -1,11 +1,11 @@
 sumologic:
   logs:
     collector:
-      otelwindows:
+      otellogswindows:
         enabled: true
 debug:
   logs:
-    otelwindows:
+    otellogswindows:
       print: true
       stopLogsIngestion: true
     collector:
@@ -27,7 +27,7 @@ debug:
   events:
     stopLogsIngestion: true
 
-otelwindows:
+otellogswindows:
   daemonset:
     nameservers:
       - 10.100.0.10

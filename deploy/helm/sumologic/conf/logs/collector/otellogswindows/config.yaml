@@ -5,7 +5,7 @@ exporters:
       queue_size: 10
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
-{{- if eq .Values.debug.logs.otelwindows.print true }}
+{{- if eq .Values.debug.logs.otellogswindows.print true }}
   debug:
     verbosity: detailed
 {{- end }}
@@ -51,4 +51,4 @@ service:
 {{- end }}
   telemetry:
     logs:
-      level: {{ .Values.otelwindows.logLevel | quote }}
+      level: {{ .Values.otellogswindows.logLevel | quote }}

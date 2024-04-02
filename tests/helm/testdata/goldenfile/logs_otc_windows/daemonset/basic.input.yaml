@@ -2,9 +2,9 @@ namespaceOverride: "sumologic"
 sumologic:
   logs:
     collector:
-      otelwindows:
+      otellogswindows:
         enabled: true
-otelwindows:
+otellogswindows:
   daemonset:
     nameservers:
       - 10.100.0.10

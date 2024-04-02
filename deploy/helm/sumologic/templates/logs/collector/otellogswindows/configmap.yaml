@@ -1,7 +1,7 @@
-{{- if eq (include "logs.collector.otelwindows.enabled" .) "true" }}
-{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otelwindows/config.yaml") (deepCopy . | merge (dict "Type" "windows" ))) | fromYaml }}
-{{ $mergeConfig := .Values.otelwindows.config.merge }}
-{{ $overrideConfig := .Values.otelwindows.config.override }}
+{{- if eq (include "logs.collector.otellogswindows.enabled" .) "true" }}
+{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otellogswindows/config.yaml") (deepCopy . | merge (dict "Type" "windows" ))) | fromYaml }}
+{{ $mergeConfig := .Values.otellogswindows.config.merge }}
+{{ $overrideConfig := .Values.otellogswindows.config.override }}
 {{ $finalConfig := "" }}
 {{ if $overrideConfig }}
 {{ $finalConfig = $overrideConfig }}

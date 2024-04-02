@@ -1,9 +1,9 @@
 sumologic:
   logs:
     collector:
-      otelwindows:
+      otellogswindows:
         enabled: true
-otelwindows:
+otellogswindows:
   additionalDaemonSets:
     linux:
       nodeSelector:

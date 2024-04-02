@@ -1,12 +1,12 @@
-{{- if eq (include "logs.collector.otelwindows.enabled" .) "true" }}
+{{- if eq (include "logs.collector.otellogswindows.enabled" .) "true" }}
 {{- $ctx := . }}
 {{- $instance := "" -}}
 {{- $defaultTolerations := (include "sumologic.logs.collector.tolerations" .) }}
 {{- $defaultAffinity := (include "kubernetes.defaultAffinity" .) }}
-{{- $daemonsets := dict "" $.Values.otelwindows.daemonset  -}}
-{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otelwindows.additionalDaemonSets -}}
+{{- $daemonsets := dict "" $.Values.otellogswindows.daemonset  -}}
+{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogswindows.additionalDaemonSets -}}
 {{- range $name, $daemonset := $daemonsets }}
-{{- $defaultDaemonset := deepCopy $.Values.otelwindows.daemonset }}
+{{- $defaultDaemonset := deepCopy $.Values.otellogswindows.daemonset }}
 {{- $daemonset := mergeOverwrite $defaultDaemonset $daemonset -}}
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
@@ -47,7 +47,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelwindows/configmap.yaml") $ctx | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otellogswindows/configmap.yaml") $ctx | sha256sum }}
 {{- if $.Values.sumologic.podAnnotations }}
 {{ toYaml $.Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -93,7 +93,7 @@ spec:
         args:
         - --config=etc/otelcol/config.yaml
         image: {{ template "sumologic.logs.collector.windows.image" $ctx }}
-        imagePullPolicy: {{ $.Values.otelwindows.image.pullPolicy }}
+        imagePullPolicy: {{ $.Values.otellogswindows.image.pullPolicy }}
         name: otelcol
         livenessProbe:
           httpGet:

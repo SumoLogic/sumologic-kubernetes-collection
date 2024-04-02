@@ -326,9 +326,9 @@ your `user-values.yaml`:
 sumologic:
   logs:
     collector:
-      otelwindows:
+      otellogswindows:
         enabled: true
-otelwindows:
+otellogswindows:
   daemonset:
     nameservers:
       - ${NAMESERVER_IP}

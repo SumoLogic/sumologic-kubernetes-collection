@@ -12,10 +12,10 @@ sumologic:
         - first_line_regex: ": : : Log beginning"
           condition: attributes["k8s.namespace.name"] == "foo"
     collector:
-      otelwindows:
+      otellogswindows:
         enabled: true
 
-otelwindows:
+otellogswindows:
   daemonset:
     nameservers:
       - 10.100.0.10

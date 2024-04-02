@@ -1,7 +1,7 @@
 sumologic:
   logs:
     collector:
-      otelwindows:
+      otellogswindows:
         enabled: true
     multiline:
       enabled: false
@@ -10,7 +10,7 @@ sumologic:
     container:
       enabled: false
 
-otelwindows:
+otellogswindows:
   logLevel: debug
   daemonset:
     nameservers:

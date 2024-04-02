@@ -7,7 +7,7 @@ filelog/containers:
     {{- if eq .Values.debug.logs.collector.stopLogsIngestion true }}
     {{ include "logs.collector.files.list" . | nindent 4 }}
     {{- end }}
-    {{- if eq .Values.debug.logs.otelwindows.stopLogsIngestion true }}
+    {{- if eq .Values.debug.logs.otellogswindows.stopLogsIngestion true }}
     {{ include "logs.collector.windows.files.list" . | nindent 4 }}
     {{- end }}
     {{- if eq .Values.debug.metrics.metadata.stopLogsIngestion true }}

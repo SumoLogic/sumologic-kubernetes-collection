@@ -9,10 +9,10 @@ sumologic:
       effect: "FailTest"
   logs:
     collector:
-      otelwindows:
+      otellogswindows:
         enabled: true
 
-otelwindows:
+otellogswindows:
   image:
     repository: my_repository
     tag: my_tag

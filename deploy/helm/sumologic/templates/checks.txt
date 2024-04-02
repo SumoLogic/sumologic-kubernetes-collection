@@ -34,8 +34,8 @@
 {{- end -}}
 {{- end -}}
 
-{{- $nameservers := (dig "otelwindows" "daemonset" "nameservers" (list "...") .Values.AsMap) -}}
+{{- $nameservers := (dig "otellogswindows" "daemonset" "nameservers" (list "...") .Values.AsMap) -}}
 {{/* Check if Windows nameservers has been overriden  */}}
-{{- if and (eq (include "logs.collector.otelwindows.enabled" .) "true") (has "..." $nameservers) -}}
+{{- if and (eq (include "logs.collector.otellogswindows.enabled" .) "true") (has "..." $nameservers) -}}
 {{- fail "\nPlease set cluster namserver for windows log collection" -}}
 {{- end -}}
