@@ -1,0 +1,71 @@
+{{- if eq .Values.pvcCleaner.events.enabled true }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "sumologic.metadata.name.pvcCleaner.events" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
+  labels:
+    app: {{ template "sumologic.labels.app.pvcCleaner.events" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.pvcCleaner.job.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: {{ template "sumologic.metadata.name.pvcCleaner.events" . }}
+          labels:
+            app: {{ template "sumologic.labels.app.pvcCleaner.events" . }}
+{{- include "sumologic.labels.common" . | nindent 12 }}
+{{- with .Values.sumologic.podLabels }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.podLabels }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+          annotations:
+{{- with .Values.sumologic.podAnnotations }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.podAnnotations }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+        spec:
+          nodeSelector:
+{{- if not (empty (include "pvcCleaner.job.nodeSelector" .)) }}
+{{ include "pvcCleaner.job.nodeSelector" . | indent 12 }}
+{{- end }}
+{{- if not (empty (include "pvcCleaner.job.tolerations" .)) }}
+          tolerations:
+{{ include "pvcCleaner.job.tolerations" . | indent 12 }}
+{{- end }}
+{{- if not (empty (include "pvcCleaner.job.affinity" .)) }}
+          affinity:
+{{ include "pvcCleaner.job.affinity" . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.securityContext }}
+          securityContext:
+{{ toYaml . | indent 12 }}
+{{- end }}
+          containers:
+          - name: pvc-cleaner
+            image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
+            command:
+            - "bash"
+            - "/pvc-cleaner/pvc-cleaner.sh"
+            - "{{ template "sumologic.namespace" . }}"
+            - "app={{ template "sumologic.labels.app.events.statefulset" . }}"
+            imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
+            resources:
+              {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
+            volumeMounts:
+            - name: pvc-cleaner
+              mountPath: /pvc-cleaner
+          volumes:
+          - configMap:
+              defaultMode: 420
+              name: {{ template "sumologic.metadata.name.pvcCleaner.configmap" . }}
+            name: pvc-cleaner
+          restartPolicy: Never
+          serviceAccountName: {{ template "sumologic.metadata.name.pvcCleaner.roles.serviceaccount" . }}
+{{- end }}

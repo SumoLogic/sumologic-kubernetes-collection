@@ -139,3 +139,11 @@ otlp
 {{- template "kubernetes.defaultAffinity" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "sumologic.metadata.name.pvcCleaner.events" -}}
+{{- template "sumologic.metadata.name.pvcCleaner" . }}-events
+{{- end -}}
+
+{{- define "sumologic.labels.app.pvcCleaner.events" -}}
+{{- template "sumologic.labels.app.pvcCleaner" . }}-events
+{{- end -}}

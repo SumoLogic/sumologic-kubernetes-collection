@@ -1,0 +1,81 @@
+---
+# Source: sumologic/templates/pvc-cleaner/cron-job-events.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: RELEASE-NAME-sumologic-pvc-cleaner-events
+  namespace: sumologic
+  labels:
+    app: pvc-cleaner-events
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: RELEASE-NAME-sumologic-pvc-cleaner-events
+          labels:
+            app: pvc-cleaner-events
+            chart: "sumologic-%CURRENT_CHART_VERSION%"
+            release: "RELEASE-NAME"
+            heritage: "Helm"
+            someSumo: label
+            some: label
+          annotations:
+            someSumo: annotation
+            some: annotation
+        spec:
+          nodeSelector:
+            kubernetes.io/os: null
+            my: node
+          tolerations:
+            - effect: NoSchedule
+              key: null
+              operator: Exists
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - RELEASE-NAME-sumologic-otelcol-logs
+                          - RELEASE-NAME-sumologic-otelcol-metrics
+                          - RELEASE-NAME-sumologic-otelcol-events
+                      - key: app
+                        operator: In
+                        values:
+                          - prometheus-operator-prometheus
+                  topologyKey: kubernetes.io/hostname
+          securityContext:
+            runAsUser: 1000
+          containers:
+            - name: pvc-cleaner
+              image: private.ecr.aws/sumologic/kubernetes-tools:x.y.z
+              command:
+                - "bash"
+                - "/pvc-cleaner/pvc-cleaner.sh"
+                - "sumologic"
+                - "app=RELEASE-NAME-sumologic-otelcol-events"
+              imagePullPolicy: Always
+              resources:
+                limits:
+                  cpu: 31m
+                  memory: 1025Mi
+                requests:
+                  cpu: 12m
+                  memory: 63Mi
+              volumeMounts:
+                - name: pvc-cleaner
+                  mountPath: /pvc-cleaner
+          volumes:
+            - configMap:
+                defaultMode: 420
+                name: RELEASE-NAME-sumologic-pvc-cleaner
+              name: pvc-cleaner
+          restartPolicy: Never
+          serviceAccountName: RELEASE-NAME-sumologic-pvc-cleaner
