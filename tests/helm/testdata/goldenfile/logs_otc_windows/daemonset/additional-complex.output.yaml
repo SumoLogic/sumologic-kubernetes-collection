@@ -1,52 +1,68 @@
 ---
-# Source: sumologic/templates/logs/collector/otelcol/daemonset.yaml
+# Source: sumologic/templates/logs/collector/otellogswindows/daemonset.yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  name: RELEASE-NAME-sumologic-otelcol-windows-logs-collector-linux
   namespace: sumologic
   annotations:
-    someDaemonsetAnnotation: someValue
+    name: additionalAnnotation
   labels:
-    app: RELEASE-NAME-sumologic-otelcol-logs-collector
+    app: RELEASE-NAME-sumologic-otellogswindows-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
-    someDaemonsetLabel: someValue
+    name: additionalLabel
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+      app.kubernetes.io/name: RELEASE-NAME-sumologic-otellogswindows-logs-collector-linux
   template:
     metadata:
       annotations:
         checksum/config: "%CONFIG_CHECKSUM%"
-        someAnnotation: someValue
+        name: additionalPodAnnotation
       labels:
-        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        app.kubernetes.io/name: RELEASE-NAME-sumologic-otellogswindows-logs-collector-linux
         app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
-        someLabel: someValue
+        name: additionalPodLabel
     spec:
       nodeSelector:
         kubernetes.io/os: linux
-        sumologic.com/kind: worker
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: NotIn
+                    values:
+                      - windows
       tolerations:
         - effect: NoSchedule
           key: worker
           operator: Equal
           value: worker
+      automountServiceAccountToken: false
+      hostNetwork: true
+      dnsPolicy: "ClusterFirst" # We need only in-cluser connections
       securityContext:
         fsGroup: 0
         runAsGroup: 0
         runAsUser: 0
+        windowsOptions:
+          hostProcess: true
+          runAsUserName: NT AUTHORITY\system
       priorityClassName: "prio"
       containers:
-        - args:
-            - --config=/etc/otelcol/config.yaml
-          image: "my_repository:my_tag"
+        - command:
+            - "otelcol-sumo.exe"
+          args:
+            - --config=etc/otelcol/config.yaml
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.92.0-sumo-0"
           imagePullPolicy: IfNotPresent
           name: otelcol
           livenessProbe:
@@ -59,10 +75,10 @@ spec:
               port: 13133 # Health Check extension default port.
           resources:
             limits:
-              cpu: 1000m
+              cpu: 6
               memory: 1Gi
             requests:
-              cpu: 100m
+              cpu: 2
               memory: 32Mi
           volumeMounts:
             - mountPath: /etc/otelcol
@@ -109,25 +125,32 @@ spec:
             - name: metrics
               containerPort: 8888
               protocol: TCP
-      initContainers: # ensure the host path is owned by the otel user group
-        - name: changeowner
+      initContainers:
+        - name: prepare # create storage directory and adjust DNSes to allow connection with cluster. It adds cluster DNS server as primary DNS server
           # yamllint disable-line rule:line-length
-          image: public.ecr.aws/docker/library/busybox:1.36.0
+          image: mcr.microsoft.com/windows/nanoserver:ltsc2019
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
-              add:
-                - CAP_CHOWN
               drop:
                 - ALL
-            privileged: true
           command:
-            - "sh"
-            - "-c"
+            - "powershell.exe"
+            - "-Command"
             - |
-              chown -R \
-                0:0 \
-                /var/lib/storage/otc
+              New-Item -ItemType Directory -Force -Path /var/lib/storage/otc;
+              Get-DnsClientServerAddress |
+              Where-Object { $_.ServerAddresses.Count -gt 0 -and $_.AddressFamily -eq 2 } |
+              ForEach-Object {
+                If ( -Not ($_.ServerAddresses.Contains("10.100.0.11")) ) {
+                  $addresses = ,"10.100.0.11" + $_.ServerAddresses;
+                  Set-DnsClientServerAddress -InterfaceIndex $_.InterfaceIndex -ServerAddresses $addresses
+                }
+                If ( -Not ($_.ServerAddresses.Contains("10.100.0.10")) ) {
+                  $addresses = ,"10.100.0.10" + $_.ServerAddresses;
+                  Set-DnsClientServerAddress -InterfaceIndex $_.InterfaceIndex -ServerAddresses $addresses
+                }
+              }
           volumeMounts:
             - mountPath: /var/lib/storage/otc
               name: file-storage
@@ -137,7 +160,7 @@ spec:
             items:
               - key: config.yaml
                 path: config.yaml
-            name: RELEASE-NAME-sumologic-otelcol-logs-collector
+            name: RELEASE-NAME-sumologic-otelcol-windows-logs-collector
           name: otelcol-config
         - hostPath:
             path: /var/log/pods
@@ -160,3 +183,8 @@ spec:
             defaultMode: 420
             secretName: es-certs
       serviceAccountName: RELEASE-NAME-sumologic-otelcol-logs-collector
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 5
+      maxUnavailable: 13
+    type: RollingUpdate

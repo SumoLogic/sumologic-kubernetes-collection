@@ -1,17 +1,17 @@
-{{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+{{- if eq (include "logs.collector.otellogswindows.enabled" .) "true" }}
 {{- $ctx := . }}
 {{- $instance := "" -}}
 {{- $defaultTolerations := (include "sumologic.logs.collector.tolerations" .) }}
 {{- $defaultAffinity := (include "kubernetes.defaultAffinity" .) }}
-{{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
-{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
+{{- $daemonsets := dict "" $.Values.otellogswindows.daemonset  -}}
+{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogswindows.additionalDaemonSets -}}
 {{- range $name, $daemonset := $daemonsets }}
-{{- $defaultDaemonset := deepCopy $.Values.otellogs.daemonset }}
+{{- $defaultDaemonset := deepCopy $.Values.otellogswindows.daemonset }}
 {{- $daemonset := mergeOverwrite $defaultDaemonset $daemonset -}}
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $nodeSelector := include "nodeSelector" (dict "Values" $.Values "nodeSelector" $daemonset.nodeSelector) }}
+{{- $nodeSelector := include "nodeSelector" (dict "Values" $.Values "nodeSelector" $daemonset.nodeSelector "defaultOs" "windows") }}
 {{- $tolerations := "" }}
 {{- if .tolerations }}
 {{- $tolerations = (toYaml .tolerations) }}
@@ -28,14 +28,14 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}
+  name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.windows.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}
   namespace: {{ template "sumologic.namespace"  $ctx }}
   {{- if $daemonset.annotations }}
   annotations:
 {{ toYaml $daemonset.annotations| indent 4 }}
 {{- end }}
   labels:
-    app: {{ template "sumologic.labels.app.logs.collector.daemonset" $ctx }}
+    app: {{ template "sumologic.labels.app.logs.collector.windows.daemonset" $ctx }}
     {{- include "sumologic.labels.common" $ctx | nindent 4 }}
 {{- if $daemonset.labels }}
 {{ toYaml $daemonset.labels | indent 4 }}
@@ -43,11 +43,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance | trunc 63 | trimSuffix "-" }}
+      app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.windows.pod" $ctx) $instance | trunc 63 | trimSuffix "-" }}
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol/configmap.yaml") $ctx | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otellogswindows/configmap.yaml") $ctx | sha256sum }}
 {{- if $.Values.sumologic.podAnnotations }}
 {{ toYaml $.Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -55,8 +55,8 @@ spec:
 {{ toYaml $daemonset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
-        app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance | trunc 63 | trimSuffix "-" }}
-        app.kubernetes.io/app-name: {{ (include "sumologic.labels.app.logs.collector.pod" $ctx) | trunc 63 | trimSuffix "-" }}
+        app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.windows.pod" $ctx) $instance | trunc 63 | trimSuffix "-" }}
+        app.kubernetes.io/app-name: {{ (include "sumologic.labels.app.logs.collector.pod"  $ctx) | trunc 63 | trimSuffix "-" }}
         {{- include "sumologic.labels.common" $ctx | nindent 8 }}
 {{- if $.Values.sumologic.podLabels }}
 {{ toYaml $.Values.sumologic.podLabels | indent 8 }}
@@ -77,6 +77,9 @@ spec:
       tolerations:
 {{ $tolerations | indent 8 }}
 {{- end }}
+      automountServiceAccountToken: false
+      hostNetwork: true
+      dnsPolicy: "ClusterFirst"  # We need only in-cluser connections
       securityContext:
         {{- toYaml $daemonset.securityContext | nindent 8 }}
       {{- if $daemonset.priorityClassName }}
@@ -85,10 +88,12 @@ spec:
       priorityClassName: {{ include "sumologic.metadata.name.priorityclass" $ctx | quote }}
       {{- end }}
       containers:
-      - args:
-        - --config=/etc/otelcol/config.yaml
-        image: {{ template "sumologic.logs.collector.image" $ctx }}
-        imagePullPolicy: {{ $.Values.otellogs.image.pullPolicy }}
+      - command:
+        - "otelcol-sumo.exe"
+        args:
+        - --config=etc/otelcol/config.yaml
+        image: {{ template "sumologic.logs.collector.windows.image" $ctx }}
+        imagePullPolicy: {{ $.Values.otellogswindows.image.pullPolicy }}
         name: otelcol
         livenessProbe:
           httpGet:
@@ -139,20 +144,28 @@ spec:
         - name: metrics
           containerPort: 8888
           protocol: TCP
-      initContainers: # ensure the host path is owned by the otel user group
-      - name: changeowner
+      initContainers:
+      - name: prepare  # create storage directory and adjust DNSes to allow connection with cluster. It adds cluster DNS server as primary DNS server
         # yamllint disable-line rule:line-length
-        image: {{ $daemonset.initContainers.changeowner.image.repository }}:{{ $daemonset.initContainers.changeowner.image.tag }}
-        imagePullPolicy: {{ $daemonset.initContainers.changeowner.image.pullPolicy }}
+        image: {{ $daemonset.initContainers.prepare.image.repository }}:{{ $daemonset.initContainers.prepare.image.tag }}
+        imagePullPolicy: {{ $daemonset.initContainers.prepare.image.pullPolicy }}
         securityContext:
-          {{- toYaml $daemonset.initContainers.changeowner.securityContext | nindent 10 }}
+          {{- toYaml $daemonset.initContainers.prepare.securityContext | nindent 10 }}
         command:
-        - "sh"
-        - "-c"
+        - "powershell.exe"
+        - "-Command"
         - |
-          chown -R \
-            {{ $daemonset.securityContext.fsGroup }}:{{ $daemonset.securityContext.fsGroup }} \
-            /var/lib/storage/otc
+          New-Item -ItemType Directory -Force -Path /var/lib/storage/otc;
+          Get-DnsClientServerAddress |
+          Where-Object { $_.ServerAddresses.Count -gt 0 -and $_.AddressFamily -eq 2 } |
+          ForEach-Object {
+{{- range $serverAddress := reverse $daemonset.nameservers }}
+            If ( -Not ($_.ServerAddresses.Contains("{{ $serverAddress }}")) ) {
+              $addresses = ,"{{ $serverAddress }}" + $_.ServerAddresses;
+              Set-DnsClientServerAddress -InterfaceIndex $_.InterfaceIndex -ServerAddresses $addresses
+            }
+{{- end }}
+          }
         volumeMounts:
         - mountPath: /var/lib/storage/otc
           name: file-storage
@@ -162,7 +175,7 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-          name: {{ template "sumologic.metadata.name.logs.collector.configmap" $ctx }}
+          name: {{ template "sumologic.metadata.name.logs.collector.windows.configmap" $ctx }}
         name: otelcol-config
       - hostPath:
           path: /var/log/pods

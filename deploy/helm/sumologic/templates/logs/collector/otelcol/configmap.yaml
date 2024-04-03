@@ -1,5 +1,5 @@
 {{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
-{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otelcol/config.yaml") .) | fromYaml }}
+{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otelcol/config.yaml") (deepCopy . | merge (dict "Type" "linux" ))) | fromYaml }}
 {{ $mergeConfig := .Values.otellogs.config.merge }}
 {{ $overrideConfig := .Values.otellogs.config.override }}
 {{ $finalConfig := "" }}
