@@ -2358,11 +2358,16 @@ opentelemetry-operator:
         memory: 256Mi
 
 ## pvcCleaner deletes unused PVCs
+## cleanForPendingPods deletes PVCs which cannot be used as they are in different zones thamn the pod
 pvcCleaner:
   metrics:
     enabled: false
+    cleanForPendingPods: false
   logs:
     enabled: false
+    cleanForPendingPods: false
+  events:
+    cleanForPendingPods: false
 
   job:
     image:
@@ -2397,6 +2402,7 @@ pvcCleaner:
 
     ## Schedule for cronJobs
     schedule: "*/15 * * * *"
+    scheduleForPendingPod: "*/5 * * * *"
 
     ## securityContext for pvcCleaner pods
     securityContext:

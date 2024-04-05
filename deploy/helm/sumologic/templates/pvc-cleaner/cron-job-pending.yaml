@@ -1,21 +1,21 @@
-{{- if eq .Values.pvcCleaner.logs.enabled true }}
+{{- if or (eq .Values.pvcCleaner.logs.cleanForPendingPods true) (eq .Values.pvcCleaner.metrics.cleanForPendingPods true) (eq .Values.pvcCleaner.events.cleanForPendingPods true) }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ template "sumologic.metadata.name.pvcCleaner.logs" . }}
+  name: {{ template "sumologic.metadata.name.pvcCleaner.pendingPods" . }}
   namespace: {{ template "sumologic.namespace"  . }}
   labels:
-    app: {{ template "sumologic.labels.app.pvcCleaner.logs" . }}
+    app: {{ template "sumologic.labels.app.pvcCleaner.pendingPods" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
-  schedule: {{ .Values.pvcCleaner.job.schedule | quote }}
+  schedule: {{ .Values.pvcCleaner.job.scheduleForPendingPod | quote }}
   jobTemplate:
     spec:
       template:
         metadata:
-          name: {{ template "sumologic.metadata.name.pvcCleaner.logs" . }}
+          name: {{ template "sumologic.metadata.name.pvcCleaner.pendingPods" . }}
           labels:
-            app: {{ template "sumologic.labels.app.pvcCleaner.logs" . }}
+            app: {{ template "sumologic.labels.app.pvcCleaner.pendingPods" . }}
 {{- include "sumologic.labels.common" . | nindent 12 }}
 {{- with .Values.sumologic.podLabels }}
 {{ toYaml . | indent 12 }}
@@ -48,22 +48,51 @@ spec:
 {{ toYaml . | indent 12 }}
 {{- end }}
           containers:
-          - name: pvc-cleaner
+{{- if eq .Values.pvcCleaner.logs.cleanForPendingPods true }}
+          - name: pvc-cleaner-pending-logs
             image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
             command:
             - "bash"
-            - "/pvc-cleaner/pvc-cleaner.sh"
+            - "/pvc-cleaner/pvc-cleaner-pending.sh"
             - "{{ template "sumologic.namespace" . }}"
             - "app={{ template "sumologic.labels.app.logs.statefulset" . }}"
-{{- if eq (include "metadata.logs.autoscaling.enabled" .) "true" }}
-            - "{{ template "sumologic.metadata.name.logs.hpa" . }}"
-{{- end }}
             imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
             resources:
               {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
             volumeMounts:
             - name: pvc-cleaner
               mountPath: /pvc-cleaner
+{{- end }}
+{{- if eq .Values.pvcCleaner.metrics.cleanForPendingPods true }}
+          - name: pvc-cleaner-pending-metrics
+            image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
+            command:
+            - "bash"
+            - "/pvc-cleaner/pvc-cleaner-pending.sh"
+            - "{{ template "sumologic.namespace" . }}"
+            - "app={{ template "sumologic.labels.app.metrics.statefulset" . }}"
+            imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
+            resources:
+              {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
+            volumeMounts:
+            - name: pvc-cleaner
+              mountPath: /pvc-cleaner
+{{- end }}
+{{- if eq .Values.pvcCleaner.events.cleanForPendingPods true }}
+          - name: pvc-cleaner-pending-events
+            image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
+            command:
+            - "bash"
+            - "/pvc-cleaner/pvc-cleaner-pending.sh"
+            - "{{ template "sumologic.namespace" . }}"
+            - "app={{ template "sumologic.labels.app.events.statefulset" . }}"
+            imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
+            resources:
+              {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
+            volumeMounts:
+            - name: pvc-cleaner
+              mountPath: /pvc-cleaner
+{{- end }}
           volumes:
           - configMap:
               defaultMode: 420

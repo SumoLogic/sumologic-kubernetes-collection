@@ -55,7 +55,9 @@ spec:
             - "/pvc-cleaner/pvc-cleaner.sh"
             - "{{ template "sumologic.namespace" . }}"
             - "app={{ template "sumologic.labels.app.metrics.statefulset" . }}"
+{{- if eq (include "metadata.metrics.autoscaling.enabled" .) "true" }}
             - "{{ template "sumologic.metadata.name.metrics.hpa" . }}"
+{{- end }}
             imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
             resources:
               {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}

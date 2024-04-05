@@ -294,6 +294,14 @@ pvc-cleaner
 {{- template "sumologic.fullname" . }}-pvc-cleaner
 {{- end -}}
 
+{{- define "sumologic.metadata.name.pvcCleaner.pendingPods" -}}
+{{- template "sumologic.metadata.name.pvcCleaner" . }}-pending
+{{- end -}}
+
+{{- define "sumologic.labels.app.pvcCleaner.pendingPods" -}}
+{{- template "sumologic.labels.app.pvcCleaner" . }}-pending
+{{- end -}}
+
 {{/*
 Return the otelcol metadata enrichment image
 */}}
