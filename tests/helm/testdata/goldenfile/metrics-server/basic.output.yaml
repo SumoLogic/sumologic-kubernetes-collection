@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
     app.kubernetes.io/version: 0.7.0
-    helm.sh/chart: metrics-server-6.11.2
+    helm.sh/chart: metrics-server-6.13.1
 spec:
   replicas: 1
   selector:
@@ -26,9 +26,12 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: metrics-server
         app.kubernetes.io/version: 0.7.0
-        helm.sh/chart: metrics-server-6.11.2
+        helm.sh/chart: metrics-server-6.13.1
     spec:
       serviceAccountName: RELEASE-NAME-metrics-server
+      volumes:
+        - emptyDir: {}
+          name: empty-dir
       affinity:
         podAffinity:
 
@@ -47,7 +50,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: metrics-server
-          image: docker.io/bitnami/metrics-server:0.7.0-debian-12-r7
+          image: docker.io/bitnami/metrics-server:0.7.0-debian-12-r8
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -56,6 +59,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: false
+            runAsGroup: 0
             runAsNonRoot: true
             runAsUser: 1001
             seccompProfile:
@@ -91,3 +95,10 @@ spec:
               path: /readyz
               port: https
               scheme: HTTPS
+          volumeMounts:
+            - mountPath: "/tmp"
+              name: "empty-dir"
+              subPath: "tmp-dir"
+            - mountPath: "/opt/bitnami/metrics-server/apiserver.local.config"
+              name: "empty-dir"
+              subPath: "app-tmp-dir"
