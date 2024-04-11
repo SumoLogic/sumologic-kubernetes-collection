@@ -13,8 +13,8 @@ spec:
     metadata:
       labels:
         app: nodejs-app
-    annotations:
-      instrumentation.opentelemetry.io/inject-nodejs: "true"
+      annotations:
+        instrumentation.opentelemetry.io/inject-nodejs: "true"
     spec:
       containers:
       - name: nodejsapp

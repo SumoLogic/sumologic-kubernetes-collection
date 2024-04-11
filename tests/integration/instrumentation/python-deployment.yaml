@@ -13,8 +13,8 @@ spec:
     metadata:
       labels:
         app: python-app
-    annotations:
-      instrumentation.opentelemetry.io/inject-python: "true"
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
     spec:
       containers:
       - name: pythonapp

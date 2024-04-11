@@ -2,6 +2,8 @@ kind: Service
 apiVersion: v1
 metadata:
   name: nodejs-app-service
+  labels:
+    app: nodejs-svc
 spec:
   selector:
     app: nodejs-app

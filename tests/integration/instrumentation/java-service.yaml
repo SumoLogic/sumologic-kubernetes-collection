@@ -2,6 +2,8 @@ kind: Service
 apiVersion: v1
 metadata:
   name: java-app-service
+  labels:
+    app: java-svc
 spec:
   selector:
     app: java-app
