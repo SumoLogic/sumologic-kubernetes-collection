@@ -44,6 +44,21 @@ func WaitUntilPodsAvailable(listOptions metav1.ListOptions, count int, wait time
 	}
 }
 
+// WaitUntilPodsAvailable returns a features.Func that can be used in `Assess` calls.
+// It will wait until the selected pods are available, using the provided total
+// `wait` and `tick` times as well as the provided list options and the desired count.
+func WaitUntilPodsAvailableCustomNS(listOptions metav1.ListOptions, count int, wait time.Duration, tick time.Duration, namespace string) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		opts := ctxopts.KubectlOptions(ctx)
+		opts.Namespace = namespace
+
+		k8s_internal.WaitUntilPodsAvailable(t, opts,
+			listOptions, count, wait, tick,
+		)
+		return ctx
+	}
+}
+
 func WaitUntilExpectedSpansPresent(
 	expectedSpansCount uint,
 	expectedSpansMetadata map[string]string,
@@ -89,6 +104,7 @@ func WaitUntilExpectedTracesPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		fmt.Printf("%s\n", ctx)
 		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
 
 		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
