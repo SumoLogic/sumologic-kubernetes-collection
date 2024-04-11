@@ -1,0 +1,24 @@
+sumologic:
+  metrics:
+    enabled: false
+
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      additionalRemoteWrites:
+        - remoteTimeout: 5s
+          url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
+          writeRelabelConfigs:
+            - action: keep
+              regex: ^true$
+              sourceLabels:
+                - _sumo_forward_
+            - action: labeldrop
+              regex: _sumo_forward_
+        - remoteTimeout: 5s
+          url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.istio
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:galley_validation_(passed|failed|config_updates|config_update_error))
+              sourceLabels:
+                - __name__

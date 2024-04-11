@@ -37,10 +37,6 @@ processors:
     send_batch_max_size: 2_048
     send_batch_size: 1024
     timeout: 1s
-  memory_limiter:
-    check_interval: 1s
-    limit_percentage: 70
-    spike_limit_percentage: 20
   resource/add_cluster:
     attributes:
       - action: upsert
@@ -84,7 +80,6 @@ service:
         - sumologic/sumologic-mock
 {{- end }}
       processors:
-        - memory_limiter
         - resource/add_cluster
         - source
         - sumologic

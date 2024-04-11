@@ -30,17 +30,7 @@ make update-changelog VERSION=x.x.x
 
 ### How do I add multiple entries for the same PR?
 
-Add a counter to your entry file names. For example, if you wanted to have three entries for PR `#123`, which is a fix, you'd create the
-following files in [.changelog]:
-
-```text
-123.fixed.0.txt
-123.fixed.1.txt
-123.fixed.2.txt
-```
-
-Unfortunately, the `towncrier create` command doesn't have support for this [yet](https://github.com/twisted/towncrier/issues/474), so you
-need to create the files manually.
+Run `make add-changelog-entry` for each entry, picking the same PR number and change type.
 
 ### How do I add an entry with multiple PR links?
 

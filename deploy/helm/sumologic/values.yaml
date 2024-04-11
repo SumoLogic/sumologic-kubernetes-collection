@@ -116,7 +116,7 @@ sumologic:
     job:
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.12.0
+        tag: 3.12.1
         pullPolicy: IfNotPresent
       ## Optionally specify an array of pullSecrets.
       ## They will be added to serviceaccount that is used for Sumo Logic's
@@ -301,6 +301,8 @@ sumologic:
       otelcol:
         enabled: true
       ## Experimental
+      otellogswindows:
+        enabled: false
       otelcloudwatch:
         enabled: false
         roleArn: ""
@@ -2130,6 +2132,151 @@ otellogs:
   ##             - linux
   additionalDaemonSets: {}
 
+## Experimental
+## Configure OpenTelemetry Logs Collector for Windows Nodes
+otellogswindows:
+  ## Metrics from Collector
+  metrics:
+    enabled: true
+
+  ## Add custom labels to otelcol svc
+  serviceLabels: {}
+
+  ## Configure image for Opentelemetry Collector
+  image:
+    # repository: ""
+    # tag: ""
+    pullPolicy: IfNotPresent
+
+  logLevel: info
+
+  config:
+    ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
+    ## be directly merged with the generated configuration, overriding existing values.
+    ## For example:
+    # override:
+    #   processors:
+    #     batch:
+    #       send_batch_size: 512
+    ## will change the batch size of the pipeline.
+    ##
+    ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
+    ## of this chart. It involves implementation details that may change even in minor versions.
+    ## Use with caution, and consider opening an issue, so your customization can be added in a safer way.
+    merge: {}
+    ## Completely override existing config and replace it with the contents of this value.
+    ## The value of this key should be a dictionary, that will replace the normal configuration.
+    ## This is an advanced feature, use with caution, and review the generated configuration first.
+    override: {}
+
+  daemonset:
+    ## Set securityContext for containers running in pods in log collector daemonset
+    securityContext:
+      windowsOptions:
+        hostProcess: true
+        runAsUserName: NT AUTHORITY\system
+
+    ## This should be the IPs of your cluster's DNS service (kube-dns or core-dns).
+    ## It will modify your Windows Nodes DNS settings, by setting those DNS servers as first on the list
+    nameservers:
+      - "..."
+
+    ## Add custom labels to the otelcol daemonset
+    labels: {}
+
+    ## Add custom annotations to the otelcol daemonset
+    annotations: {}
+
+    ## Add custom labels to all otelcol daemonset pods
+    podLabels: {}
+
+    ## Add custom annotations to all otelcol daemonset pods
+    podAnnotations: {}
+
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+      requests:
+        memory: 32Mi
+        cpu: 100m
+    ## Option to define priorityClassName to assign a priority class to pods.
+    ## If not set then temaplates/priorityclass.yaml is used.
+    priorityClassName:
+
+    ## Set securityContext for containers running in pods in log collector daemonset
+    containers:
+      otelcol:
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+
+    ## Set securityContext and image for initContainers running in pods in log collector daemonset
+    initContainers:
+      prepare:
+        image:
+          repository: "mcr.microsoft.com/windows/nanoserver"
+          tag: "ltsc2019"
+          pullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+
+    nodeSelector: {}
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+    affinity: {}
+
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: VALUE_FROM_SECRET
+    #     valueFrom:
+    #       secretKeyRef:
+    #         name: secret_name
+    #         key: secret_key
+
+    # extraVolumes:
+    #   - name: es-certs
+    #     secret:
+    #       defaultMode: 420
+    #       secretName: es-certs
+    # extraVolumeMounts:
+    #   - name: es-certs
+    #     mountPath: /certs
+    #     readOnly: true
+
+  ## additionalDaemonSets allows to set daemonsets with affinity, nodeSelector and resources
+  ## different than the main DaemonSet
+  ## Be careful and set nodeAffinity for the main DaemonSet,
+  ## as we do not support multiple pods of otellogs on the same node
+  ##
+  ## e.g:
+  ## additionalDaemonSets:
+  ##   linux:
+  ##     nodeSelector:
+  ##       kubernetes.io/os: linux
+  ##     resources:
+  ##       limits:
+  ##         memory: 1Gi
+  ##         cpu: 6
+  ##       requests:
+  ##         memory: 32Mi
+  ##         cpu: 2
+  ## daemonset:
+  ##   affinity:
+  ##     nodeAffinity:
+  ##       requiredDuringSchedulingIgnoredDuringExecution:
+  ##         nodeSelectorTerms:
+  ##         - matchExpressions:
+  ##           - key: kubernetes.io/os
+  ##             operator: NotIn
+  ##             values:
+  ##             - linux
+  additionalDaemonSets: {}
+
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
 telegraf-operator:
@@ -2442,6 +2589,9 @@ debug:
       forwardToSumologicMock: false
       stopLogsIngestion: false
     collector:
+      print: false
+      stopLogsIngestion: false
+    otellogswindows:
       print: false
       stopLogsIngestion: false
 

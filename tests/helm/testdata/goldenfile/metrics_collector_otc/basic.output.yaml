@@ -27,7 +27,7 @@ spec:
         release: RELEASE-NAME
       podMonitorSelector:
         release: RELEASE-NAME
-    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
+    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     nodeSelector:
       kubernetes.io/os: linux
     resources: {}

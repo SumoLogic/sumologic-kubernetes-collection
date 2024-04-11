@@ -62,7 +62,7 @@ memory_limiter:
   ## it can result in unnecessary CPU consumption.
   check_interval: 5s
   ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
-  limit_percentage: 75
+  limit_percentage: 90
   ## Spike limit (calculated from available memory). Must be less than limit_percentage.
   spike_limit_percentage: 20
 

@@ -1,0 +1,44 @@
+---
+# Source: sumologic/templates/logs/collector/otellogswindows/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-windows-logs-collector
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otellogswindows-logs-collector
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  config.yaml: |
+    exporters:
+      otlphttp:
+        disable_keep_alives: true
+        endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+        sending_queue:
+          queue_size: 10
+    extensions:
+      file_storage:
+        compaction:
+          directory: /var/lib/storage/otc
+          on_rebound: true
+        directory: /var/lib/storage/otc
+        timeout: 10s
+      health_check: {}
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 2000
+        send_batch_size: 1000
+        timeout: 1s
+    receivers: null
+    service:
+      extensions:
+      - health_check
+      - file_storage
+      - pprof
+      pipelines: null
+      telemetry:
+        logs:
+          level: debug

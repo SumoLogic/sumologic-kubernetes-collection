@@ -1,0 +1,33 @@
+sumologic:
+  logs:
+    collector:
+      otellogswindows:
+        enabled: true
+debug:
+  logs:
+    otellogswindows:
+      print: true
+      stopLogsIngestion: true
+    collector:
+      stopLogsIngestion: true
+    metadata:
+      stopLogsIngestion: true
+  metrics:
+    collector:
+      stopLogsIngestion: true
+    metadata:
+      stopLogsIngestion: true
+  instrumentation:
+    otelcolInstrumentation:
+      stopLogsIngestion: true
+    tracesGateway:
+      stopLogsIngestion: true
+    tracesSampler:
+      stopLogsIngestion: true
+  events:
+    stopLogsIngestion: true
+
+otellogswindows:
+  daemonset:
+    nameservers:
+      - 10.100.0.10

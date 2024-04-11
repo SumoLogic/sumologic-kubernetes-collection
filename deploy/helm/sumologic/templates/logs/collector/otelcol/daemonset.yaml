@@ -1,7 +1,6 @@
 {{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 {{- $ctx := . }}
 {{- $instance := "" -}}
-{{- $defaultNodeSelector := (include "kubernetes.defaultNodeSelector" .) }}
 {{- $defaultTolerations := (include "sumologic.logs.collector.tolerations" .) }}
 {{- $defaultAffinity := (include "kubernetes.defaultAffinity" .) }}
 {{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
@@ -12,12 +11,7 @@
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $nodeSelector := "" }}
-{{- if .nodeSelector }}
-{{- $nodeSelector = (toYaml .nodeSelector) }}
-{{- else if $defaultNodeSelector }}
-{{- $nodeSelector = $defaultNodeSelector }}
-{{- end }}
+{{- $nodeSelector := include "nodeSelector" (dict "Values" $.Values "nodeSelector" $daemonset.nodeSelector) }}
 {{- $tolerations := "" }}
 {{- if .tolerations }}
 {{- $tolerations = (toYaml .tolerations) }}

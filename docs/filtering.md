@@ -312,7 +312,7 @@ sumologic:
             metrics:
               metric:
                 ## Exclude all metrics from "sumologic" namespace
-                - `resource.attributes["k8s.namespace.name"] == "sumologic"`
+                - 'resource.attributes["k8s.namespace.name"] == "sumologic"'
 ```
 
 #### Drop metric datapoints with unspecified type

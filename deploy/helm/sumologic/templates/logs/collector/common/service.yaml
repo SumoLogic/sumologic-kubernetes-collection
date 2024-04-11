@@ -1,4 +1,4 @@
-{{- if and (eq (include "logs.collector.otelcol.enabled" .) "true") (.Values.otellogs.metrics.enabled) }}
+{{- if or (and (eq (include "logs.collector.otelcol.enabled" .) "true") (.Values.otellogs.metrics.enabled)) (and (eq (include "logs.collector.otellogswindows.enabled" .) "true") (.Values.otellogswindows.metrics.enabled)) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,7 +13,7 @@ metadata:
 {{- end }}
 spec:
   selector:
-    app.kubernetes.io/app-name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
+    app.kubernetes.io/app-name: {{ (include "sumologic.labels.app.logs.collector.pod"  .) | trunc 63 | trimSuffix "-" }}
   ports:
   - name: metrics
     port: 8888

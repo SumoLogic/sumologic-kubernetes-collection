@@ -1,0 +1,10 @@
+sumologic:
+  logs:
+    collector:
+      otellogswindows:
+        enabled: true
+
+otellogswindows:
+  daemonset:
+    nameservers:
+      - 10.100.0.10

@@ -7,6 +7,68 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.6.1]
+
+### Released 2024-03-29
+
+### Fixed
+
+- fix(metrics): use namespaceSelector from configuration for additionalServiceMonitors [#3618]
+
+[#3618]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3618
+[v4.6.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.6.1
+
+## [v4.6.0]
+
+### Released 2024-03-27
+
+### Added
+
+- feat: add Prometheus Windows Exporter as optional chart dependency [#3569]
+- feat(logs): make logs-collector's update strategy configurable [#3596]
+
+### Changed
+
+- feat(events): support global nodeSelector, tolerations and affinity [#3565]
+- chore(operatorinstr): add possibility to configure additional env vars for instrumentation [#3567]
+- feat: schedule collection on linux nodes only [#3570]
+- chore: remove clear_logs_timestamp from otelcol configuration [#3574]
+- chore: drop support for Kops 1.24 [#3581]
+- chore: Upgrade Opentelemetry-operator subchart to v0.47.1 [#3583]
+- chore: Upgrade metrics server to 6.11.2 [#3584]
+- feat(sumologicmock): use full hostname [#3585]
+- feat(otellogs): allow to override all properties within additionalDaemonsets [#3586]
+- chore: update Sumo Logic Terraform Provider to 2.28.3 [#3592]
+- chore: update Tailing Sidecar to 0.11.0 [#3603]
+- chore(setup): upgrade setup job to 3.12.1 [#3608]
+
+### Fixed
+
+- fix(sumologic-mock): fix nodeSelector [#3564]
+- fix(instr): fix backward configuration compatibility for instrumentation resources [#3573]
+- fix(logs): add container_name_key to source processor configuration to fix container-level annotations [#3582]
+- fix(metrics): change targetallocator ServiceAccount name [#3604]
+
+[#3569]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3569
+[#3596]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3596
+[#3565]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3565
+[#3567]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3567
+[#3570]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3570
+[#3574]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3574
+[#3581]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3581
+[#3583]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3583
+[#3584]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3584
+[#3585]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3585
+[#3586]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3586
+[#3592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3592
+[#3603]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3603
+[#3608]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3608
+[#3564]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3564
+[#3573]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3573
+[#3582]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3582
+[#3604]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3604
+[v4.6.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.6.0
+
 ## [v4.5.0]
 
 ### Released 2024-02-21
