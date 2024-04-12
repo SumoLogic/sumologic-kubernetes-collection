@@ -7,7 +7,7 @@ require (
 	github.com/gruntwork-io/go-commons v0.17.1
 	github.com/gruntwork-io/terratest v0.46.13
 	github.com/open-telemetry/opentelemetry-operator v0.97.1
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.73.0
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.73.1
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.29.3
