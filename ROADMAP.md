@@ -20,18 +20,19 @@ We are going to deprecate Fluent Bit and Fluentd.
 
 We are also aiming to use OpenTelemetry Collector as alternative to Prometheus.
 
-## Helm Chart v4
+## [Helm Chart v4][v4]
 
 Fluent Bit and Fluentd are going to be removed and no longer used.
 
 Prometheus is going to be deprecated and replaced with OpenTelemetry Collector by default.
 
-We are also going to move metadata enrichment closer to it's sources, e.g. for logs it's going to be performed by OpenTelemetry Collector
-daemonset (node agent)
-
 ## Helm Chart v5
 
 In this relase we would like to completely remove support for Prometheus.
 
+We are also going to move metadata enrichment closer to it's sources, e.g. for logs it's going to be performed by OpenTelemetry Collector
+daemonset (node agent)
+
 [v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2
-[v3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/milestone/9
+[v3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3
+[v4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4
