@@ -35,4 +35,4 @@ daemonset (node agent)
 
 [v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2
 [v3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3
-[v4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4
+[v4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/main
