@@ -17,12 +17,12 @@ spec:
         instrumentation.opentelemetry.io/inject-python: "true"
     spec:
       containers:
-      - name: pythonapp
-        image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-python:main
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
+        - name: pythonapp
+          image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-python:main
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]

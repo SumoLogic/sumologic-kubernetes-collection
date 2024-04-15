@@ -17,15 +17,15 @@ spec:
         instrumentation.opentelemetry.io/inject-nodejs: "true"
     spec:
       containers:
-      - name: nodejsapp
-        image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-nodejs:main
-        env:
-        - name: NODE_PATH
-          value: /usr/local/lib/node_modules
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
+        - name: nodejsapp
+          image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-nodejs:main
+          env:
+            - name: NODE_PATH
+              value: /usr/local/lib/node_modules
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]

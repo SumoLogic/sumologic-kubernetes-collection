@@ -17,12 +17,12 @@ spec:
         instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
-      - name: javaapp
-        image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-java:main
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
+        - name: javaapp
+          image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-java:main
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
