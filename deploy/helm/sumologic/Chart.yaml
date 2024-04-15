@@ -38,5 +38,5 @@ dependencies:
     condition: opentelemetry-operator.enabled,sumologic.metrics.collector.otelcol.enabled
   - name: prometheus-windows-exporter
     repository: https://prometheus-community.github.io/helm-charts
-    version: "0.3.*"
+    version: 0.3.1
     condition: prometheus-windows-exporter.enabled,sumologic.metrics.collector.otelcol.enabled
