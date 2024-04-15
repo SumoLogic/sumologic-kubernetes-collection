@@ -12,7 +12,7 @@ VERSION_IDX = 0
 CREATED_IDX = 1
 
 # We ignore Prometheus here, as we're locked to whatever version is CRD-compatible with OpenShift
-DEPENDENCIES_TO_IGNORE=("kube-prometheus-stack")
+DEPENDENCIES_TO_IGNORE=("kube-prometheus-stack", "falco")
 
 def get_info() -> list[str]:
     output_lines = []
