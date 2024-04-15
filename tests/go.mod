@@ -6,7 +6,7 @@ require (
 	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/gruntwork-io/go-commons v0.17.1
 	github.com/gruntwork-io/terratest v0.46.13
-	github.com/open-telemetry/opentelemetry-operator v0.97.1
+	github.com/open-telemetry/opentelemetry-operator v0.98.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.73.1
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -98,7 +98,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/vladimirvivien/gexe v0.2.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/net v0.22.0 // indirect
+	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
