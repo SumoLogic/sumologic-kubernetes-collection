@@ -104,7 +104,6 @@ func WaitUntilExpectedTracesPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		fmt.Printf("%s\n", ctx)
 		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
 
 		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
