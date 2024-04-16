@@ -12,7 +12,8 @@ VERSION_IDX = 0
 CREATED_IDX = 1
 
 # We ignore Prometheus here, as we're locked to whatever version is CRD-compatible with OpenShift
-DEPENDENCIES_TO_IGNORE=("kube-prometheus-stack", "falco")
+DEPENDENCIES_TO_IGNORE=("kube-prometheus-stack")
+DEPENDENCIES_ONLY_MINOR_UPGRADES=("falco", "metrics-server")
 
 def get_info() -> list[str]:
     output_lines = []
@@ -43,9 +44,13 @@ def get_info() -> list[str]:
         pd_entries["created date"] = pd.to_datetime(
             pd_entries["created"], format=time_formate_with_zone
         )
-
-        pd_sorted_entries = pd_entries.sort_values("created date", ascending=False)
-        latest_release = pd_sorted_entries.loc[0].values
+        if dep["name"] in DEPENDENCIES_ONLY_MINOR_UPGRADES:
+            major_version, *_ = current_version.split(".")
+            compatible_entries = pd_entries[pd_entries["version"].str.startswith(major_version)]
+        else:
+            compatible_entries = pd_entries
+        pd_sorted_entries = compatible_entries.sort_values("created date", ascending=False)
+        latest_release = pd_sorted_entries.iloc[0].values
         current_release = (
             pd_sorted_entries.loc[pd_sorted_entries["version"] == current_version]
             .values.flatten()
