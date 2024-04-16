@@ -13,6 +13,9 @@ details on our Kubernetes Solution.
   - [Support Matrix](#support-matrix)
     - [ARM support](#arm-support)
     - [Falco support](#falco-support)
+    - [Windows nodes support](#windows-nodes-support)
+      - [Merics collection](#merics-collection)
+      - [Logs collection](#logs-collection)
 
 Documentation for other versions can be found in the
 [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
@@ -95,7 +98,7 @@ The following table displays the tested Kubernetes and Helm versions.
 | K8s with EKS (fargate) | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29 |
 | K8s with Kops          | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29 |
 | K8s with GKE           | 1.26<br/>1.27<br/>1.28<br/>1.29          |
-| K8s with AKS           | 1.27<br/>1.28<br/>1.29                   |
+| K8s with AKS           | 1.26<br/>1.27<br/>1.28<br/>1.29          |
 | OpenShift              | 4.12<br/>4.13<br/>4.14                   |
 | Helm                   | 3.8.2 (Linux)                            |
 | kubectl                | 1.23.6                                   |
