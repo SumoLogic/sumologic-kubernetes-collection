@@ -1,0 +1,30 @@
+# Request less resources so that this fits on Github actions runners environment
+sumologic:
+  events:
+    enabled: false
+  logs:
+    enabled: false
+  metrics:
+    enabled: false
+
+opentelemetry-operator:
+  enabled: true
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator1,ot-operator2,test-apps"
+  manager:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+
+  kubeRBACProxy:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 64Mi
+
+otelcolInstrumentation:
+  enabled: true
+
+tracesGateway:
+  enabled: false

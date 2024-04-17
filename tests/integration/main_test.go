@@ -76,6 +76,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// TODO: Create namespaces only for specific tests
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[0]),
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[1]),
+		stepfuncs.KubectlCreateNamespaceOpt(internal.InstrumentationAppsNamespace),
 		stepfuncs.KubectlCreateNamespaceOpt(internal.OverrideNamespace),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),

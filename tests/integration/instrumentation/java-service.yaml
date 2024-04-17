@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: java-app-service
+  labels:
+    app: java-svc
+spec:
+  selector:
+    app: java-app
+  ports:
+    - protocol: TCP
+      targetPort: 8080
+      port: 8080
+  type: LoadBalancer

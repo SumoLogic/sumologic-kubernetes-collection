@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nodejs-app-service
+  labels:
+    app: nodejs-svc
+spec:
+  selector:
+    app: nodejs-app
+  ports:
+    - protocol: TCP
+      targetPort: 3000
+      port: 8080
+  type: LoadBalancer

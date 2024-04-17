@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: python-app-service
+  labels:
+    app: python-svc
+spec:
+  selector:
+    app: python-app
+  ports:
+    - protocol: TCP
+      targetPort: 8080
+      port: 8080
+  type: LoadBalancer
