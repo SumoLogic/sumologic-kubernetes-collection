@@ -153,6 +153,9 @@ sumologic:
       ## Add custom annotations only to setup job pod
       podAnnotations: {}
 
+      ## Time in seconds after which the job result will be removed from the Kubernetes cluster
+      ttlSecondsAfterFinished: 120
+
     ## uncomment for the debug mode (disables the automatic run of the setup.sh script)
     # debug: true
 

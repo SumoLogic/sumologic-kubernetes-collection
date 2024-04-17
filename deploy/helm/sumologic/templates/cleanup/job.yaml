@@ -10,6 +10,7 @@ metadata:
     app: {{ template "sumologic.metadata.name.cleanup" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
+  ttlSecondsAfterFinished: {{ .Values.sumologic.setup.job.ttlSecondsAfterFinished }}
   template:
     metadata:
       annotations:
