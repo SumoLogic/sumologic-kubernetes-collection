@@ -15,6 +15,7 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
 spec:
+  ttlSecondsAfterFinished: 0
   template:
     metadata:
       annotations:
