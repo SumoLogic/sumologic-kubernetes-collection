@@ -41,7 +41,7 @@ spec:
               mountPath: /etc/terraform
       containers:
         - name: cleanup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.12.1
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.13.0
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: cleanup
