@@ -301,7 +301,25 @@ are few common examples.
 
 #### Drop unnecessary metrics
 
-You can use the [filter processor](#filter-processor) to drop logs you don't want to be sent to Sumo Logic:
+To drop Prometheus histogram metrics using the [filter processor](#filter-processor)
+
+```yaml
+sumologic:
+  metrics:
+    otelcol:
+      extraProcessors:
+        - filter/exclude_sumo_metrics:
+            metrics:
+              exclude:
+                match_type: strict
+                metric_names:
+                  - otelcol_processor_batch_batch_send_size
+```
+
+**Note**: Please use the base metric name to filter Prometheus
+[histogram metrics](https://prometheus.io/docs/concepts/metric_types/#histogram)
+
+You can use the [filter processor](#filter-processor) to drop metrics you don't want to be sent to Sumo Logic:
 
 ```yaml
 sumologic:
