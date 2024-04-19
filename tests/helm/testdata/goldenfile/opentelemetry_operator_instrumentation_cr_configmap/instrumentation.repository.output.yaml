@@ -1,0 +1,138 @@
+---
+# Source: sumologic/templates/opentelemetry-operator/configmap-instrumentation-cr.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-ot-operator-instr-cm
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-ot-operator-instr-cm
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  instrumentation.cr.yaml: |
+    ---
+    apiVersion: opentelemetry.io/v1alpha1
+    kind: Instrumentation
+    metadata:
+      namespace: ot-operator1
+      name: RELEASE-NAME-sumologic-ot-operator-instr
+      labels:
+        app: RELEASE-NAME-sumologic-ot-operator-instr
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      propagators:
+        - tracecontext
+        - baggage
+      resource:
+        addK8sUIDAttributes: false
+      env:
+        - name: OTEL_APPLICATION_NAMESPACE_NAME
+          value: ot-operator1
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: application=ot-operator1
+      dotnet:
+        image: mydotnetrepo:mydotnettag
+        env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
+          - name: OTEL_LOGS_EXPORTER
+            value: none
+          - name: OTEL_TRACES_EXPORTER
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+      python:
+        image: mypythonrepo:mypythontag
+        env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
+          - name: OTEL_TRACES_EXPORTER
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+      nodejs:
+        image: mynodejsrepo:mynodejstag
+        env:
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
+      java:
+        image: myjavarepo:myjavatag
+        env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
+          - name: OTEL_TRACES_EXPORTER
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+    ---
+    apiVersion: opentelemetry.io/v1alpha1
+    kind: Instrumentation
+    metadata:
+      namespace: ot-operator2
+      name: RELEASE-NAME-sumologic-ot-operator-instr
+      labels:
+        app: RELEASE-NAME-sumologic-ot-operator-instr
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      propagators:
+        - tracecontext
+        - baggage
+      resource:
+        addK8sUIDAttributes: false
+      env:
+        - name: OTEL_APPLICATION_NAMESPACE_NAME
+          value: ot-operator2
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: application=ot-operator2
+      dotnet:
+        image: mydotnetrepo:mydotnettag
+        env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
+          - name: OTEL_LOGS_EXPORTER
+            value: none
+          - name: OTEL_TRACES_EXPORTER
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+      python:
+        image: mypythonrepo:mypythontag
+        env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
+          - name: OTEL_TRACES_EXPORTER
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+      nodejs:
+        image: mynodejsrepo:mynodejstag
+        env:
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
+      java:
+        image: myjavarepo:myjavatag
+        env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
+          - name: OTEL_TRACES_EXPORTER
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318

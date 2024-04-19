@@ -2434,7 +2434,11 @@ opentelemetry-operator:
 
   instrumentation:
     dotnet:
-      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.7.0
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet
+      tag: 0.7.0
+
+      ## image is deprecated, it should be specified in ${repository}:${tag} format
+      image: ""
       traces:
         enabled: true
       metrics:
@@ -2446,7 +2450,11 @@ opentelemetry-operator:
       #     value: my_value
 
     java:
-      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.26.0
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java
+      tag: 1.26.0
+
+      ## image is deprecated, it should be specified in ${repository}:${tag} format
+      image: ""
       traces:
         enabled: true
       metrics:
@@ -2458,7 +2466,11 @@ opentelemetry-operator:
       #     value: my_value
 
     python:
-      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.39b0
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python
+      tag: 0.39b0
+
+      ## image is deprecated, it should be specified in ${repository}:${tag} format
+      image: ""
       traces:
         enabled: true
       metrics:
@@ -2472,7 +2484,11 @@ opentelemetry-operator:
     ## Current instrumentation doesn't support customization
     ## for nodejs. Traces are always enabled.
     nodejs:
-      image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.40.0
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs
+      tag: 0.40.0
+
+      ## image is deprecated, it should be specified in ${repository}:${tag} format
+      image: ""
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:

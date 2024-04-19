@@ -4,6 +4,22 @@
 {{ fail "No value for \"opentelemetry-operator.instrumentationNamespaces\".Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
 {{- else -}}
 {{- range $ns := splitList "," $operator.instrumentationNamespaces -}}
+{{- $dotnetImage := printf "%s:%s" $operator.instrumentation.dotnet.repository $operator.instrumentation.dotnet.tag -}}
+{{- if $operator.instrumentation.dotnet.image -}}
+{{- $dotnetImage = $operator.instrumentation.dotnet.image -}}
+{{- end -}}
+{{- $pythonImage := printf "%s:%s" $operator.instrumentation.python.repository $operator.instrumentation.python.tag -}}
+{{- if $operator.instrumentation.python.image -}}
+{{- $pythonImage = $operator.instrumentation.python.image -}}
+{{- end -}}
+{{- $nodeJSImage := printf "%s:%s" $operator.instrumentation.nodejs.repository $operator.instrumentation.nodejs.tag -}}
+{{- if $operator.instrumentation.nodejs.image -}}
+{{- $nodeJSImage = $operator.instrumentation.nodejs.image -}}
+{{- end -}}
+{{- $javaImage := printf "%s:%s" $operator.instrumentation.java.repository $operator.instrumentation.java.tag -}}
+{{- if $operator.instrumentation.java.image -}}
+{{- $javaImage = $operator.instrumentation.java.image -}}
+{{- end -}}
 ---
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
@@ -25,7 +41,7 @@ spec:
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: application={{ $ns }}
   dotnet:
-    image: {{ $operator.instrumentation.dotnet.image }}
+    image: {{ $dotnetImage }}
     env:
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.dotnet.metrics.enabled) }}
@@ -41,7 +57,7 @@ spec:
 {{- toYaml $operator.instrumentation.dotnet.extraEnvVars | nindent 6 -}}
 {{- end }}
   python:
-    image: {{ $operator.instrumentation.python.image }}
+    image: {{ $pythonImage }}
     env:
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.python.metrics.enabled) }}
@@ -55,7 +71,7 @@ spec:
 {{- toYaml $operator.instrumentation.python.extraEnvVars | nindent 6 -}}
 {{- end }}
   nodejs:
-    image: {{ $operator.instrumentation.nodejs.image }}
+    image: {{ $nodeJSImage }}
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4317
@@ -63,7 +79,7 @@ spec:
 {{- toYaml $operator.instrumentation.nodejs.extraEnvVars | nindent 6 -}}
 {{- end }}
   java:
-    image: {{ $operator.instrumentation.java.image }}
+    image: {{ $javaImage }}
     env:
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.java.metrics.enabled) }}
