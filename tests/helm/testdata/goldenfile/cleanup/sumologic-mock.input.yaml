@@ -6,3 +6,8 @@ debug:
 
 sumologic:
   cleanupEnabled: true
+  setup:
+    job:
+      initContainerImage:
+        repository: myrepo
+        tag: mytag
