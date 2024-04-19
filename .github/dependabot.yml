@@ -11,7 +11,12 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/tests/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      kubernetes:
+        patterns:
+          - "k8s.io/*"
+          - "sigs.k8s.io/*"
 
     labels:
       - skip-changelog
