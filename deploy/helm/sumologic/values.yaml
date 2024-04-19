@@ -118,6 +118,9 @@ sumologic:
         repository: public.ecr.aws/sumologic/kubernetes-setup
         tag: 3.13.0
         pullPolicy: IfNotPresent
+      initContainerImage:
+        repository: public.ecr.aws/docker/library/busybox
+        tag: latest
       ## Optionally specify an array of pullSecrets.
       ## They will be added to serviceaccount that is used for Sumo Logic's
       ## setup job.
