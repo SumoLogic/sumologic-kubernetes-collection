@@ -1,0 +1,17 @@
+opentelemetry-operator:
+  enabled: true
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator1,ot-operator2"
+  instrumentation:
+    dotnet:
+      repository: mydotnetrepo
+      tag: mydotnettag
+    python:
+      repository: mypythonrepo
+      tag: mypythontag
+    nodejs:
+      repository: mynodejsrepo
+      tag: mynodejstag
+    java:
+      repository: myjavarepo
+      tag: myjavatag
