@@ -1,9 +1,9 @@
 name: Sync Repositories
 
 on:
-  push:
-    branches:
-      - drosiek-sync-container-repositories
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   sync-repositories:
