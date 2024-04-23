@@ -30,6 +30,7 @@ pkgs.mkShell {
     pkgs.golangci-lint
     pkgs.go
     pkgs.kind
+    pkgs.skopeo
   ];
 }
 ## Output of `make tool-versions`:

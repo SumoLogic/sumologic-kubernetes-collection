@@ -1,0 +1,30 @@
+name: Sync Repositories
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync-repositories:
+    name: Sync container repositories
+    strategy:
+      matrix:
+        include:
+          - docker_username: DOCKERHUB_LOGIN_KUBE_RBAC_PROXY
+            docker_password: DOCKERHUB_PASSWORD_KUBE_RBAC_PROXY
+            aws_access_key: AWS_ACCESS_KEY_ID_KUBE_RBAC_PROXY
+            aws_secret_access_key: AWS_SECRET_ACCESS_KEY_KUBE_RBAC_PROXY
+            src_repository: quay.io/brancz/kube-rbac-proxy
+            dest_docker_namespace: docker.io/sumologic
+            dest_ecr_namespace: public.ecr.aws/a4t4y2n3
+    uses: ./.github/workflows/workflow-sync-repositories.yaml
+    with:
+      src_repository: ${{ matrix.src_repository }}
+      dest_docker_namespace: ${{ matrix.dest_docker_namespace }}
+      dest_ecr_namespace: ${{ matrix.dest_ecr_namespace }}
+    secrets:
+      DOCKER_USERNAME: ${{ secrets[matrix.docker_username] }}
+      DOCKER_PASSWORD: ${{ secrets[matrix.docker_password] }}
+      AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key] }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
