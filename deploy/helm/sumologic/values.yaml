@@ -2420,7 +2420,7 @@ tailing-sidecar-operator:
 
   kubeRbacProxy:
     image:
-      repository: public.ecr.aws/sumologic/sumologic-otel-collector/kube-rbac-proxy
+      repository: public.ecr.aws/sumologic/kube-rbac-proxy
 
 ## Configure OpenTelemetry Operator - Instrumentation
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
@@ -2532,7 +2532,7 @@ opentelemetry-operator:
 
   kubeRBACProxy:
     image:
-      repository: public.ecr.aws/sumologic/sumologic-otel-collector/kube-rbac-proxy
+      repository: public.ecr.aws/sumologic/kube-rbac-proxy
 
 ## pvcCleaner deletes unused PVCs
 pvcCleaner:
