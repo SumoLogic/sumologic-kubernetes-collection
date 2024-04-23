@@ -3,7 +3,7 @@
 SRC_REPOSITORY=${1}
 DESTINATION_NAMESPACE=${2}
 skopeo sync \
-    -f oci \
+    -f v2s2 \
     --retry-times 5 \
     --src docker \
     --dest docker \
