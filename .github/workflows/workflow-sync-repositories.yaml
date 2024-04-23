@@ -30,14 +30,6 @@ jobs:
     runs-on: ubuntu-20.04
     name: ${{ inputs.src_repository }}
     steps:
-      - name: No re-runs
-        run: |
-          if [ "$GITHUB_RUN_ATTEMPT" -gt 1 ]; then
-            echo "It is not advised to re-run this workflow! It won't speed up the process!"
-            exit 1
-          else
-            echo "not a re-run, continue"
-          fi
       - uses: actions/checkout@v4
       - name: Install skopeo
         run: sudo apt-get install skopeo -y
