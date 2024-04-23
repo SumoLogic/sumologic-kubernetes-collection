@@ -11,8 +11,34 @@ jobs:
     strategy:
       matrix:
         include:
+          - src_repository: docker.io/bitnami/metrics-server
+            suffix: METRICS_SERVER
+          - src_repository: docker.io/busybox
+            suffix: BUSYBOX
+          - src_repository: docker.io/telegraf
+            suffix: TELEGRAF
+          - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet
+            suffix: AUTOINSTRUMENTATION_DOTNET
+          - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java
+            suffix: AUTOINSTRUMENTATION_JAVA
+          - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs
+            suffix: AUTOINSTRUMENTATION_NODEJS
+          - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python
+            suffix: AUTOINSTRUMENTATION_PYTHON
+          - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
+            suffix: OPENTELEMETRY_OPERATOR
+          - src_repository: public.ecr.aws/falcosecurity/falco-driver-loader
+            suffix: FALCO_DRIVER_LOADER
+          - src_repository: public.ecr.aws/falcosecurity/falco-no-driver
+            suffix: FALCO_NO_DRIVER
           - src_repository: quay.io/brancz/kube-rbac-proxy
             suffix: KUBE_RBAC_PROXY
+          - src_repository: quay.io/influxdb/telegraf-operator
+            suffix: TELEGRAF_OPERATOR
+          - src_repository: quay.io/prometheus/node-exporter
+            suffix: NODE_EXPORTER
+          - src_repository: registry.k8s.io/kube-state-metrics/kube-state-metrics
+            suffix: KUBE_STATE_METRICS
     uses: ./.github/workflows/workflow-sync-repositories.yaml
     with:
       src_repository: ${{ matrix.src_repository }}
