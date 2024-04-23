@@ -8,7 +8,7 @@ docker run \
         sync \
             --keep-going \
             --remove-signatures \
-            -f v2s2 \
+            -f oci \
             --retry-times 5 \
             --src docker \
             --dest docker \
