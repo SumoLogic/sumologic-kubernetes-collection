@@ -2,7 +2,6 @@
 
 SRC_REPOSITORY=${1}
 DESTINATION_NAMESPACE=${2}
-ls -al ~/.docker/config.json
 docker run \
     -v ~/.docker/config.json:/tmp/auth.json \
     quay.io/skopeo/stable:v1.15.0 \
