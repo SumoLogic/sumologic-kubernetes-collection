@@ -28,6 +28,7 @@ on:
 jobs:
   sync-repository:
     runs-on: ubuntu-22.04
+    continue-on-error: true
     name: ${{ inputs.src_repository }}
     steps:
       - uses: actions/checkout@v4
