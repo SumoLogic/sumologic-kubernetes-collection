@@ -7,6 +7,7 @@ docker run \
     quay.io/skopeo/stable:v1.15.0 \
         sync \
             --keep-going \
+            --remove-signatures \
             -f v2s2 \
             --retry-times 5 \
             --src docker \
