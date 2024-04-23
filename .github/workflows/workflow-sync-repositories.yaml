@@ -28,7 +28,7 @@ on:
 jobs:
   sync-repository:
     runs-on: ubuntu-20.04
-    name: sync ${{ inputs.src_repository }} repository
+    name: ${{ inputs.src_repository }}
     steps:
       - name: No re-runs
         run: |
