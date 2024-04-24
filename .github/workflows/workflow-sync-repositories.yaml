@@ -42,6 +42,7 @@ jobs:
       - name: Synchronize image to Docker Hub repository
         run: ./ci/sync-repository.sh ${{ inputs.src_repository }} ${{ inputs.dest_docker_namespace }}
       - name: Login to ECR
+        if: always()
         run: |-
           aws ecr-public get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin ${{ inputs.dest_ecr_namespace }}
@@ -49,4 +50,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Synchronize image to ECR repository
+        if: always()
         run: ./ci/sync-repository.sh ${{ inputs.src_repository }} ${{ inputs.dest_ecr_namespace }}
