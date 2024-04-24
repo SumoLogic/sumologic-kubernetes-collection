@@ -11,20 +11,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - docker_username: DOCKERHUB_LOGIN_KUBE_RBAC_PROXY
-            docker_password: DOCKERHUB_PASSWORD_KUBE_RBAC_PROXY
-            aws_access_key: AWS_ACCESS_KEY_ID_KUBE_RBAC_PROXY
-            aws_secret_access_key: AWS_SECRET_ACCESS_KEY_KUBE_RBAC_PROXY
-            src_repository: quay.io/brancz/kube-rbac-proxy
-            dest_docker_namespace: docker.io/sumologic
-            dest_ecr_namespace: public.ecr.aws/a4t4y2n3
+          - src_repository: quay.io/brancz/kube-rbac-proxy
+            suffix: KUBE_RBAC_PROXY
     uses: ./.github/workflows/workflow-sync-repositories.yaml
     with:
       src_repository: ${{ matrix.src_repository }}
-      dest_docker_namespace: ${{ matrix.dest_docker_namespace }}
-      dest_ecr_namespace: ${{ matrix.dest_ecr_namespace }}
+      dest_docker_namespace: docker.io/sumologic
+      dest_ecr_namespace: public.ecr.aws/a4t4y2n3
     secrets:
-      DOCKER_USERNAME: ${{ secrets[matrix.docker_username] }}
-      DOCKER_PASSWORD: ${{ secrets[matrix.docker_password] }}
-      AWS_ACCESS_KEY_ID: ${{ secrets[matrix.aws_access_key] }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets[matrix.aws_secret_access_key] }}
+      DOCKER_USERNAME: ${{ secrets[format('DOCKERHUB_LOGIN_{0}', matrix.suffix)] }}
+      DOCKER_PASSWORD: ${{ secrets[format('DOCKERHUB_PASSWORD_{0}', matrix.suffix)] }}
+      AWS_ACCESS_KEY_ID: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', matrix.suffix)] }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', matrix.suffix)] }}
