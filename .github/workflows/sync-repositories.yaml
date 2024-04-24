@@ -37,7 +37,7 @@ jobs:
             suffix: KUBE_RBAC_PROXY
           - src_repository: quay.io/coreos/prometheus-config-reloader
             suffix: PROMETHEUS_CONFIG_RELOADER
-          - src_repository: quay.io/coreos/prometheus
+          - src_repository: quay.io/prometheus/prometheus
             suffix: PROMETHEUS
           - src_repository: quay.io/coreos/prometheus-operator
             suffix: PROMETHEUS_OPERATOR
