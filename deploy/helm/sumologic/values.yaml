@@ -1188,6 +1188,8 @@ kube-prometheus-stack:
     enabled: false
     additionalServiceMonitors: []
     prometheusSpec:
+      image:
+        repository: public.ecr.aws.com/sumologic/prometheus
       ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics
       ## from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
