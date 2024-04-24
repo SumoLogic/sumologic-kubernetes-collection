@@ -120,7 +120,7 @@ spec:
       initContainers: # ensure the host path is owned by the otel user group
         - name: changeowner
           # yamllint disable-line rule:line-length
-          image: public.ecr.aws/docker/library/busybox:1.36.0
+          image: public.ecr.aws/sumologic/busybox:1.36.0
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
