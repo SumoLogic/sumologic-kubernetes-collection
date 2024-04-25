@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+
 SRC_REPOSITORY=${1}
 DESTINATION_NAMESPACE=${2}
 
@@ -9,6 +9,7 @@ docker run \
         sync \
             --all \
             --keep-going \
+            -f oci \
             --retry-times 5 \
             --src docker \
             --dest docker \
