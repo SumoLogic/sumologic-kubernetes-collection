@@ -47,7 +47,6 @@ jobs:
             suffix: PROMETHEUS_OPERATOR
           - src_repository: quay.io/thanos/thanos
             suffix: THANOS
-            format: ""
           - src_repository: registry.k8s.io/kube-state-metrics/kube-state-metrics
             suffix: KUBE_STATE_METRICS
     uses: ./.github/workflows/workflow-sync-repositories.yaml

@@ -15,10 +15,6 @@ on:
         description: Destination ECR repository
         required: true
         type: string
-      format:
-        description: Manifest format
-        default: ""
-        type: string
     secrets:
       DOCKER_USERNAME:
         required: true
@@ -54,4 +50,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Synchronize image to ECR repository
         if: always() && steps.loginECR.outcome == 'success'
-        run: ./ci/sync-repository.sh ${{ inputs.src_repository }} ${{ inputs.dest_ecr_namespace }} "${{ inputs.format }}"
+        run: ./ci/sync-repository.sh ${{ inputs.src_repository }} ${{ inputs.dest_ecr_namespace }}
