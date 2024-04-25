@@ -119,7 +119,7 @@ sumologic:
         tag: 3.13.0
         pullPolicy: IfNotPresent
       initContainerImage:
-        repository: public.ecr.aws/docker/library/busybox
+        repository: public.ecr.aws/sumologic/busybox
         tag: latest
       ## Optionally specify an array of pullSecrets.
       ## They will be added to serviceaccount that is used for Sumo Logic's
@@ -744,6 +744,9 @@ sumologic:
 ## Configure metrics-server
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/metrics-server/values.yaml
 metrics-server:
+  image:
+    registry: public.ecr.aws
+    repository: sumologic/metrics-server
   ## Set the enabled flag to true for enabling metrics-server.
   ## This is required before enabling autoscaling unless you have an existing metrics-server in the cluster.
   enabled: false
@@ -1020,6 +1023,8 @@ kube-prometheus-stack:
     defaultDashboardsEnabled: false
   prometheusOperator:
     enabled: false
+    image:
+      repository: public.ecr.aws/sumologic/prometheus-operator
     ## Labels to add to the operator pod
     podLabels: {}
     ## Annotations to add to the operator pod
@@ -1065,6 +1070,7 @@ kube-prometheus-stack:
     ## uses version 2.6.0 of kube-state-metrics, but this version has some critical vulnerabilities,
     ## so we bump the image manually.
     image:
+      repository: public.ecr.aws/sumologic/kube-state-metrics
       tag: "v2.7.0"
     prometheus:
       monitor:
@@ -1131,6 +1137,8 @@ kube-prometheus-stack:
   prometheus-node-exporter:
     ## Put here the new name if you want to override the full name used for Prometheus Node exporter components.
     # fullnameOverride: ""
+    image:
+      repository: public.ecr.aws/sumologic/node-exporter
 
     nodeSelector:
       kubernetes.io/os: linux
@@ -1180,6 +1188,8 @@ kube-prometheus-stack:
     enabled: false
     additionalServiceMonitors: []
     prometheusSpec:
+      image:
+        repository: public.ecr.aws/sumologic/prometheus
       ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics
       ## from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
@@ -2068,7 +2078,7 @@ otellogs:
     initContainers:
       changeowner:
         image:
-          repository: "public.ecr.aws/docker/library/busybox"
+          repository: "public.ecr.aws/sumologic/busybox"
           tag: "1.36.0"
           pullPolicy: IfNotPresent
         securityContext:
@@ -2291,6 +2301,7 @@ telegraf-operator:
   # fullnameOverride: ""
   image:
     sidecarImage: public.ecr.aws/sumologic/telegraf:1.21.2
+    repository: public.ecr.aws/sumologic/telegraf-operator
   replicaCount: 1
   classes:
     secretName: "telegraf-operator-classes"
@@ -2323,7 +2334,7 @@ falco:
 
   image:
     registry: public.ecr.aws
-    # repository: falcosecurity/falco-no-driver
+    repository: sumologic/falco-no-driver
 
   ## Add kernel-devel package through MachineConfig, required to enable building of missing falco modules (only for OpenShift)
   addKernelDevel: true
@@ -2332,7 +2343,7 @@ falco:
     initContainers:
       ## Add initContainer to wait until kernel-devel is installed on host
       - name: init-falco
-        image: public.ecr.aws/docker/library/busybox:1.36.0
+        image: public.ecr.aws/sumologic/busybox:1.36.0
         command:
           - "sh"
           - "-c"
@@ -2357,7 +2368,7 @@ falco:
       initContainer:
         image:
           registry: public.ecr.aws
-          # repository: falcosecurity/falco-driver-loader
+          repository: sumologic/falco-driver-loader
   falco:
     load_plugins:
       - json
@@ -2438,7 +2449,7 @@ opentelemetry-operator:
 
   instrumentation:
     dotnet:
-      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet
+      repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
       tag: 0.7.0
 
       ## image is deprecated, it should be specified in ${repository}:${tag} format
@@ -2454,7 +2465,7 @@ opentelemetry-operator:
       #     value: my_value
 
     java:
-      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java
+      repository: public.ecr.aws/sumologic/autoinstrumentation-java
       tag: 1.26.0
 
       ## image is deprecated, it should be specified in ${repository}:${tag} format
@@ -2470,7 +2481,7 @@ opentelemetry-operator:
       #     value: my_value
 
     python:
-      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python
+      repository: public.ecr.aws/sumologic/autoinstrumentation-python
       tag: 0.39b0
 
       ## image is deprecated, it should be specified in ${repository}:${tag} format
@@ -2488,7 +2499,7 @@ opentelemetry-operator:
     ## Current instrumentation doesn't support customization
     ## for nodejs. Traces are always enabled.
     nodejs:
-      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs
+      repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
       tag: 0.40.0
 
       ## image is deprecated, it should be specified in ${repository}:${tag} format
@@ -2516,6 +2527,8 @@ opentelemetry-operator:
       issuerRef: {}
 
   manager:
+    image:
+      repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
       tag: "0.92.0-sumo-0"
@@ -2533,6 +2546,10 @@ opentelemetry-operator:
   kubeRBACProxy:
     image:
       repository: public.ecr.aws/sumologic/kube-rbac-proxy
+
+  testFramework:
+    image:
+      repository: public.ecr.aws/sumologic/busybox
 
 ## pvcCleaner deletes unused PVCs
 pvcCleaner:
