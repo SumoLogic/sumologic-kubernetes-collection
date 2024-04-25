@@ -7,7 +7,6 @@ docker run \
     quay.io/skopeo/stable:v1.15.0 \
         sync \
             --keep-going \
-            -f oci \
             --retry-times 5 \
             --src docker \
             --dest docker \
