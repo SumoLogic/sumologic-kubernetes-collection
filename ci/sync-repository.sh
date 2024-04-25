@@ -13,6 +13,7 @@ docker run \
     quay.io/skopeo/stable:v1.15.0 \
         sync \
             ${FORMAT} \
+            --all \
             --keep-going \
             --retry-times 5 \
             --src docker \
