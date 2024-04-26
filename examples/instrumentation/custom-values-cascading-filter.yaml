@@ -1,0 +1,71 @@
+sumologic:
+  accessId: <ENTER_YOUR_SUMOLOGIC_ACCESS_ID>
+  accessKey: <ENTER_YOUR_SUMOLOGIC_ACCESS_KEY>
+  clusterName: <ENTER_YOUR_CLUSTER_NAME>
+  traces:
+    enabled: true
+## Following configures OpenTelemetry Collector (traces-sampler)
+tracesSampler:
+  config:
+    processors:
+      ## Following enables a smart cascading filtering rules with preset limits.
+      ## https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/cascadingfilterprocessor
+      cascading_filter:
+        ## (default = 30s): Wait time since the first span of a trace before making
+        ## a filtering decision
+        decision_wait: 30s
+        ## (default = 100000): Number of traces kept in memory
+        num_traces: 200000
+        ## (default = 0): Expected number of new traces (helps in allocating data structures)
+        expected_new_traces_per_sec: 100
+        ## (default = 0): defines maximum number of spans per second
+        spans_per_second: 1600
+        ## Number of spans that are always probabilistically filtered
+        ## (hence might be used for metrics calculation).
+        probabilistic_filtering_rate: 100
+        ## Rules that will reject all traces matching them
+        trace_reject_filters:
+          # Adjust or remove the example as needed
+          - name: remove-all-traces-with-health-span
+            name_pattern: "health.*"
+          # Adjust or remove the example as needed
+          - name: remove-all-traces-with-healthcheck-service
+            attributes:
+              - key: service.name
+                values:
+                  - "healthcheck/.*"
+                use_regex: true
+        ## Rules that will accept traces with this criteria, but only to a given volume
+        trace_accept_filters:
+          # Adjust or remove the example as needed
+          - name: sampling-priority,
+            attributes:
+              - key: sampling.priority
+                values:
+                  - "1"
+            spans_per_second: 400 # <- adjust the output traffic level
+          # Adjust or remove the example as needed
+          - name: traces-with-errors
+            properties:
+              min_number_of_errors: 1
+            spans_per_second: 400 # <- adjust the output traffic level
+          # Adjust or remove the example as needed
+          - name: traces-with-and-high-latency
+            properties:
+              min_duration: 10s
+            spans_per_second: 800 # <- adjust the output traffic level
+          # Adjust or remove the example as needed
+          # - name: some-service-traces-with-some-attribute
+          #  attributes:
+          #    - key: service.name
+          #      values:
+          #        - some-service
+          #    - key: important-key
+          #      values:
+          #        - value1
+          #        - value2
+          #      use_regex: true
+          #  spans_per_second: 300 # <- adjust the output traffic level
+          # Adjust or remove the example as needed
+          - name: everything_else
+            spans_per_second: -1 # If there's anything left in the budget, it will randomly select remaining traces
