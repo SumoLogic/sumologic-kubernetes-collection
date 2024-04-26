@@ -48,7 +48,7 @@ jobs:
           go-version: "1.22"
           cache: false
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v5
         with:
           version: v1.57.1
           working-directory: ./tests/integration/
