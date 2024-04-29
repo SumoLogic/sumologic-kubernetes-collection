@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/gruntwork-io/go-commons v0.17.1
-	github.com/gruntwork-io/terratest v0.46.13
+	github.com/gruntwork-io/terratest v0.46.14
 	github.com/open-telemetry/opentelemetry-operator v0.98.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.73.2
 	github.com/stretchr/testify v1.9.0
