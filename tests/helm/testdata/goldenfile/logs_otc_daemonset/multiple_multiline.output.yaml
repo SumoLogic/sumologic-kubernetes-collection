@@ -99,6 +99,7 @@ data:
           combine_with: ""
           id: merge-docker-lines
           is_last_entry: body.log matches "\n$"
+          max_unmatched_batch_size: 1
           output: strip-trailing-newline
           source_identifier: attributes["log.file.path"]
           type: recombine
@@ -106,6 +107,7 @@ data:
           combine_with: ""
           id: merge-cri-lines
           is_last_entry: body.logtag == "F"
+          max_unmatched_batch_size: 1
           output: extract-metadata-from-filepath
           overwrite_with: newest
           source_identifier: attributes["log.file.path"]
@@ -157,6 +159,7 @@ data:
 
           id: merge-multiline-logs-0
           is_first_entry: body matches "@@@Log beginning"
+          max_unmatched_batch_size: 1
           output: clean-up-log-file-path
           source_identifier: attributes["log.file.path"]
           type: recombine
@@ -165,6 +168,7 @@ data:
 
           id: merge-multiline-logs-1
           is_first_entry: body matches "---Log beginning"
+          max_unmatched_batch_size: 1
           output: clean-up-log-file-path
           source_identifier: attributes["log.file.path"]
           type: recombine
@@ -173,6 +177,7 @@ data:
 
           id: merge-multiline-logs-2
           is_first_entry: 'body matches ": : : Log beginning"'
+          max_unmatched_batch_size: 1
           output: clean-up-log-file-path
           source_identifier: attributes["log.file.path"]
           type: recombine
@@ -181,6 +186,7 @@ data:
 
           id: merge-multiline-logs
           is_first_entry: body matches "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
+          max_unmatched_batch_size: 1
           output: clean-up-log-file-path
           source_identifier: attributes["log.file.path"]
           type: recombine
