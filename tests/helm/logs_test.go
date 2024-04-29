@@ -134,17 +134,13 @@ func TestMetadataLogFormatHTTP(t *testing.T) {
 		Exporters struct {
 			Containers struct {
 				LogFormat string `yaml:"log_format"`
-				JsonLogs  struct {
-					FlattenBody bool `yaml:"flatten_body"`
-				} `yaml:"json_logs"`
 			} `yaml:"sumologic/containers"`
 		}
 	}
 
 	testCases := []struct {
-		logFormat                   string
-		expectedExporterLogFormat   string
-		expectedExporterFlattenBody bool
+		logFormat                 string
+		expectedExporterLogFormat string
 	}{
 		{
 			logFormat:                 "json",
@@ -181,7 +177,6 @@ sumologic:
 			err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 			require.NoError(t, err)
 			require.Equal(t, testCase.expectedExporterLogFormat, otelConfig.Exporters.Containers.LogFormat)
-			require.False(t, otelConfig.Exporters.Containers.JsonLogs.FlattenBody)
 		})
 	}
 }
@@ -194,9 +189,6 @@ func TestMetadataLogFormatOTLP(t *testing.T) {
 		Exporters struct {
 			SumoLogic struct {
 				LogFormat string `yaml:"log_format"`
-				JsonLogs  struct {
-					FlattenBody bool `yaml:"flatten_body"`
-				} `yaml:"json_logs"`
 			} `yaml:"sumologic"`
 		}
 		Processors map[string]interface{}
