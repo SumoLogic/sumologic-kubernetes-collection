@@ -17,8 +17,6 @@ data:
         verbosity: detailed
       sumologic/containers:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true
@@ -27,8 +25,6 @@ data:
           storage: file_storage
       sumologic/sumologic-mock-containers:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
-        json_logs:
-          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true
@@ -37,8 +33,6 @@ data:
           storage: file_storage
       sumologic/sumologic-mock-systemd:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
-        json_logs:
-          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true
@@ -47,8 +41,6 @@ data:
           storage: file_storage
       sumologic/systemd:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true
