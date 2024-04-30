@@ -280,6 +280,9 @@ processors:
       annotations:
         - key: "*"
           tag_name: "pod_annotations_%s"
+      namespace_annotations:
+        - key: "*"
+          tag_name: namespace_annotations_%s
       delimiter: "_"
       labels:
         - key: "*"
@@ -342,6 +345,8 @@ processors:
     attributes:
       - action: delete
         pattern: ^pod_annotations_.*
+      - action: delete
+        pattern: ^namespace_annotations_.*
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
@@ -370,6 +375,7 @@ processors:
 {{ if .Values.sumologic.logs.container.enabled }}
   source/containers:
     annotation_prefix: "pod_annotations_"
+    namespace_annotation_prefix: "namespace_annotations_"
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     container_annotations:
       enabled: {{ .Values.sumologic.logs.container.perContainerAnnotationsEnabled }}

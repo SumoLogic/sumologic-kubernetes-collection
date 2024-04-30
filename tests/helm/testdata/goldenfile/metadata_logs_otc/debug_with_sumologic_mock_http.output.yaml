@@ -194,6 +194,9 @@ data:
           - podName
           - serviceName
           - statefulSetName
+          namespace_annotations:
+          - key: '*'
+            tag_name: namespace_annotations_%s
           namespace_labels:
           - key: '*'
             tag_name: namespace_labels_%s
@@ -219,6 +222,8 @@ data:
         attributes:
         - action: delete
           pattern: ^pod_annotations_.*
+        - action: delete
+          pattern: ^namespace_annotations_.*
       resource/remove_pod_name:
         attributes:
         - action: delete
@@ -246,6 +251,7 @@ data:
           namespace: ""
           node: ""
           pod: ""
+        namespace_annotation_prefix: namespace_annotations_
         pod_key: pod
         pod_name_key: pod_name
         pod_template_hash_key: pod_labels_pod-template-hash

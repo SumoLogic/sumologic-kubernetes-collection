@@ -60,6 +60,9 @@ const (
 	AnnotationsTestNamespace = "annotations-test"
 	AnnotationsTest          = "yamls/annotations-test.yaml"
 
+	NamespaceAnnotationsTestNamespace = "namespace-annotations-test"
+	NamespaceAnnotationsTest          = "yamls/namespace-annotations-test.yaml"
+
 	NginxTelegrafMetricsTest = "yamls/nginx.yaml"
 	NginxTelegrafNamespace   = "nginx"
 
