@@ -620,9 +620,9 @@ sumologic:
       replicaCount: 3
       image:
         repository: public.ecr.aws/sumologic/nginx-unprivileged
-        ## This is simply 1.25.2-alpine with a newer version of Alpine
+        ## This is simply 1.26.0-alpine with a newer version of Alpine
         ## In the nginx repo, this a moving tag, so I've chosen to add a -sumo-1 suffix to indicate the change
-        tag: 1.25.2-alpine-sumo-1
+        tag: 1.26.0-alpine-sumo-0
         pullPolicy: IfNotPresent
       resources:
         limits:
