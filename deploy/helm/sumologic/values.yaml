@@ -1765,6 +1765,10 @@ metadata:
       ## To use maxUnavailable, set minAvailable to null and uncomment the below:
       # maxUnavailable: 1
 
+# Send OTEL metrics through otelcol
+metricsGateway:
+  enabled: false
+
 ## Configure traces-gateway
 ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector/traces.md
 tracesGateway:

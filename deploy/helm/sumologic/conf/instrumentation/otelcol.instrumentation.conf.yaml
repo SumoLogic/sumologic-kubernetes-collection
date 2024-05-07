@@ -7,6 +7,10 @@ exporters:
     verbosity: detailed
 {{- end }}
 
+{{ - if eq .Values.metricsGateway.enabled true }}
+  otlphttp/metrics:
+    endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
+{{ - else }}
   sumologic/metrics:
     client: '{{ include "sumologic.sumo_client" . }}'
     endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
@@ -39,6 +43,7 @@ exporters:
       ## num_seconds is the number of seconds to buffer in case of a backend outage
       ## requests_per_second is the average number of requests per seconds.
       queue_size: 5000
+{{- end }}
 {{- if eq .Values.tracesGateway.enabled true }}
   otlphttp/traces:
     endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
@@ -197,7 +202,11 @@ service:
       receivers: [otlp, otlp/deprecated]
       processors: [memory_limiter, k8s_tagger, source, resource, batch]
       exporters:
+{{- if eq .Values.metricsGateway.enabled true }}
+        - otlphttp/metrics
+{{- else }}
         - sumologic/metrics
+{{- end}}
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
         - debug
 {{- end }}
