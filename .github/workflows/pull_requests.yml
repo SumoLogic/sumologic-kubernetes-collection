@@ -159,7 +159,7 @@ jobs:
           cache: false
       - name: golangci-lint
         if: needs.chart-changed.outputs.any_changed == 'true'
-        uses: golangci/golangci-lint-action@v5
+        uses: golangci/golangci-lint-action@v6
         with:
           version: v1.57.1
           working-directory: ./tests/helm/
