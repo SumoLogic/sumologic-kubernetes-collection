@@ -32,6 +32,8 @@ sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.smbd.plist
 
 1. Provision the VM with the provider: `vagrant up`
 
+If asked for a username and password, enter your macOS user credentials.
+
 ### Using nix
 
 1. [Install nix](https://nixos.org/download.html)

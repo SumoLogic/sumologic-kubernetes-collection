@@ -52,7 +52,7 @@ You can set up the Vagrant environment with just one command:
 vagrant up
 ```
 
-If asked for a username and password, enter your macOS user information.
+If asked for a username and password, enter your macOS user credentials.
 
 If you experience following error (MacOS specific)
 
