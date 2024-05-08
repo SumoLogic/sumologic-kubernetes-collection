@@ -2,17 +2,47 @@
 
 ## Prerequisites
 
-Please install the following:
-
-- [VirtualBox](https://www.oracle.com/virtualization/technologies/vm/downloads/virtualbox-downloads.html)
-- [Vagrant](https://www.vagrantup.com/)
-
-### MacOS
+### MacOS (Intel processors)
 
 ```bash
 brew install --cask virtualbox
 brew install --cask vagrant
 ```
+
+### MacOS (Apple Silicon processors)
+
+1. Install prerequesites:
+
+```bash
+brew install qemu
+brew install --cask vagrant
+```
+
+1. Install the QEMU vagrant provider:
+
+```bash
+vagrant plugin install vagrant-qemu
+```
+
+1. Set the default Vagrant provider to QEMU:
+
+```bash
+echo 'export VAGRANT_DEFAULT_PROVIDER=qemu' >> ~/.zshrc
+source ~/.zshrc
+```
+
+1. Enable SMB sharing:
+
+```bash
+sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.smbd.plist
+```
+
+### Other
+
+Please install Vagrant and a Vagrant-compatible provider such as VirtualBox:
+
+- [VirtualBox](https://www.oracle.com/virtualization/technologies/vm/downloads/virtualbox-downloads.html)
+- [Vagrant](https://www.vagrantup.com/)
 
 ## Setting up
 
@@ -21,6 +51,8 @@ You can set up the Vagrant environment with just one command:
 ```bash
 vagrant up
 ```
+
+If asked for a username and password, enter your macOS user information.
 
 If you experience following error (MacOS specific)
 

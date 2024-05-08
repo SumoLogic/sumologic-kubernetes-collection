@@ -16,8 +16,21 @@ There is a prepared Vagrant environment with [microk8s](https://microk8s.io/) se
 You'll need to use QEMU instead of VirtualBox to use Vagrant on ARM. The following instructions will assume an M1 Mac as the host:
 
 1. Install QEMU: `brew install qemu`
-2. Install the QEMU vagrant provider: `vagrant plugin install vagrant-qemu`
-3. Provision the VM with the provider: `vagrant up --provider=qemu`
+1. Install the QEMU vagrant provider: `vagrant plugin install vagrant-qemu`
+1. Set the default Vagrant provider to QEMU:
+
+```bash
+echo 'export VAGRANT_DEFAULT_PROVIDER=qemu' >> ~/.zshrc
+source ~/.zshrc
+```
+
+1. Enable SMB sharing:
+
+```bash
+sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.smbd.plist
+```
+
+1. Provision the VM with the provider: `vagrant up`
 
 ### Using nix
 
