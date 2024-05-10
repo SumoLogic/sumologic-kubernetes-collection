@@ -6,27 +6,27 @@ metadata:
   name: RELEASE-NAME-metrics-server
   namespace: "sumologic"
   labels:
-    app.kubernetes.io/name: metrics-server
-    helm.sh/chart: metrics-server-6.6.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/version: 0.6.4
+    app.kubernetes.io/name: metrics-server
+    app.kubernetes.io/version: 0.7.0
+    helm.sh/chart: metrics-server-6.13.1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: metrics-server
       app.kubernetes.io/instance: RELEASE-NAME
+      app.kubernetes.io/name: metrics-server
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: metrics-server
-        helm.sh/chart: metrics-server-6.6.3
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/version: 0.6.4
+        app.kubernetes.io/name: metrics-server
+        app.kubernetes.io/version: 0.7.0
+        helm.sh/chart: metrics-server-6.13.1
     spec:
       serviceAccountName: RELEASE-NAME-metrics-server
       affinity:
@@ -37,16 +37,17 @@ spec:
             - podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app.kubernetes.io/name: metrics-server
                     app.kubernetes.io/instance: RELEASE-NAME
+                    app.kubernetes.io/name: metrics-server
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
 
+      automountServiceAccountToken: true
       dnsPolicy: ClusterFirst
       containers:
         - name: metrics-server
-          image: docker.io/bitnami/metrics-server:0.6.4-debian-11-r72
+          image: docker.io/bitnami/metrics-server:0.7.0-debian-12-r8
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -55,6 +56,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: false
+            runAsGroup: 0
             runAsNonRoot: true
             runAsUser: 1001
             seccompProfile:
@@ -67,9 +69,6 @@ spec:
             - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
           env:
           envFrom:
-          resources:
-            limits: {}
-            requests: {}
           ports:
             - name: https
               containerPort: 8443
@@ -93,3 +92,13 @@ spec:
               path: /readyz
               port: https
               scheme: HTTPS
+          volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/metrics-server/apiserver.local.config
+              subPath: app-tmp-dir
+      volumes:
+        - name: empty-dir
+          emptyDir: {}
