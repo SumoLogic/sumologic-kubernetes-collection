@@ -4669,6 +4669,10 @@ opentelemetry-operator:
         cpu: 150m
         memory: 256Mi
 
+  kubeRBACProxy:
+    image:
+      tag: v0.14.4
+
 ## pvcCleaner deletes unused PVCs
 pvcCleaner:
   metrics:
