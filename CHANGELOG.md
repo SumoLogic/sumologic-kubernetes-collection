@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Released 2024-05-10
 
+Starting from this release we are using all images from `public.ecr.aws/sumologic` container image repository. We also mirroring all images in `docker.io/sumologic` container image repository.
+
 ### Added
 
 - feat(logs-collector): add templates for windows logs collection [#3591]
