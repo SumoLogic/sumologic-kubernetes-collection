@@ -7,7 +7,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v4.6.1]
+## [v4.7.0]
+
+### Released 2024-05-10
+
+### Added
+
+- feat(logs-collector): add templates for windows logs collection [#3591]
+- chore: add instrumentation tests [#3643]
+- chore: use Sumo Logic hosted Kube RBAC Proxy [#3674]
+- feat: add support for namespace annotations to set sourceCategory, sourceCategoryPrefix, sourceCategoryReplaceDash, sourceHost, sourceName
+  [#3684]
+
+### Changed
+
+- feat(events): remove memory_limiter processor from the pipeline [#3630]
+- feat: increase limit in memory_limiter procesor to 90% [#3630]
+- chore: drop support for GKE 1.25 [#3633]
+- chore: drop support for AKS 1.26 [#3633], [#3653]
+- deps: update telegraf-operator to 1.4.0 [#3641]
+- deps: update metrics-server to 6.13.1 [#3641]
+- chore: add support for openshift 4.15 [#3654]
+- feat: add ttlSecondsAfterFinished to setup and cleanup jobs [#3656]
+- chore: update Sumo Logic Kubernetes Setup to v3.13.0 [#3664]
+- feat: provide separate configuration for instrumentation repositories and tags [#3665]
+- feat(cleanup): expose initContainers image for setup/cleanup job [#3666]
+- chore: update Tailing Sidecar Operator to v0.12.0 [#3667]
+- deps: bump otel-operator to 0.49.0 [#3671]
+- feat: use Sumo Logic repository for all images [#3677]
+- chore: update OpenTelemetry Collector to 0.99.0-sumo-0 [#3682]
+- chore: update nginx image to 1.26.0-sumo-0 [#3688]
+
+[#3591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3591
+[#3643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3643
+[#3674]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3674
+[#3684]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3684
+[#3630]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3630
+[#3633]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3633
+[#3653]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3653
+[#3641]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3641
+[#3654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3654
+[#3656]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3656
+[#3664]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3664
+[#3665]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3665
+[#3666]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3666
+[#3667]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3667
+[#3671]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3671
+[#3677]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3677
+[#3682]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3682
+[#3688]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3688
+
+[v4.7.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.7.0## [v4.6.1]
 
 ### Released 2024-03-29
 
