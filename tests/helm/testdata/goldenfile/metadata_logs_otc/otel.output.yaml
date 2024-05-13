@@ -15,8 +15,6 @@ data:
     exporters:
       sumologic/containers:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true
@@ -25,8 +23,6 @@ data:
           storage: file_storage
       sumologic/systemd:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true

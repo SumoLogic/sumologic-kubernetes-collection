@@ -238,6 +238,7 @@ receivers:
         source_identifier: attributes["log.file.path"]
         output: clean-up-log-file-path
         type: recombine
+        max_unmatched_batch_size: 1
 {{- end }}
 
       ## merge-multiline-logs merges incoming log records into multiline logs.
@@ -252,6 +253,7 @@ receivers:
         source_identifier: attributes["log.file.path"]
         output: clean-up-log-file-path
         type: recombine
+        max_unmatched_batch_size: 1
 {{- end }}
 
       - field: attributes["log.file.path"]

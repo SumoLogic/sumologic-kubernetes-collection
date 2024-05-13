@@ -25,13 +25,13 @@ const (
 
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"
-	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.14.0"
+	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.22.0"
 
 	OverrideNamespace = "test-override"
 
 	TracesGeneratorNamespace = "customer-trace-tester"
 	TracesGeneratorName      = "customer-trace-tester"
-	TracesGeneratorImage     = "sumologic/kubernetes-tools:2.14.0"
+	TracesGeneratorImage     = "sumologic/kubernetes-tools:2.22.0"
 
 	MultilineLogsNamespace = "multiline-logs-generator"
 	MultilineLogsPodName   = "multiline-logs-generator"
@@ -226,13 +226,8 @@ var (
 		"otelcol_processor_groupbyattrs_metric_groups_sum",
 		"otelcol_processor_groupbyattrs_num_non_grouped_metrics",
 		"otelcol_processor_refused_metric_points",
-		"otelcol_http_server_request_content_length",
 		"otelcol_processor_batch_metadata_cardinality",
-		"otelcol_http_server_duration_count",
-		"otelcol_http_server_duration_sum",
 		"otelcol_otelsvc_k8s_service_table_size",
-		"otelcol_http_server_duration_bucket",
-		"otelcol_http_server_response_content_length",
 		"otelcol_otelsvc_k8s_owner_table_size",
 		"otelcol_exporter_send_failed_metric_points",
 	}
