@@ -1555,6 +1555,9 @@ metadata:
     size: 10Gi
     ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
     pvcLabels: {}
+  
+  ## Compression for logs, metrics and events:
+  compression: zstd
 
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.

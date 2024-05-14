@@ -2,6 +2,7 @@ exporters:
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: {{ include "sumologic.events.exporter.endpoint" . }}
+    compression: {{ .Values.metadata.compression }}
     log_format: {{ include "sumologic.events.exporter.format" . }}
     sending_queue:
       enabled: true
@@ -18,6 +19,7 @@ exporters:
   sumologic/sumologic-mock:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
+    compression: {{ .Values.metadata.compression }}
     log_format: {{ include "sumologic.events.exporter.format" . }}
     sending_queue:
       enabled: true

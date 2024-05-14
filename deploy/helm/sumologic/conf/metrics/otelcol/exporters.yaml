@@ -8,6 +8,7 @@ sumologic/sumologic-mock-default:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: {{ include "metrics.otelcol.exporter.format" . }}
   endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
+  compression: {{ .Values.metadata.compression }}
   ## Sumo doesn't yet natively support OTLP Histograms
   decompose_otlp_histograms: true
   ## Configuration for sending queue
@@ -29,6 +30,7 @@ sumologic/sumologic-mock-http:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
@@ -47,6 +49,7 @@ sumologic/default:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: {{ include "metrics.otelcol.exporter.format" . }}
   endpoint: {{ include "metrics.otelcol.exporter.endpoint" . }}
+  compression: {{ .Values.metadata.compression }}
   ## Sumo doesn't yet natively support OTLP Histograms
   decompose_otlp_histograms: true
   ## Configuration for sending queue
@@ -68,6 +71,7 @@ sumologic/apiserver:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
@@ -82,6 +86,7 @@ sumologic/control_plane:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
@@ -96,6 +101,7 @@ sumologic/controller:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
@@ -110,6 +116,7 @@ sumologic/kubelet:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
@@ -124,6 +131,7 @@ sumologic/node:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
@@ -138,6 +146,7 @@ sumologic/scheduler:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
@@ -152,6 +161,7 @@ sumologic/state:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
+  compression: {{ .Values.metadata.compression }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}
