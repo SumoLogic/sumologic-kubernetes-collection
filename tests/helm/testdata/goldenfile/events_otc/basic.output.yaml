@@ -15,6 +15,7 @@ data:
     exporters:
       sumologic:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
         log_format: otlp
         sending_queue:

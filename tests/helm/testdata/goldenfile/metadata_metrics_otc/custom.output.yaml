@@ -15,6 +15,7 @@ data:
     exporters:
       sumologic/apiserver:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
@@ -26,6 +27,7 @@ data:
         timeout: 30s
       sumologic/control_plane:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
@@ -37,6 +39,7 @@ data:
         timeout: 30s
       sumologic/controller:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
@@ -48,6 +51,7 @@ data:
         timeout: 30s
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         decompose_otlp_histograms: true
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
         max_request_body_size: 16777216
@@ -60,6 +64,7 @@ data:
         timeout: 30s
       sumologic/kubelet:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
@@ -71,6 +76,7 @@ data:
         timeout: 30s
       sumologic/node:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
@@ -82,6 +88,7 @@ data:
         timeout: 30s
       sumologic/scheduler:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
@@ -93,6 +100,7 @@ data:
         timeout: 30s
       sumologic/state:
         client: k8s_%CURRENT_CHART_VERSION%
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus

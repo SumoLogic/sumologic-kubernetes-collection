@@ -9,8 +9,6 @@ exporters:
   sumologic/containers:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     compression: {{ .Values.metadata.compression }}
-    json_logs:
-      add_timestamp: false
     log_format: {{ include "logs.otelcol.container.exporter.format" . }}
     sending_queue:
       enabled: true
@@ -24,8 +22,6 @@ exporters:
   sumologic/sumologic-mock-containers:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
     compression: {{ .Values.metadata.compression }}
-    json_logs:
-      add_timestamp: false
     log_format: {{ include "logs.otelcol.container.exporter.format" . }}
     sending_queue:
       enabled: true
@@ -42,8 +38,6 @@ exporters:
   sumologic/systemd:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     compression: {{ .Values.metadata.compression }}
-    json_logs:
-      add_timestamp: false
     log_format: json
     sending_queue:
       enabled: true
@@ -57,8 +51,6 @@ exporters:
   sumologic/sumologic-mock-systemd:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
     compression: {{ .Values.metadata.compression }}
-    json_logs:
-      add_timestamp: false
     log_format: json
     sending_queue:
       enabled: true

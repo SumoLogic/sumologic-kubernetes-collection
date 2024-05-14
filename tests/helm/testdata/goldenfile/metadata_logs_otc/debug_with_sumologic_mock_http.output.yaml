@@ -16,6 +16,7 @@ data:
       debug:
         verbosity: detailed
       sumologic/containers:
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         log_format: json
         sending_queue:
@@ -24,6 +25,7 @@ data:
           queue_size: 10000
           storage: file_storage
       sumologic/sumologic-mock-containers:
+        compression: zstd
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         log_format: json
         sending_queue:
@@ -32,6 +34,7 @@ data:
           queue_size: 10000
           storage: file_storage
       sumologic/sumologic-mock-systemd:
+        compression: zstd
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         log_format: json
         sending_queue:
@@ -40,6 +43,7 @@ data:
           queue_size: 10000
           storage: file_storage
       sumologic/systemd:
+        compression: zstd
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         log_format: json
         sending_queue:
