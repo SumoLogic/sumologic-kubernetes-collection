@@ -1,0 +1,32 @@
+name: Close Jira task
+
+on:
+  issues:
+    types:
+      - closed
+
+jobs:
+  close-jira-issue:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Close Jira task
+        id: close-jira-task
+        run: |-
+          JIRA_ID=$(curl \
+            --http1.1 \
+            -u "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            ${JIRA_BASE_URL}'/rest/api/latest/search?jql=summary~"sumologic-kubernetes-collection%20and%20%23${{ github.event.issue.number }}"' \
+            | jq '.issues[0].key' --raw-output)
+
+          curl \
+            --http1.1 \
+            -u "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            "${JIRA_BASE_URL}'/rest/api/latest/issue/${JIRA_ID/transitions" \
+            -X POST \
+            -d '{"update":{"comment":[{"add":{"body":"Resolved via github actions"}}]},"transition":{"id":"31"},"fields":{"resolution":{"name":"Done"}}}' \
+            -H 'Content-type: application/json'
+
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
