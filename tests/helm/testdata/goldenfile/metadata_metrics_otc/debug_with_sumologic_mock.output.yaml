@@ -17,7 +17,7 @@ data:
         verbosity: detailed
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
-        compression: zstd
+        compression: gzip
         decompose_otlp_histograms: true
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
@@ -30,7 +30,7 @@ data:
         timeout: 30s
       sumologic/sumologic-mock-default:
         client: k8s_%CURRENT_CHART_VERSION%
-        compression: zstd
+        compression: gzip
         decompose_otlp_histograms: true
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         max_request_body_size: 16777216
@@ -43,7 +43,7 @@ data:
         timeout: 30s
       sumologic/sumologic-mock-http:
         client: k8s_%CURRENT_CHART_VERSION%
-        compression: zstd
+        compression: gzip
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         max_request_body_size: 16777216
         metric_format: prometheus

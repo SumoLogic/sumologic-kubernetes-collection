@@ -6,6 +6,11 @@ fullnameOverride: ""
 ## Use the same namespace as namespaceOverride in 'kube-prometheus-stack.namespaceOverride' if Prometheus setup is also enabled
 namespaceOverride: ""
 
+## Compression for logs, metrics and events
+## Compression types can be gzip, snappy, zstd or deflate
+## Default is gzip
+compression: gzip
+
 sumologic:
   ### Setup
 
@@ -1555,9 +1560,6 @@ metadata:
     size: 10Gi
     ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
     pvcLabels: {}
-
-  ## Compression for logs, metrics and events:
-  compression: zstd
 
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.

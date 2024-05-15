@@ -1,7 +1,7 @@
 exporters:
   otlphttp:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
-    compression: {{ .Values.metadata.compression }}
+    compression: {{ .Values.compression }}
     sending_queue:
       queue_size: 10
     # this improves load balancing at the cost of more network traffic

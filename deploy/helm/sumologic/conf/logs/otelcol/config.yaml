@@ -8,7 +8,7 @@ exporters:
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-    compression: {{ .Values.metadata.compression }}
+    compression: {{ .Values.compression }}
     log_format: {{ include "logs.otelcol.container.exporter.format" . }}
     sending_queue:
       enabled: true
@@ -21,7 +21,7 @@ exporters:
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-containers:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
-    compression: {{ .Values.metadata.compression }}
+    compression: {{ .Values.compression }}
     log_format: {{ include "logs.otelcol.container.exporter.format" . }}
     sending_queue:
       enabled: true
@@ -37,7 +37,7 @@ exporters:
 {{ if .Values.sumologic.logs.systemd.enabled }}
   sumologic/systemd:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-    compression: {{ .Values.metadata.compression }}
+    compression: {{ .Values.compression }}
     log_format: json
     sending_queue:
       enabled: true
@@ -50,7 +50,7 @@ exporters:
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-systemd:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
-    compression: {{ .Values.metadata.compression }}
+    compression: {{ .Values.compression }}
     log_format: json
     sending_queue:
       enabled: true
@@ -67,7 +67,7 @@ exporters:
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
-    compression: {{ .Values.metadata.compression }}
+    compression: {{ .Values.compression }}
     log_format: otlp
     sending_queue:
       enabled: true
@@ -81,7 +81,7 @@ exporters:
   sumologic/sumologic-mock:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
-    compression: {{ .Values.metadata.compression }}
+    compression: {{ .Values.compression }}
     log_format: otlp
     sending_queue:
       enabled: true

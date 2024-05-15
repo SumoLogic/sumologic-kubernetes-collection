@@ -16,7 +16,7 @@ data:
       debug:
         verbosity: detailed
       otlphttp:
-        compression: zstd
+        compression: gzip
         disable_keep_alives: true
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:

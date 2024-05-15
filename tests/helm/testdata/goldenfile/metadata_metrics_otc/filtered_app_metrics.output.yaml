@@ -15,7 +15,7 @@ data:
     exporters:
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
-        compression: zstd
+        compression: gzip
         decompose_otlp_histograms: true
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216

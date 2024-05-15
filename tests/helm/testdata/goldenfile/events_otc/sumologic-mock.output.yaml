@@ -17,7 +17,7 @@ data:
         verbosity: detailed
       sumologic:
         client: k8s_%CURRENT_CHART_VERSION%
-        compression: zstd
+        compression: gzip
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
         log_format: otlp
         sending_queue:
@@ -25,7 +25,7 @@ data:
           storage: file_storage
       sumologic/sumologic-mock:
         client: k8s_%CURRENT_CHART_VERSION%
-        compression: zstd
+        compression: gzip
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         log_format: otlp
         sending_queue:
