@@ -49,18 +49,6 @@ SUMO_ENDPOINT_{{ replace "-" "_" . | upper }}
 {{- end -}}
 
 {{/*
-Generate endpoint variable string for given string
-
-Example usage:
-
-{{ include "terraform.sources.endpoint" "logs" }}
-
-*/}}
-{{- define "terraform.sources.endpoint_name" -}}
-{{ printf "endpoint-%s" . }}
-{{- end -}}
-
-{{/*
 Generate line for local Terraform section
  * `terraform.sources.local = value`
 
