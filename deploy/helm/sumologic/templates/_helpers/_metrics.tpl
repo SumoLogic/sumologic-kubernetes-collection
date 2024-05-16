@@ -231,11 +231,6 @@ sumologic.com/app: otelcol-metrics
 sumologic.com/component: metrics
 {{- end -}}
 
-{{- define "sumologic.labels.metrics.remoteWriteProxy" -}}
-sumologic.com/app: metrics-remote-write-proxy
-sumologic.com/component: metrics
-{{- end -}}
-
 {{- define "sumologic.label.scrape" -}}
 sumologic.com/scrape: "true"
 {{- end -}}
@@ -263,11 +258,6 @@ sumologic.com/component: metrics
 
 {{- define "sumologic.labels.app.metrics.collector" -}}
 sumologic.com/app: otelcol
-{{- end -}}
-
-{{- define "sumologic.labels.app.metrics.collector.pod" -}}
-{{ template "sumologic.labels.app.metrics.collector" . }}
-{{ template "sumologic.labels.component.metrics" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.metrics.clusterrole" -}}

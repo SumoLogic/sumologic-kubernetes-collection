@@ -21,10 +21,6 @@
 {{ template "sumologic.labels.app.sumologic-mock" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.sumologic-mock" -}}
-{{- template "sumologic.fullname" . }}-mock
-{{- end -}}
-
 {{- define "sumologic-mock.deployment.nodeSelector" -}}
 {{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.debug.sumologicMock.deployment.nodeSelector)}}
 {{- end -}}

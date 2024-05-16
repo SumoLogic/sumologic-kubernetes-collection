@@ -182,3 +182,7 @@ vhalt:
 .PHONY: vdestroy
 vdestroy:
 	vagrant destroy -f
+
+.PHONY: check-unused-templates
+check-unused-templates:
+	./ci/check_unused_templates.sh

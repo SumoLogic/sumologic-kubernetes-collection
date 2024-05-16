@@ -1,11 +1,4 @@
 {{/*
-Expand the name of the chart.
-*/}}
-{{- define "sumologic.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end -}}
-
-{{/*
 Create a default fully qualified app name.
 We truncate at 22 chars because some Kubernetes name fields are limited to 63 characters (by the DNS naming spec).
 In particular, some statefulsets will have too long names if the name is longer than 22 characters.

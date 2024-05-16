@@ -18,10 +18,6 @@
 {{- template "sumologic.labels.app.tracessampler.service" . }}-headless
 {{- end -}}
 
-{{- define "sumologic.labels.app.tracessampler.service-metrics" -}}
-{{- template "sumologic.labels.app.tracessampler.service" . }}-instr-metrics
-{{- end -}}
-
 {{- define "sumologic.labels.app.tracessampler.configmap" -}}
 {{- template "sumologic.labels.app.tracessampler" . }}
 {{- end -}}
@@ -50,10 +46,6 @@
 {{- template "sumologic.labels.app.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelcolinstrumentation.statefulset" -}}
-{{- template "sumologic.labels.app.otelcolinstrumentation" . }}
-{{- end -}}
-
 {{- define "sumologic.labels.app.otelcolinstrumentation.component" -}}
 {{- template "sumologic.labels.app.otelcolinstrumentation" . }}-component
 {{- end -}}
@@ -75,10 +67,6 @@
 {{- end -}}
 
 {{- define "sumologic.labels.app.tracesgateway.configmap" -}}
-{{- template "sumologic.labels.app.tracesgateway" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.tracesgateway.deployment" -}}
 {{- template "sumologic.labels.app.tracesgateway" . }}
 {{- end -}}
 
@@ -219,10 +207,6 @@ Example Usage:
 */}}
 {{- define "tracesgateway.exporter.loadbalancing.endpoint" -}}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.tracessampler.service-headless" . ) ( include "sumologic.namespace" .  ) }}
-{{- end -}}
-
-{{- define "opentelemetry-operator.controller.manager.metrics.service.url" -}}
-http://{{ .Release.Name }}-opentelemetry-operator.{{ template "sumologic.namespace" . }}:8080/metrics
 {{- end -}}
 
 {{/*

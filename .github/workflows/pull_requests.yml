@@ -201,3 +201,11 @@ jobs:
       - name: Failure
         if: ${{ always() && !(needs.run-integration-tests.result == 'success' || needs.run-integration-tests.result == 'skipped') }}
         run: exit 1
+
+  unused-templates:
+    name: Check for unused templates
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for unused templates
+        run: make check-unused-templates
