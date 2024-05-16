@@ -21,7 +21,7 @@ jobs:
           curl \
             --http1.1 \
             -u "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
-            "${JIRA_BASE_URL}'/rest/api/latest/issue/${JIRA_ID/transitions" \
+            "${JIRA_BASE_URL}/rest/api/latest/issue/${JIRA_ID}/transitions" \
             -X POST \
             -d '{"update":{"comment":[{"add":{"body":"Resolved via github actions"}}]},"transition":{"id":"31"},"fields":{"resolution":{"name":"Done"}}}' \
             -H 'Content-type: application/json'
