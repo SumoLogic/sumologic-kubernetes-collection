@@ -87,6 +87,13 @@ exporters:
 {{- end }}
 {{- end }}
 
+{{- if .Values.sumologic.logs.extraExporters }}
+{{- range $name, $exporter := .Values.sumologic.logs.extraExporters }}
+{{ printf "%s:" $name | indent 2 }}
+{{ toYaml $exporter | indent 4}}
+{{- end }}
+{{- end }}
+
 extensions:
   health_check: {}
 {{ if .Values.metadata.persistence.enabled }}

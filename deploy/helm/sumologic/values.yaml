@@ -463,6 +463,10 @@ sumologic:
 
     sourceType: otlp
 
+    ## additional exporters which may be used in any of the pipeline
+    ## remember add them to containers, systemd or kubelet routing as well
+    extraExporters: {}
+
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
   metrics:
