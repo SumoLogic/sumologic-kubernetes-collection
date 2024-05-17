@@ -3,6 +3,13 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+    container:
+      otelcol:
+        useDefaultExporters: false
+        routing:
+          - exporter: sumologic/test
+            default: false
+            statement: route() where resource.attributes["exporter"] == "test"
     extraExporters:
       sumologic/test:
         endpoint: https://test-endpoint

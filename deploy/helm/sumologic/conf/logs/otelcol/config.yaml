@@ -379,6 +379,18 @@ processors:
       value: ""
 {{ end }}
 
+{{- if .Values.sumologic.logs.container.otelcol.routing }}
+  routing/containers:
+    default_exporters:
+{{ include "logs.otelcol.routing.defaultExporters" . | nindent 6}}
+    table:
+{{- range $entry := .Values.sumologic.logs.container.otelcol.routing }}
+      statement: {{ $entry.statement }}
+      exporters:
+        - {{ $entry.exporter }}
+{{- end }}
+{{- end }}
+
 {{ if .Values.sumologic.logs.container.enabled }}
   source/containers:
     annotation_prefix: "pod_annotations_"
@@ -518,6 +530,9 @@ service:
         - transform/flatten
 {{- end }}
         - batch
+{{- if .Values.sumologic.logs.container.otelcol.routing }}
+        - routing/containers
+{{- end }}
       receivers:
         - otlp
 {{ end }}

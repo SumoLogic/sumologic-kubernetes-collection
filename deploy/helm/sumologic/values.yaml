@@ -353,6 +353,27 @@ sumologic:
       otelcol:
         ## Extra processors for container logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
+        ## useDefaultExporters uses default helm chart exporters.
+        ## depending on the configuration it may be:
+        ## * sumologic/containers and/or sumologic/sumologic-mock-containers
+        ## * sumologic and/or sumologic/sumologic-mock
+        useDefaultExporters: true
+        ## routing defines how to use extraExporters
+        routing:
+          []
+          ## -
+          ##  exporter is an exporter name. For example `exporter/name` for the following extraExporters configuration:
+          ##
+          ##  extraExporters:
+          ##    exporter/name:
+          ##      config_key: config_value
+          ##  exporter: sumologic
+          ##  ## set to true if the exporter should be used as default exporter
+          ##  default: true
+          ##  ## statement in OTTL under which the exporter should be used
+          ##  ## see routing processor documentation for more details:
+          ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/processor/routingprocessor/README.md#tech-preview-opentelemetry-transformation-language-statements-as-routing-conditions
+          ##  statement: ""
 
       ## Set the _sourceHost metadata field in Sumo Logic.
       sourceHost: ""

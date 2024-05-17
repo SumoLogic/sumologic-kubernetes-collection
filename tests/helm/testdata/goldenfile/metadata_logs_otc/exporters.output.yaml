@@ -218,6 +218,12 @@ data:
         - action: insert
           key: _sourceName
           value: ""
+      routing/containers:
+        default_exporters: null
+        table:
+          exporters:
+          - sumologic/test
+          statement: route() where resource.attributes["exporter"] == "test"
       source/containers:
         annotation_prefix: pod_annotations_
         collector: kubernetes
@@ -292,7 +298,7 @@ data:
       pipelines:
         logs/otlp/containers:
           exporters:
-          - sumologic
+          - sumologic/test
           processors:
           - memory_limiter
           - filter/include_containers
@@ -308,6 +314,7 @@ data:
           - resource/drop_annotations
           - transform/add_timestamp
           - batch
+          - routing/containers
           receivers:
           - otlp
         logs/otlp/kubelet:
