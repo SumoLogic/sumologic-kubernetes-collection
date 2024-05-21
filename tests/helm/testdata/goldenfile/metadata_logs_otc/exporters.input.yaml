@@ -6,7 +6,7 @@ sumologic:
     otelcol:
       useDefaultExporters: false
       routing:
-        defaultExporters:
+        fallbackExporters:
           - debug
         table:
           - exporter: sumologic/test

@@ -13,7 +13,7 @@ metadata:
 data:
   config.yaml: |
     exporters:
-      logging:
+      debug:
         verbosity: detailed
       sumologic:
         client: k8s_%CURRENT_CHART_VERSION%
@@ -219,9 +219,24 @@ data:
           key: _sourceName
           value: ""
       routing/containers:
-        default_exporters: null
+        default_exporters:
+        - debug
         table:
-          exporters:
+        - exporters:
+          - sumologic/test
+          statement: route() where resource.attributes["exporter"] == "test"
+      routing/kubelet:
+        default_exporters:
+        - debug
+        table:
+        - exporters:
+          - sumologic/test
+          statement: route() where resource.attributes["exporter"] == "test"
+      routing/systemd:
+        default_exporters:
+        - debug
+        table:
+        - exporters:
           - sumologic/test
           statement: route() where resource.attributes["exporter"] == "test"
       source/containers:
@@ -299,6 +314,7 @@ data:
         logs/otlp/containers:
           exporters:
           - sumologic/test
+          - debug
           processors:
           - memory_limiter
           - filter/include_containers
@@ -319,7 +335,8 @@ data:
           - otlp
         logs/otlp/kubelet:
           exporters:
-          - sumologic
+          - sumologic/test
+          - debug
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host
@@ -337,11 +354,13 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - batch
+          - routing/kubelet
           receivers:
           - otlp
         logs/otlp/systemd:
           exporters:
-          - sumologic
+          - sumologic/test
+          - debug
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host
@@ -360,6 +379,7 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - batch
+          - routing/systemd
           receivers:
           - otlp
       telemetry:

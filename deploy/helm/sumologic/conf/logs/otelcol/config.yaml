@@ -379,20 +379,50 @@ processors:
       value: ""
 {{ end }}
 
-{{- if .Values.sumologic.logs.otelcol.routing }}
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
   routing/containers:
     default_exporters:
-{{ include "logs.otelcol.routing.defaultExporters" . | nindent 6}}
+{{ include "logs.otelcol.routing.container.defaultExporters" . | nindent 6}}
     table:
 {{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
-      statement: {{ $entry.statement }}
-      exporters:
-        - {{ $entry.exporter }}
+      - statement: {{ $entry.statement }}
+        exporters:
+          - {{ $entry.exporter }}
 {{- end }}
 {{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
-      statement: route()
-      exporters:
-{{ include "logs.otelcol.routing.defaultExporters" . | nindent 10}}
+      - statement: route()
+        exporters:
+{{ include "logs.otelcol.routing.container.defaultExporters" . | nindent 12 }}
+{{- end }}
+
+  routing/systemd:
+    default_exporters:
+{{ include "logs.otelcol.routing.container.defaultExporters" . | nindent 6 }}
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: {{ $entry.statement }}
+        exporters:
+          - {{ $entry.exporter }}
+{{- end }}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: route()
+        exporters:
+{{ include "logs.otelcol.routing.container.defaultExporters" . | nindent 12 }}
+{{- end }}
+
+  routing/kubelet:
+    default_exporters:
+{{ include "logs.otelcol.routing.container.defaultExporters" . | nindent 6 }}
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: {{ $entry.statement }}
+        exporters:
+          - {{ $entry.exporter }}
+{{- end }}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: route()
+        exporters:
+{{ include "logs.otelcol.routing.container.defaultExporters" . | nindent 12 }}
 {{- end }}
 {{- end }}
 
@@ -535,7 +565,7 @@ service:
         - transform/flatten
 {{- end }}
         - batch
-{{- if .Values.sumologic.logs.otelcol.routing }}
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
         - routing/containers
 {{- end }}
       receivers:
@@ -568,6 +598,9 @@ service:
 {{- end }}
 {{- end }}
         - batch
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/kubelet
+{{- end }}
       receivers:
         - otlp
 
@@ -597,6 +630,9 @@ service:
 {{- end }}
 {{- end }}
         - batch
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/systemd
+{{- end }}
       receivers:
         - otlp
 {{ end }}

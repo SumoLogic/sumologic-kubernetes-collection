@@ -447,8 +447,8 @@ sumologic:
       useDefaultExporters: true
       ## routing defines how to route data
       routing:
-        ## defaultExporters is a list of exporters to be used when data do not match any of the table's statement
-        defaultExporters: []
+        ## fallbackExporters is a list of exporters to be used when data do not match any of the table's statement
+        fallbackExporters: []
         table: []
         ## -
         ##  ## exporter is name of the exporter

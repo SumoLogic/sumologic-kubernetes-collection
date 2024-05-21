@@ -66,9 +66,9 @@ Return the log format for the Sumologic exporter for container logs.
 {{/*
 Return default exporters for routing Processor.
 */}}
-{{- define "logs.otelcol.routing.defaultExporters" -}}
+{{- define "logs.otelcol.routing.container.defaultExporters" -}}
 {{- $exporters := include "logs.otelcol.container.defaultExporters" . | fromJsonArray }}
-{{- range $entry := .Values.sumologic.logs.otelcol.routing.defaultExporters -}}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
 {{- $exporters = append $exporters $entry -}}
 {{- end -}}
 {{- range $_, $exporter := $exporters }}
@@ -112,7 +112,7 @@ Return all exporters
 {{- range $entry := .Values.sumologic.logs.otelcol.routing.table -}}
 {{- $exporters = append $exporters $entry.exporter -}}
 {{- end -}}
-{{- range $exporter := .Values.sumologic.logs.otelcol.routing.defaultExporters -}}
+{{- range $exporter := .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
 {{- $exporters = append $exporters $exporter -}}
 {{- end -}}
 {{- range $_, $exporter := $exporters }}
@@ -121,50 +121,120 @@ Return all exporters
 {{- end -}}
 
 {{/*
-Return the exporters for systemd log pipeline.
+Return default exporters for systemd
+
+'{{- $exporters := include "logs.otelcol.systemd.defaultExporters" . | fromJsonArray }}'
+*/}}
+{{- define "logs.otelcol.systemd.defaultExporters" -}}
+{{- $exporters := list -}}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters -}}
+{{- if eq .Values.sumologic.logs.sourceType "http" -}}
+{{- $exporters = append $exporters "sumologic/systemd" -}}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" -}}
+{{- $exporters = append $exporters "sumologic/sumologic-mock-systemd" -}}
+{{- end -}}
+{{- else if eq .Values.sumologic.logs.sourceType "otlp" -}}
+{{- $exporters = append $exporters "sumologic" -}}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" -}}
+{{- $exporters = append $exporters "sumologic/sumologic-mock" -}}
+{{- end -}}
+{{- else -}}
+{{- fail "`sumologic.logs.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- if eq .Values.debug.logs.metadata.print true -}}
+{{- $exporters = append $exporters "debug" -}}
+{{- end -}}
+{{- end -}}
+{{ $exporters | uniq | toJson }}
+{{- end -}}
+
+{{/*
+Return all exporters for systemd log pipeline.
 
 '{{ include "logs.otelcol.systemd.exporters" . }}'
 */}}
 {{- define "logs.otelcol.systemd.exporters" -}}
-{{- if eq .Values.sumologic.logs.sourceType "http" -}}
-- sumologic/systemd
-{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
-- sumologic/sumologic-mock-systemd
-{{- end }}
-{{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
-- sumologic
-{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
-- sumologic/sumologic-mock
-{{- end }}
-{{- else -}}
-{{- fail "`sumologic.logs.sourceType` can only be `http` or `otlp`" -}}
+{{- $exporters := include "logs.otelcol.systemd.defaultExporters" . | fromJsonArray }}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table -}}
+{{- $exporters = append $exporters $entry.exporter -}}
 {{- end -}}
-{{- if eq .Values.debug.logs.metadata.print true }}
-- debug
+{{- range $exporter := .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
+{{- $exporters = append $exporters $exporter -}}
+{{- end -}}
+{{- range $_, $exporter := $exporters }}
+{{ printf "- %s" $exporter }}
 {{- end }}
 {{- end -}}
 
 {{/*
-Return the exporters for kubelet log pipeline.
+Return default exporters for routing/systemd processor.
+*/}}
+{{- define "logs.otelcol.routing.systemd.defaultExporters" -}}
+{{- $exporters := include "logs.otelcol.systemd.defaultExporters" . | fromJsonArray }}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
+{{- $exporters = append $exporters $entry -}}
+{{- end -}}
+{{- range $_, $exporter := $exporters }}
+{{ printf "- %s" $exporter }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Return default exporters for kubelet
+
+'{{- $exporters := include "logs.otelcol.kubelet.defaultExporters" . | fromJsonArray }}'
+*/}}
+{{- define "logs.otelcol.kubelet.defaultExporters" -}}
+{{- $exporters := list -}}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters -}}
+{{- if eq .Values.sumologic.logs.sourceType "http" -}}
+{{- $exporters = append $exporters "sumologic/kubelet" -}}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" -}}
+{{- $exporters = append $exporters "sumologic/sumologic-mock-kubelet" -}}
+{{- end -}}
+{{- else if eq .Values.sumologic.logs.sourceType "otlp" -}}
+{{- $exporters = append $exporters "sumologic" -}}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" -}}
+{{- $exporters = append $exporters "sumologic/sumologic-mock" -}}
+{{- end -}}
+{{- else -}}
+{{- fail "`sumologic.logs.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- if eq .Values.debug.logs.metadata.print true -}}
+{{- $exporters = append $exporters "debug" -}}
+{{- end -}}
+{{- end -}}
+{{ $exporters | uniq | toJson }}
+{{- end -}}
+
+{{/*
+Return all exporters for kubelet log pipeline.
 
 '{{ include "logs.otelcol.kubelet.exporters" . }}'
 */}}
 {{- define "logs.otelcol.kubelet.exporters" -}}
-{{- if eq .Values.sumologic.logs.sourceType "http" }}
-- sumologic/systemd
-{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
-- sumologic/sumologic-mock-systemd
-{{- end }}
-{{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
-- sumologic
-{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
-- sumologic/sumologic-mock
-{{- end }}
-{{- else }}
-{{- fail "`sumologic.logs.sourceType` can only be `http` or `otlp`" -}}
+{{- $exporters := include "logs.otelcol.kubelet.defaultExporters" . | fromJsonArray }}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table -}}
+{{- $exporters = append $exporters $entry.exporter -}}
 {{- end -}}
-{{- if eq .Values.debug.logs.metadata.print true }}
-- debug
+{{- range $exporter := .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
+{{- $exporters = append $exporters $exporter -}}
+{{- end -}}
+{{- range $_, $exporter := $exporters }}
+{{ printf "- %s" $exporter }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Return default exporters for routing/kubelet processor.
+*/}}
+{{- define "logs.otelcol.routing.kubelet.defaultExporters" -}}
+{{- $exporters := include "logs.otelcol.kubelet.defaultExporters" . | fromJsonArray }}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
+{{- $exporters = append $exporters $entry -}}
+{{- end -}}
+{{- range $_, $exporter := $exporters }}
+{{ printf "- %s" $exporter }}
 {{- end }}
 {{- end -}}
 
