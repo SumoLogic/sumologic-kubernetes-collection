@@ -2,9 +2,14 @@ package stepfuncs
 
 import (
 	"context"
+	"os"
+	"path"
+	stdstrings "strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
@@ -41,6 +46,84 @@ func KubectlCreateNamespaceOpt(namespace string) features.Func {
 	}
 }
 
+// KubectlCreateOperatorNamespacesOpt returns a features.Func that will create namespaces references by otel operator configuration.
+func KubectlCreateOperatorNamespacesOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		valuesFileBytes := GetHelmValuesForT(t)
+		var values struct {
+			Operator struct {
+				InstrumentationNamespaces string `yaml:"instrumentationNamespaces"`
+			} `yaml:"opentelemetry-operator"`
+		}
+
+		err := yaml.Unmarshal(valuesFileBytes, &values)
+		require.NoError(t, err)
+		if values.Operator.InstrumentationNamespaces != "" {
+			namespaces := stdstrings.Split(values.Operator.InstrumentationNamespaces, ",")
+			for _, namespace := range namespaces {
+				k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx), namespace)
+			}
+		}
+		return ctx
+	}
+}
+
+// KubectlDeleteOperatorNamespacesOpt returns a features.Func that will delete namespaces references by otel operator configuration.
+func KubectlDeleteOperatorNamespacesOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		valuesFileBytes := GetHelmValuesForT(t)
+		var values struct {
+			Operator struct {
+				InstrumentationNamespaces string `yaml:"instrumentationNamespaces"`
+			} `yaml:"opentelemetry-operator"`
+		}
+
+		err := yaml.Unmarshal(valuesFileBytes, &values)
+		require.NoError(t, err)
+		if values.Operator.InstrumentationNamespaces != "" {
+			namespaces := stdstrings.Split(values.Operator.InstrumentationNamespaces, ",")
+			for _, namespace := range namespaces {
+				k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx), namespace)
+			}
+		}
+		return ctx
+	}
+}
+
+// KubectlCreateOverrideNamespaceOpt returns a features.Func that will create an override namespace if set in the values.yaml.
+func KubectlCreateOverrideNamespaceOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		valuesFileBytes := GetHelmValuesForT(t)
+		var values struct {
+			NamespaceOverride string `yaml:"namespaceOverride"`
+		}
+
+		err := yaml.Unmarshal(valuesFileBytes, &values)
+		require.NoError(t, err)
+		if values.NamespaceOverride != "" {
+			k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx), values.NamespaceOverride)
+		}
+		return ctx
+	}
+}
+
+// KubectlCreateOverrideNamespaceOpt returns a features.Func that will delete an override namespace if set in the values.yaml.
+func KubectlDeleteOverrideNamespaceOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		valuesFileBytes := GetHelmValuesForT(t)
+		var values struct {
+			NamespaceOverride string `yaml:"namespaceOverride"`
+		}
+
+		err := yaml.Unmarshal(valuesFileBytes, &values)
+		require.NoError(t, err)
+		if values.NamespaceOverride != "" {
+			k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx), values.NamespaceOverride)
+		}
+		return ctx
+	}
+}
+
 // KubectlCreateNamespaceTestOpt wraps KubectlCreateNamespaceOpt by generating
 // a namespace name for test.
 func KubectlCreateNamespaceTestOpt() features.Func {
@@ -70,4 +153,12 @@ func KubectlDeleteFOpt(yamlPath string, namespace string) features.Func {
 		k8s.KubectlDelete(t, &kubectlOpts, yamlPath)
 		return ctx
 	}
+}
+
+// Get the content of the Helm values.yaml for the test, as bytes.
+func GetHelmValuesForT(t *testing.T) []byte {
+	valuesFilePath := path.Join("values", strings.ValueFileFromT(t))
+	valuesFileBytes, err := os.ReadFile(valuesFilePath)
+	require.NoError(t, err, "values file %s must exist", valuesFilePath)
+	return valuesFileBytes
 }
