@@ -22,7 +22,7 @@ release.
 
 | version                                                                                                 | planned end of life date |
 | ------------------------------------------------------------------------------------------------------- | ------------------------ |
-| [v3.19](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.19/docs/README.md) | 2024-08-15               |
+| [v3.19](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.19/docs/README.md) | 2024-08-21               |
 
 ### Unsupported versions
 
