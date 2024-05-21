@@ -113,11 +113,19 @@ Return all exporters for .Type pipeline
 */}}
 {{- define "logs.otelcol.exporters" -}}
 {{- $exporters := include "logs.otelcol.defaultExporters" . | fromJsonArray }}
+{{/* Iterate over all exporters used by routing */}}
+{{- if .Values.sumologic.logs.otelcol.routing.table -}}
 {{- range $entry := .Values.sumologic.logs.otelcol.routing.table -}}
 {{- $exporters = append $exporters $entry.exporter -}}
 {{- end -}}
 {{- range $exporter := .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
 {{- $exporters = append $exporters $exporter -}}
+{{- end -}}
+{{/* Routing is not enabled, so iterate over all extraExporters */}}
+{{- else -}}
+{{- range $exporter, $_ := .Values.sumologic.logs.otelcol.extraExporters -}}
+{{- $exporters = append $exporters $exporter -}}
+{{- end -}}
 {{- end -}}
 {{- range $_, $exporter := $exporters }}
 {{ printf "- %s" $exporter }}

@@ -422,7 +422,7 @@ processors:
 {{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
       - statement: route()
         exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "kubelet") . | nindent 12 }}
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "kubelet") | nindent 12 }}
 {{- end }}
 {{- end }}
 
