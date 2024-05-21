@@ -68,10 +68,8 @@ Return default exporters for routing Processor.
 */}}
 {{- define "logs.otelcol.routing.defaultExporters" -}}
 {{- $exporters := include "logs.otelcol.container.defaultExporters" . | fromJsonArray }}
-{{- range $entry := .Values.sumologic.logs.container.otelcol.routing -}}
-{{- if $entry.default -}}
-{{- $exporters = append $exporters $entry.exporter -}}
-{{- end -}}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.defaultExporters -}}
+{{- $exporters = append $exporters $entry -}}
 {{- end -}}
 {{- range $_, $exporter := $exporters }}
 {{ printf "- %s" $exporter }}
@@ -85,7 +83,7 @@ Return default exporters.
 */}}
 {{- define "logs.otelcol.container.defaultExporters" -}}
 {{- $exporters := list -}}
-{{- if .Values.sumologic.logs.container.otelcol.useDefaultExporters -}}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters -}}
 {{- if eq .Values.sumologic.logs.sourceType "http" -}}
 {{- $exporters = append $exporters "sumologic/containers" -}}
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" -}}
@@ -111,8 +109,11 @@ Return all exporters
 */}}
 {{- define "logs.otelcol.container.exporters" -}}
 {{- $exporters := include "logs.otelcol.container.defaultExporters" . | fromJsonArray }}
-{{- range $entry := .Values.sumologic.logs.container.otelcol.routing -}}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table -}}
 {{- $exporters = append $exporters $entry.exporter -}}
+{{- end -}}
+{{- range $exporter := .Values.sumologic.logs.otelcol.routing.defaultExporters -}}
+{{- $exporters = append $exporters $exporter -}}
 {{- end -}}
 {{- range $_, $exporter := $exporters }}
 {{ printf "- %s" $exporter }}

@@ -379,15 +379,20 @@ processors:
       value: ""
 {{ end }}
 
-{{- if .Values.sumologic.logs.container.otelcol.routing }}
+{{- if .Values.sumologic.logs.otelcol.routing }}
   routing/containers:
     default_exporters:
 {{ include "logs.otelcol.routing.defaultExporters" . | nindent 6}}
     table:
-{{- range $entry := .Values.sumologic.logs.container.otelcol.routing }}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
       statement: {{ $entry.statement }}
       exporters:
         - {{ $entry.exporter }}
+{{- end }}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      statement: route()
+      exporters:
+{{ include "logs.otelcol.routing.defaultExporters" . | nindent 10}}
 {{- end }}
 {{- end }}
 
@@ -530,7 +535,7 @@ service:
         - transform/flatten
 {{- end }}
         - batch
-{{- if .Values.sumologic.logs.container.otelcol.routing }}
+{{- if .Values.sumologic.logs.otelcol.routing }}
         - routing/containers
 {{- end }}
       receivers:
