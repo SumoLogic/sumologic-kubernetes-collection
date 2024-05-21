@@ -443,6 +443,9 @@ sumologic:
       excludeUnitRegex: ""
 
     otelcol:
+      ## additional exporters which may be used in any of the pipeline
+      ## remember add them to containers, systemd or kubelet routing as well
+      extraExporters: {}
       ## useDefaultExporters uses default helm chart exporters and always sends all data to them
       useDefaultExporters: true
       ## routing defines how to route data
@@ -453,7 +456,7 @@ sumologic:
         ## -
         ##  ## exporter is name of the exporter
         ##  exporter: sumologic/otlp
-        ##  ## statement in OTTL under which the exporter should be used
+        ##  ## statement is an OTTL condition which defines what data should be send to the exporter
         ##  ## see routing processor documentation for more details:
         ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/processor/routingprocessor/README.md#tech-preview-opentelemetry-transformation-language-statements-as-routing-conditions
         ##  statement: ""
@@ -478,10 +481,6 @@ sumologic:
     additionalFields: []
 
     sourceType: otlp
-
-    ## additional exporters which may be used in any of the pipeline
-    ## remember add them to containers, systemd or kubelet routing as well
-    extraExporters: {}
 
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.

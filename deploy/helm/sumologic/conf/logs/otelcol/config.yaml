@@ -87,8 +87,8 @@ exporters:
 {{- end }}
 {{- end }}
 
-{{- if .Values.sumologic.logs.extraExporters }}
-{{- range $name, $exporter := .Values.sumologic.logs.extraExporters }}
+{{- if .Values.sumologic.logs.otelcol.extraExporters }}
+{{- range $name, $exporter := .Values.sumologic.logs.otelcol.extraExporters }}
 {{ printf "%s:" $name | indent 2 }}
 {{ toYaml $exporter | indent 4}}
 {{- end }}

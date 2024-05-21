@@ -39,3 +39,14 @@
 {{- if and (eq (include "logs.collector.otellogswindows.enabled" .) "true") (has "..." $nameservers) -}}
 {{- fail "\nPlease set cluster namserver for windows log collection" -}}
 {{- end -}}
+
+{{/* Check if routing has been configured properly */}}
+{{- if and .Values.sumologic.logs.otelcol.useDefaultExporters .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
+{{- fail "\nCannot use `sumologic.logs.otelcol.routing.fallbackExporters` when `sumologic.logs.otelcol.useDefaultExporters` is set to `true`: https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
+{{- end -}}
+{{- if and (not .Values.sumologic.logs.otelcol.useDefaultExporters) (not .Values.sumologic.logs.otelcol.routing.fallbackExporters) .Values.sumologic.logs.otelcol.routing.table -}}
+{{- fail "\nYou have to specify `sumologic.logs.otelcol.routing.fallbackExporters` or set `sumologic.logs.otelcol.useDefaultExporters` to `true` when using `.Values.sumologic.logs.otelcol.routing.table`: https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
+{{- end -}}
+{{- if and (not .Values.sumologic.logs.otelcol.useDefaultExporters) (not .Values.sumologic.logs.otelcol.extraExporters) -}}
+{{- fail "\nPlease set `sumologic.logs.otelcol.extraExporters` if you set `sumologic.logs.otelcol.useDefaultExporters` to false : https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
+{{- end -}}

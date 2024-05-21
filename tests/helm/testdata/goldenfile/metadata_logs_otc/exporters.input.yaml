@@ -4,6 +4,11 @@ sumologic:
       otelcol:
         enabled: true
     otelcol:
+      extraExporters:
+        sumologic/test:
+          endpoint: https://test-endpoint
+        debug:
+          verbosity: detailed
       useDefaultExporters: false
       routing:
         fallbackExporters:
@@ -11,8 +16,3 @@ sumologic:
         table:
           - exporter: sumologic/test
             statement: route() where resource.attributes["exporter"] == "test"
-    extraExporters:
-      sumologic/test:
-        endpoint: https://test-endpoint
-      debug:
-        verbosity: detailed
