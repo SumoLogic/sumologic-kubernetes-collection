@@ -6,12 +6,6 @@ import (
 	"os"
 	"testing"
 
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/e2e-framework/klient"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
-	"sigs.k8s.io/e2e-framework/klient/wait"
-	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
@@ -59,7 +53,7 @@ func TestMain(m *testing.M) {
 		} else {
 			testenv.Setup(CreateKindCluster(kindClusterName))
 			ConfigureTestEnv(testenv)
-			testenv.Finish(DestroyKindCluster(kindClusterName))
+			testenv.Finish(envfuncs.DestroyCluster(kindClusterName))
 		}
 	}
 
@@ -77,8 +71,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// TODO: Create namespaces only for specific tests
 		stepfuncs.KubectlCreateOperatorNamespacesOpt(),
 		stepfuncs.KubectlCreateOverrideNamespaceOpt(),
-		// Create Test Namespace
-		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		stepfuncs.HelmVersionOpt(),
 		// SetHelmOptionsTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
@@ -111,6 +103,9 @@ func ConfigureTestEnv(testenv env.Environment) {
 	testenv.Finish(
 		func(ctx context.Context, envConf *envconf.Config) (context.Context, error) {
 			namespace := ctxopts.Namespace(ctx)
+			if namespace == "" {
+				return ctx, nil
+			}
 			return envfuncs.DeleteNamespace(namespace)(ctx, envConf)
 		},
 		envfuncs.DeleteNamespace(internal.OverrideNamespace),
@@ -132,10 +127,11 @@ func InjectKubectlOptionsFromKubeconfig(kubeconfig string) func(context.Context,
 func CreateKindCluster(clusterName string) func(context.Context, *envconf.Config) (context.Context, error) {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		k := kind.NewCluster(clusterName)
+		k.WithOpts(kind.WithImage(os.Getenv(internal.EnvNameKindImage)))
 
 		// We only provide the config because the API is constructed in such a way
 		// that it requires both the image and the cluster config.
-		kubecfg, err := k.CreateWithConfig(os.Getenv(internal.EnvNameKindImage), "yamls/cluster.yaml")
+		kubecfg, err := k.CreateWithConfig(ctx, "yamls/cluster.yaml")
 		if err != nil {
 			return ctx, err
 		}
@@ -145,42 +141,26 @@ func CreateKindCluster(clusterName string) func(context.Context, *envconf.Config
 		if err != nil {
 			log.Printf("Couldn't find image archive file %s, proceeding without it", fileName)
 		} else {
-			err = k.LoadImageArchive(fileName)
+			err = k.LoadImageArchive(ctx, fileName)
 			if err != nil {
 				log.Fatalf("Loading image archive failed: %v", err)
 			}
 			log.Printf("Loaded image archive: %s", fileName)
 		}
 
+		// update envconfig with kubeconfig...
+		cfg.WithKubeconfigFile(kubecfg)
+
+		err = k.WaitForControlPlane(ctx, cfg.Client())
+		if err != nil {
+			return ctx, err
+		}
+
 		kubectlOptions := k8s.NewKubectlOptions("", kubecfg, "")
 		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
 		log.Printf("Kube config: %s", kubecfg)
 
-		// update envconfig with kubeconfig...
-		cfg.WithKubeconfigFile(kubecfg)
-
-		// ...and with new klient.Client since otherwise it would be reused as per:
-		// https://github.com/kubernetes-sigs/e2e-framework/blob/55d8b7e4/pkg/envconf/config.go#L116-L132
-		cl, err := klient.NewWithKubeConfigFile(kubecfg)
-		if err != nil {
-			return ctx, err
-		}
-		cfg.WithClient(cl)
-
-		err = WaitForControlPlane(ctx, cl, k)
-		if err != nil {
-			return ctx, err
-		}
-
-		// store entire cluster value in ctx for future access using the cluster name
 		return ctx, nil
-	}
-}
-
-func DestroyKindCluster(clusterName string) func(context.Context, *envconf.Config) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		cluster := kind.NewCluster(clusterName)
-		return ctx, cluster.Destroy()
 	}
 }
 
@@ -195,33 +175,4 @@ func GetImageArchiveFilename() (string, error) {
 	}
 
 	return fileName, nil
-}
-
-// this is a backport of a function added in e2e_framework 0.3.0
-// it should be removed once we upgrade
-func WaitForControlPlane(ctx context.Context, client klient.Client, k *kind.Cluster) error {
-	r, err := resources.New(client.RESTConfig())
-	if err != nil {
-		return err
-	}
-	for _, sl := range []metav1.LabelSelectorRequirement{
-		{Key: "component", Operator: metav1.LabelSelectorOpIn, Values: []string{"etcd", "kube-apiserver", "kube-controller-manager", "kube-scheduler"}},
-		{Key: "k8s-app", Operator: metav1.LabelSelectorOpIn, Values: []string{"kindnet", "kube-dns", "kube-proxy"}},
-	} {
-		selector, err := metav1.LabelSelectorAsSelector(
-			&metav1.LabelSelector{
-				MatchExpressions: []metav1.LabelSelectorRequirement{
-					sl,
-				},
-			},
-		)
-		if err != nil {
-			return err
-		}
-		err = wait.For(conditions.New(r).ResourceListN(&v1.PodList{}, len(sl.Values), resources.WithLabelSelector(selector.String())))
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

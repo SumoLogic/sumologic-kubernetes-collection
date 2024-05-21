@@ -31,5 +31,8 @@ func WithNamespace(ctx context.Context, namespace string) context.Context {
 
 func Namespace(ctx context.Context) string {
 	v := ctx.Value(ctxKeyNameNamespace)
+	if v == nil {
+		return ""
+	}
 	return v.(string)
 }

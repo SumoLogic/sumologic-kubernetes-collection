@@ -23,6 +23,8 @@ import (
 func KubectlDeleteNamespaceTestOpt(force bool) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		namespace := ctxopts.Namespace(ctx)
+		kubectlOptions := ctxopts.KubectlOptions(ctx)
+		kubectlOptions.Namespace = ""
 		return KubectlDeleteNamespaceOpt(namespace, force)(ctx, t, envConf)
 	}
 }
@@ -50,6 +52,7 @@ func KubectlCreateNamespaceOpt(namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		kubectlOptions := ctxopts.KubectlOptions(ctx)
 		kubectlOptions.Namespace = namespace
+		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
 		k8s.CreateNamespace(t, kubectlOptions, namespace)
 		return ctxopts.WithNamespace(ctx, namespace)
 	}
