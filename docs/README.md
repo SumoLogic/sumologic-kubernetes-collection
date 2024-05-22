@@ -4,7 +4,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
-- [Deployment Guide for unreleased version](#deployment-guide-for-unreleased-version)
+- [Deployment Guide for v4.7](#deployment-guide-for-v47)
   - [Solution overview](#solution-overview)
     - [Log Collection](#log-collection)
     - [Metrics Collection](#metrics-collection)
@@ -112,7 +112,7 @@ The following table displays the currently used software versions for our Helm c
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
 | Falco                                     | 3.8.7   |
 | Telegraf Operator                         | 1.3.12  |
-| Tailing Sidecar Operator                  | 0.12.0  |
+| Tailing Sidecar Operator                  | 0.13.0  |
 | Metrics Server                            | 6.11.2  |
 
 ### ARM support
