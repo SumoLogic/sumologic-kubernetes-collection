@@ -414,6 +414,20 @@ func DeleteAdditionalSumologicMock() features.Feature {
 
 func GetAdditionalLogsFeature() features.Feature {
 	return features.New("additional exporter logs").
+		Setup(stepfuncs.GenerateLogs(
+			stepfuncs.LogsGeneratorDeployment,
+			logsGeneratorCount,
+			internal.LogsGeneratorName,
+			internal.LogsGeneratorNamespace,
+			internal.LogsGeneratorImage,
+		)).
+		Setup(stepfuncs.GenerateLogs(
+			stepfuncs.LogsGeneratorDaemonSet,
+			logsGeneratorCount,
+			internal.LogsGeneratorName,
+			internal.LogsGeneratorNamespace,
+			internal.LogsGeneratorImage,
+		)).
 		Assess("logs from log generator deployment present", stepfuncs.WaitUntilExpectedAdditionalLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
@@ -519,6 +533,21 @@ func GetAdditionalLogsFeature() features.Feature {
 			waitDuration,
 			tickDuration,
 		)).
+		Teardown(
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				opts := *ctxopts.KubectlOptions(ctx)
+				opts.Namespace = internal.LogsGeneratorNamespace
+				terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.LogsGeneratorName)
+				return ctx
+			}).
+		Teardown(
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				opts := *ctxopts.KubectlOptions(ctx)
+				opts.Namespace = internal.LogsGeneratorNamespace
+				terrak8s.RunKubectl(t, &opts, "delete", "daemonset", internal.LogsGeneratorName)
+				return ctx
+			}).
+		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
 		Feature()
 }
 
