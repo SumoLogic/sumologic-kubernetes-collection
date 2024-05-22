@@ -402,6 +402,7 @@ func GetLogsFeature() features.Feature {
 func DeployAdditionalSumologicMock() features.Feature {
 	return features.New("create additional sumologic mock").
 		Setup(stepfuncs.KubectlApplyFOpt(internal.YamlPathAdditionalSumologicMock, internal.AdditionalSumologicMockNamespace)).
+		Assess("additional sumologic mock is ready", stepfuncs.WaitUntilAdditionalSumologicMockAvailable(waitDuration, tickDuration)).
 		Feature()
 }
 
