@@ -399,6 +399,128 @@ func GetLogsFeature() features.Feature {
 
 }
 
+func DeployAdditionalSumologicMock() features.Feature {
+	return features.New("create additional sumologic mock").
+		Setup(stepfuncs.KubectlApplyFOpt(internal.YamlPathAdditionalSumologicMock, internal.AdditionalSumologicMockNamespace)).
+		Feature()
+}
+
+func DeleteAdditionalSumologicMock() features.Feature {
+	return features.New("delete additional sumologic mock").
+		Setup(stepfuncs.KubectlDeleteFOpt(internal.YamlPathAdditionalSumologicMock, internal.AdditionalSumologicMockNamespace)).
+		Feature()
+}
+
+func GetAdditionalLogsFeature() features.Feature {
+	return features.New("additional exporter logs").
+		Assess("logs from log generator deployment present", stepfuncs.WaitUntilExpectedAdditionalLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"deployment":     internal.LogsGeneratorName,
+			},
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("logs from log generator daemonset present", stepfuncs.WaitUntilExpectedAdditionalLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"daemonset":      internal.LogsGeneratorName,
+			},
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("expected container log metadata is present for log generator deployment", stepfuncs.WaitUntilExpectedAdditionalLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				"cluster": internal.ClusterName,
+				// TODO: uncomment this after v4 release
+				// or make it depend on the metadata provider
+				// "_collector":     internal.ClusterName,
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"container":      internal.LogsGeneratorName,
+				"deployment":     internal.LogsGeneratorName,
+				"pod":            fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDeploymentSuffixRegex),
+				"host":           internal.NodeNameRegex,
+				"node":           internal.NodeNameRegex,
+				"_sourceName": fmt.Sprintf(
+					"%s\\.%s%s\\.%s",
+					internal.LogsGeneratorNamespace,
+					internal.LogsGeneratorName,
+					internal.PodDeploymentSuffixRegex,
+					internal.LogsGeneratorName,
+				),
+				"_sourceCategory": fmt.Sprintf(
+					"%s/%s/%s", // dashes instead of hyphens due to sourceCategoryReplaceDash
+					internal.ClusterName,
+					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
+					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the deployment name
+				),
+				"_sourceHost": internal.EmptyRegex,
+			},
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("expected container log metadata is present for log generator daemonset", stepfuncs.WaitUntilExpectedAdditionalLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				// TODO: uncomment this after v4 release
+				// or make it depend on the metadata provider
+				// "_collector":  "kubernetes",
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"container":      internal.LogsGeneratorName,
+				"daemonset":      internal.LogsGeneratorName,
+				"pod":            fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDaemonSetSuffixRegex),
+				"host":           internal.NodeNameRegex,
+				"node":           internal.NodeNameRegex,
+				"_sourceName": fmt.Sprintf(
+					"%s\\.%s%s\\.%s",
+					internal.LogsGeneratorNamespace,
+					internal.LogsGeneratorName,
+					internal.PodDaemonSetSuffixRegex,
+					internal.LogsGeneratorName,
+				),
+				"_sourceCategory": fmt.Sprintf(
+					"%s/%s/%s", // dashes instead of hyphens due to sourceCategoryReplaceDash
+					internal.ClusterName,
+					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
+					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the DaemonSet name
+				),
+				"_sourceHost": internal.EmptyRegex,
+			},
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("logs from node systemd present", stepfuncs.WaitUntilExpectedAdditionalLogsPresent(
+			10, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"cluster":         "kubernetes",
+				"_sourceName":     internal.NotUndefinedRegex,
+				"_sourceCategory": "kubernetes/system",
+				"_sourceHost":     internal.NodeNameRegex,
+			},
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedAdditionalLogsPresent(
+			1, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"cluster":         "kubernetes",
+				"_sourceName":     "k8s_kubelet",
+				"_sourceCategory": "kubernetes/kubelet",
+				"_sourceHost":     internal.NodeNameRegex,
+			},
+			waitDuration,
+			tickDuration,
+		)).
+		Feature()
+}
+
 func GetMultilineLogsFeature() features.Feature {
 	return features.New("multiline logs").
 		Setup(stepfuncs.KubectlApplyFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).

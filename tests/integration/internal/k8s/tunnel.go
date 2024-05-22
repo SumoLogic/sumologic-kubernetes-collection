@@ -19,10 +19,16 @@ func TunnelForSumologicMock(
 	kubectlOptions := *ctxopts.KubectlOptions(ctx)
 	kubectlOptions.Namespace = ctxopts.Namespace(ctx)
 
+	serviceName := fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName)
+
+	if kubectlOptions.Namespace == internal.AdditionalSumologicMockNamespace {
+		serviceName = internal.AdditionalSumologicMockServiceName
+	}
+
 	tunnel := terrak8s.NewTunnel(
 		&kubectlOptions,
 		terrak8s.ResourceTypeService,
-		fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName),
+		serviceName,
 		0,
 		internal.SumologicMockServicePort,
 	)

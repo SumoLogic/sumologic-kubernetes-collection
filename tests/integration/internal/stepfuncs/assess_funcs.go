@@ -392,6 +392,48 @@ func WaitUntilExpectedLogsPresent(
 	}
 }
 
+// WaitUntilAdditionalLogsPresent returns a features.Func that can be used in `Assess` calls.
+// It will wait until the provided number of logs with the provided labels are returned by additional sumologic-mock's HTTP API on
+// the provided Service and port, until it succeeds or waitDuration passes.
+func WaitUntilExpectedAdditionalLogsPresent(
+	expectedLogsCount uint,
+	expectedLogsMetadata map[string]string,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		newCtx := ctxopts.WithNamespace(ctx, internal.AdditionalSumologicMockNamespace)
+		k8s_internal.WaitUntilSumologicMockAvailable(newCtx, t, waitDuration, tickDuration)
+
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(newCtx, t)
+		defer closeTunnelFunc()
+
+		assert.Eventually(t, func() bool {
+			logsCount, err := client.GetLogsCount(t, expectedLogsMetadata)
+			if err != nil {
+				log.ErrorS(err, "failed getting log counts from sumologic-mock")
+				return false
+			}
+			if logsCount < expectedLogsCount {
+				log.InfoS(
+					"received logs, less than expected",
+					"received", logsCount,
+					"expected", expectedLogsCount,
+				)
+				return false
+			}
+			log.InfoS(
+				"received enough logs",
+				"received", logsCount,
+				"expected", expectedLogsCount,
+				"metadata", expectedLogsMetadata,
+			)
+			return true
+		}, waitDuration, tickDuration)
+		return ctx
+	}
+}
+
 // WaitUntilStatefulSetIsReady waits for a specified duration and check with the
 // specified tick interval whether the stateful set (as described by the provided options)
 // is ready.
