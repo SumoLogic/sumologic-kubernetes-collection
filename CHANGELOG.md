@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.19.1]
+
+### Released 2024-05-21
+
+### Changed
+
+- deps: upgrade fluent-bit subchart to `0.46.7` [#3715]
+
+[#3715]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3715
+[v3.19.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.1
+
 ## [v3.19.0]
 
 ### Released 2024-05-14
