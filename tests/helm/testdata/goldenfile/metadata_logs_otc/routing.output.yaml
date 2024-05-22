@@ -225,13 +225,6 @@ data:
         - exporters:
           - sumologic/test
           statement: route() where resource.attributes["exporter"] == "test"
-      routing/kubelet:
-        default_exporters:
-        - debug
-        table:
-        - exporters:
-          - sumologic/test
-          statement: route() where resource.attributes["exporter"] == "test"
       routing/systemd:
         default_exporters:
         - debug

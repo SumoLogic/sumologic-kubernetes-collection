@@ -335,8 +335,8 @@ data:
           - otlp
         logs/otlp/kubelet:
           exporters:
-          - sumologic/kubelet
-          - sumologic/sumologic-mock-kubelet
+          - sumologic/systemd
+          - sumologic/sumologic-mock-systemd
           - debug
           processors:
           - memory_limiter

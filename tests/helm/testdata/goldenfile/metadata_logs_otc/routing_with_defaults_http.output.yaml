@@ -235,16 +235,6 @@ data:
         - exporters:
           - sumologic/containers
           statement: route()
-      routing/kubelet:
-        default_exporters:
-        - sumologic/kubelet
-        table:
-        - exporters:
-          - sumologic/test
-          statement: route() where resource.attributes["exporter"] == "test"
-        - exporters:
-          - sumologic/kubelet
-          statement: route()
       routing/systemd:
         default_exporters:
         - sumologic/systemd
@@ -351,7 +341,7 @@ data:
           - otlp
         logs/otlp/kubelet:
           exporters:
-          - sumologic/kubelet
+          - sumologic/systemd
           - sumologic/test
           processors:
           - memory_limiter
