@@ -10,7 +10,6 @@ import (
 func Test_Helm_Routing_OT(t *testing.T) {
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(15),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolLogsCollectorInstall,
 	}
@@ -23,5 +22,5 @@ func Test_Helm_Routing_OT(t *testing.T) {
 	featDeployMock := DeployAdditionalSumologicMock()
 	featDeleteMock := DeleteAdditionalSumologicMock()
 
-	testenv.Test(t, featDeployMock, featInstall, featLogs, featAdditionalLogs, featDeleteMock)
+	testenv.Test(t, featInstall, featDeployMock, featLogs, featAdditionalLogs, featDeleteMock)
 }

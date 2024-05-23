@@ -34,6 +34,9 @@ spec:
             - --store-traces
             - --store-logs
             - --store-metrics
+          env:
+            - name: RUST_LOG
+              value: "off"
           resources: {}
           securityContext:
             capabilities:
