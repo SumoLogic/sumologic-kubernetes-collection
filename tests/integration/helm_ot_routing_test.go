@@ -17,10 +17,11 @@ func Test_Helm_Routing_OT(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
+	featLogs := GetLogsFeature()
 	featAdditionalLogs := GetAdditionalLogsFeature()
 
 	featDeployMock := DeployAdditionalSumologicMock()
 	featDeleteMock := DeleteAdditionalSumologicMock()
 
-	testenv.Test(t, featDeployMock, featInstall, featAdditionalLogs, featDeleteMock)
+	testenv.Test(t, featDeployMock, featInstall, featLogs, featAdditionalLogs, featDeleteMock)
 }
