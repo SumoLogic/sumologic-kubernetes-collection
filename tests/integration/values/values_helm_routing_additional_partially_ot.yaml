@@ -1,0 +1,11 @@
+sumologic:
+  logs:
+    otelcol:
+      extraExporters:
+        sumologic/additional-sumologic-mock:
+          endpoint: http://sumologic-mock.additional-sumologic-mock:3000/receiver
+      routing:
+        table:
+          - exporter: sumologic/additional-sumologic-mock
+            statement: route() where resource.attributes["deployment"] == "logs-generator"
+

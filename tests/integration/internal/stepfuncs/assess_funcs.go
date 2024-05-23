@@ -414,6 +414,7 @@ func WaitUntilExpectedAdditionalLogsPresent(
 	expectedLogsMetadata map[string]string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
+	exactValue bool,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		newCtx := ctxopts.WithNamespace(ctx, internal.AdditionalSumologicMockNamespace)
@@ -428,9 +429,18 @@ func WaitUntilExpectedAdditionalLogsPresent(
 				log.ErrorS(err, "failed getting log counts from sumologic-mock")
 				return false
 			}
-			if logsCount < expectedLogsCount {
+			if !exactValue && logsCount < expectedLogsCount {
 				log.InfoS(
 					"received logs, less than expected",
+					"received", logsCount,
+					"expected", expectedLogsCount,
+				)
+				return false
+			}
+
+			if exactValue && logsCount != expectedLogsCount {
+				log.InfoS(
+					"received logs, not the same like expected",
 					"received", logsCount,
 					"expected", expectedLogsCount,
 				)
