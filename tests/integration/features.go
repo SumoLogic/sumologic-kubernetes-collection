@@ -418,7 +418,7 @@ func removeLogsDeployment(ctx context.Context, t *testing.T, envConf *envconf.Co
 func removeLogsDaemonset(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 	opts := *ctxopts.KubectlOptions(ctx)
 	opts.Namespace = internal.LogsGeneratorNamespace
-	terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.LogsGeneratorName)
+	terrak8s.RunKubectl(t, &opts, "delete", "daemonset", internal.LogsGeneratorName)
 	return ctx
 }
 
