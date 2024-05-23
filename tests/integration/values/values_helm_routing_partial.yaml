@@ -1,6 +1,7 @@
 sumologic:
   logs:
     otelcol:
+      useDefaultExporters: false
       extraExporters:
         sumologic/additional-sumologic-mock:
           endpoint: http://sumologic-mock.additional-sumologic-mock:3000/receiver
