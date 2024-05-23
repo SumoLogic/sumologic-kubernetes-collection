@@ -374,7 +374,7 @@ func WaitUntilExpectedExactLogsPresent(
 	expectedLogsMetadata map[string]string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
-	exactValue bool,
+	strict bool,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
@@ -388,7 +388,7 @@ func WaitUntilExpectedExactLogsPresent(
 				log.ErrorS(err, "failed getting log counts from sumologic-mock")
 				return false
 			}
-			if !exactValue && logsCount < expectedLogsCount {
+			if !strict && logsCount < expectedLogsCount {
 				log.InfoS(
 					"received logs, less than expected",
 					"received", logsCount,
@@ -397,7 +397,7 @@ func WaitUntilExpectedExactLogsPresent(
 				return false
 			}
 
-			if exactValue && logsCount != expectedLogsCount {
+			if strict && logsCount != expectedLogsCount {
 				log.InfoS(
 					"received logs, not the same like expected",
 					"received", logsCount,
@@ -437,7 +437,7 @@ type WaitForLogs func(
 	expectedLogsMetadata map[string]string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
-	exactValue bool,
+	strict bool,
 ) features.Func
 
 // WaitUntilAdditionalLogsPresent returns a features.Func that can be used in `Assess` calls.
@@ -448,7 +448,7 @@ func WaitUntilExpectedAdditionalLogsPresent(
 	expectedLogsMetadata map[string]string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
-	exactValue bool,
+	strict bool,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		newCtx := ctxopts.WithNamespace(ctx, internal.AdditionalSumologicMockNamespace)
@@ -463,7 +463,7 @@ func WaitUntilExpectedAdditionalLogsPresent(
 				log.ErrorS(err, "failed getting log counts from sumologic-mock")
 				return false
 			}
-			if !exactValue && logsCount < expectedLogsCount {
+			if !strict && logsCount < expectedLogsCount {
 				log.InfoS(
 					"received logs, less than expected",
 					"received", logsCount,
@@ -472,7 +472,7 @@ func WaitUntilExpectedAdditionalLogsPresent(
 				return false
 			}
 
-			if exactValue && logsCount != expectedLogsCount {
+			if strict && logsCount != expectedLogsCount {
 				log.InfoS(
 					"received logs, not the same like expected",
 					"received", logsCount,
