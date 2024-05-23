@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_Helm_Routing_Additional_Partially(t *testing.T) {
+func Test_Helm_Routing_Partial(t *testing.T) {
 
 	installChecks := []featureCheck{
 		CheckOtelcolMetadataLogsInstall,
@@ -16,11 +16,10 @@ func Test_Helm_Routing_Additional_Partially(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featLogs := GetLogsFeature()
-	featAdditionalLogs := GetAdditionalPartiallyLogsFeature()
+	featLogs := GetPartialLogsFeature()
 
 	featDeployMock := DeployAdditionalSumologicMock()
 	featDeleteMock := DeleteAdditionalSumologicMock()
 
-	testenv.Test(t, featInstall, featDeployMock, featLogs, featAdditionalLogs, featDeleteMock)
+	testenv.Test(t, featInstall, featDeployMock, featLogs, featDeleteMock)
 }
