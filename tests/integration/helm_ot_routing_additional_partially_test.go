@@ -5,6 +5,8 @@ package integration
 
 import (
 	"testing"
+
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
 func Test_Helm_Routing_Additional_Partially(t *testing.T) {
@@ -16,7 +18,7 @@ func Test_Helm_Routing_Additional_Partially(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featLogs := GetLogsFeature()
+	featLogs := GetAllLogsFeature(stepfuncs.WaitUntilExpectedExactLogsPresent, true)
 	featAdditionalLogs := GetAdditionalPartiallyLogsFeature()
 
 	featDeployMock := DeployAdditionalSumologicMock()

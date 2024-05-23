@@ -432,6 +432,14 @@ func WaitUntilAdditionalSumologicMockAvailable(
 	}
 }
 
+type WaitForLogs func(
+	expectedLogsCount uint,
+	expectedLogsMetadata map[string]string,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+	exactValue bool,
+) features.Func
+
 // WaitUntilAdditionalLogsPresent returns a features.Func that can be used in `Assess` calls.
 // It will wait until the provided number of logs with the provided labels are returned by additional sumologic-mock's HTTP API on
 // the provided Service and port, until it succeeds or waitDuration passes.

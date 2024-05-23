@@ -9,6 +9,7 @@ import (
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
@@ -40,7 +41,7 @@ func Test_Helm_Default_OT_NamespaceOverride(t *testing.T) {
 
 	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
-	featLogs := GetLogsFeature()
+	featLogs := GetAllLogsFeature(stepfuncs.WaitUntilExpectedExactLogsPresent, true)
 
 	featMultilineLogs := GetMultilineLogsFeature()
 
