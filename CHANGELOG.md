@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.19.3]
+
+### Released 2024-05-23
+
+### Changed
+
+- chore(deps): update Fluent Bit to 3.0.4 [#3729]
+
+[#3729]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3729
+[v3.19.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.3
+
 ## [v3.19.2]
 
 ### Released 2024-05-22
