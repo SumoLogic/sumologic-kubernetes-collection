@@ -31,13 +31,9 @@ spec:
           args:
             - sumologic-mock
             - --hostname=sumologic-mock.additional-sumologic-mock
-            - --print-headers
-            - --print-logs
-            - --print-metrics
             - --store-traces
             - --store-logs
             - --store-metrics
-            - --print-spans
           resources: {}
           securityContext:
             capabilities:
