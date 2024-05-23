@@ -584,7 +584,7 @@ service:
 {{- end }}
         - batch
 {{- if .Values.sumologic.logs.otelcol.routing.table }}
-        - routing/kubelet
+        - routing/systemd
 {{- end }}
       receivers:
         - otlp

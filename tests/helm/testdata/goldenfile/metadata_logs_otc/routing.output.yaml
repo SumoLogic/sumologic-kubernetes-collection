@@ -347,7 +347,7 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - batch
-          - routing/kubelet
+          - routing/systemd
           receivers:
           - otlp
         logs/otlp/systemd:
