@@ -444,7 +444,6 @@ sumologic:
 
     otelcol:
       ## additional exporters which may be used in any of the pipeline
-      ## remember add them to containers, systemd or kubelet routing as well
       extraExporters: {}
       ## useDefaultExporters uses default helm chart exporters and always sends all data to them
       useDefaultExporters: true
