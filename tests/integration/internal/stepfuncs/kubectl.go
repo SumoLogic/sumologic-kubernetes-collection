@@ -46,6 +46,22 @@ func KubectlCreateNamespaceOpt(namespace string) features.Func {
 	}
 }
 
+// KubectlCreateOperatorNamespacesOpt returns a features.Func that will create namespaces for sumologic mock.
+func KubectlCreateSumologicMockNamespaceOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		namespace := ctxopts.AdditionalSumologicMockNamespace(ctx)
+		return KubectlCreateNamespaceOpt(namespace)(ctx, t, envConf)
+	}
+}
+
+// KubectlDeleteSumologicMockNamespaceOpt returns a features.Func that will delete namespaces for sumologic mock.
+func KubectlDeleteSumologicMockNamespaceOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		namespace := ctxopts.AdditionalSumologicMockNamespace(ctx)
+		return KubectlDeleteNamespaceOpt(namespace)(ctx, t, envConf)
+	}
+}
+
 // KubectlCreateOperatorNamespacesOpt returns a features.Func that will create namespaces references by otel operator configuration.
 func KubectlCreateOperatorNamespacesOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {

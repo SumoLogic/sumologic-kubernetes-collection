@@ -2,6 +2,7 @@ package ctxopts
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -51,6 +52,11 @@ func WithHelmRelease(ctx context.Context, namespace string) context.Context {
 func HelmRelease(ctx context.Context) string {
 	v := ctx.Value(ctxKeyNameHelmRelease)
 	return v.(string)
+}
+
+func AdditionalSumologicMockNamespace(ctx context.Context) string {
+	v := ctx.Value(ctxKeyNameHelmRelease)
+	return fmt.Sprintf("%s-sumologic-mock", v.(string))
 }
 
 func Clusters(ctx context.Context) []string {

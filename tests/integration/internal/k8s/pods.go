@@ -81,7 +81,7 @@ func WaitUntilSumologicMockAvailable(
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) {
-	if ctxopts.Namespace(ctx) == internal.AdditionalSumologicMockNamespace {
+	if ctxopts.Namespace(ctx) == ctxopts.AdditionalSumologicMockNamespace(ctx) {
 
 		k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx), internal.AdditionalSumologicMockServiceName, int(waitDuration), tickDuration)
 		return

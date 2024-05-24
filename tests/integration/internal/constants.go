@@ -27,7 +27,6 @@ const (
 
 	YamlPathAdditionalSumologicMock    = "yamls/additional-sumologic-mock.yaml"
 	AdditionalSumologicMockServiceName = "sumologic-mock"
-	AdditionalSumologicMockNamespace   = "additional-sumologic-mock"
 
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"

@@ -473,14 +473,21 @@ func GetAllLogsFeature(waitFunction stepfuncs.WaitForLogs, generate bool) featur
 
 func DeployAdditionalSumologicMock() features.Feature {
 	return features.New("create additional sumologic mock").
-		Setup(stepfuncs.KubectlApplyFOpt(internal.YamlPathAdditionalSumologicMock, internal.AdditionalSumologicMockNamespace)).
+		Setup(stepfuncs.KubectlCreateSumologicMockNamespaceOpt()).
+		Setup(stepfuncs.KubectlApplyFOpt(internal.YamlPathAdditionalSumologicMock, ctxopts.AdditionalSumologicMockNamespace(ctx)(ctx, t, envConf))).
 		Assess("additional sumologic mock is ready", stepfuncs.WaitUntilAdditionalSumologicMockAvailable(waitDuration, tickDuration)).
 		Feature()
 }
 
 func DeleteAdditionalSumologicMock() features.Feature {
 	return features.New("delete additional sumologic mock").
-		Setup(stepfuncs.KubectlDeleteFOpt(internal.YamlPathAdditionalSumologicMock, internal.AdditionalSumologicMockNamespace)).
+		Teardown(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			opts := *ctxopts.KubectlOptions(ctx)
+			opts.Namespace = ctxopts.AdditionalSumologicMockNamespace(ctx)
+			terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.Add)
+			return ctx
+		}).
+		Teardown(stepfuncs.KubectlDeleteSumologicMockNamespaceOpt()).
 		Feature()
 }
 

@@ -21,7 +21,7 @@ func TunnelForSumologicMock(
 
 	serviceName := fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName)
 
-	if kubectlOptions.Namespace == internal.AdditionalSumologicMockNamespace {
+	if kubectlOptions.Namespace == ctxopts.AdditionalSumologicMockNamespace(ctx) {
 		serviceName = internal.AdditionalSumologicMockServiceName
 	}
 

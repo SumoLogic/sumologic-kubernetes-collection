@@ -425,7 +425,7 @@ func WaitUntilAdditionalSumologicMockAvailable(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		newCtx := ctxopts.WithNamespace(ctx, internal.AdditionalSumologicMockNamespace)
+		newCtx := ctxopts.WithNamespace(ctx, ctxopts.AdditionalSumologicMockNamespace(ctx))
 		k8s_internal.WaitUntilSumologicMockAvailable(newCtx, t, waitDuration, tickDuration)
 
 		return ctx
@@ -451,7 +451,7 @@ func WaitUntilExpectedAdditionalLogsPresent(
 	strict bool,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		newCtx := ctxopts.WithNamespace(ctx, internal.AdditionalSumologicMockNamespace)
+		newCtx := ctxopts.WithNamespace(ctx, ctxopts.AdditionalSumologicMockNamespace(ctx))
 		k8s_internal.WaitUntilSumologicMockAvailable(newCtx, t, waitDuration, tickDuration)
 
 		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(newCtx, t)
