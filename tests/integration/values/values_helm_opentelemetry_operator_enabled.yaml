@@ -9,8 +9,7 @@ sumologic:
 
 opentelemetry-operator:
   enabled: true
-  createDefaultInstrumentation: true
-  instrumentationNamespaces: "ot-operator1,ot-operator2"
+
   manager:
     resources:
       requests:
@@ -22,6 +21,10 @@ opentelemetry-operator:
       requests:
         cpu: 5m
         memory: 64Mi
+
+instrumentation:
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator1,ot-operator2"
 
 otelcolInstrumentation:
   enabled: true
