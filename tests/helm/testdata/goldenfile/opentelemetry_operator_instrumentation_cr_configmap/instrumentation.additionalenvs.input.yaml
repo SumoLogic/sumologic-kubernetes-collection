@@ -1,33 +1,39 @@
 opentelemetry-operator:
   enabled: true
+  manager:
+    autoInstrumentationImage:
+      dotnet:
+        repository: myrepo
+        tag: mytag
+      python:
+        repository: myrepo
+        tag: mytag
+      nodejs:
+        repository: myrepo
+        tag: mytag
+      java:
+        repository: myrepo
+        tag: mytag
+instrumentation:
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator1,ot-operator2"
-  instrumentation:
-    dotnet:
-      repository: myrepo
-      tag: mytag
-      image: dotnetimg
-      extraEnvVars:
-        - name: "test"
-          value: "dotnetval"
-    python:
-      repository: myrepo
-      tag: mytag
-      image: pythonimg
-      extraEnvVars:
-        - name: "test"
-          value: "pythonval"
-    nodejs:
-      repository: myrepo
-      tag: mytag
-      image: nodejsimg
-      extraEnvVars:
-        - name: "test"
-          value: "nodeval"
-    java:
-      repository: myrepo
-      tag: mytag
-      image: javaimg
-      extraEnvVars:
-        - name: "test"
-          value: "javaval"
+  instrumentationJobImage:
+    image:
+      repository: asd
+      tag: asd
+  dotnet:
+    extraEnvVars:
+      - name: "test"
+        value: "dotnetval"
+  python:
+    extraEnvVars:
+      - name: "test"
+        value: "pythonval"
+  nodejs:
+    extraEnvVars:
+      - name: "test"
+        value: "nodeval"
+  java:
+    extraEnvVars:
+      - name: "test"
+        value: "javaval"
