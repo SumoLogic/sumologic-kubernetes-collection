@@ -1,6 +1,6 @@
 {{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
-{{ $createDefaultInstrumentation := index .Values "opentelemetry-operator" "createDefaultInstrumentation" }}
+{{ $createDefaultInstrumentation := .Values.instrumentation.createDefaultInstrumentation }}
 {{- if and $operatorEnabled $tracesEnabled $createDefaultInstrumentation }}
 apiVersion: v1
 kind: ConfigMap

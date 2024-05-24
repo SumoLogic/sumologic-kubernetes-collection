@@ -1,25 +1,14 @@
 {{- $ctx := . -}}
-{{- $operator := index .Values "opentelemetry-operator" -}}
-{{- if eq ( get $operator "instrumentationNamespaces" ) "" -}}
-{{ fail "No value for \"opentelemetry-operator.instrumentationNamespaces\".Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
+{{- $instrumentation := .Values.instrumentation -}}
+{{- $operatorAiImages := index .Values "opentelemetry-operator" "manager" "autoInstrumentationImage" -}}
+{{- if eq ( get $instrumentation "instrumentationNamespaces" ) "" -}}
+{{ fail "No value for \"instrumentation.instrumentationNamespaces\".Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
 {{- else -}}
-{{- range $ns := splitList "," $operator.instrumentationNamespaces -}}
-{{- $dotnetImage := printf "%s:%s" $operator.instrumentation.dotnet.repository $operator.instrumentation.dotnet.tag -}}
-{{- if $operator.instrumentation.dotnet.image -}}
-{{- $dotnetImage = $operator.instrumentation.dotnet.image -}}
-{{- end -}}
-{{- $pythonImage := printf "%s:%s" $operator.instrumentation.python.repository $operator.instrumentation.python.tag -}}
-{{- if $operator.instrumentation.python.image -}}
-{{- $pythonImage = $operator.instrumentation.python.image -}}
-{{- end -}}
-{{- $nodeJSImage := printf "%s:%s" $operator.instrumentation.nodejs.repository $operator.instrumentation.nodejs.tag -}}
-{{- if $operator.instrumentation.nodejs.image -}}
-{{- $nodeJSImage = $operator.instrumentation.nodejs.image -}}
-{{- end -}}
-{{- $javaImage := printf "%s:%s" $operator.instrumentation.java.repository $operator.instrumentation.java.tag -}}
-{{- if $operator.instrumentation.java.image -}}
-{{- $javaImage = $operator.instrumentation.java.image -}}
-{{- end -}}
+{{- range $ns := splitList "," $instrumentation.instrumentationNamespaces -}}
+{{- $dotnetImage := printf "%s:%s" $operatorAiImages.dotnet.repository $operatorAiImages.dotnet.tag -}}
+{{- $pythonImage := printf "%s:%s" $operatorAiImages.python.repository $operatorAiImages.python.tag -}}
+{{- $nodeJSImage := printf "%s:%s" $operatorAiImages.nodejs.repository $operatorAiImages.nodejs.tag -}}
+{{- $javaImage := printf "%s:%s" $operatorAiImages.java.repository $operatorAiImages.java.tag -}}
 ---
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
@@ -44,53 +33,53 @@ spec:
     image: {{ $dotnetImage }}
     env:
       - name: OTEL_METRICS_EXPORTER
-        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.dotnet.metrics.enabled) }}
+        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.dotnet.metrics.enabled) }}
       - name: OTEL_LOGS_EXPORTER
         value: none
       - name: OTEL_TRACES_EXPORTER
-        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.dotnet.traces.enabled) }}
+        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.dotnet.traces.enabled) }}
       - name: OTEL_EXPORTER_OTLP_PROTOCOL
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
-{{- if $operator.instrumentation.dotnet.extraEnvVars -}}
-{{- toYaml $operator.instrumentation.dotnet.extraEnvVars | nindent 6 -}}
+{{- if $instrumentation.dotnet.extraEnvVars -}}
+{{- toYaml $instrumentation.dotnet.extraEnvVars | nindent 6 -}}
 {{- end }}
   python:
     image: {{ $pythonImage }}
     env:
       - name: OTEL_METRICS_EXPORTER
-        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.python.metrics.enabled) }}
+        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.python.metrics.enabled) }}
       - name: OTEL_TRACES_EXPORTER
-        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.python.traces.enabled) }}
+        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.python.traces.enabled) }}
       - name: OTEL_EXPORTER_OTLP_PROTOCOL
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
-{{- if $operator.instrumentation.python.extraEnvVars -}}
-{{- toYaml $operator.instrumentation.python.extraEnvVars | nindent 6 -}}
+{{- if $instrumentation.python.extraEnvVars -}}
+{{- toYaml $instrumentation.python.extraEnvVars | nindent 6 -}}
 {{- end }}
   nodejs:
     image: {{ $nodeJSImage }}
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4317
-{{- if $operator.instrumentation.nodejs.extraEnvVars -}}
-{{- toYaml $operator.instrumentation.nodejs.extraEnvVars | nindent 6 -}}
+{{- if $instrumentation.nodejs.extraEnvVars -}}
+{{- toYaml $instrumentation.nodejs.extraEnvVars | nindent 6 -}}
 {{- end }}
   java:
     image: {{ $javaImage }}
     env:
       - name: OTEL_METRICS_EXPORTER
-        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.java.metrics.enabled) }}
+        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.java.metrics.enabled) }}
       - name: OTEL_TRACES_EXPORTER
-        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $operator.instrumentation.java.traces.enabled) }}
+        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.java.traces.enabled) }}
       - name: OTEL_EXPORTER_OTLP_PROTOCOL
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
-{{- if $operator.instrumentation.java.extraEnvVars -}}
-{{- toYaml $operator.instrumentation.java.extraEnvVars | nindent 6 -}}
+{{- if $instrumentation.java.extraEnvVars -}}
+{{- toYaml $instrumentation.java.extraEnvVars | nindent 6 -}}
 {{- end }}
 {{ end -}}
 {{- end -}}
