@@ -2581,9 +2581,10 @@ instrumentation:
     #     value: my_value
 
   ## Current instrumentation doesn't support customization
-  ## for nodejs. Traces are always enabled.
+  ## for nodejs traces are always enabled.
   nodejs:
-    {}
+    metrics:
+      enabled: true
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
     #   - name: OTEL_CUSTOM_ENV_VAR
