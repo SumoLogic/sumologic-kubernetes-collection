@@ -264,7 +264,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.99.0-sumo-0"
+    tag: "0.100.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -1045,6 +1045,13 @@ kube-prometheus-stack:
       enabled: false
     tls:
       enabled: false
+    prometheusConfigReloader:
+      image:
+        repository: public.ecr.aws/sumologic/prometheus-config-reloader
+
+    thanosImage:
+      repository: public.ecr.aws/sumologic/thanos
+
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
     ## Put here the new name if you want to override the full name used for Kube State Metrics components.
@@ -2459,7 +2466,7 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.99.0-sumo-0"
+      tag: "0.100.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java

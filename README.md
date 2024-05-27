@@ -29,7 +29,7 @@ release.
 | [v4.3](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.3/docs/README.md)   | 2024-07-24               |
 | [v4.2](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.2/docs/README.md)   | 2024-06-13               |
 | [v4.1](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.1/docs/README.md)   | 2024-05-27               |
-| [v3.19](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.19/docs/README.md) | 2024-08-15               |
+| [v3.19](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.19/docs/README.md) | 2024-08-21               |
 
 ### Unsupported versions
 
