@@ -62,6 +62,8 @@ spec:
   nodejs:
     image: {{ $nodeJSImage }}
     env:
+      - name: OTEL_METRICS_EXPORTER
+        value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.nodejs.metrics.enabled) }}
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4317
 {{- if $instrumentation.nodejs.extraEnvVars -}}
