@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.19.4]
+
+### Released 2024-05-27
+
+### Changed
+
+- deps: update OpenTelemetry Collector to v0.100.0-sumo-0 [#3738]
+
+[#3738]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3738
+[v3.19.4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.4
+
 ## [v3.19.3]
 
 ### Released 2024-05-23
