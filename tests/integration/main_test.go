@@ -66,18 +66,13 @@ func TestMain(m *testing.M) {
 }
 
 func ConfigureTestEnv(testenv env.Environment) {
-	// List of the namespaces must match values/values_helm_opentelemetry_operator_enabled.yaml
-	// opentelemetry-operator.manager.env.WATCH_NAMESPACE value
-	var openTelemetryOperatorNamespaces = [...]string{"ot-operator1", "ot-operator2"}
 
 	// Before
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		// Needed for OpenTelemetry Operator test
 		// TODO: Create namespaces only for specific tests
-		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[0]),
-		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[1]),
-		stepfuncs.KubectlCreateNamespaceOpt(internal.InstrumentationAppsNamespace),
-		stepfuncs.KubectlCreateNamespaceOpt(internal.OverrideNamespace),
+		stepfuncs.KubectlCreateOperatorNamespacesOpt(),
+		stepfuncs.KubectlCreateOverrideNamespaceOpt(),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		stepfuncs.SetHelmOptionsTestOpt([]string{}),
@@ -102,9 +97,8 @@ func ConfigureTestEnv(testenv env.Environment) {
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.PrintClusterStateOpt(),
 		stepfuncs.HelmDeleteTestOpt(),
-		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[0]),
-		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[1]),
-		stepfuncs.KubectlDeleteNamespaceOpt(internal.OverrideNamespace),
+		stepfuncs.KubectlDeleteOverrideNamespaceOpt(),
+		stepfuncs.KubectlDeleteOperatorNamespacesOpt(),
 		stepfuncs.KubectlDeleteNamespaceTestOpt(),
 	) {
 		testenv.AfterEachTest(f)
@@ -112,12 +106,13 @@ func ConfigureTestEnv(testenv env.Environment) {
 
 	// Teardown
 	// TODO: Uninstall the Helm Chart here as well
-	testenv.Finish(envfuncs.DeleteNamespace(openTelemetryOperatorNamespaces[0]))
-	testenv.Finish(envfuncs.DeleteNamespace(openTelemetryOperatorNamespaces[1]))
-	testenv.Finish(func(ctx context.Context, envConf *envconf.Config) (context.Context, error) {
-		namespace := ctxopts.Namespace(ctx)
-		return envfuncs.DeleteNamespace(namespace)(ctx, envConf)
-	})
+	testenv.Finish(
+		func(ctx context.Context, envConf *envconf.Config) (context.Context, error) {
+			namespace := ctxopts.Namespace(ctx)
+			return envfuncs.DeleteNamespace(namespace)(ctx, envConf)
+		},
+		envfuncs.DeleteNamespace(internal.OverrideNamespace),
+	)
 }
 
 // InjectKubectlOptionsFromKubeconfig injects kubectl options to the context that will be propagated in tests.

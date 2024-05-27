@@ -18,6 +18,7 @@ sed -i "s/${otc_current_version}/${otc_new_version}/" ./deploy/helm/sumologic/RE
 sed -i "s/${otc_current_version}/${otc_new_version}/" ./deploy/helm/sumologic/values.yaml
 sed -i "s/${otc_current_version}/${otc_new_version}/" ./docs/*.md
 sed -i "s/${otc_current_version}/${otc_new_version}/" ./tests/helm/testdata/goldenfile/*/*.yaml
+sed -i "s/${otc_current_version}/${otc_new_version}/" ./tests/helm/testdata/goldenfile/*/*/*.yaml
 
 upstream_current_version=${otc_current_version%%-sumo-*}
 upstream_new_version=${otc_new_version%%-sumo-*}

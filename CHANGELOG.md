@@ -7,30 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v3.19.0]
+## [v4.7.1]
 
-### Released 2024-05-14
+### Released 2024-05-22
 
-### Changed
+- chore: Upgrading tailing-sidecar to v0.13.0 [#3725]
 
-- deps(setup): upgrade setup job from 3.11.0 to 3.14.0 [#3595], [#3700]
-- deps: upgrade telegraf-operator subchart to `1.4.0` [#3695]
-- deps: upgrade fluent-bit subchart to `0.46.5` [#3695]
-- deps: upgrade tailing-sidecar-operator subchart to `0.12.0` [#3695]
-- deps: upgrade `opentelemetry-operator` subchart to `v0.49.0` [#3695]
-- deps: upgrade metrics-server subchart to `6.13.1` [#3695]
-- deps: upgrade falco subchart to '3.8.7` [#3695]
-- deps: update OpenTelemetry Collector to v0.99.0-sumo-0 [#3696]
-- deps: update nginx image to 1.26.0-sumo-0 [#3698]
-- deps: update fluentd image to 1.16.5-sumo-0 [#3701]
-
-[#3595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3595
-[#3700]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3700
-[#3695]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3695
-[#3696]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3696
-[#3698]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3698
-[#3701]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3701
-[v3.19.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.0
+[#3725]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3725
+[v4.7.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.7.1
 
 ## [v4.7.0]
 
@@ -453,6 +437,64 @@ See the [migration guide][v4_migration_guide] for details.
 [#3340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3340
 [v4.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0
 [v4_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v4/important-changes/
+
+## [v3.19.3]
+
+### Released 2024-05-23
+
+### Changed
+
+- chore(deps): update Fluent Bit to 3.0.4 [#3729]
+
+[#3729]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3729
+[v3.19.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.3
+
+## [v3.19.2]
+
+### Released 2024-05-22
+
+### Changed
+
+- chore: upgrade tailing sidecar in v3 [#3719]
+
+[#3719]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3719
+[v3.19.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.2
+
+## [v3.19.1]
+
+### Released 2024-05-21
+
+### Changed
+
+- deps: upgrade fluent-bit subchart to `0.46.7` [#3715]
+
+[#3715]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3715
+[v3.19.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.1
+
+## [v3.19.0]
+
+### Released 2024-05-14
+
+### Changed
+
+- deps(setup): upgrade setup job from 3.11.0 to 3.14.0 [#3595], [#3700]
+- deps: upgrade telegraf-operator subchart to `1.4.0` [#3695]
+- deps: upgrade fluent-bit subchart to `0.46.5` [#3695]
+- deps: upgrade tailing-sidecar-operator subchart to `0.12.0` [#3695]
+- deps: upgrade `opentelemetry-operator` subchart to `v0.49.0` [#3695]
+- deps: upgrade metrics-server subchart to `6.13.1` [#3695]
+- deps: upgrade falco subchart to '3.8.7` [#3695]
+- deps: update OpenTelemetry Collector to v0.99.0-sumo-0 [#3696]
+- deps: update nginx image to 1.26.0-sumo-0 [#3698]
+- deps: update fluentd image to 1.16.5-sumo-0 [#3701]
+
+[#3595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3595
+[#3700]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3700
+[#3695]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3695
+[#3696]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3696
+[#3698]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3698
+[#3701]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3701
+[v3.19.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.0
 
 ## [v3.18.0]
 
