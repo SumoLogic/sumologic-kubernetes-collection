@@ -1,14 +1,8 @@
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: additional-sumologic-mock
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sumologic-mock
-  namespace: additional-sumologic-mock
+  name: additional-sumologic-mock
   labels:
     app: sumologic-mock
 spec:
@@ -55,8 +49,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: sumologic-mock
-  namespace: additional-sumologic-mock
+  name: additional-sumologic-mock
   labels:
     app: sumologic-mock
 spec:

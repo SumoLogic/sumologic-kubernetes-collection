@@ -1,6 +1,12 @@
 sumologic:
+  metrics:
+    enabled: false
+  traces:
+    enabled: false
+  events:
+    enabled: false
   logs:
     otelcol:
       extraExporters:
         sumologic/additional-sumologic-mock:
-          endpoint: http://sumologic-mock.additional-sumologic-mock:3000/receiver
+          endpoint: http://additional-sumologic-mock:3000/receiver

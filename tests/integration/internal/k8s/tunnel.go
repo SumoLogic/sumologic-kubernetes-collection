@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
@@ -15,15 +14,10 @@ import (
 func TunnelForSumologicMock(
 	ctx context.Context,
 	t *testing.T,
+	serviceName string,
 ) *terrak8s.Tunnel {
 	kubectlOptions := *ctxopts.KubectlOptions(ctx)
 	kubectlOptions.Namespace = ctxopts.Namespace(ctx)
-
-	serviceName := fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName)
-
-	if kubectlOptions.Namespace == internal.AdditionalSumologicMockNamespace {
-		serviceName = internal.AdditionalSumologicMockServiceName
-	}
 
 	tunnel := terrak8s.NewTunnel(
 		&kubectlOptions,

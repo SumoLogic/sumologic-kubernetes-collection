@@ -66,8 +66,9 @@ func WaitUntilExpectedSpansPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
-		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
+		sumoMockServiceName := GetSumoMockServiceName(ctx)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, sumoMockServiceName, waitDuration, tickDuration)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t, sumoMockServiceName)
 		defer closeTunnelFunc()
 
 		assert.Eventually(t, func() bool {
@@ -104,9 +105,9 @@ func WaitUntilExpectedTracesPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
-
-		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
+		sumoMockServiceName := GetSumoMockServiceName(ctx)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, sumoMockServiceName, waitDuration, tickDuration)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t, sumoMockServiceName)
 		defer closeTunnelFunc()
 
 		assert.Eventually(t, func() bool {
@@ -158,13 +159,14 @@ func WaitUntilExpectedMetricsPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
+		sumoMockServiceName := GetSumoMockServiceName(ctx)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, sumoMockServiceName, waitDuration, tickDuration)
 
 		// We can't do it earlier, because we run the tests for different k8s versions
 		// and we can't fetch current version earlier
 		expectedMetrics = append(expectedMetrics, internal.GetVersionDependentMetrics(t)...)
 
-		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t, sumoMockServiceName)
 		defer closeTunnelFunc()
 
 		retries := int(waitDuration / tickDuration)
@@ -235,12 +237,13 @@ func WaitUntilExpectedMetricsPresentWithFilters(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
+		sumoMockServiceName := GetSumoMockServiceName(ctx)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, sumoMockServiceName, waitDuration, tickDuration)
 
 		// We don't add version-dependent metrics here,
 		// because for now they are not expected in this assess func.
 
-		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t, sumoMockServiceName)
 		defer closeTunnelFunc()
 
 		retries := int(waitDuration / tickDuration)
@@ -316,10 +319,11 @@ func WaitUntilExpectedMetricLabelsPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
+		sumoMockServiceName := GetSumoMockServiceName(ctx)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, sumoMockServiceName, waitDuration, tickDuration)
 
 		// Get the sumologic mock pod as metrics source
-		rClient, tunnelCloseFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
+		rClient, tunnelCloseFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t, sumoMockServiceName)
 		defer tunnelCloseFunc()
 
 		assert.Eventually(t, func() bool {
@@ -377,9 +381,10 @@ func WaitUntilExpectedExactLogsPresent(
 	strict bool,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
+		sumoMockServiceName := GetSumoMockServiceName(ctx)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, sumoMockServiceName, waitDuration, tickDuration)
 
-		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t, sumoMockServiceName)
 		defer closeTunnelFunc()
 
 		assert.Eventually(t, func() bool {
@@ -425,9 +430,7 @@ func WaitUntilAdditionalSumologicMockAvailable(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		newCtx := ctxopts.WithNamespace(ctx, internal.AdditionalSumologicMockNamespace)
-		k8s_internal.WaitUntilSumologicMockAvailable(newCtx, t, waitDuration, tickDuration)
-
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, internal.AdditionalSumologicMockServiceName, waitDuration, tickDuration)
 		return ctx
 	}
 }
@@ -451,10 +454,8 @@ func WaitUntilExpectedAdditionalLogsPresent(
 	strict bool,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		newCtx := ctxopts.WithNamespace(ctx, internal.AdditionalSumologicMockNamespace)
-		k8s_internal.WaitUntilSumologicMockAvailable(newCtx, t, waitDuration, tickDuration)
-
-		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(newCtx, t)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, internal.AdditionalSumologicMockServiceName, waitDuration, tickDuration)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t, internal.AdditionalSumologicMockServiceName)
 		defer closeTunnelFunc()
 
 		assert.Eventually(t, func() bool {
@@ -667,4 +668,8 @@ func WaitForPvcCount(appName string, count int, waitDuration time.Duration, tick
 
 		return ctx
 	}
+}
+
+func GetSumoMockServiceName(ctx context.Context) string {
+	return fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName)
 }
