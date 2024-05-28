@@ -442,6 +442,24 @@ sumologic:
       ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeUnitRegex: ""
 
+    otelcol:
+      ## additional exporters which may be used in any of the pipeline
+      extraExporters: {}
+      ## useDefaultExporters uses default helm chart exporters and always sends all data to them
+      useDefaultExporters: true
+      ## routing defines how to route data
+      routing:
+        ## fallbackExporters is a list of exporters to be used when data do not match any of the table's statement
+        fallbackExporters: []
+        table: []
+        ## -
+        ##  ## exporter is name of the exporter
+        ##  exporter: sumologic/otlp
+        ##  ## statement is an OTTL condition which defines what data should be send to the exporter
+        ##  ## see routing processor documentation for more details:
+        ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/processor/routingprocessor/README.md#tech-preview-opentelemetry-transformation-language-statements-as-routing-conditions
+        ##  statement: ""
+
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
     ## https://help.sumologic.com/docs/manage/fields/#manage-fields

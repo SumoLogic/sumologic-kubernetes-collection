@@ -1,0 +1,386 @@
+---
+# Source: sumologic/templates/logs/otelcol/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-logs
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-logs
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  config.yaml: |
+    exporters:
+      debug:
+        verbosity: detailed
+      sumologic:
+        client: k8s_%CURRENT_CHART_VERSION%
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+        log_format: otlp
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+      sumologic/test:
+        endpoint: https://test-endpoint
+    extensions:
+      file_storage:
+        compaction:
+          directory: /tmp
+          on_rebound: true
+        directory: /var/lib/storage/otc
+        timeout: 10s
+      health_check: {}
+      pprof: {}
+    processors:
+      attributes/extract_systemd_source_fields:
+        actions:
+        - action: extract
+          key: fluent.tag
+          pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+        - action: insert
+          from_attribute: _HOSTNAME
+          key: _sourceHost
+      attributes/remove_fluent_tag:
+        actions:
+        - action: delete
+          key: fluent.tag
+      batch:
+        send_batch_max_size: 2048
+        send_batch_size: 1024
+        timeout: 1s
+      filter/exclude_kubelet:
+        logs:
+          exclude:
+            match_type: strict
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: kubelet.service
+      filter/exclude_kubelet_hostname:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _HOSTNAME
+              value: $^
+      filter/exclude_kubelet_priority:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: PRIORITY
+              value: $^
+      filter/exclude_kubelet_syslog:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: SYSLOG_FACILITY
+              value: $^
+      filter/exclude_kubelet_unit:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: $^
+      filter/exclude_systemd_hostname:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _HOSTNAME
+              value: $^
+      filter/exclude_systemd_priority:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: PRIORITY
+              value: $^
+      filter/exclude_systemd_syslog:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: SYSLOG_FACILITY
+              value: $^
+      filter/exclude_systemd_unit:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: $^
+      filter/include_containers:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: k8s.container.name
+              value: .+
+      filter/include_fluent_tag_host:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: fluent.tag
+              value: host\..+
+      filter/include_kubelet:
+        logs:
+          include:
+            match_type: strict
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: kubelet.service
+      filter/include_systemd:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: .+
+      groupbyattrs/containers:
+        keys:
+        - k8s.container.id
+        - k8s.container.name
+        - k8s.namespace.name
+        - k8s.pod.name
+        - _collector
+      groupbyattrs/systemd:
+        keys:
+        - _sourceName
+        - _sourceHost
+        - _collector
+      k8s_tagger:
+        extract:
+          annotations:
+          - key: '*'
+            tag_name: pod_annotations_%s
+          delimiter: _
+          labels:
+          - key: '*'
+            tag_name: pod_labels_%s
+          metadata:
+          - daemonSetName
+          - deploymentName
+          - hostName
+          - namespace
+          - nodeName
+          - podName
+          - serviceName
+          - statefulSetName
+          namespace_annotations:
+          - key: '*'
+            tag_name: namespace_annotations_%s
+          namespace_labels:
+          - key: '*'
+            tag_name: namespace_labels_%s
+        owner_lookup_enabled: true
+        passthrough: false
+        pod_association:
+        - from: build_hostname
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 90
+        spike_limit_percentage: 20
+      resource/add_cluster:
+        attributes:
+        - action: upsert
+          key: cluster
+          value: kubernetes
+      resource/containers_copy_node_to_host:
+        attributes:
+        - action: upsert
+          from_attribute: k8s.node.name
+          key: k8s.pod.hostname
+      resource/drop_annotations:
+        attributes:
+        - action: delete
+          pattern: ^pod_annotations_.*
+        - action: delete
+          pattern: ^namespace_annotations_.*
+      resource/remove_pod_name:
+        attributes:
+        - action: delete
+          key: pod_name
+      resource/set_empty_source_metadata:
+        attributes:
+        - action: insert
+          key: _sourceCategory
+          value: ""
+        - action: insert
+          key: _sourceHost
+          value: ""
+        - action: insert
+          key: _sourceName
+          value: ""
+      routing/containers:
+        default_exporters:
+        - sumologic
+        table:
+        - exporters:
+          - sumologic/test
+          statement: route() where resource.attributes["exporter"] == "test"
+        - exporters:
+          - sumologic
+          statement: route()
+      routing/systemd:
+        default_exporters:
+        - sumologic
+        table:
+        - exporters:
+          - sumologic/test
+          statement: route() where resource.attributes["exporter"] == "test"
+        - exporters:
+          - sumologic
+          statement: route()
+      source/containers:
+        annotation_prefix: pod_annotations_
+        collector: kubernetes
+        container_annotations:
+          container_name_key: container
+          enabled: false
+          prefixes: []
+        exclude:
+          container: ""
+          namespace: ""
+          node: ""
+          pod: ""
+        namespace_annotation_prefix: namespace_annotations_
+        pod_key: pod
+        pod_name_key: pod_name
+        pod_template_hash_key: pod_labels_pod-template-hash
+        source_category: '%{namespace}/%{pod_name}'
+        source_category_prefix: kubernetes/
+        source_category_replace_dash: /
+        source_host: ""
+        source_name: '%{namespace}.%{pod}.%{container}'
+      source/kubelet:
+        collector: kubernetes
+        source_category: kubelet
+        source_category_prefix: kubernetes/
+        source_category_replace_dash: /
+        source_host: '%{_sourceHost}'
+        source_name: k8s_kubelet
+      source/systemd:
+        collector: kubernetes
+        source_category: system
+        source_category_prefix: kubernetes/
+        source_category_replace_dash: /
+        source_host: '%{_sourceHost}'
+        source_name: '%{_sourceName}'
+      sumologic:
+        add_cloud_namespace: false
+      transform/add_timestamp:
+        log_statements:
+        - context: log
+          statements:
+          - set(time, Now()) where time_unix_nano == 0
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+      transform/containers_parse_json:
+        error_mode: ignore
+        log_statements:
+        - context: log
+          statements:
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{")
+      transform/flatten:
+        error_mode: ignore
+        log_statements:
+        - context: log
+          statements:
+          - merge_maps(attributes, body, "insert") where IsMap(body)
+          - set(body, "") where IsMap(body)
+      transform/remove_attributes:
+        log_statements:
+        - context: log
+          statements:
+          - limit(attributes, 0, [])
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+    service:
+      extensions:
+      - health_check
+      - file_storage
+      - pprof
+      pipelines:
+        logs/otlp/containers:
+          exporters:
+          - sumologic
+          - sumologic/test
+          processors:
+          - memory_limiter
+          - filter/include_containers
+          - groupbyattrs/containers
+          - k8s_tagger
+          - resource/add_cluster
+          - resource/set_empty_source_metadata
+          - resource/containers_copy_node_to_host
+          - sumologic
+          - source/containers
+          - transform/containers_parse_json
+          - resource/remove_pod_name
+          - resource/drop_annotations
+          - transform/add_timestamp
+          - batch
+          - routing/containers
+          receivers:
+          - otlp
+        logs/otlp/kubelet:
+          exporters:
+          - sumologic
+          - sumologic/test
+          processors:
+          - memory_limiter
+          - filter/include_fluent_tag_host
+          - filter/include_kubelet
+          - filter/exclude_kubelet_syslog
+          - filter/exclude_kubelet_hostname
+          - filter/exclude_kubelet_priority
+          - filter/exclude_kubelet_unit
+          - attributes/extract_systemd_source_fields
+          - attributes/remove_fluent_tag
+          - groupbyattrs/systemd
+          - resource/add_cluster
+          - source/kubelet
+          - transform/remove_attributes
+          - transform/flatten
+          - transform/add_timestamp
+          - batch
+          - routing/systemd
+          receivers:
+          - otlp
+        logs/otlp/systemd:
+          exporters:
+          - sumologic
+          - sumologic/test
+          processors:
+          - memory_limiter
+          - filter/include_fluent_tag_host
+          - filter/include_systemd
+          - filter/exclude_kubelet
+          - filter/exclude_systemd_syslog
+          - filter/exclude_systemd_hostname
+          - filter/exclude_systemd_priority
+          - filter/exclude_systemd_unit
+          - attributes/extract_systemd_source_fields
+          - attributes/remove_fluent_tag
+          - groupbyattrs/systemd
+          - resource/add_cluster
+          - source/systemd
+          - transform/remove_attributes
+          - transform/flatten
+          - transform/add_timestamp
+          - batch
+          - routing/systemd
+          receivers:
+          - otlp
+      telemetry:
+        logs:
+          level: info

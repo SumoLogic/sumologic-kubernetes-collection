@@ -25,6 +25,9 @@ const (
 	SumologicMockServicePort = 3000
 	SumologicMockServiceName = "sumologic-mock"
 
+	YamlPathAdditionalSumologicMock    = "yamls/additional-sumologic-mock.yaml"
+	AdditionalSumologicMockServiceName = "additional-sumologic-mock"
+
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"
 	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.22.0"

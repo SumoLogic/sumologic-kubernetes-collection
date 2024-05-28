@@ -1,0 +1,11 @@
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+    otelcol:
+      extraExporters:
+        sumologic/test:
+          endpoint: https://test-endpoint
+        debug:
+          verbosity: detailed

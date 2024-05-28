@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
 func Test_Helm_Http_Source(t *testing.T) {
@@ -30,7 +31,7 @@ func Test_Helm_Http_Source(t *testing.T) {
 
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 
-	featLogs := GetLogsFeature()
+	featLogs := GetAllLogsFeature(stepfuncs.WaitUntilExpectedExactLogsPresent, true)
 
 	featMultilineLogs := GetMultipleMultilineLogsFeature()
 

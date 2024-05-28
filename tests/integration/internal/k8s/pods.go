@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/retry"
@@ -78,10 +77,11 @@ func WaitUntilPodsAvailableE(
 func WaitUntilSumologicMockAvailable(
 	ctx context.Context,
 	t *testing.T,
+	serviceName string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) {
-	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx), fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName), int(waitDuration), tickDuration)
+	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx), serviceName, int(waitDuration), tickDuration)
 }
 
 func formatSelectors(listOptions v1.ListOptions) string {
