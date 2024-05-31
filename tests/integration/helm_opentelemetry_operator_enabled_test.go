@@ -72,8 +72,8 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 			)
 			return ctx
 		}).
-		Assess("instrumentation-cr in ot-operator1 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources("ot-operator1")
+		Assess("instrumentation-cr in ot-operator-enabled-1 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			res := envConf.Client().Resources("ot-operator-enabled-1")
 			releaseName := ctxopts.HelmRelease(ctx)
 			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instr", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}
@@ -90,8 +90,8 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 			)
 			return ctx
 		}).
-		Assess("instrumentation-cr in ot-operator2 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources("ot-operator2")
+		Assess("instrumentation-cr in ot-operator-enabled-2 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			res := envConf.Client().Resources("ot-operator-enabled-2")
 			releaseName := ctxopts.HelmRelease(ctx)
 			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instr", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}

@@ -81,7 +81,8 @@ func WaitUntilSumologicMockAvailable(
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) {
-	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx), serviceName, int(waitDuration), tickDuration)
+	retries := waitDuration / tickDuration
+	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx), serviceName, int(retries), tickDuration)
 }
 
 func formatSelectors(listOptions v1.ListOptions) string {
