@@ -465,7 +465,7 @@ func GetAllLogsFeature(waitFunction stepfuncs.WaitForLogs, generate bool) featur
 		feature = feature.
 			Teardown(removeLogsDeployment).
 			Teardown(removeLogsDaemonset).
-			Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace))
+			Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace, true))
 	}
 
 	return feature.Feature()
@@ -576,7 +576,7 @@ func GetPartialLogsFeature() features.Feature {
 		)).
 		Teardown(removeLogsDeployment).
 		Teardown(removeLogsDaemonset).
-		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
+		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace, true)).
 		Feature()
 }
 
@@ -847,7 +847,7 @@ func GetCurlAppFeature() features.Feature {
 			waitDuration,
 			tickDuration,
 		)).
-		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.InstrumentationAppsNamespace)).
+		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.InstrumentationAppsNamespace, true)).
 		Feature()
 }
 
@@ -949,7 +949,7 @@ func GetTracesFeature() features.Feature {
 			terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.TracesGeneratorName)
 			return ctx
 		}).
-		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.TracesGeneratorNamespace)).
+		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.TracesGeneratorNamespace, true)).
 		Feature()
 }
 
