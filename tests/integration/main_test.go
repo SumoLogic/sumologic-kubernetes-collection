@@ -99,7 +99,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		stepfuncs.HelmDeleteTestOpt(),
 		stepfuncs.KubectlDeleteOverrideNamespaceOpt(),
 		stepfuncs.KubectlDeleteOperatorNamespacesOpt(),
-		stepfuncs.KubectlDeleteNamespaceTestOpt(),
+		stepfuncs.KubectlDeleteNamespaceTestOpt(false),
 	) {
 		testenv.AfterEachTest(f)
 	}
