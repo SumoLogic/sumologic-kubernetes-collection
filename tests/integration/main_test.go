@@ -2,13 +2,16 @@ package integration
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"testing"
-	"time"
 
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/e2e-framework/klient"
+	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
+	"sigs.k8s.io/e2e-framework/klient/wait"
+	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
@@ -19,7 +22,6 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 const (
@@ -38,6 +40,7 @@ func TestMain(m *testing.M) {
 	}
 
 	testenv = env.NewWithConfig(cfg)
+	kindClusterName := envconf.RandomName("sumologic-test", 20)
 
 	if !cfg.DryRunMode() {
 
@@ -54,11 +57,9 @@ func TestMain(m *testing.M) {
 
 			ConfigureTestEnv(testenv)
 		} else {
-
-			testenv.BeforeEachTest(CreateKindCluster())
+			testenv.Setup(CreateKindCluster(kindClusterName))
 			ConfigureTestEnv(testenv)
-			testenv.AfterEachTest(DestroyKindCluster())
-			testenv.Finish(DestroyActiveKindClusters)
+			testenv.Finish(DestroyKindCluster(kindClusterName))
 		}
 	}
 
@@ -126,11 +127,8 @@ func InjectKubectlOptionsFromKubeconfig(kubeconfig string) func(context.Context,
 	}
 }
 
-type kindContextKey string
-
-func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		clusterName := strings.NameFromT(t)
+func CreateKindCluster(clusterName string) func(context.Context, *envconf.Config) (context.Context, error) {
+	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		k := kind.NewCluster(clusterName)
 
 		// We only provide the config because the API is constructed in such a way
@@ -143,20 +141,18 @@ func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (con
 		// load the Docker image archive if present
 		fileName, err := GetImageArchiveFilename()
 		if err != nil {
-			t.Logf("Couldn't find image archive file %s, proceeding without it", fileName)
+			log.Printf("Couldn't find image archive file %s, proceeding without it", fileName)
 		} else {
 			err = k.LoadImageArchive(fileName)
 			if err != nil {
-				t.Fatalf("Loading image archive failed: %v", err)
+				log.Fatalf("Loading image archive failed: %v", err)
 			}
-			t.Logf("Loaded image archive: %s", fileName)
+			log.Printf("Loaded image archive: %s", fileName)
 		}
 
 		kubectlOptions := k8s.NewKubectlOptions("", kubecfg, "")
-		k8s.WaitUntilAllNodesReady(t, kubectlOptions, 60, 2*time.Second)
-		k8s.RunKubectl(t, kubectlOptions, "describe", "node")
 		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
-		t.Logf("Kube config: %s", kubecfg)
+		log.Printf("Kube config: %s", kubecfg)
 
 		// update envconfig with kubeconfig...
 		cfg.WithKubeconfigFile(kubecfg)
@@ -169,56 +165,21 @@ func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (con
 		}
 		cfg.WithClient(cl)
 
-		// store entire cluster value in ctx for future access using the cluster name
-		newContext := context.WithValue(ctx, kindContextKey(clusterName), k)
-
-		// and save the cluster name in the list of active clusters
-		newContext = ctxopts.WithCluster(newContext, clusterName)
-
-		// store entire cluster value in ctx for future access using the cluster name
-		return newContext, nil
-	}
-}
-
-func DestroyKindCluster() func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		clusterName := strings.NameFromT(t)
-		return DestroyKindClusterByName(ctx, clusterName)
-	}
-}
-
-func DestroyKindClusterByName(ctx context.Context, clusterName string) (context.Context, error) {
-	clusterVal := ctx.Value(kindContextKey(clusterName))
-	if clusterVal == nil {
-		return ctx, fmt.Errorf("destroy kind cluster func: context cluster is nil")
-	}
-
-	cluster, ok := clusterVal.(*kind.Cluster)
-	if !ok {
-		return ctx, fmt.Errorf("destroy kind cluster func: unexpected type for cluster value")
-	}
-
-	if err := cluster.Destroy(); err != nil {
-		return ctx, fmt.Errorf("destroy kind cluster: %w", err)
-	}
-
-	// remove the cluster name from the list of active clusters
-	newContext := ctxopts.WithoutCluster(ctx, clusterName)
-
-	return newContext, nil
-}
-
-func DestroyActiveKindClusters(ctx context.Context, _ *envconf.Config) (context.Context, error) {
-	var err error
-	clusters := ctxopts.Clusters(ctx)
-	newContext := ctx
-	for _, clusterName := range clusters {
-		newContext, err = DestroyKindClusterByName(newContext, clusterName)
+		err = WaitForControlPlane(ctx, cl, k)
 		if err != nil {
-			return newContext, err
+			return ctx, err
 		}
+
+		// store entire cluster value in ctx for future access using the cluster name
+		return ctx, nil
 	}
-	return newContext, err
+}
+
+func DestroyKindCluster(clusterName string) func(context.Context, *envconf.Config) (context.Context, error) {
+	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
+		cluster := kind.NewCluster(clusterName)
+		return ctx, cluster.Destroy()
+	}
 }
 
 func GetImageArchiveFilename() (string, error) {
@@ -232,4 +193,33 @@ func GetImageArchiveFilename() (string, error) {
 	}
 
 	return fileName, nil
+}
+
+// this is a backport of a function added in e2e_framework 0.3.0
+// it should be removed once we upgrade
+func WaitForControlPlane(ctx context.Context, client klient.Client, k *kind.Cluster) error {
+	r, err := resources.New(client.RESTConfig())
+	if err != nil {
+		return err
+	}
+	for _, sl := range []metav1.LabelSelectorRequirement{
+		{Key: "component", Operator: metav1.LabelSelectorOpIn, Values: []string{"etcd", "kube-apiserver", "kube-controller-manager", "kube-scheduler"}},
+		{Key: "k8s-app", Operator: metav1.LabelSelectorOpIn, Values: []string{"kindnet", "kube-dns", "kube-proxy"}},
+	} {
+		selector, err := metav1.LabelSelectorAsSelector(
+			&metav1.LabelSelector{
+				MatchExpressions: []metav1.LabelSelectorRequirement{
+					sl,
+				},
+			},
+		)
+		if err != nil {
+			return err
+		}
+		err = wait.For(conditions.New(r).ResourceListN(&v1.PodList{}, len(sl.Values), resources.WithLabelSelector(selector.String())))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
