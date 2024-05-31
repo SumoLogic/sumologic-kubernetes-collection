@@ -12,7 +12,6 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	log "k8s.io/klog/v2"
 	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
@@ -49,10 +48,10 @@ func WaitUntilPodsAvailable(listOptions metav1.ListOptions, count int, wait time
 // `wait` and `tick` times as well as the provided list options and the desired count.
 func WaitUntilPodsAvailableCustomNS(listOptions metav1.ListOptions, count int, wait time.Duration, tick time.Duration, namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		opts := ctxopts.KubectlOptions(ctx)
+		opts := *ctxopts.KubectlOptions(ctx)
 		opts.Namespace = namespace
 
-		k8s_internal.WaitUntilPodsAvailable(t, opts,
+		k8s_internal.WaitUntilPodsAvailable(t, &opts,
 			listOptions, count, wait, tick,
 		)
 		return ctx
@@ -506,7 +505,7 @@ func WaitUntilStatefulSetIsReady(
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		sts := appsv1.StatefulSet{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Namespace: ctxopts.Namespace(ctx),
 			},
 		}
@@ -557,7 +556,7 @@ func WaitUntilDaemonSetIsReady(
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		ds := appsv1.DaemonSet{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Namespace: ctxopts.Namespace(ctx),
 			},
 		}
@@ -608,7 +607,7 @@ func WaitUntilDeploymentIsReady(
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		deps := appsv1.Deployment{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Namespace: ctxopts.Namespace(ctx),
 			},
 		}

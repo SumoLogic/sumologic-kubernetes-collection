@@ -10,7 +10,7 @@ sumologic:
 opentelemetry-operator:
   enabled: true
   createDefaultInstrumentation: true
-  instrumentationNamespaces: "ot-operator1,ot-operator2"
+  instrumentationNamespaces: "ot-operator-enabled-1,ot-operator-enabled-2"
   manager:
     resources:
       requests:
