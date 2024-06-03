@@ -24,6 +24,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
+	strings_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/sumologicmock"
 )
 
@@ -72,7 +73,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				// Get the receiver mock pod as metrics source
 				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
 				podList := corev1.PodList{}
-				releaseName := ctxopts.HelmRelease(ctx)
+				releaseName := strings_internal.ReleaseNameFromT(t)
 				deployment := fmt.Sprintf("%s-sumologic-mock", releaseName)
 				require.NoError(t,
 					wait.For(
@@ -115,7 +116,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		).
 		Assess("expected labels are present for non-pod kube-state-metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				releaseName := ctxopts.HelmRelease(ctx)
+				releaseName := strings_internal.ReleaseNameFromT(t)
 				deployment := fmt.Sprintf("%s-sumologic-mock", releaseName)
 				metricFilters := sumologicmock.MetadataFilters{
 					"__name__":   "kube_deployment_spec_replicas",
@@ -139,7 +140,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		).
 		Assess("expected labels are present for pod kube-state-metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				releaseName := ctxopts.HelmRelease(ctx)
+				releaseName := strings_internal.ReleaseNameFromT(t)
 				deployment := fmt.Sprintf("%s-kube-state-metrics", releaseName)
 				metricFilters := sumologicmock.MetadataFilters{
 					"__name__":   "kube_pod_status_phase",
@@ -197,7 +198,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 		Assess("expected labels are present for annotation metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				metricFilters := sumologicmock.MetadataFilters{"__name__": "nginx_accepts", "job": "pod-annotations"}
-				releaseName := ctxopts.HelmRelease(ctx)
+				releaseName := strings_internal.ReleaseNameFromT(t)
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := sumologicmock.Labels{
 					"cluster":                      "kubernetes",
@@ -1081,7 +1082,7 @@ func CheckOtelcolMetadataMetricsInstall(builder *features.FeatureBuilder) *featu
 							return true
 						},
 						resources.WithLabelSelector(
-							fmt.Sprintf("app=%s-sumologic-otelcol-metrics", ctxopts.HelmRelease(ctx)),
+							fmt.Sprintf("app=%s-sumologic-otelcol-metrics", strings_internal.ReleaseNameFromT(t)),
 						),
 					)
 				require.NoError(t,
@@ -1140,7 +1141,7 @@ func CheckOtelcolMetadataLogsInstall(builder *features.FeatureBuilder) *features
 							return true
 						},
 						resources.WithLabelSelector(
-							fmt.Sprintf("app=%s-sumologic-otelcol-logs", ctxopts.HelmRelease(ctx)),
+							fmt.Sprintf("app=%s-sumologic-otelcol-logs", strings_internal.ReleaseNameFromT(t)),
 						),
 					)
 				require.NoError(t,
@@ -1173,7 +1174,7 @@ func CheckOtelcolEventsInstall(builder *features.FeatureBuilder) *features.Featu
 		Assess("otelcol events buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
-				releaseName := ctxopts.HelmRelease(ctx)
+				releaseName := strings_internal.ReleaseNameFromT(t)
 				kubectlOptions := ctxopts.KubectlOptions(ctx)
 
 				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)

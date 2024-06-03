@@ -38,6 +38,7 @@ func GenerateTraces(
 
 		deployment := tracesgenerator.GetTracesGeneratorDeployment(
 			ctx,
+			t,
 			tracesGeneratorNamespace,
 			tracesGeneratorName,
 			tracesGeneratorImage,

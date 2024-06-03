@@ -69,7 +69,6 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 // use SetKubectlNamespaceOpt.
 func HelmInstallOpt(path string, releaseName string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		ctx = ctxopts.WithHelmRelease(ctx, releaseName)
 		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{"--wait"})
 
 		err := helm.InstallE(t, helmOptions, path, releaseName)
@@ -138,7 +137,7 @@ func HelmDeleteOpt(release string) features.Func {
 // by HelmInstallTestOpt/HelmInstallOpt.
 func HelmDeleteTestOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		releaseName := ctxopts.HelmRelease(ctx)
+		releaseName := strings.ReleaseNameFromT(t)
 		return HelmDeleteOpt(releaseName)(ctx, t, envConf)
 	}
 }

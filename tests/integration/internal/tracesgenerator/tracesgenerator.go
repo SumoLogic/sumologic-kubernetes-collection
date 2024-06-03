@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"testing"
 	"time"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	strings_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -45,6 +47,7 @@ func NewDefaultGeneratorOptions() *TracesGeneratorOptions {
 
 func GetTracesGeneratorDeployment(
 	ctx context.Context,
+	t *testing.T,
 	namespace string,
 	name string,
 	image string,
@@ -60,7 +63,7 @@ func GetTracesGeneratorDeployment(
 		Labels:    appLabels,
 	}
 
-	release := ctxopts.HelmRelease(ctx)
+	release := strings_internal.ReleaseNameFromT(t)
 	otelcolInstrumentationNamespace := ctxopts.Namespace(ctx)
 	colName := fmt.Sprintf("%s-sumologic-otelagent.%s", release, otelcolInstrumentationNamespace)
 
