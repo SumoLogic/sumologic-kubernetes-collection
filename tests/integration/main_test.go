@@ -79,7 +79,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 		stepfuncs.KubectlCreateOverrideNamespaceOpt(),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
-		stepfuncs.SetHelmOptionsTestOpt([]string{}),
 		stepfuncs.HelmVersionOpt(),
 		// SetHelmOptionsTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
@@ -90,7 +89,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// The reason for this is to limit the amount of boilerplate in tests
 		// themselves but we cannot attach/map the values.yaml to the test itself
 		// so we do this mapping instead.
-		stepfuncs.SetHelmOptionsTestOpt([]string{"--wait"}),
 		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
 		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
 	) {

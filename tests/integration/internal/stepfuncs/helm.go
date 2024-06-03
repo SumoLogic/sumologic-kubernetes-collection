@@ -31,7 +31,8 @@ const (
 // HelmVersion returns a features.Func that will run helm version
 func HelmVersionOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		_, err := helm.RunHelmCommandAndGetOutputE(t, ctxopts.HelmOptions(ctx), "version")
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{})
+		_, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "version")
 		require.NoError(t, err)
 
 		return ctx
@@ -52,7 +53,8 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 			)
 			return ctx
 		}
-		_, err := helm.RunHelmCommandAndGetOutputE(t, ctxopts.HelmOptions(ctx), "dependency", "update", path)
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{})
+		_, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "dependency", "update", path)
 		require.NoError(t, err)
 
 		return ctx
@@ -68,8 +70,9 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 func HelmInstallOpt(path string, releaseName string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		ctx = ctxopts.WithHelmRelease(ctx, releaseName)
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{"--wait"})
 
-		err := helm.InstallE(t, ctxopts.HelmOptions(ctx), path, releaseName)
+		err := helm.InstallE(t, helmOptions, path, releaseName)
 		if err != nil {
 			kubectlOptions := ctxopts.KubectlOptions(ctx)
 
@@ -125,7 +128,8 @@ func HelmInstallTestOpt(path string) features.Func {
 // use SetKubectlNamespaceOpt.
 func HelmDeleteOpt(release string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		helm.Delete(t, ctxopts.HelmOptions(ctx), release, true)
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{"--wait"})
+		helm.Delete(t, helmOptions, release, true)
 		return ctx
 	}
 }
@@ -139,40 +143,24 @@ func HelmDeleteTestOpt() features.Func {
 	}
 }
 
-// SetHelmOptionsOpt returns a features.Func that will get the kubectlOptions embedded in the context,
-// use it to create helm options with values files set to the provided path.
-//
-// NOTE:
-// By default the default cluster namespace will be used. If you'd like to specify the namespace
-// use SetKubectlNamespaceOpt.
-func SetHelmOptionsOpt(valuesFilePath string, extraInstallationArgs map[string][]string) features.Func {
-	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOptions := ctxopts.KubectlOptions(ctx)
-		require.NotNil(t, kubectlOptions)
-
-		// yamlFilePathCommon contains a shared set of values that:
-		// * decrease the requested resources so that pods fit on runners available on Github CI.
-		// * set dummy access keys, access IDs and sumologic-mock's URL as endpoint in the chart.
-		const yamlFilePathCommon = "values/values_common.yaml"
-
-		return ctxopts.WithHelmOptions(ctx, &helm.Options{
-			KubectlOptions: kubectlOptions,
-			ValuesFiles:    []string{yamlFilePathCommon, valuesFilePath},
-			ExtraArgs:      extraInstallationArgs,
-		})
-	}
-}
-
-// SetHelmOptionsTestOpt wraps SetHelmOptionsOpt by taking the values file from
-// `values` directory and concatenating that with a name name generated from a test name.
+// HelmOptionsFromT returns helm options for the test. It sets the values file from the
+// `values` directory and concatenates that with a name name generated from a test name.
 //
 // The details of values file name generation can be found in `strings.ValueFileFromT()`.
-func SetHelmOptionsTestOpt(extraInstallationArgs []string) features.Func {
-	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		valuesFilePath := path.Join("values", strings.ValueFileFromT(t))
-		extraArgs := map[string][]string{
-			"install": extraInstallationArgs,
-		}
-		return SetHelmOptionsOpt(valuesFilePath, extraArgs)(ctx, t, envConf)
+func HelmOptionsFromT(t *testing.T, kubectlOptions *k8s.KubectlOptions, extraInstallationArgs []string) *helm.Options {
+	valuesFilePath := path.Join("values", strings.ValueFileFromT(t))
+	extraArgs := map[string][]string{
+		"install": extraInstallationArgs,
+	}
+
+	// yamlFilePathCommon contains a shared set of values that:
+	// * decrease the requested resources so that pods fit on runners available on Github CI.
+	// * set dummy access keys, access IDs and sumologic-mock's URL as endpoint in the chart.
+	const yamlFilePathCommon = "values/values_common.yaml"
+
+	return &helm.Options{
+		KubectlOptions: kubectlOptions,
+		ValuesFiles:    []string{yamlFilePathCommon, valuesFilePath},
+		ExtraArgs:      extraArgs,
 	}
 }
