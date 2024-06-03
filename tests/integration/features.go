@@ -464,8 +464,7 @@ func GetAllLogsFeature(waitFunction stepfuncs.WaitForLogs, generate bool) featur
 	if generate {
 		feature = feature.
 			Teardown(removeLogsDeployment).
-			Teardown(removeLogsDaemonset).
-			Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace, true))
+			Teardown(removeLogsDaemonset)
 	}
 
 	return feature.Feature()
@@ -576,7 +575,6 @@ func GetPartialLogsFeature() features.Feature {
 		)).
 		Teardown(removeLogsDeployment).
 		Teardown(removeLogsDaemonset).
-		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace, true)).
 		Feature()
 }
 
