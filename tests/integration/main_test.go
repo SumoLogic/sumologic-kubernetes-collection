@@ -69,6 +69,9 @@ func TestMain(m *testing.M) {
 func ConfigureTestEnv(testenv env.Environment) {
 
 	// Before
+
+	testenv.Setup(envfuncs.CreateNamespace(internal.LogsGeneratorNamespace))
+
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		// Needed for OpenTelemetry Operator test
 		// TODO: Create namespaces only for specific tests
@@ -113,6 +116,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 			return envfuncs.DeleteNamespace(namespace)(ctx, envConf)
 		},
 		envfuncs.DeleteNamespace(internal.OverrideNamespace),
+		envfuncs.DeleteNamespace(internal.LogsGeneratorNamespace),
 	)
 }
 

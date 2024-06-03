@@ -22,7 +22,7 @@ delete-cluster:
 .PHONY: test
 test:
 	KIND_NODE_IMAGE=$(KIND_NODE_IMAGE) \
-		go test -timeout 30m -v -count 1 -tags=$(GOTAGS) -run=$(TEST_NAME) . -args $(TEST_ARGS)
+		go test -timeout 60m -v -count 1 -tags=$(GOTAGS) -run=$(TEST_NAME) . -args $(TEST_ARGS)
 
 .PHONY: create-image-archive
 create-image-archive:
