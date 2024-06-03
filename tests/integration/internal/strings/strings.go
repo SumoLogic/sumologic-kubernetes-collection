@@ -31,7 +31,11 @@ func ValueFileFromT(t *testing.T) string {
 }
 
 func ReleaseNameFromT(t *testing.T) string {
+	fullTestName := t.Name()
+	// take only the top-level test name, so we get a consistent result in all subtests
+	parts := strings.SplitN(fullTestName, "/", 2)
+	baseTestName := parts[0]
 	h := fnv.New32a()
-	h.Write([]byte(t.Name()))
+	h.Write([]byte(baseTestName))
 	return fmt.Sprintf("rel-%d", h.Sum32())[:maxReleaseNameLength]
 }

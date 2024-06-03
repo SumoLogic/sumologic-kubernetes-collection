@@ -22,6 +22,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	strings_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
@@ -74,7 +75,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		}).
 		Assess("instrumentation-cr in ot-operator-enabled-1 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources("ot-operator-enabled-1")
-			releaseName := ctxopts.HelmRelease(ctx)
+			releaseName := strings_internal.ReleaseNameFromT(t)
 			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instr", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}
 
@@ -92,7 +93,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		}).
 		Assess("instrumentation-cr in ot-operator-enabled-2 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources("ot-operator-enabled-2")
-			releaseName := ctxopts.HelmRelease(ctx)
+			releaseName := strings_internal.ReleaseNameFromT(t)
 			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instr", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}
 

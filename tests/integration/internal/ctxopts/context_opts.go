@@ -33,12 +33,3 @@ func Namespace(ctx context.Context) string {
 	v := ctx.Value(ctxKeyNameNamespace)
 	return v.(string)
 }
-
-func WithHelmRelease(ctx context.Context, namespace string) context.Context {
-	return context.WithValue(ctx, ctxKeyNameHelmRelease, namespace)
-}
-
-func HelmRelease(ctx context.Context) string {
-	v := ctx.Value(ctxKeyNameHelmRelease)
-	return v.(string)
-}
