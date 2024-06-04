@@ -1,7 +1,6 @@
 module github.com/SumoLogic/sumologic-kubernetes-collection/tests
 
 go 1.22.0
-
 require (
 	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/gruntwork-io/go-commons v0.17.1
@@ -15,12 +14,14 @@ require (
 	k8s.io/apimachinery v0.30.1
 	k8s.io/klog/v2 v2.120.1
 	k8s.io/kube-aggregator v0.30.1
-	sigs.k8s.io/e2e-framework v0.3.0
+	sigs.k8s.io/e2e-framework v0.4.0
 )
 
 require (
+	github.com/blang/semver/v4 v4.0.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
+	k8s.io/component-base v0.30.1 // indirect
 )
 
 require (
