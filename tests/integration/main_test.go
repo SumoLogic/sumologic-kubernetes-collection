@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"testing"
 
 	"sigs.k8s.io/e2e-framework/pkg/env"
@@ -57,6 +58,23 @@ func TestMain(m *testing.M) {
 			testenv.Setup(envfuncs.CreateClusterWithConfig(kindProvider, kindClusterName, kindClusterConfigPath, clusterOpts...))
 			ConfigureTestEnv(testenv)
 			testenv.Finish(envfuncs.DestroyCluster(kindClusterName))
+
+			// ensure the cluster is deleted on panic or SIGINT
+			defer func() {
+				err := kindProvider.WithName(kindClusterName).Destroy(context.Background())
+				if err != nil {
+					log.Printf("Couldn't delete cluster %s: %v", kindClusterName, err)
+				}
+			}()
+			sigChan := SetupSignalHandler()
+			go func() {
+				<-sigChan
+				err := kindProvider.WithName(kindClusterName).Destroy(context.Background())
+				if err != nil {
+					log.Printf("Couldn't delete cluster %s: %v", kindClusterName, err)
+				}
+				os.Exit(1)
+			}()
 		}
 	}
 
@@ -66,7 +84,6 @@ func TestMain(m *testing.M) {
 func ConfigureTestEnv(testenv env.Environment) {
 
 	// Before
-
 	testenv.Setup(envfuncs.CreateNamespace(internal.LogsGeneratorNamespace))
 
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
@@ -151,4 +168,10 @@ func GetImageArchiveFilename() (string, error) {
 	}
 
 	return fileName, nil
+}
+
+func SetupSignalHandler() chan os.Signal {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+	return sigChan
 }
