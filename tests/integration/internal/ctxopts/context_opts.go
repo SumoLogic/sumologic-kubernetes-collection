@@ -10,11 +10,7 @@ import (
 type ctxKey string
 
 const (
-	ctxKeyNameKubectlOptions ctxKey = "kubectloptions"
-	ctxKeyNameHelmOptions    ctxKey = "helmoptions"
-	ctxKeyNameHelmRelease    ctxKey = "helmrelease"
-	ctxKeyNameNamespace      ctxKey = "namespace"
-	ctxKeyNameKindClusters   ctxKey = "kindClusters"
+	ctxKeyNameNamespace ctxKey = "namespace"
 )
 
 func KubectlOptions(ctx context.Context, envConf *envconf.Config) *k8s.KubectlOptions {

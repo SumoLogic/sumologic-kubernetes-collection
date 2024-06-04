@@ -2,6 +2,7 @@ package integration
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -9,6 +10,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
+	"sigs.k8s.io/e2e-framework/support"
 	"sigs.k8s.io/e2e-framework/support/kind"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
@@ -21,6 +23,7 @@ const (
 	envNameKubeConfig           = "KUBECONFIG"
 	envNameImageArchive         = "IMAGE_ARCHIVE"
 	defaultImageArchiveFilename = "images.tar"
+	kindClusterConfigPath       = "yamls/cluster.yaml"
 )
 
 var testenv env.Environment
@@ -46,7 +49,12 @@ func TestMain(m *testing.M) {
 			cfg.WithKubeconfigFile(kubeconfig)
 			ConfigureTestEnv(testenv)
 		} else {
-			testenv.Setup(CreateKindCluster(kindClusterName))
+			kindProvider, err := GetKindProvider()
+			if err != nil {
+				log.Fatal(err)
+			}
+			clusterOpts := GetClusterOpts()
+			testenv.Setup(envfuncs.CreateClusterWithConfig(kindProvider, kindClusterName, kindClusterConfigPath, clusterOpts...))
 			ConfigureTestEnv(testenv)
 			testenv.Finish(envfuncs.DestroyCluster(kindClusterName))
 		}
@@ -62,12 +70,11 @@ func ConfigureTestEnv(testenv env.Environment) {
 	testenv.Setup(envfuncs.CreateNamespace(internal.LogsGeneratorNamespace))
 
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
-		// Needed for OpenTelemetry Operator test
-		// TODO: Create namespaces only for specific tests
 		stepfuncs.KubectlCreateOperatorNamespacesOpt(),
 		stepfuncs.KubectlCreateOverrideNamespaceOpt(),
 		stepfuncs.HelmVersionOpt(),
-		// SetHelmOptionsTestOpt picks a values file from `values` directory
+		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
+		// HelmInstallTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
 		// in `strings.ValueFileFromT()`.)
 		// This values file will be used throughout the test to install the
@@ -76,7 +83,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// The reason for this is to limit the amount of boilerplate in tests
 		// themselves but we cannot attach/map the values.yaml to the test itself
 		// so we do this mapping instead.
-		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
 		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
 	) {
 		testenv.BeforeEachTest(f)
@@ -108,42 +114,30 @@ func ConfigureTestEnv(testenv env.Environment) {
 	)
 }
 
-func CreateKindCluster(clusterName string) func(context.Context, *envconf.Config) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		k := kind.NewCluster(clusterName)
-		k.WithOpts(kind.WithImage(os.Getenv(internal.EnvNameKindImage)))
+func GetClusterOpts() []support.ClusterOpts {
+	clusterOpts := []support.ClusterOpts{}
+	image := os.Getenv(internal.EnvNameKindImage)
+	clusterOpts = append(clusterOpts, kind.WithImage(image))
+	return clusterOpts
+}
 
-		// We only provide the config because the API is constructed in such a way
-		// that it requires both the image and the cluster config.
-		kubecfg, err := k.CreateWithConfig(ctx, "yamls/cluster.yaml")
-		if err != nil {
-			return ctx, err
-		}
+func GetKindProvider() (support.E2EClusterProviderWithImageLoader, error) {
+	provider := kind.NewProvider().(support.E2EClusterProviderWithImageLoader)
 
-		// load the Docker image archive if present
-		fileName, err := GetImageArchiveFilename()
-		if err != nil {
-			log.Printf("Couldn't find image archive file %s, proceeding without it", fileName)
-		} else {
-			err = k.LoadImageArchive(ctx, fileName)
-			if err != nil {
-				log.Fatalf("Loading image archive failed: %v", err)
-			}
-			log.Printf("Loaded image archive: %s", fileName)
-		}
-
-		// update envconfig with kubeconfig...
-		cfg.WithKubeconfigFile(kubecfg)
-
-		err = k.WaitForControlPlane(ctx, cfg.Client())
-		if err != nil {
-			return ctx, err
-		}
-
-		log.Printf("Kube config: %s", kubecfg)
-
-		return ctx, nil
+	// load the Docker image archive if present
+	fileName, err := GetImageArchiveFilename()
+	if err != nil {
+		log.Printf("Couldn't find image archive file %s, proceeding without it", fileName)
+		return provider, nil
 	}
+
+	err = provider.LoadImageArchive(context.TODO(), fileName)
+	if err != nil {
+		return nil, fmt.Errorf("Loading image archive failed: %w", err)
+	}
+	log.Printf("Loaded image archive: %s", fileName)
+
+	return provider, nil
 }
 
 func GetImageArchiveFilename() (string, error) {
