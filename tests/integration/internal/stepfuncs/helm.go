@@ -31,7 +31,7 @@ const (
 // HelmVersion returns a features.Func that will run helm version
 func HelmVersionOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{})
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{})
 		_, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "version")
 		require.NoError(t, err)
 
@@ -53,7 +53,7 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 			)
 			return ctx
 		}
-		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{})
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{})
 		_, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "dependency", "update", path)
 		require.NoError(t, err)
 
@@ -69,11 +69,11 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 // use SetKubectlNamespaceOpt.
 func HelmInstallOpt(path string, releaseName string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{"--wait"})
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{"--wait"})
 
 		err := helm.InstallE(t, helmOptions, path, releaseName)
 		if err != nil {
-			kubectlOptions := ctxopts.KubectlOptions(ctx)
+			kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
 
 			// Print setup job logs if installation failed.
 			k8s.RunKubectl(t, kubectlOptions,
@@ -130,7 +130,7 @@ func HelmInstallTestOpt(path string) features.Func {
 // use SetKubectlNamespaceOpt.
 func HelmDeleteOpt(release string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx), []string{"--wait"})
+		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{"--wait"})
 		helm.Delete(t, helmOptions, release, true)
 		return ctx
 	}

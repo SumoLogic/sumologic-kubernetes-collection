@@ -410,14 +410,14 @@ func checkKubeletLogs(count uint, strict bool, waitFunction stepfuncs.WaitForLog
 }
 
 func removeLogsDeployment(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-	opts := *ctxopts.KubectlOptions(ctx)
+	opts := *ctxopts.KubectlOptions(ctx, envConf)
 	opts.Namespace = internal.LogsGeneratorNamespace
 	terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.LogsGeneratorName)
 	return ctx
 }
 
 func removeLogsDaemonset(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-	opts := *ctxopts.KubectlOptions(ctx)
+	opts := *ctxopts.KubectlOptions(ctx, envConf)
 	opts.Namespace = internal.LogsGeneratorNamespace
 	terrak8s.RunKubectl(t, &opts, "delete", "daemonset", internal.LogsGeneratorName)
 	return ctx
@@ -943,7 +943,7 @@ func GetTracesFeature() features.Feature {
 			tickDuration,
 		)).
 		Teardown(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			opts := *ctxopts.KubectlOptions(ctx)
+			opts := *ctxopts.KubectlOptions(ctx, envConf)
 			opts.Namespace = internal.TracesGeneratorNamespace
 			terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.TracesGeneratorName)
 			return ctx
@@ -1041,8 +1041,8 @@ func CheckSumologicSecret(endpointCount int) featureCheck {
 	return func(builder *features.FeatureBuilder) *features.FeatureBuilder {
 		return builder.Assess("sumologic secret is created with endpoints",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
-				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
+				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx, envConf), "sumologic", 60, tickDuration)
+				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx, envConf), "sumologic")
 				require.Len(t, secret.Data, endpointCount, "Secret has incorrect number of endpoints")
 				return ctx
 			})
@@ -1175,7 +1175,7 @@ func CheckOtelcolEventsInstall(builder *features.FeatureBuilder) *features.Featu
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
 				releaseName := strings_internal.ReleaseNameFromT(t)
-				kubectlOptions := ctxopts.KubectlOptions(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
 
 				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
 				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
