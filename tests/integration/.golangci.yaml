@@ -7,13 +7,6 @@ linters-settings:
     check-type-assertions: false
     check-blank: true
 
-  maligned:
-    # print struct with more effective memory layout or not, false by default
-    suggest-new: true
-
-  unused:
-    go: "1.18"
-
   lll:
     # max line length, lines longer will be reported. Default is 120.
     # '\t' is counted as 1 character by default, and can be changed with the tab-width option
