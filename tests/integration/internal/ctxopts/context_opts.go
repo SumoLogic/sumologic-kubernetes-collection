@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
 type ctxKey string
@@ -16,15 +17,13 @@ const (
 	ctxKeyNameKindClusters   ctxKey = "kindClusters"
 )
 
-func WithKubectlOptions(ctx context.Context, kubectlOptions *k8s.KubectlOptions) context.Context {
-	return context.WithValue(ctx, ctxKeyNameKubectlOptions, kubectlOptions)
+func KubectlOptions(ctx context.Context, envConf *envconf.Config) *k8s.KubectlOptions {
+	namespace := Namespace(ctx)
+	return k8s.NewKubectlOptions("", envConf.KubeContext(), namespace)
 }
 
-func KubectlOptions(ctx context.Context) *k8s.KubectlOptions {
-	v := ctx.Value(ctxKeyNameKubectlOptions)
-	return v.(*k8s.KubectlOptions)
-}
-
+// NOTE: It's possible to put the namespace in the environment config instead, but this makes running tests in parallel impossible.
+// Each test gets its own copy of the context, but they use the same environment config.
 func WithNamespace(ctx context.Context, namespace string) context.Context {
 	return context.WithValue(ctx, ctxKeyNameNamespace, namespace)
 }

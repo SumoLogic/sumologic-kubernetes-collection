@@ -59,9 +59,6 @@ func Test_Helm_Default_OT_NamespaceOverride(t *testing.T) {
 		}
 		originalNamespace := ctxopts.Namespace(ctx)
 		ctx = context.WithValue(ctx, originalNamespaceKey, originalNamespace)
-		kubectlOptions := ctxopts.KubectlOptions(ctx)
-		kubectlOptions.Namespace = internal.OverrideNamespace
-		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
 		ctx = ctxopts.WithNamespace(ctx, internal.OverrideNamespace)
 		return ctx, nil
 	}
@@ -70,9 +67,6 @@ func Test_Helm_Default_OT_NamespaceOverride(t *testing.T) {
 			return ctx, nil
 		}
 		originalNamespace := ctx.Value(originalNamespaceKey).(string)
-		kubectlOptions := ctxopts.KubectlOptions(ctx)
-		kubectlOptions.Namespace = originalNamespace
-		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
 		ctx = ctxopts.WithNamespace(ctx, originalNamespace)
 		return ctx, nil
 	}

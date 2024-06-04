@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
 // Same as WaitUntilPodsAvailableE, but terminates the test instead of returning an error.
@@ -76,13 +77,14 @@ func WaitUntilPodsAvailableE(
 
 func WaitUntilSumologicMockAvailable(
 	ctx context.Context,
+	envConf *envconf.Config,
 	t *testing.T,
 	serviceName string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) {
 	retries := waitDuration / tickDuration
-	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx), serviceName, int(retries), tickDuration)
+	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx, envConf), serviceName, int(retries), tickDuration)
 }
 
 func formatSelectors(listOptions v1.ListOptions) string {

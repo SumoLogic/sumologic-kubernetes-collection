@@ -11,8 +11,6 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
 	"sigs.k8s.io/e2e-framework/support/kind"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
-
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
@@ -46,9 +44,6 @@ func TestMain(m *testing.M) {
 			kubeconfig := os.Getenv(envNameKubeConfig)
 
 			cfg.WithKubeconfigFile(kubeconfig)
-			testenv = testenv.
-				BeforeEachTest(InjectKubectlOptionsFromKubeconfig(kubeconfig))
-
 			ConfigureTestEnv(testenv)
 		} else {
 			testenv.Setup(CreateKindCluster(kindClusterName))
@@ -113,17 +108,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 	)
 }
 
-// InjectKubectlOptionsFromKubeconfig injects kubectl options to the context that will be propagated in tests.
-// This makes the kubectl options readily available for each test.
-func InjectKubectlOptionsFromKubeconfig(kubeconfig string) func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		kubectlOptions := k8s.NewKubectlOptions("", kubeconfig, "")
-		k8s.RunKubectl(t, kubectlOptions, "describe", "node")
-		t.Logf("Kube config: %s", kubeconfig)
-		return ctxopts.WithKubectlOptions(ctx, kubectlOptions), nil
-	}
-}
-
 func CreateKindCluster(clusterName string) func(context.Context, *envconf.Config) (context.Context, error) {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		k := kind.NewCluster(clusterName)
@@ -156,8 +140,6 @@ func CreateKindCluster(clusterName string) func(context.Context, *envconf.Config
 			return ctx, err
 		}
 
-		kubectlOptions := k8s.NewKubectlOptions("", kubecfg, "")
-		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
 		log.Printf("Kube config: %s", kubecfg)
 
 		return ctx, nil
