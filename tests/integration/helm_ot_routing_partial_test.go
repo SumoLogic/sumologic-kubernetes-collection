@@ -1,5 +1,5 @@
-//go:build allversions
-// +build allversions
+//go:build onlylatest
+// +build onlylatest
 
 package integration
 
