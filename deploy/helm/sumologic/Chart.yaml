@@ -29,7 +29,7 @@ dependencies:
     repository: https://helm.influxdata.com/
     condition: telegraf-operator.enabled
   - name: tailing-sidecar-operator
-    version: 0.13.0
+    version: 0.14.0
     repository: https://sumologic.github.io/tailing-sidecar
     condition: tailing-sidecar-operator.enabled
   - name: opentelemetry-operator
