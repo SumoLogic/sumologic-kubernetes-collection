@@ -265,6 +265,8 @@ var (
 		"otelcol_processor_groupbyattrs_log_groups_bucket",
 		"otelcol_processor_groupbyattrs_log_groups_count",
 		"otelcol_processor_groupbyattrs_log_groups_sum",
+		"otelcol_fileconsumer_reading_files",
+		"otelcol_fileconsumer_open_files",
 	}
 	TracingOtelcolMetrics = []string{ // not used by any App
 		"otelcol_loadbalancer_num_backend_updates",
