@@ -7,6 +7,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.8.0]
+
+### Released 2024-06-07
+
+### Added
+
+- chore: apple silicon instructions for CONTRIBUTING.md & vagrant/README.md [#3691]
+
+### Changed
+
+- chore: update Sumo Logic Kubernetes Setup to v3.14.0 [#3697]
+- feat: expose additional exporters and routing configuration [#3711]
+- chore: upgrade tailing sidecar (#3719) [#3720]
+- feat: use Sumo Logic images for Thanos and Prometheus Config Reloader [#3728]
+- chore: update OpenTelemetry Collector to 0.100.0-sumo-0 [#3737]
+- chore: Upgrade tailing-sidecar to v0.14.0 [#3753]
+- chore: update OpenTelemetry Collector to 0.102.1-sumo-0 [#3755] This change fixes
+  [CVE-2024-36129](https://github.com/open-telemetry/opentelemetry-collector/security/advisories/GHSA-c74f-6mfw-mm4v).
+
+[#3691]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3691
+[#3697]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3697
+[#3711]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3711
+[#3720]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3720
+[#3728]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3728
+[#3737]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3737
+[#3753]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3753
+[#3755]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3755
+
+[v4.8.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.8.0## [v4.7.1]
+
 ## [v4.7.1]
 
 ### Released 2024-05-22
