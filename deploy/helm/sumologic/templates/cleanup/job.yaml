@@ -58,6 +58,8 @@ spec:
 {{- else }}
             value: {{ .Values.sumologic.endpoint }}
 {{- end }}
+          - name: SUMOLOGIC_COLLECTOR_NAME
+            value: {{ include "terraform.collector.name" . }}
           {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 999

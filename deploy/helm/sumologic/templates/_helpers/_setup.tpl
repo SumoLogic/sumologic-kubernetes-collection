@@ -82,7 +82,7 @@ Example usage:
 
 */}}
 {{- define "terraform.collector.name" -}}
-{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}
+{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}{{- end}}
 {{- end -}}
 
 {{/*

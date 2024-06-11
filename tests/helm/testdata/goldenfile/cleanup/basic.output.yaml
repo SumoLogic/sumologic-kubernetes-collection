@@ -53,6 +53,8 @@ spec:
           env:
             - name: SUMOLOGIC_BASE_URL
               value:
+            - name: SUMOLOGIC_COLLECTOR_NAME
+              value: kubernetes
 
             - name: NO_PROXY
               value: kubernetes.default.svc

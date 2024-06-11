@@ -590,6 +590,10 @@ data:
 
     readonly DEBUG_MODE=${DEBUG_MODE:="false"}
     readonly DEBUG_MODE_ENABLED_FLAG="true"
+    readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
+
+    # Set variables for terraform
+    export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
 
     # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
     # so that we don't have to deal with True vs true vs TRUE
@@ -706,27 +710,25 @@ data:
         echo "Please refer to https://help.sumologic.com/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
     fi
 
-    readonly COLLECTOR_NAME="kubernetes"
-
     # Sumo Logic Collector and HTTP sources
     # Only import sources when collector exists.
-    if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
+    if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
     true  # prevent to render empty if; then
-    terraform import sumologic_http_source.default_events_source "${COLLECTOR_NAME}/events"
-    terraform import sumologic_http_source.default_otlp_events_source "${COLLECTOR_NAME}/events-otlp"
-    terraform import sumologic_http_source.default_logs_source "${COLLECTOR_NAME}/logs"
-    terraform import sumologic_http_source.default_otlp_logs_source "${COLLECTOR_NAME}/logs-otlp"
-    terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
-    terraform import sumologic_http_source.control_plane_metrics_source "${COLLECTOR_NAME}/control-plane-metrics"
-    terraform import sumologic_http_source.controller_metrics_source "${COLLECTOR_NAME}/kube-controller-manager-metrics"
-    terraform import sumologic_http_source.default_metrics_source "${COLLECTOR_NAME}/(default-metrics)"
-    terraform import sumologic_http_source.default_otlp_metrics_source "${COLLECTOR_NAME}/metrics-otlp"
-    terraform import sumologic_http_source.kubelet_metrics_source "${COLLECTOR_NAME}/kubelet-metrics"
-    terraform import sumologic_http_source.node_metrics_source "${COLLECTOR_NAME}/node-exporter-metrics"
-    terraform import sumologic_http_source.scheduler_metrics_source "${COLLECTOR_NAME}/kube-scheduler-metrics"
-    terraform import sumologic_http_source.state_metrics_source "${COLLECTOR_NAME}/kube-state-metrics"
-    terraform import sumologic_http_source.default_traces_source "${COLLECTOR_NAME}/traces"
-    terraform import sumologic_http_source.default_otlp_traces_source "${COLLECTOR_NAME}/traces-otlp"
+    terraform import sumologic_http_source.default_events_source "${SUMOLOGIC_COLLECTOR_NAME}/events"
+    terraform import sumologic_http_source.default_otlp_events_source "${SUMOLOGIC_COLLECTOR_NAME}/events-otlp"
+    terraform import sumologic_http_source.default_logs_source "${SUMOLOGIC_COLLECTOR_NAME}/logs"
+    terraform import sumologic_http_source.default_otlp_logs_source "${SUMOLOGIC_COLLECTOR_NAME}/logs-otlp"
+    terraform import sumologic_http_source.apiserver_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/apiserver-metrics"
+    terraform import sumologic_http_source.control_plane_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/control-plane-metrics"
+    terraform import sumologic_http_source.controller_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.default_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/(default-metrics)"
+    terraform import sumologic_http_source.default_otlp_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/metrics-otlp"
+    terraform import sumologic_http_source.kubelet_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kubelet-metrics"
+    terraform import sumologic_http_source.node_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/node-exporter-metrics"
+    terraform import sumologic_http_source.scheduler_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kube-scheduler-metrics"
+    terraform import sumologic_http_source.state_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kube-state-metrics"
+    terraform import sumologic_http_source.default_traces_source "${SUMOLOGIC_COLLECTOR_NAME}/traces"
+    terraform import sumologic_http_source.default_otlp_traces_source "${SUMOLOGIC_COLLECTOR_NAME}/traces-otlp"
     fi
 
     # Kubernetes Secret
@@ -753,7 +755,6 @@ data:
   variables.tf: |
     variable "collector_name" {
       type  = string
-      default = "kubernetes"
     }
 
     variable "namespace_name" {
