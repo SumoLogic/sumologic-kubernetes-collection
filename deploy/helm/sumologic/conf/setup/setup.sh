@@ -2,6 +2,10 @@
 
 readonly DEBUG_MODE=${DEBUG_MODE:="false"}
 readonly DEBUG_MODE_ENABLED_FLAG="true"
+readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
+
+# Set variables for terraform
+export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -118,18 +122,16 @@ else
     echo "Please refer to https://help.sumologic.com/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
-readonly COLLECTOR_NAME="{{ template "terraform.collector.name" . }}"
-
 # Sumo Logic Collector and HTTP sources
 # Only import sources when collector exists.
-if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
+if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
 true  # prevent to render empty if; then
 {{- $ctx := .Values -}}
 {{- range $type, $sources := .Values.sumologic.collector.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" }}
 {{- range $key, $source := $sources }}
 {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
-terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "${COLLECTOR_NAME}/{{ $source.name }}"
+terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "${SUMOLOGIC_COLLECTOR_NAME}/{{ $source.name }}"
 {{- end }}
 {{- end }}
 {{- else if and (eq $type "metrics") $ctx.sumologic.traces.enabled }}
@@ -137,7 +139,7 @@ terraform import sumologic_http_source.{{ template "terraform.sources.name" (dic
 If traces are enabled and metrics are disabled, create default metrics source anyway
 */}}
 {{- if hasKey $sources "default" }}
-terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" "default" "Type" $type) }} "${COLLECTOR_NAME}/{{ $sources.default.name }}"
+terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" "default" "Type" $type) }} "${SUMOLOGIC_COLLECTOR_NAME}/{{ $sources.default.name }}"
 {{- end }}
 {{- end }}
 {{- end }}

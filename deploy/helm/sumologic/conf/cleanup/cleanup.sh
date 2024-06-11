@@ -9,6 +9,8 @@ export HTTP_PROXY="${HTTP_PROXY:=""}"
 export HTTPS_PROXY="${HTTPS_PROXY:=""}"
 export NO_PROXY="${NO_PROXY:=""}"
 
+readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
+
 cp /etc/terraform/*.tf /terraform/
 cd /terraform || exit 1
 
@@ -17,7 +19,7 @@ cd /terraform || exit 1
 terraform init -input=false -get=false || terraform init -input=false -upgrade
 
 # shellcheck disable=SC1083
-terraform import sumologic_collector.collector {{ template "terraform.collector.name" . }}
+terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"
 # shellcheck disable=SC1083
 terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
 
