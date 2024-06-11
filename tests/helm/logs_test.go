@@ -464,6 +464,7 @@ sumologic:
 					Id     string
 					Type   string
 					Output string
+					Fields []string
 				}
 			} `yaml:"filelog/containers"`
 		}
@@ -472,10 +473,16 @@ sumologic:
 	require.NoError(t, err)
 
 	keepTimeOperatorFound := false
+
+operatorLoop:
 	for _, operator := range otelConfig.Receivers.Filelog.Operators {
-		if operator.Id == "move-time-attribute" {
-			keepTimeOperatorFound = true
-			break
+		if operator.Id == "keep-fields" {
+			for _, field := range operator.Fields {
+				if field == "attributes[\"time\"]" {
+					keepTimeOperatorFound = true
+					break operatorLoop
+				}
+			}
 		}
 	}
 	require.True(t, keepTimeOperatorFound)

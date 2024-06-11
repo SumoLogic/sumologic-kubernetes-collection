@@ -40,174 +40,64 @@ filelog/containers:
   include_file_name: false
   include_file_path: true
   operators:
-    ## Detect the container runtime log format
-    ## Can be: docker-shim, CRI-O and containerd
-    - id: get-format
+    ## Parse the container runtime log format automatically
+    - type: container
+      add_metadata_from_filepath: true
+    
+    ## Reorganise attributes according to Sumo Logic requirements
+    ## - rename log.iostream to stream
+    - type: move
+      from: attributes["log.iostream"]
+      to: attributes["stream"]
+    ## Keep only the following attributes:
+    ## - stream
+    ## - k8s.pod.name
+    ## - k8s.container.name
+    ## - k8s.namespace.name
+    ## - log.file.path
+    ## - time if `sumologic.logs.container.keep_time_attribute` is set to `true`
+    - type: retain
+      id: keep-fields
+      fields:
+        - attributes["stream"]
+        - attributes["k8s.pod.name"]
+        - attributes["k8s.container.name"]
+        - attributes["k8s.namespace.name"]
+        - attributes["log.file.path"]
+{{ if .Values.sumologic.logs.container.keep_time_attribute }}
+        - attributes["time"]
+{{ end }}
+
+    ## Strip trailing "\n" from the log body
+    - id: strip-trailing-newline-router
+{{- if .Values.sumologic.logs.multiline.enabled }}
+      default: multiline
+{{- else }}
+      default: merge-multiline-logs
+{{- end }}
       routes:
-        - expr: 'body matches "^\\{"'
-          output: parser-docker
-        - expr: 'body matches "^[^ Z]+ "'
-          output: parser-crio
-        - expr: 'body matches "^[^ Z]+Z"'
-          output: parser-containerd
+        - expr: body matches "^.*\n$"
+          output: strip-trailing-newline
       type: router
 
-    ## Parse CRI-O format
-    - id: parser-crio
-      output: merge-cri-lines
-      parse_to: body
-      regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
-      timestamp:
-        layout: '2006-01-02T15:04:05.000000000-07:00'
-        layout_type: gotime
-        parse_from: body.time
-      type: regex_parser
-
-    ## Parse CRI-Containerd format
-    - id: parser-containerd
-      output: merge-cri-lines
-      parse_to: body
-      regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
-      timestamp:
-        layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-        parse_from: body.time
-      type: regex_parser
-
-    ## Parse docker-shim format
-    ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
-    ## record.
-    ## Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
-    ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
-    ## Input Timestamp: _empty_
-    ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
-    - id: parser-docker
-      output: merge-docker-lines
-      parse_to: body
-      timestamp:
-        layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-        parse_from: body.time
-      type: json_parser
-
-    ## merge-docker-lines stitches back together log lines split by Docker logging driver.
-    ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
-    ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
-    ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n","stream":"stdout"}
-    - id: merge-docker-lines
-      combine_field: body.log
-      combine_with: ""
-      is_last_entry: body.log matches "\n$"
-      output: strip-trailing-newline
-      source_identifier: attributes["log.file.path"]
-      type: recombine
-      ## Ensure we combine everything up to `is_last_entry` even on the file beginning
-      max_unmatched_batch_size: 0
-
-    ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
-    ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
-    ## Input Body (JSON): { "log": "ne that was split by the logging driver", "logtag": "F" }
-    ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "logtag": "F" }
-    - id: merge-cri-lines
-      combine_field: body.log
-      combine_with: ""
-      is_last_entry: body.logtag == "F"
-      output: extract-metadata-from-filepath
-      overwrite_with: newest
-      source_identifier: attributes["log.file.path"]
-      type: recombine
-      ## Ensure we combine everything up to `is_last_entry` even on the file beginning
-      max_unmatched_batch_size: 0
-
     ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
+    ## Uses attributes.log as temporary cotainer for new log
     ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
     ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "stream": "stdout" }
     - id: strip-trailing-newline
-      output: extract-metadata-from-filepath
-      parse_from: body.log
-      parse_to: body
+      parse_from: body
+      parse_to: attributes
+      output: replace-body
       regex: "^(?P<log>.*)\n$"
       type: regex_parser
 
-    ## extract-metadata-from-filepath extracts data from the `log.file.path` Attribute into the Attributes
-    ## Input Attributes:
-    ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
-    ## Output Attributes:
-    ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
-    ## - container_name: "loggercontainer",
-    ## - namespace: "default",
-    ## - pod_name: "logger-multiline-4nvg4",
-    ## - run_id: "0",
-    ## - uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-    ## }
-    - id: extract-metadata-from-filepath
-      parse_from: attributes["log.file.path"]
-{{ if eq .Type "linux" }}
-      regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
-{{ else if eq .Type "windows" }}
-      regex: '^.*\\(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\\(?P<container_name>[^\._]+)\\(?P<run_id>\d+)\.log$'
-{{ else }}
-      fail "\nUnknown Type argument for `logs.collector.configuration.receivers.filelog-container` function"
-{{ end }}
-      type: regex_parser
-
-
-    ## The following actions are being performed:
-    ## - renaming attributes
-    ## - moving stream from body to attributes
-    ## - using body.log as body
-    ## Input Body (JSON): {
-    ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-    ##   "stream": "stdout",
-    ## }
-    ## Output Body (String): "2001-02-03 04:05:06 loggerlog 1 first line\n"
-    ## Input Attributes:
-    ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
-    ## - container_name: "loggercontainer",
-    ## - namespace: "default",
-    ## - pod_name: "logger-multiline-4nvg4",
-    ## - run_id: "0",
-    ## - uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-    ## Output Attributes:
-    ## - k8s.container.name: "loggercontainer"
-    ## - k8s.namespace.name: "default"
-    ## - k8s.pod.name: "logger-multiline-4nvg4"
-    ## - stream: "stdout"
-    ## - log.file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
-
-    - id: move-attributes
-      from: body.stream
-      to: attributes["stream"]
+    - id: replace-body
       type: move
-
-{{ if .Values.sumologic.logs.container.keep_time_attribute }}
-    - id: move-time-attribute
-      from: body.time
-      to: attributes["time"]
-      type: move
-{{ end }}
-
-    - from: attributes.container_name
-      to: attributes["k8s.container.name"]
-      type: move
-
-    - from: attributes.namespace
-      to: attributes["k8s.namespace.name"]
-      type: move
-
-    - from: attributes.pod_name
-      to: attributes["k8s.pod.name"]
-      type: move
-
-    - from: body.log
+      from: attributes.log
       to: body
-      type: move
-
-    - field: attributes.run_id
-      type: remove
-
-    - field: attributes.uid
-      type: remove
 
 {{- if .Values.sumologic.logs.multiline.enabled }}
+    ## Perform multiline detection
     - id: multiline
       default: merge-multiline-logs
       routes:

@@ -62,88 +62,37 @@ data:
         include_file_name: false
         include_file_path: true
         operators:
-        - id: get-format
+        - add_metadata_from_filepath: true
+          type: container
+        - from: attributes["log.iostream"]
+          to: attributes["stream"]
+          type: move
+        - fields:
+          - attributes["stream"]
+          - attributes["k8s.pod.name"]
+          - attributes["k8s.container.name"]
+          - attributes["k8s.namespace.name"]
+          - attributes["log.file.path"]
+          id: keep-fields
+          type: retain
+        - default: multiline
+          id: strip-trailing-newline-router
           routes:
-          - expr: body matches "^\\{"
-            output: parser-docker
-          - expr: body matches "^[^ Z]+ "
-            output: parser-crio
-          - expr: body matches "^[^ Z]+Z"
-            output: parser-containerd
+          - expr: body matches "^.*\n$"
+            output: strip-trailing-newline
           type: router
-        - id: parser-crio
-          output: merge-cri-lines
-          parse_to: body
-          regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$
-          timestamp:
-            layout: "2006-01-02T15:04:05.000000000-07:00"
-            layout_type: gotime
-            parse_from: body.time
-          type: regex_parser
-        - id: parser-containerd
-          output: merge-cri-lines
-          parse_to: body
-          regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$
-          timestamp:
-            layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-            parse_from: body.time
-          type: regex_parser
-        - id: parser-docker
-          output: merge-docker-lines
-          parse_to: body
-          timestamp:
-            layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-            parse_from: body.time
-          type: json_parser
-        - combine_field: body.log
-          combine_with: ""
-          id: merge-docker-lines
-          is_last_entry: body.log matches "\n$"
-          max_unmatched_batch_size: 0
-          output: strip-trailing-newline
-          source_identifier: attributes["log.file.path"]
-          type: recombine
-        - combine_field: body.log
-          combine_with: ""
-          id: merge-cri-lines
-          is_last_entry: body.logtag == "F"
-          max_unmatched_batch_size: 0
-          output: extract-metadata-from-filepath
-          overwrite_with: newest
-          source_identifier: attributes["log.file.path"]
-          type: recombine
         - id: strip-trailing-newline
-          output: extract-metadata-from-filepath
-          parse_from: body.log
-          parse_to: body
+          output: replace-body
+          parse_from: body
+          parse_to: attributes
           regex: |-
             ^(?P<log>.*)
             $
           type: regex_parser
-        - id: extract-metadata-from-filepath
-          parse_from: attributes["log.file.path"]
-          regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$
-          type: regex_parser
-        - from: body.stream
-          id: move-attributes
-          to: attributes["stream"]
-          type: move
-        - from: attributes.container_name
-          to: attributes["k8s.container.name"]
-          type: move
-        - from: attributes.namespace
-          to: attributes["k8s.namespace.name"]
-          type: move
-        - from: attributes.pod_name
-          to: attributes["k8s.pod.name"]
-          type: move
-        - from: body.log
+        - from: attributes.log
+          id: replace-body
           to: body
           type: move
-        - field: attributes.run_id
-          type: remove
-        - field: attributes.uid
-          type: remove
         - default: merge-multiline-logs
           id: multiline
           routes: null
