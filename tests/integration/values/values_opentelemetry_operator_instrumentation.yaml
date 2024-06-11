@@ -24,7 +24,7 @@ opentelemetry-operator:
 
 instrumentation:
   createDefaultInstrumentation: true
-  instrumentationNamespaces: "ot-operator1,ot-operator2,test-apps"
+  instrumentationNamespaces: "ot-operator-instr-1,ot-operator-instr-2,test-apps"
 
 otelcolInstrumentation:
   enabled: true
