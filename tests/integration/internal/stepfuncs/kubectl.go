@@ -10,6 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
+	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
@@ -19,18 +20,28 @@ import (
 
 // KubectlDeleteNamespaceTestOpt wraps KubectlDeleteNamespaceOpt by extracting the
 // namespace saved in the context by KubectlCreateNamespaceTestOpt/KubectlCreateNamespaceOpt.
-func KubectlDeleteNamespaceTestOpt() features.Func {
+func KubectlDeleteNamespaceTestOpt(force bool) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		namespace := ctxopts.Namespace(ctx)
-		return KubectlDeleteNamespaceOpt(namespace)(ctx, t, envConf)
+		kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
+		kubectlOptions.Namespace = ""
+		return KubectlDeleteNamespaceOpt(namespace, force)(ctx, t, envConf)
 	}
 }
 
-// KubectlDeleteNamespaceOpt returns a features.Func that with delete the namespace
-// that was saved in context using KubectlSetNamespaceOpt or KubectlSetTestNamespaceOpt.
-func KubectlDeleteNamespaceOpt(namespace string) features.Func {
+// KubectlDeleteNamespaceOpt returns a features.Func that with delete the provided namespace using kubectl options saved in the context.
+// If force is set to true, finalizers are ignored during the deletion.
+func KubectlDeleteNamespaceOpt(namespace string, force bool) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx), namespace)
+		var err error
+		if force {
+			ns := k8s.GetNamespace(t, ctxopts.KubectlOptions(ctx, envConf), namespace)
+			client := envConf.Client()
+			ns.Spec.Finalizers = []corev1.FinalizerName{}
+			err = client.Resources().Update(ctx, ns)
+			require.NoError(t, err)
+		}
+		k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx, envConf), namespace)
 		return ctx
 	}
 }
@@ -39,8 +50,7 @@ func KubectlDeleteNamespaceOpt(namespace string) features.Func {
 // in the cluster and set it in kubectlOptions stored in the context.
 func KubectlCreateNamespaceOpt(namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOptions := ctxopts.KubectlOptions(ctx)
-		kubectlOptions.Namespace = namespace
+		kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
 		k8s.CreateNamespace(t, kubectlOptions, namespace)
 		return ctxopts.WithNamespace(ctx, namespace)
 	}
@@ -61,7 +71,7 @@ func KubectlCreateOperatorNamespacesOpt() features.Func {
 		if values.Instrumentation.InstrumentationNamespaces != "" {
 			namespaces := stdstrings.Split(values.Instrumentation.InstrumentationNamespaces, ",")
 			for _, namespace := range namespaces {
-				k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx), namespace)
+				k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx, envConf), namespace)
 			}
 		}
 		return ctx
@@ -83,7 +93,7 @@ func KubectlDeleteOperatorNamespacesOpt() features.Func {
 		if values.Instrumentation.InstrumentationNamespaces != "" {
 			namespaces := stdstrings.Split(values.Instrumentation.InstrumentationNamespaces, ",")
 			for _, namespace := range namespaces {
-				k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx), namespace)
+				ctx = KubectlDeleteNamespaceOpt(namespace, true)(ctx, t, envConf)
 			}
 		}
 		return ctx
@@ -101,7 +111,7 @@ func KubectlCreateOverrideNamespaceOpt() features.Func {
 		err := yaml.Unmarshal(valuesFileBytes, &values)
 		require.NoError(t, err)
 		if values.NamespaceOverride != "" {
-			k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx), values.NamespaceOverride)
+			k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx, envConf), values.NamespaceOverride)
 		}
 		return ctx
 	}
@@ -118,7 +128,7 @@ func KubectlDeleteOverrideNamespaceOpt() features.Func {
 		err := yaml.Unmarshal(valuesFileBytes, &values)
 		require.NoError(t, err)
 		if values.NamespaceOverride != "" {
-			k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx), values.NamespaceOverride)
+			ctx = KubectlDeleteNamespaceOpt(values.NamespaceOverride, true)(ctx, t, envConf)
 		}
 		return ctx
 	}
@@ -137,7 +147,7 @@ func KubectlCreateNamespaceTestOpt() features.Func {
 // with the provided yaml file path as an argument.
 func KubectlApplyFOpt(yamlPath string, namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
+		kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
 		kubectlOpts.Namespace = namespace
 		k8s.KubectlApply(t, &kubectlOpts, yamlPath)
 		return ctx
@@ -148,7 +158,7 @@ func KubectlApplyFOpt(yamlPath string, namespace string) features.Func {
 // with the provided yaml file path as an argument.
 func KubectlDeleteFOpt(yamlPath string, namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
+		kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
 		kubectlOpts.Namespace = namespace
 		k8s.KubectlDelete(t, &kubectlOpts, yamlPath)
 		return ctx

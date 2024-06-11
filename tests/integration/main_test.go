@@ -5,21 +5,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"testing"
-	"time"
 
-	"sigs.k8s.io/e2e-framework/klient"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
+	"sigs.k8s.io/e2e-framework/support"
 	"sigs.k8s.io/e2e-framework/support/kind"
-
-	"github.com/gruntwork-io/terratest/modules/k8s"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 const (
@@ -27,6 +24,7 @@ const (
 	envNameKubeConfig           = "KUBECONFIG"
 	envNameImageArchive         = "IMAGE_ARCHIVE"
 	defaultImageArchiveFilename = "images.tar"
+	kindClusterConfigPath       = "yamls/cluster.yaml"
 )
 
 var testenv env.Environment
@@ -38,6 +36,7 @@ func TestMain(m *testing.M) {
 	}
 
 	testenv = env.NewWithConfig(cfg)
+	kindClusterName := envconf.RandomName("sumologic-test", 20)
 
 	if !cfg.DryRunMode() {
 
@@ -49,16 +48,33 @@ func TestMain(m *testing.M) {
 			kubeconfig := os.Getenv(envNameKubeConfig)
 
 			cfg.WithKubeconfigFile(kubeconfig)
-			testenv = testenv.
-				BeforeEachTest(InjectKubectlOptionsFromKubeconfig(kubeconfig))
-
 			ConfigureTestEnv(testenv)
 		} else {
-
-			testenv.BeforeEachTest(CreateKindCluster())
+			kindProvider, err := GetKindProvider()
+			if err != nil {
+				log.Fatal(err)
+			}
+			clusterOpts := GetClusterOpts()
+			testenv.Setup(envfuncs.CreateClusterWithConfig(kindProvider, kindClusterName, kindClusterConfigPath, clusterOpts...))
 			ConfigureTestEnv(testenv)
-			testenv.AfterEachTest(DestroyKindCluster())
-			testenv.Finish(DestroyActiveKindClusters)
+			testenv.Finish(envfuncs.DestroyCluster(kindClusterName))
+
+			// ensure the cluster is deleted on panic or SIGINT
+			defer func() {
+				err := kindProvider.WithName(kindClusterName).Destroy(context.Background())
+				if err != nil {
+					log.Printf("Couldn't delete cluster %s: %v", kindClusterName, err)
+				}
+			}()
+			sigChan := SetupSignalHandler()
+			go func() {
+				<-sigChan
+				err := kindProvider.WithName(kindClusterName).Destroy(context.Background())
+				if err != nil {
+					log.Printf("Couldn't delete cluster %s: %v", kindClusterName, err)
+				}
+				os.Exit(1)
+			}()
 		}
 	}
 
@@ -68,16 +84,14 @@ func TestMain(m *testing.M) {
 func ConfigureTestEnv(testenv env.Environment) {
 
 	// Before
+	testenv.Setup(envfuncs.CreateNamespace(internal.LogsGeneratorNamespace))
+
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
-		// Needed for OpenTelemetry Operator test
-		// TODO: Create namespaces only for specific tests
 		stepfuncs.KubectlCreateOperatorNamespacesOpt(),
 		stepfuncs.KubectlCreateOverrideNamespaceOpt(),
-		// Create Test Namespace
-		stepfuncs.KubectlCreateNamespaceTestOpt(),
-		stepfuncs.SetHelmOptionsTestOpt([]string{}),
 		stepfuncs.HelmVersionOpt(),
-		// SetHelmOptionsTestOpt picks a values file from `values` directory
+		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
+		// HelmInstallTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
 		// in `strings.ValueFileFromT()`.)
 		// This values file will be used throughout the test to install the
@@ -86,8 +100,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// The reason for this is to limit the amount of boilerplate in tests
 		// themselves but we cannot attach/map the values.yaml to the test itself
 		// so we do this mapping instead.
-		stepfuncs.SetHelmOptionsTestOpt([]string{"--wait"}),
-		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
 		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
 	) {
 		testenv.BeforeEachTest(f)
@@ -99,7 +111,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		stepfuncs.HelmDeleteTestOpt(),
 		stepfuncs.KubectlDeleteOverrideNamespaceOpt(),
 		stepfuncs.KubectlDeleteOperatorNamespacesOpt(),
-		stepfuncs.KubectlDeleteNamespaceTestOpt(),
+		stepfuncs.KubectlDeleteNamespaceTestOpt(false),
 	) {
 		testenv.AfterEachTest(f)
 	}
@@ -109,116 +121,40 @@ func ConfigureTestEnv(testenv env.Environment) {
 	testenv.Finish(
 		func(ctx context.Context, envConf *envconf.Config) (context.Context, error) {
 			namespace := ctxopts.Namespace(ctx)
+			if namespace == "" {
+				return ctx, nil
+			}
 			return envfuncs.DeleteNamespace(namespace)(ctx, envConf)
 		},
 		envfuncs.DeleteNamespace(internal.OverrideNamespace),
+		envfuncs.DeleteNamespace(internal.LogsGeneratorNamespace),
 	)
 }
 
-// InjectKubectlOptionsFromKubeconfig injects kubectl options to the context that will be propagated in tests.
-// This makes the kubectl options readily available for each test.
-func InjectKubectlOptionsFromKubeconfig(kubeconfig string) func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		kubectlOptions := k8s.NewKubectlOptions("", kubeconfig, "")
-		k8s.RunKubectl(t, kubectlOptions, "describe", "node")
-		t.Logf("Kube config: %s", kubeconfig)
-		return ctxopts.WithKubectlOptions(ctx, kubectlOptions), nil
-	}
+func GetClusterOpts() []support.ClusterOpts {
+	clusterOpts := []support.ClusterOpts{}
+	image := os.Getenv(internal.EnvNameKindImage)
+	clusterOpts = append(clusterOpts, kind.WithImage(image))
+	return clusterOpts
 }
 
-type kindContextKey string
+func GetKindProvider() (support.E2EClusterProviderWithImageLoader, error) {
+	provider := kind.NewProvider().(support.E2EClusterProviderWithImageLoader)
 
-func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		clusterName := strings.NameFromT(t)
-		k := kind.NewCluster(clusterName)
-
-		// We only provide the config because the API is constructed in such a way
-		// that it requires both the image and the cluster config.
-		kubecfg, err := k.CreateWithConfig(os.Getenv(internal.EnvNameKindImage), "yamls/cluster.yaml")
-		if err != nil {
-			return ctx, err
-		}
-
-		// load the Docker image archive if present
-		fileName, err := GetImageArchiveFilename()
-		if err != nil {
-			t.Logf("Couldn't find image archive file %s, proceeding without it", fileName)
-		} else {
-			err = k.LoadImageArchive(fileName)
-			if err != nil {
-				t.Fatalf("Loading image archive failed: %v", err)
-			}
-			t.Logf("Loaded image archive: %s", fileName)
-		}
-
-		kubectlOptions := k8s.NewKubectlOptions("", kubecfg, "")
-		k8s.WaitUntilAllNodesReady(t, kubectlOptions, 60, 2*time.Second)
-		k8s.RunKubectl(t, kubectlOptions, "describe", "node")
-		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
-		t.Logf("Kube config: %s", kubecfg)
-
-		// update envconfig with kubeconfig...
-		cfg.WithKubeconfigFile(kubecfg)
-
-		// ...and with new klient.Client since otherwise it would be reused as per:
-		// https://github.com/kubernetes-sigs/e2e-framework/blob/55d8b7e4/pkg/envconf/config.go#L116-L132
-		cl, err := klient.NewWithKubeConfigFile(kubecfg)
-		if err != nil {
-			return ctx, err
-		}
-		cfg.WithClient(cl)
-
-		// store entire cluster value in ctx for future access using the cluster name
-		newContext := context.WithValue(ctx, kindContextKey(clusterName), k)
-
-		// and save the cluster name in the list of active clusters
-		newContext = ctxopts.WithCluster(newContext, clusterName)
-
-		// store entire cluster value in ctx for future access using the cluster name
-		return newContext, nil
-	}
-}
-
-func DestroyKindCluster() func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
-	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		clusterName := strings.NameFromT(t)
-		return DestroyKindClusterByName(ctx, clusterName)
-	}
-}
-
-func DestroyKindClusterByName(ctx context.Context, clusterName string) (context.Context, error) {
-	clusterVal := ctx.Value(kindContextKey(clusterName))
-	if clusterVal == nil {
-		return ctx, fmt.Errorf("destroy kind cluster func: context cluster is nil")
+	// load the Docker image archive if present
+	fileName, err := GetImageArchiveFilename()
+	if err != nil {
+		log.Printf("Couldn't find image archive file %s, proceeding without it", fileName)
+		return provider, nil
 	}
 
-	cluster, ok := clusterVal.(*kind.Cluster)
-	if !ok {
-		return ctx, fmt.Errorf("destroy kind cluster func: unexpected type for cluster value")
+	err = provider.LoadImageArchive(context.TODO(), fileName)
+	if err != nil {
+		return nil, fmt.Errorf("Loading image archive failed: %w", err)
 	}
+	log.Printf("Loaded image archive: %s", fileName)
 
-	if err := cluster.Destroy(); err != nil {
-		return ctx, fmt.Errorf("destroy kind cluster: %w", err)
-	}
-
-	// remove the cluster name from the list of active clusters
-	newContext := ctxopts.WithoutCluster(ctx, clusterName)
-
-	return newContext, nil
-}
-
-func DestroyActiveKindClusters(ctx context.Context, _ *envconf.Config) (context.Context, error) {
-	var err error
-	clusters := ctxopts.Clusters(ctx)
-	newContext := ctx
-	for _, clusterName := range clusters {
-		newContext, err = DestroyKindClusterByName(newContext, clusterName)
-		if err != nil {
-			return newContext, err
-		}
-	}
-	return newContext, err
+	return provider, nil
 }
 
 func GetImageArchiveFilename() (string, error) {
@@ -232,4 +168,10 @@ func GetImageArchiveFilename() (string, error) {
 	}
 
 	return fileName, nil
+}
+
+func SetupSignalHandler() chan os.Signal {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+	return sigChan
 }

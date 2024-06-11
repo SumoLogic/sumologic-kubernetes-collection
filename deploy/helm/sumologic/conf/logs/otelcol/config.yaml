@@ -87,6 +87,13 @@ exporters:
 {{- end }}
 {{- end }}
 
+{{- if .Values.sumologic.logs.otelcol.extraExporters }}
+{{- range $name, $exporter := .Values.sumologic.logs.otelcol.extraExporters }}
+{{ printf "%s:" $name | indent 2 }}
+{{ toYaml $exporter | indent 4}}
+{{- end }}
+{{- end }}
+
 extensions:
   health_check: {}
 {{ if .Values.metadata.persistence.enabled }}
@@ -372,6 +379,38 @@ processors:
       value: ""
 {{ end }}
 
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+  routing/containers:
+    default_exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 6}}
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: {{ $entry.statement }}
+        exporters:
+          - {{ $entry.exporter }}
+{{- end }}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: route()
+        exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 12}}
+{{- end }}
+
+  routing/systemd:
+    default_exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 6 }}
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: {{ $entry.statement }}
+        exporters:
+          - {{ $entry.exporter }}
+{{- end }}
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: route()
+        exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 12 }}
+{{- end }}
+{{- end }}
+
 {{ if .Values.sumologic.logs.container.enabled }}
   source/containers:
     annotation_prefix: "pod_annotations_"
@@ -485,7 +524,7 @@ service:
 {{ if .Values.sumologic.logs.container.enabled }}
     logs/otlp/containers:
       exporters:
-{{ include "logs.otelcol.container.exporters" . | indent 8 }}
+{{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "containers") | nindent 8}}
       processors:
         - memory_limiter
         - filter/include_containers
@@ -511,6 +550,9 @@ service:
         - transform/flatten
 {{- end }}
         - batch
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/containers
+{{- end }}
       receivers:
         - otlp
 {{ end }}
@@ -518,7 +560,7 @@ service:
 {{ if .Values.sumologic.logs.systemd.enabled }}
     logs/otlp/kubelet:
       exporters:
-{{ include "logs.otelcol.kubelet.exporters" . | indent 8 }}
+{{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -541,12 +583,15 @@ service:
 {{- end }}
 {{- end }}
         - batch
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/systemd
+{{- end }}
       receivers:
         - otlp
 
     logs/otlp/systemd:
       exporters:
-{{ include "logs.otelcol.systemd.exporters" . | indent 8 }}
+{{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -570,6 +615,9 @@ service:
 {{- end }}
 {{- end }}
         - batch
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/systemd
+{{- end }}
       receivers:
         - otlp
 {{ end }}

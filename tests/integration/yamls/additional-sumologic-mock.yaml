@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: additional-sumologic-mock
+  labels:
+    app: sumologic-mock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sumologic-mock
+  template:
+    metadata:
+      labels:
+        service: sumologic-mock
+        app: sumologic-mock
+    spec:
+      containers:
+        - ports:
+            - containerPort: 3000
+            - containerPort: 3001
+          image: public.ecr.aws/sumologic/sumologic-mock:2.22.0-59-g245ae92
+          name: sumologic-mock
+          args:
+            - sumologic-mock
+            - --hostname=sumologic-mock.additional-sumologic-mock
+            - --store-traces
+            - --store-logs
+            - --store-metrics
+          env:
+            - name: RUST_LOG
+              value: "off"
+          resources: {}
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 10
+      hostname: sumologic-mock
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: additional-sumologic-mock
+  labels:
+    app: sumologic-mock
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+    - name: "3001"
+      port: 3001
+      targetPort: 3001
+  selector:
+    service: sumologic-mock

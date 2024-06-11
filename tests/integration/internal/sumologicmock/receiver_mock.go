@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
+	"sigs.k8s.io/e2e-framework/pkg/envconf"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/k8s"
 )
@@ -37,9 +38,11 @@ func NewClient(t *testing.T, baseUrl url.URL) *SumologicMockClient {
 // by the caller when they're done with it.
 func NewClientWithK8sTunnel(
 	ctx context.Context,
+	envConf *envconf.Config,
 	t *testing.T,
+	serviceName string,
 ) (*SumologicMockClient, func()) {
-	tunnel := k8s.TunnelForSumologicMock(ctx, t)
+	tunnel := k8s.TunnelForSumologicMock(ctx, envConf, t, serviceName)
 	baseUrl := url.URL{
 		Scheme: "http",
 		Host:   tunnel.Endpoint(),

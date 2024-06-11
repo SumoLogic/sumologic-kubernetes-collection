@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
 func Test_Helm_Default_OT_FIPS(t *testing.T) {
@@ -31,7 +32,7 @@ func Test_Helm_Default_OT_FIPS(t *testing.T) {
 
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 
-	featLogs := GetLogsFeature()
+	featLogs := GetAllLogsFeature(stepfuncs.WaitUntilExpectedExactLogsPresent, true)
 
 	featMultilineLogs := GetMultilineLogsFeature()
 

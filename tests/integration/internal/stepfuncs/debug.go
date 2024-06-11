@@ -23,14 +23,14 @@ import (
 func PrintClusterStateOpt(force ...bool) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		if (len(force) == 1 && force[0]) || t.Failed() {
-			kubectlOptions := *ctxopts.KubectlOptions(ctx)
+			kubectlOptions := *ctxopts.KubectlOptions(ctx, envConf)
 			kubectlOptions.Namespace = ctxopts.Namespace(ctx)
 			k8s.RunKubectl(t, &kubectlOptions,
 				"logs", "-lapp=sumoloigic-mock", "--tail=1000",
 			)
 
-			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx), "get", "all")
-			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx), "get", "events")
+			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx, envConf), "get", "all")
+			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx, envConf), "get", "events")
 		}
 
 		return ctx

@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"testing"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	strings_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 // Option is an interface that is used to pass in types that fulfill it to e.g.
@@ -36,8 +37,8 @@ import (
 //	  ...
 //	}
 type Option interface {
-	Apply(ctx context.Context, obj k8s.Object)
-	GetListOption(ctx context.Context) resources.ListOption
+	Apply(ctx context.Context, t *testing.T, obj k8s.Object)
+	GetListOption(ctx context.Context, t *testing.T) resources.ListOption
 }
 
 // nameOption is an Option that sets a concrete name on the k8s.Object.
@@ -45,11 +46,11 @@ type nameOption struct {
 	name string
 }
 
-func (no nameOption) Apply(ctx context.Context, obj k8s.Object) {
+func (no nameOption) Apply(ctx context.Context, t *testing.T, obj k8s.Object) {
 	obj.SetName(no.name)
 }
 
-func (no nameOption) GetListOption(ctx context.Context) resources.ListOption {
+func (no nameOption) GetListOption(ctx context.Context, t *testing.T) resources.ListOption {
 	return func(lo *metav1.ListOptions) {}
 }
 
@@ -66,11 +67,11 @@ type nameFOption struct {
 	formatter Formatter
 }
 
-func (no nameFOption) Apply(ctx context.Context, obj k8s.Object) {
-	obj.SetName(no.formatter(ctx))
+func (no nameFOption) Apply(ctx context.Context, t *testing.T, obj k8s.Object) {
+	obj.SetName(no.formatter(ctx, t))
 }
 
-func (no nameFOption) GetListOption(ctx context.Context) resources.ListOption {
+func (no nameFOption) GetListOption(ctx context.Context, t *testing.T) resources.ListOption {
 	return func(lo *metav1.ListOptions) {
 	}
 }
@@ -91,18 +92,18 @@ type labelsFOption struct {
 	kvs []LabelFormatterKV
 }
 
-func (lo labelsFOption) Apply(ctx context.Context, obj k8s.Object) {
+func (lo labelsFOption) Apply(ctx context.Context, t *testing.T, obj k8s.Object) {
 	labels := make(map[string]string, len(lo.kvs))
 	for _, elem := range lo.kvs {
-		labels[elem.K] = elem.V(ctx)
+		labels[elem.K] = elem.V(ctx, t)
 	}
 	obj.SetLabels(labels)
 }
 
-func (lo labelsFOption) GetListOption(ctx context.Context) resources.ListOption {
+func (lo labelsFOption) GetListOption(ctx context.Context, t *testing.T) resources.ListOption {
 	labels := make([]string, 0, len(lo.kvs))
 	for _, elem := range lo.kvs {
-		labels = append(labels, fmt.Sprintf("%s=%s", elem.K, elem.V(ctx)))
+		labels = append(labels, fmt.Sprintf("%s=%s", elem.K, elem.V(ctx, t)))
 	}
 
 	return resources.WithLabelSelector(strings.Join(labels, ","))
@@ -132,10 +133,10 @@ func WithLabelsF(kvs ...LabelFormatterKV) Option {
 	}
 }
 
-type Formatter func(ctx context.Context) string
+type Formatter func(ctx context.Context, t *testing.T) string
 
 func ReleaseFormatter(format string) Formatter {
-	return func(ctx context.Context) string {
-		return fmt.Sprintf(format, ctxopts.HelmRelease(ctx))
+	return func(ctx context.Context, t *testing.T) string {
+		return fmt.Sprintf(format, strings_internal.ReleaseNameFromT(t))
 	}
 }
