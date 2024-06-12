@@ -459,9 +459,7 @@ data:
       }
 
       data = {
-        endpoint-metrics                          = sumologic_http_source.default_metrics_source.url
-        endpoint-traces                           = sumologic_http_source.default_traces_source.url
-        endpoint-traces-otlp                      = sumologic_http_source.default_otlp_traces_source.url
+        for name, config in local.source_configs : config["config-name"] => lookup(local.sources, name).url
       }
 
       type = "Opaque"
