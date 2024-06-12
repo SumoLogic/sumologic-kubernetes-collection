@@ -55,6 +55,7 @@ filelog/containers:
     ## - k8s.container.name
     ## - k8s.namespace.name
     ## - log.file.path
+    ## - time if `sumologic.logs.container.keep_time_attribute` is set to `true`
     - type: retain
       id: keep-fields
       fields:
