@@ -14,6 +14,7 @@ readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
 # Set variables for terraform
 export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
+export TF_VAR_namespace_name="${NAMESPACE:?}"
 
 cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
