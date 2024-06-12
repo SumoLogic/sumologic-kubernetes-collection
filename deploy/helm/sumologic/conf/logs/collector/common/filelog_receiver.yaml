@@ -56,6 +56,7 @@ filelog/containers:
     ## - k8s.namespace.name
     ## - log.file.path
     - type: retain
+      id: keep-fields
       fields:
         - attributes["stream"]
         - attributes["k8s.pod.name"]
@@ -66,6 +67,18 @@ filelog/containers:
         - attributes["time"]
 {{ end }}
 
+    ## Strip trailing "\n" from the log body
+    - id: strip-trailing-newline-router
+{{- if .Values.sumologic.logs.multiline.enabled }}
+      default: multiline
+{{- else }}
+      default: merge-multiline-logs
+{{- end }}
+      routes:
+        - expr: body matches "^.*\n$"
+          output: strip-trailing-newline
+      type: router
+
     ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
     ## Uses attributes.log as temporary cotainer for new log
     ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
@@ -75,14 +88,12 @@ filelog/containers:
       parse_to: attributes
       output: replace-body
       regex: "^(?P<log>.*)\n$"
-      if: body matches "^.*\n$"
       type: regex_parser
 
     - id: replace-body
       type: move
       from: attributes.log
       to: body
-      if: attributes.log != nil
 
 {{- if .Values.sumologic.logs.multiline.enabled }}
     ## Perform multiline detection

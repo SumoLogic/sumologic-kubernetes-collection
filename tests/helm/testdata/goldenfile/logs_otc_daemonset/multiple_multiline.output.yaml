@@ -73,9 +73,15 @@ data:
           - attributes["k8s.container.name"]
           - attributes["k8s.namespace.name"]
           - attributes["log.file.path"]
+          id: keep-fields
           type: retain
+        - default: multiline
+          id: strip-trailing-newline-router
+          routes:
+          - expr: body matches "^.*\n$"
+            output: strip-trailing-newline
+          type: router
         - id: strip-trailing-newline
-          if: body matches "^.*\n$"
           output: replace-body
           parse_from: body
           parse_to: attributes
@@ -85,7 +91,6 @@ data:
           type: regex_parser
         - from: attributes.log
           id: replace-body
-          if: attributes.log != nil
           to: body
           type: move
         - default: merge-multiline-logs
