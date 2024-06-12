@@ -60,6 +60,8 @@ spec:
 {{- end }}
           - name: SUMOLOGIC_COLLECTOR_NAME
             value: {{ include "terraform.collector.name" . }}
+          - name: CHART_VERSION
+            value: "{{ .Chart.Version }}"
           {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 999

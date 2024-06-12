@@ -55,6 +55,8 @@ spec:
               value: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/terraform/api/
             - name: SUMOLOGIC_COLLECTOR_NAME
               value: kubernetes
+            - name: CHART_VERSION
+              value: "%CURRENT_CHART_VERSION%"
 
             - name: NO_PROXY
               value: kubernetes.default.svc

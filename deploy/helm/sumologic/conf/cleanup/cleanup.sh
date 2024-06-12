@@ -11,7 +11,11 @@ export NO_PROXY="${NO_PROXY:=""}"
 
 readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
 
-cp /etc/terraform/*.tf /terraform/
+# Set variables for terraform
+export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
+export TF_VAR_chart_version="${CHART_VERSION:?}"
+
+cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
 
 # Fall back to init -upgrade to prevent:
