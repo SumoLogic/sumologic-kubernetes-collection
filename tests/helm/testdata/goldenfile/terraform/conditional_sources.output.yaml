@@ -341,9 +341,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  locals.tf: |
-    locals {
-    }
   main.tf: |
     terraform {
       required_providers {
@@ -556,7 +553,7 @@ data:
         fi
     }
 
-    cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
+    cp /etc/terraform/* /terraform/
     cd /terraform || exit 1
 
     # Fall back to init -upgrade to prevent:
@@ -618,6 +615,16 @@ data:
     export SUMOLOGIC_ACCESSID=
 
     bash /etc/terraform/custom.sh
+  sources.tf.json: |
+    {
+      "locals": {
+        "source_configs": {},
+        "sources": {}
+      },
+      "resource": {
+        "sumologic_http_source": {}
+      }
+    }
   variables.tf: |
     variable "collector_name" {
       type  = string

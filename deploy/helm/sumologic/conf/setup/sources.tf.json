@@ -1,0 +1,58 @@
+{{- $ctx := .Values -}}
+{{- $sourceConfigs := dict -}}
+
+{{- /* Create a map with all the enabled sources and their configurations. */ -}}
+{{- range $type, $sources := .Values.sumologic.collector.sources }}
+  {{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" }}
+    {{- range $key, $source := $sources }}
+      {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
+        {{- $resourceName := (include "terraform.sources.name" (dict "Name" $key "Type" $type)) -}}
+        {{- $sourceConfig := deepCopy $source -}}
+        {{- /* Ensure config-name is set for all source configurations to make things simpler. */ -}}
+        {{- if not (hasKey $sourceConfig "config-name") }}
+          {{- $configName := include "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) -}}
+          {{- $_ := set $sourceConfig "config-name" $configName -}}
+        {{- end -}}
+        {{- $_ := set $sourceConfigs $resourceName $sourceConfig -}}
+      {{- end }}
+    {{- end }}
+  {{- else if and (eq $type "metrics") $ctx.sumologic.traces.enabled }}
+    {{- /*
+    If traces are enabled and metrics are disabled, create default metrics source anyway.
+    */}}
+    {{- if hasKey $sources "default" }}
+        {{- $key := "default" -}}
+        {{- $sourceConfig := deepCopy (get $sources $key) -}}
+        {{- $resourceName := include "terraform.sources.name" (dict "Name" $key "Type" $type) -}}
+        {{- /* Ensure config-name is set for all source configurations to make things simpler. */ -}}
+        {{- if not (hasKey $sourceConfig "config-name") }}
+          {{- $configName := include "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) -}}
+          {{- $_ := set $sourceConfig "config-name" $configName -}}
+        {{- end -}}
+        {{- $_ := set $sourceConfigs $resourceName $sourceConfig -}}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- /* Create sumologic_http_source resources. */ -}}
+{{- $sourceResources := dict -}}
+{{- range $resourceName, $sourceConfig := $sourceConfigs }}
+  {{- $properties := get $sourceConfig "properties" | default (dict) -}}
+  {{- $sourceResource := deepCopy $sourceConfig -}}
+  {{- $sourceResource := omit $sourceResource "properties" "config-name" -}}
+  {{- $sourceResource := merge $sourceResource $properties -}}
+  {{- $_ := set $sourceResource "collector_id" "${ sumologic_collector.collector.id }" -}}
+  {{- $_ := set $sourceResources $resourceName $sourceResource -}}
+{{- end }}
+
+{{- /* Create map from resource name to the actual resource. This is useful for iterating over all defined resources. */ -}}
+{{- $resourceMap := dict -}}
+{{- range $resourceName, $_ := $sourceResources -}}
+  {{- $_ := set $resourceMap $resourceName (printf "${ sumologic_http_source.%s }" $resourceName) -}}
+{{- end -}}
+
+{{- /* Set up the actual Terraform configuration. */ -}}
+{{- $terraformData := dict "resource" (dict "sumologic_http_source" $sourceResources) -}}
+{{- $locals :=  dict "source_configs" $sourceConfigs "sources" $resourceMap -}}
+{{- $_ := set $terraformData "locals" $locals -}}
+{{- toPrettyJson $terraformData | nindent 2 }}
