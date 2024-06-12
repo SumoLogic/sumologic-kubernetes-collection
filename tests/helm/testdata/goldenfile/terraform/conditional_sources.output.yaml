@@ -459,6 +459,7 @@ data:
       }
 
       data = {
+        for name, config in local.source_configs : config["config-name"] => lookup(local.sources, name).url
       }
 
       type = "Opaque"
