@@ -211,8 +211,8 @@ data:
       echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
     fi
   fields.tf: |
-    resource "sumologic_field" "cluster" {
-      count = var.create_fields ? 1 : 0
+    resource "sumologic_field" "collection_field" {
+      for_each = var.create_fields ? toset(var.fields) : toset([])
 
       lifecycle {
         # ignore changes for name and type, as older installations have been case sensitive
@@ -220,124 +220,7 @@ data:
         ignore_changes = [field_name, data_type]
       }
 
-      field_name = "cluster"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "container" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "container"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "daemonset" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "daemonset"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "deployment" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "deployment"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "host" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "host"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "namespace" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "namespace"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "node" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "node"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "pod" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "pod"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "service" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "service"
-      data_type = "String"
-      state = "Enabled"
-    }
-    resource "sumologic_field" "statefulset" {
-      count = var.create_fields ? 1 : 0
-
-      lifecycle {
-        # ignore changes for name and type, as older installations have been case sensitive
-        # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-        ignore_changes = [field_name, data_type]
-      }
-
-      field_name = "statefulset"
+      field_name = "${ each.key }"
       data_type = "String"
       state = "Enabled"
     }
@@ -470,6 +353,7 @@ data:
     readonly DEBUG_MODE=${DEBUG_MODE:="false"}
     readonly DEBUG_MODE_ENABLED_FLAG="true"
     readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
+    declare -ra FIELDS=(${SUMOLOGIC_FIELDS:?})
 
     # Set variables for terraform
     export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
@@ -548,7 +432,7 @@ data:
         local REMAINING
         REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
         readonly REMAINING
-        if [[ $(( REMAINING - 10 )) -ge 10 ]] ; then
+        if [[ $(( REMAINING - ${#FIELDS} )) -ge 10 ]] ; then
             return 0
         else
             return 1
@@ -571,7 +455,6 @@ data:
             "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
         readonly FIELDS_RESPONSE
 
-        declare -ra FIELDS=("cluster" "container" "daemonset" "deployment" "host" "namespace" "node" "pod" "service" "statefulset")
         for FIELD in "${FIELDS[@]}" ; do
             FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName | ascii_downcase == \"${FIELD}\") | .fieldId" )
             # Don't try to import non existing fields
@@ -581,7 +464,7 @@ data:
 
             terraform import \
                 -var="create_fields=1" \
-                sumologic_field."${FIELD}"[0] "${FIELD_ID}"
+                sumologic_field.collection_field[\"${FIELD}\"] "${FIELD_ID}"
         done
     else
         readonly CREATE_FIELDS=0
@@ -830,6 +713,21 @@ data:
         }
       }
     }
+  terraform.tfvars.json: |
+    {
+      "fields": [
+        "cluster",
+        "container",
+        "daemonset",
+        "deployment",
+        "host",
+        "namespace",
+        "node",
+        "pod",
+        "service",
+        "statefulset"
+      ]
+    }
   variables.tf: |
     variable "collector_name" {
       type  = string
@@ -843,4 +741,9 @@ data:
       description = "If set, Terraform will attempt to create fields at Sumo Logic"
       type        = bool
       default     = true
+    }
+
+    variable "fields" {
+      description = "Log fields to create."
+      type = list(string)
     }

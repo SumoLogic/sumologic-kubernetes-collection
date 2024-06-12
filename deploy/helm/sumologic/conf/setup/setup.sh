@@ -3,6 +3,7 @@
 readonly DEBUG_MODE=${DEBUG_MODE:="false"}
 readonly DEBUG_MODE_ENABLED_FLAG="true"
 readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
+declare -ra FIELDS=(${SUMOLOGIC_FIELDS:?})
 
 # Set variables for terraform
 export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
@@ -81,7 +82,7 @@ function should_create_fields() {
     local REMAINING
     REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
     readonly REMAINING
-    if [[ $(( REMAINING - {{ len .Values.sumologic.logs.fields }} )) -ge 10 ]] ; then
+    if [[ $(( REMAINING - ${#FIELDS} )) -ge 10 ]] ; then
         return 0
     else
         return 1
@@ -104,7 +105,6 @@ if should_create_fields ; then
         "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
     readonly FIELDS_RESPONSE
 
-    declare -ra FIELDS=({{ include "helm-toolkit.utils.joinListWithSpaces" .Values.sumologic.logs.fields }})
     for FIELD in "${FIELDS[@]}" ; do
         FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName | ascii_downcase == \"${FIELD}\") | .fieldId" )
         # Don't try to import non existing fields
@@ -114,7 +114,7 @@ if should_create_fields ; then
 
         terraform import \
             -var="create_fields=1" \
-            sumologic_field."${FIELD}"[0] "${FIELD_ID}"
+            sumologic_field.collection_field[\"${FIELD}\"] "${FIELD_ID}"
     done
 else
     readonly CREATE_FIELDS=0

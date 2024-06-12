@@ -11,3 +11,8 @@ variable "create_fields" {
   type        = bool
   default     = true
 }
+
+variable "fields" {
+  description = "Log fields to create."
+  type = list(string)
+}

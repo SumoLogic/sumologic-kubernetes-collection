@@ -418,7 +418,7 @@ Example:
 
 
 {{/*
-Generate a space separated list of quoted values:
+Generate a space separated list of values:
 
 Example:
 
@@ -428,7 +428,7 @@ Example:
 {{- $local := dict "first" true -}}
 {{- range $k, $v := . -}}
 {{- if not $local.first }} {{ end -}}
-{{- $v | quote -}}
+{{- $v -}}
 {{- $_ := set $local "first" false -}}
 {{- end -}}
 {{- end -}}

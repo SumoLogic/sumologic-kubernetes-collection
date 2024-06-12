@@ -63,6 +63,8 @@ spec:
               value:
             - name: SUMOLOGIC_COLLECTOR_NAME
               value: kubernetes
+            - name: SUMOLOGIC_FIELDS
+              value: "cluster container daemonset deployment host namespace node pod service statefulset"
 
             - name: NO_PROXY
               value: kubernetes.default.svc
