@@ -6,6 +6,7 @@ readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
 
 # Set variables for terraform
 export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
+export TF_VAR_namespace_name="${NAMESPACE:?}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
