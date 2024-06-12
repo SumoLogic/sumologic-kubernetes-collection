@@ -341,12 +341,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  locals.tf: |
-    locals {
-      default_metrics_source                      = "(default-metrics)"
-      default_traces_source                       = "traces"
-      default_otlp_traces_source                  = "traces-otlp"
-    }
   main.tf: |
     terraform {
       required_providers {
@@ -458,23 +452,6 @@ data:
         }
     }
 
-    resource "sumologic_http_source" "default_metrics_source" {
-        name         = local.default_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "default_traces_source" {
-        name         = local.default_traces_source
-        collector_id = sumologic_collector.collector.id
-        content_type = "Zipkin"
-    }
-
-    resource "sumologic_http_source" "default_otlp_traces_source" {
-        name         = local.default_otlp_traces_source
-        collector_id = sumologic_collector.collector.id
-        content_type = "Otlp"
-    }
-
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
         name = "sumologic"
@@ -579,7 +556,7 @@ data:
         fi
     }
 
-    cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
+    cp /etc/terraform/* /terraform/
     cd /terraform || exit 1
 
     # Fall back to init -upgrade to prevent:
@@ -644,6 +621,54 @@ data:
     export SUMOLOGIC_ACCESSID=
 
     bash /etc/terraform/custom.sh
+  sources.tf.json: |
+    {
+      "locals": {
+        "source_configs": {
+          "default_metrics_source": {
+            "config-name": "endpoint-metrics",
+            "name": "(default-metrics)"
+          },
+          "default_otlp_traces_source": {
+            "config-name": "endpoint-traces-otlp",
+            "name": "traces-otlp",
+            "properties": {
+              "content_type": "Otlp"
+            }
+          },
+          "default_traces_source": {
+            "config-name": "endpoint-traces",
+            "name": "traces",
+            "properties": {
+              "content_type": "Zipkin"
+            }
+          }
+        },
+        "sources": {
+          "default_metrics_source": "${ sumologic_http_source.default_metrics_source }",
+          "default_otlp_traces_source": "${ sumologic_http_source.default_otlp_traces_source }",
+          "default_traces_source": "${ sumologic_http_source.default_traces_source }"
+        }
+      },
+      "resource": {
+        "sumologic_http_source": {
+          "default_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "(default-metrics)"
+          },
+          "default_otlp_traces_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "content_type": "Otlp",
+            "name": "traces-otlp"
+          },
+          "default_traces_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "content_type": "Zipkin",
+            "name": "traces"
+          }
+        }
+      }
+    }
   variables.tf: |
     variable "collector_name" {
       type  = string

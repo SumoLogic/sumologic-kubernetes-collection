@@ -85,28 +85,6 @@ Example usage:
 {{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}{{- end}}
 {{- end -}}
 
-{{/*
-Generate resource sections
-
-Example usage:
-
-{{ include "terraform.sources.resource" (dict "Source" $source "Context" $ctx) }}
-
-*/}}
-{{- define "terraform.sources.resource" -}}
-{{- $source := .Source -}}
-{{- $ctx := .Context -}}
-resource "sumologic_http_source" "{{ .Name }}" {
-    name         = local.{{ .Name }}
-    collector_id = sumologic_collector.collector.id
-    {{- if $source.properties }}
-    {{- range $fkey, $fvalue := $source.properties }}
-    {{- include "terraform.generate-object" (dict "Name" $fkey "Value" $fvalue "KeyLength" (include "terraform.max-key-length" $source.properties) "Indent" 2) -}}
-    {{- end -}}
-    {{- end }}
-}
-{{- end -}}
-
 {{- define "terraform.max-key-length" -}}
 {{- $max := 0 -}}
 {{- range $key, $value := . -}}
@@ -143,55 +121,6 @@ Example usage:
 {{- $format = "%s" -}}
 {{- end -}}
 {{ indent (int $indent) "" }}{{ if not .SkipName }}{{ printf $format (toString $name) }} {{ if not .SkipEqual }}= {{ end }}{{ end }}{{ (toString $value) }}{{ if .AddComma }},{{ end }}
-{{- end -}}
-
-{{/*
-Generates Terraform object for primitives, slices and maps
-
-Example usage:
-
-{{- include "terraform.generate-object" (dict "Name" $name "Value" $value "Indent" 12 "List" true) }}
-
-where:
-  - Value can be slice, map or primitive type (int, string, etc)
-  - Name is string
-  - Indent should be convertable to int (0 by default)
-  - List - information if the Value is element of the list, false by default
-*/}}
-{{- define "terraform.generate-object" -}}
-{{- $name := .Name -}}
-{{- $value := .Value -}}
-{{- $keyLength := .KeyLength -}}
-{{- $indent := int .Indent -}}
-{{- $indent = add $indent 2 -}}
-{{- $process := true -}}
-{{- if eq (kindOf $value) "slice" }}
-{{- range $sname, $svalue := $value }}
-{{- if eq (kindOf $svalue) "map" }}
-{{- $process = false }}
-{{ include "terraform.generate-key" (dict "Name" $name "Value" "{" "SkipPadding" true "SkipEqual" true "SkipEscaping" true "KeyLength" $keyLength "Indent" $indent) }}
-{{- range $tname, $tvalue := $svalue }}
-{{- include "terraform.generate-object" (dict "Name" $tname "Value" $tvalue "Indent" $indent "KeyLength" (include "terraform.max-key-length" $svalue)) }}
-{{- end }}
-{{ printf "}" | indent (int $indent) }}
-{{- end }}
-{{- end }}
-{{- if $process }}
-{{ include "terraform.generate-key" (dict "Name" $name "Value" "[" "SkipPadding" true "SkipEscaping" true "KeyLength" $keyLength "Indent" $indent) }}
-{{- range $sname, $svalue := $value }}
-{{ include "terraform.generate-key" (dict "Name" $sname "Value" $svalue "SkipName" true "AddComma" true "Indent" (add $indent 2)) }}
-{{- end }}
-{{ printf "]" | indent (int $indent) }}
-{{- end }}
-{{- else if eq (kindOf $value) "map" }}
-{{ include "terraform.generate-key" (dict "Name" $name "Value" "{" "SkipPadding" true "SkipEscaping" true "KeyLength" $keyLength "Indent" $indent) }}
-{{- range $sname, $svalue := $value }}
-{{- include "terraform.generate-object" (dict "Name" $sname "Value" $svalue "KeyLength" (include "terraform.max-key-length" $value) "Indent" $indent) }}
-{{- end }}
-{{ printf "}" | indent (int $indent) }}
-{{- else }}
-{{ include "terraform.generate-key" (dict "Name" $name "Value" $value "KeyLength" $keyLength "Indent" $indent) }}
-{{- end -}}
 {{- end -}}
 
 {{/*

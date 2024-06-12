@@ -87,7 +87,7 @@ function should_create_fields() {
     fi
 }
 
-cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
+cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
 
 # Fall back to init -upgrade to prevent:

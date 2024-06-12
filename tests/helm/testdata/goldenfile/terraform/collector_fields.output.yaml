@@ -341,24 +341,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  locals.tf: |
-    locals {
-      default_events_source                       = "events"
-      default_otlp_events_source                  = "events-otlp"
-      default_logs_source                         = "logs"
-      default_otlp_logs_source                    = "logs-otlp"
-      apiserver_metrics_source                    = "apiserver-metrics"
-      control_plane_metrics_source                = "control-plane-metrics"
-      controller_metrics_source                   = "kube-controller-manager-metrics"
-      default_metrics_source                      = "(default-metrics)"
-      default_otlp_metrics_source                 = "metrics-otlp"
-      kubelet_metrics_source                      = "kubelet-metrics"
-      node_metrics_source                         = "node-exporter-metrics"
-      scheduler_metrics_source                    = "kube-scheduler-metrics"
-      state_metrics_source                        = "kube-state-metrics"
-      default_traces_source                       = "traces"
-      default_otlp_traces_source                  = "traces-otlp"
-    }
   main.tf: |
     terraform {
       required_providers {
@@ -470,94 +452,6 @@ data:
           here_is_very_long_field_name = "another_value"
           test_fields                  = "test_value"
         }
-    }
-
-    resource "sumologic_http_source" "default_events_source" {
-        name         = local.default_events_source
-        collector_id = sumologic_collector.collector.id
-        default_date_formats {
-          format  = "epoch"
-          locator = "\"timestamp\":(\\d+)"
-        }
-    }
-
-    resource "sumologic_http_source" "default_otlp_events_source" {
-        name         = local.default_otlp_events_source
-        collector_id = sumologic_collector.collector.id
-        content_type = "Otlp"
-    }
-
-    resource "sumologic_http_source" "default_logs_source" {
-        name         = local.default_logs_source
-        collector_id = sumologic_collector.collector.id
-        default_date_formats {
-          format  = "epoch"
-          locator = "\"timestamp\":(\\d+)"
-        }
-    }
-
-    resource "sumologic_http_source" "default_otlp_logs_source" {
-        name         = local.default_otlp_logs_source
-        collector_id = sumologic_collector.collector.id
-        content_type = "Otlp"
-    }
-
-    resource "sumologic_http_source" "apiserver_metrics_source" {
-        name         = local.apiserver_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "control_plane_metrics_source" {
-        name         = local.control_plane_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "controller_metrics_source" {
-        name         = local.controller_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "default_metrics_source" {
-        name         = local.default_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "default_otlp_metrics_source" {
-        name         = local.default_otlp_metrics_source
-        collector_id = sumologic_collector.collector.id
-        content_type = "Otlp"
-    }
-
-    resource "sumologic_http_source" "kubelet_metrics_source" {
-        name         = local.kubelet_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "node_metrics_source" {
-        name         = local.node_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "scheduler_metrics_source" {
-        name         = local.scheduler_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "state_metrics_source" {
-        name         = local.state_metrics_source
-        collector_id = sumologic_collector.collector.id
-    }
-
-    resource "sumologic_http_source" "default_traces_source" {
-        name         = local.default_traces_source
-        collector_id = sumologic_collector.collector.id
-        content_type = "Zipkin"
-    }
-
-    resource "sumologic_http_source" "default_otlp_traces_source" {
-        name         = local.default_otlp_traces_source
-        collector_id = sumologic_collector.collector.id
-        content_type = "Otlp"
     }
 
     resource "kubernetes_secret" "sumologic_collection_secret" {
@@ -676,7 +570,7 @@ data:
         fi
     }
 
-    cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
+    cp /etc/terraform/* /terraform/
     cd /terraform || exit 1
 
     # Fall back to init -upgrade to prevent:
@@ -753,6 +647,202 @@ data:
     export SUMOLOGIC_ACCESSID=
 
     bash /etc/terraform/custom.sh
+  sources.tf.json: |
+    {
+      "locals": {
+        "source_configs": {
+          "apiserver_metrics_source": {
+            "config-name": "endpoint-metrics-apiserver",
+            "name": "apiserver-metrics"
+          },
+          "control_plane_metrics_source": {
+            "config-name": "endpoint-control_plane_metrics_source",
+            "name": "control-plane-metrics"
+          },
+          "controller_metrics_source": {
+            "config-name": "endpoint-metrics-kube-controller-manager",
+            "name": "kube-controller-manager-metrics"
+          },
+          "default_events_source": {
+            "config-name": "endpoint-events",
+            "name": "events",
+            "properties": {
+              "default_date_formats": [
+                {
+                  "format": "epoch",
+                  "locator": "\\\"timestamp\\\":(\\\\d+)"
+                }
+              ]
+            }
+          },
+          "default_logs_source": {
+            "config-name": "endpoint-logs",
+            "name": "logs",
+            "properties": {
+              "default_date_formats": [
+                {
+                  "format": "epoch",
+                  "locator": "\\\"timestamp\\\":(\\\\d+)"
+                }
+              ]
+            }
+          },
+          "default_metrics_source": {
+            "config-name": "endpoint-metrics",
+            "name": "(default-metrics)"
+          },
+          "default_otlp_events_source": {
+            "config-name": "endpoint-events-otlp",
+            "name": "events-otlp",
+            "properties": {
+              "content_type": "Otlp"
+            }
+          },
+          "default_otlp_logs_source": {
+            "config-name": "endpoint-logs-otlp",
+            "name": "logs-otlp",
+            "properties": {
+              "content_type": "Otlp"
+            }
+          },
+          "default_otlp_metrics_source": {
+            "config-name": "endpoint-metrics-otlp",
+            "name": "metrics-otlp",
+            "properties": {
+              "content_type": "Otlp"
+            }
+          },
+          "default_otlp_traces_source": {
+            "config-name": "endpoint-traces-otlp",
+            "name": "traces-otlp",
+            "properties": {
+              "content_type": "Otlp"
+            }
+          },
+          "default_traces_source": {
+            "config-name": "endpoint-traces",
+            "name": "traces",
+            "properties": {
+              "content_type": "Zipkin"
+            }
+          },
+          "kubelet_metrics_source": {
+            "config-name": "endpoint-metrics-kubelet",
+            "name": "kubelet-metrics"
+          },
+          "node_metrics_source": {
+            "config-name": "endpoint-metrics-node-exporter",
+            "name": "node-exporter-metrics"
+          },
+          "scheduler_metrics_source": {
+            "config-name": "endpoint-metrics-kube-scheduler",
+            "name": "kube-scheduler-metrics"
+          },
+          "state_metrics_source": {
+            "config-name": "endpoint-metrics-kube-state",
+            "name": "kube-state-metrics"
+          }
+        },
+        "sources": {
+          "apiserver_metrics_source": "${ sumologic_http_source.apiserver_metrics_source }",
+          "control_plane_metrics_source": "${ sumologic_http_source.control_plane_metrics_source }",
+          "controller_metrics_source": "${ sumologic_http_source.controller_metrics_source }",
+          "default_events_source": "${ sumologic_http_source.default_events_source }",
+          "default_logs_source": "${ sumologic_http_source.default_logs_source }",
+          "default_metrics_source": "${ sumologic_http_source.default_metrics_source }",
+          "default_otlp_events_source": "${ sumologic_http_source.default_otlp_events_source }",
+          "default_otlp_logs_source": "${ sumologic_http_source.default_otlp_logs_source }",
+          "default_otlp_metrics_source": "${ sumologic_http_source.default_otlp_metrics_source }",
+          "default_otlp_traces_source": "${ sumologic_http_source.default_otlp_traces_source }",
+          "default_traces_source": "${ sumologic_http_source.default_traces_source }",
+          "kubelet_metrics_source": "${ sumologic_http_source.kubelet_metrics_source }",
+          "node_metrics_source": "${ sumologic_http_source.node_metrics_source }",
+          "scheduler_metrics_source": "${ sumologic_http_source.scheduler_metrics_source }",
+          "state_metrics_source": "${ sumologic_http_source.state_metrics_source }"
+        }
+      },
+      "resource": {
+        "sumologic_http_source": {
+          "apiserver_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "apiserver-metrics"
+          },
+          "control_plane_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "control-plane-metrics"
+          },
+          "controller_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "kube-controller-manager-metrics"
+          },
+          "default_events_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "default_date_formats": [
+              {
+                "format": "epoch",
+                "locator": "\\\"timestamp\\\":(\\\\d+)"
+              }
+            ],
+            "name": "events"
+          },
+          "default_logs_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "default_date_formats": [
+              {
+                "format": "epoch",
+                "locator": "\\\"timestamp\\\":(\\\\d+)"
+              }
+            ],
+            "name": "logs"
+          },
+          "default_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "(default-metrics)"
+          },
+          "default_otlp_events_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "content_type": "Otlp",
+            "name": "events-otlp"
+          },
+          "default_otlp_logs_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "content_type": "Otlp",
+            "name": "logs-otlp"
+          },
+          "default_otlp_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "content_type": "Otlp",
+            "name": "metrics-otlp"
+          },
+          "default_otlp_traces_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "content_type": "Otlp",
+            "name": "traces-otlp"
+          },
+          "default_traces_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "content_type": "Zipkin",
+            "name": "traces"
+          },
+          "kubelet_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "kubelet-metrics"
+          },
+          "node_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "node-exporter-metrics"
+          },
+          "scheduler_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "kube-scheduler-metrics"
+          },
+          "state_metrics_source": {
+            "collector_id": "${ sumologic_collector.collector.id }",
+            "name": "kube-state-metrics"
+          }
+        }
+      }
+    }
   variables.tf: |
     variable "collector_name" {
       type  = string
