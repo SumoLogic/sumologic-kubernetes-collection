@@ -6,6 +6,7 @@ readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
 
 # Set variables for terraform
 export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
+export TF_VAR_chart_version="${CHART_VERSION:?}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -80,7 +81,7 @@ function should_create_fields() {
     local REMAINING
     REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
     readonly REMAINING
-    if [[ $(( REMAINING - {{ len .Values.sumologic.logs.fields }} )) -ge 10 ]] ; then
+    if [[ $(( REMAINING - ${#FIELDS} )) -ge 10 ]] ; then
         return 0
     else
         return 1
@@ -89,6 +90,8 @@ function should_create_fields() {
 
 cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
+
+declare -ra FIELDS=($(jq -r '.fields[]' terraform.tfvars.json))
 
 # Fall back to init -upgrade to prevent:
 # Error: Inconsistent dependency lock file
@@ -103,7 +106,6 @@ if should_create_fields ; then
         "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
     readonly FIELDS_RESPONSE
 
-    declare -ra FIELDS=({{ include "helm-toolkit.utils.joinListWithSpaces" .Values.sumologic.logs.fields }})
     for FIELD in "${FIELDS[@]}" ; do
         FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName | ascii_downcase == \"${FIELD}\") | .fieldId" )
         # Don't try to import non existing fields
@@ -113,7 +115,7 @@ if should_create_fields ; then
 
         terraform import \
             -var="create_fields=1" \
-            sumologic_field."${FIELD}"[0] "${FIELD_ID}"
+            sumologic_field.collection_field[\"${FIELD}\"] "${FIELD_ID}"
     done
 else
     readonly CREATE_FIELDS=0

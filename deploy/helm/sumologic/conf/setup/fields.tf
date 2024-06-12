@@ -1,6 +1,5 @@
-{{- range $value := .Values.sumologic.logs.fields }}
-resource "sumologic_field" {{ $value | quote }} {
-  count = var.create_fields ? 1 : 0
+resource "sumologic_field" "collection_field" {
+  for_each = var.create_fields ? toset(var.fields) : toset([])
 
   lifecycle {
     # ignore changes for name and type, as older installations have been case sensitive
@@ -8,24 +7,7 @@ resource "sumologic_field" {{ $value | quote }} {
     ignore_changes = [field_name, data_type]
   }
 
-  field_name = {{ $value | quote }}
+  field_name = "${ each.key }"
   data_type = "String"
   state = "Enabled"
 }
-{{- end }}
-
-{{- range $value := .Values.sumologic.logs.additionalFields }}
-resource "sumologic_field" {{ $value | quote }} {
-  count = var.create_fields ? 1 : 0
-
-  lifecycle {
-    # ignore changes for name and type, as older installations have been case sensitive
-    # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
-    ignore_changes = [field_name, data_type]
-  }
-
-  field_name = {{ $value | quote }}
-  data_type = "String"
-  state = "Enabled"
-}
-{{- end }}

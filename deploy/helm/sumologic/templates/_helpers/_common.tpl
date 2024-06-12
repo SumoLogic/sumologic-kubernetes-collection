@@ -418,23 +418,6 @@ Example:
 
 
 {{/*
-Generate a space separated list of quoted values:
-
-Example:
-
-{{ include "helm-toolkit.utils.joinListWithSpaces" .Values.sumologic.logs.fields }}
-*/}}
-{{- define "helm-toolkit.utils.joinListWithSpaces" -}}
-{{- $local := dict "first" true -}}
-{{- range $k, $v := . -}}
-{{- if not $local.first }} {{ end -}}
-{{- $v | quote -}}
-{{- $_ := set $local "first" false -}}
-{{- end -}}
-{{- end -}}
-
-
-{{/*
 Returns kubernetes minor version as integer (without additional chars like +)
 
 Example:
