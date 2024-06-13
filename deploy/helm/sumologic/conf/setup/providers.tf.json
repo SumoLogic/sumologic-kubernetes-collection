@@ -1,0 +1,5 @@
+{{- $kubernetesProvider := deepCopy .Values.sumologic.cluster -}}
+{{- $sumoProvider := dict -}}
+{{- $providers := dict "sumologic" $sumoProvider "kubernetes" $kubernetesProvider -}}
+{{- $terraformData := dict "provider" $providers -}}
+{{- toPrettyJson $terraformData | nindent 2 }}

@@ -3,16 +3,16 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: RELEASE-NAME-sumologic-setup
+  name: collection-sumologic-setup
   namespace: sumologic
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-weight: "2"
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
   labels:
-    app: RELEASE-NAME-sumologic
-    chart: "sumologic-%CURRENT_CHART_VERSION%"
-    release: "RELEASE-NAME"
+    app: collection-sumologic
+    chart: "sumologic-4.8.0"
+    release: "collection"
     heritage: "Helm"
 data:
   custom.sh: |
@@ -224,6 +224,16 @@ data:
       data_type = "String"
       state = "Enabled"
     }
+  kubernetes.tf.json: |
+    {
+      "provider": {
+        "kubernetes": {
+          "cluster_ca_certificate": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}",
+          "host": "https://kubernetes.default.svc",
+          "token": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
+        }
+      }
+    }
   main.tf: |
     terraform {
       required_providers {
@@ -303,9 +313,6 @@ data:
       if [[ "${SUMOLOGIC_BASE_URL}" == "${SUMOLOGIC_ENV}" ]] ; then
         SUMOLOGIC_ENV="us1"
       fi
-      NOTIFICATIONS_RECIPIENTS='["email@locahost.lh"]'
-      NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{TriggerType}} on {{Name}}\",message_body=\"Triggered {{TriggerType}} alert on {{Name}}: {{QueryURL}}\""
-      NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
 
       TF_LOG_PROVIDER=DEBUG terraform apply \
           -auto-approve \
@@ -315,26 +322,14 @@ data:
           -var="folder=${MONITORS_FOLDER_NAME}" \
           -var="folder_parent_id=${INTEGRATIONS_FOLDER_ID}" \
           -var="monitors_disabled=${MONITORS_DISABLED}" \
-          -var="email_notifications_critical=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Critical\", \"ResolvedCritical\"]}]" \
-          -var="email_notifications_warning=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Warning\", \"ResolvedWarning\"]}]" \
-          -var="email_notifications_missingdata=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"MissingData\", \"ResolvedMissingData\"]}]" \
           || { echo "Error during applying Terraform monitors."; exit 1; }
     else
       echo "The monitors have been already installed in ${MONITORS_FOLDER_NAME}."
       echo "You can (re)install them manually with:"
       echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
     fi
-  providers.tf.json: |
-    {
-      "provider": {
-        "kubernetes": {
-          "cluster_ca_certificate": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}",
-          "host": "https://kubernetes.default.svc",
-          "token": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
-        },
-        "sumologic": {}
-      }
-    }
+  providers.tf: |
+    provider "sumologic" {}
   resources.tf: |
     resource "sumologic_collector" "collector" {
         name  = var.collector_name
@@ -533,24 +528,44 @@ data:
             "config-name": "endpoint-events",
             "name": "events",
             "properties": {
+              "config-name": "endpoint-events",
               "default_date_formats": [
                 {
                   "format": "epoch",
                   "locator": "\\\"timestamp\\\":(\\\\d+)"
                 }
-              ]
+              ],
+              "name": "events",
+              "properties": {
+                "default_date_formats": [
+                  {
+                    "format": "epoch",
+                    "locator": "\\\"timestamp\\\":(\\\\d+)"
+                  }
+                ]
+              }
             }
           },
           "default_logs_source": {
             "config-name": "endpoint-logs",
             "name": "logs",
             "properties": {
+              "config-name": "endpoint-logs",
               "default_date_formats": [
                 {
                   "format": "epoch",
                   "locator": "\\\"timestamp\\\":(\\\\d+)"
                 }
-              ]
+              ],
+              "name": "logs",
+              "properties": {
+                "default_date_formats": [
+                  {
+                    "format": "epoch",
+                    "locator": "\\\"timestamp\\\":(\\\\d+)"
+                  }
+                ]
+              }
             }
           },
           "default_metrics_source": {
@@ -561,35 +576,60 @@ data:
             "config-name": "endpoint-events-otlp",
             "name": "events-otlp",
             "properties": {
-              "content_type": "Otlp"
+              "config-name": "endpoint-events-otlp",
+              "content_type": "Otlp",
+              "name": "events-otlp",
+              "properties": {
+                "content_type": "Otlp"
+              }
             }
           },
           "default_otlp_logs_source": {
             "config-name": "endpoint-logs-otlp",
             "name": "logs-otlp",
             "properties": {
-              "content_type": "Otlp"
+              "config-name": "endpoint-logs-otlp",
+              "content_type": "Otlp",
+              "name": "logs-otlp",
+              "properties": {
+                "content_type": "Otlp"
+              }
             }
           },
           "default_otlp_metrics_source": {
             "config-name": "endpoint-metrics-otlp",
             "name": "metrics-otlp",
             "properties": {
-              "content_type": "Otlp"
+              "config-name": "endpoint-metrics-otlp",
+              "content_type": "Otlp",
+              "name": "metrics-otlp",
+              "properties": {
+                "content_type": "Otlp"
+              }
             }
           },
           "default_otlp_traces_source": {
             "config-name": "endpoint-traces-otlp",
             "name": "traces-otlp",
             "properties": {
-              "content_type": "Otlp"
+              "config-name": "endpoint-traces-otlp",
+              "content_type": "Otlp",
+              "name": "traces-otlp",
+              "properties": {
+                "content_type": "Otlp"
+              }
             }
           },
           "default_traces_source": {
             "config-name": "endpoint-traces",
             "name": "traces",
             "properties": {
-              "content_type": "Zipkin"
+              "config-name": "endpoint-traces",
+              "content_type": "Zipkin",
+              "name": "traces",
+              "properties": {
+                "content_type": "Zipkin"
+              }
             }
           },
           "kubelet_metrics_source": {
