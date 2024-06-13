@@ -83,6 +83,10 @@ spec:
           value: "{{ template "terraform.secret.name" }}"
         - name: CHART_VERSION
           value: "{{ .Chart.Version }}"
+        - name: SUMOLOGIC_MONITORS_ENABLED
+          value: "{{ .Values.sumologic.setup.monitors.enabled }}"
+        - name: SUMOLOGIC_DASHBOARDS_ENABLED
+          value: "{{ .Values.sumologic.setup.dashboards.enabled }}"
         {{- include "proxy-env-variables" . | nindent 8 -}}
 {{- if .Values.sumologic.setup.debug }}
         - name: DEBUG_MODE

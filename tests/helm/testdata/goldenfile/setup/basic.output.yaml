@@ -67,6 +67,10 @@ spec:
               value: "sumologic"
             - name: CHART_VERSION
               value: "%CURRENT_CHART_VERSION%"
+            - name: SUMOLOGIC_MONITORS_ENABLED
+              value: "true"
+            - name: SUMOLOGIC_DASHBOARDS_ENABLED
+              value: "true"
 
             - name: NO_PROXY
               value: kubernetes.default.svc
