@@ -50,7 +50,7 @@ spec:
           command: ["/etc/terraform/cleanup.sh"]
           envFrom:
           - secretRef:
-              name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.setup.secret" .)}}
+              name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.cleanup.secret" .)}}
           env:
           - name: SUMOLOGIC_BASE_URL
 {{- if eq (include "sumologic-mock.local-mode-enabled" .) "true" }}
