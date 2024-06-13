@@ -85,44 +85,6 @@ Example usage:
 {{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}{{- end}}
 {{- end -}}
 
-{{- define "terraform.max-key-length" -}}
-{{- $max := 0 -}}
-{{- range $key, $value := . -}}
-{{- if gt (len $key) $max -}}
-{{- $max = (len $key) -}}
-{{- end -}}
-{{- end -}}
-{{ $max }}
-{{- end -}}
-
-{{/*
-Generate key for Terraform object. Default behaviour is to print:
-
-{{ name }} = {{ value }}
-
-If this is key for list, prints only value.
-
-This template takes care about indentation using Indent key
-
-Example usage:
-
-{{- include "terraform.generate-object" (dict "Name" "my_key" "Value" "my_value" "Indent" 8 "List" true) }}
-*/}}
-{{- define "terraform.generate-key" -}}
-{{- $indent := int .Indent -}}
-{{- $name := .Name -}}
-{{- $keyLength := int .KeyLength -}}
-{{- $format := printf "%%-%ss" (toString $keyLength) -}}
-{{- $value := .Value -}}
-{{- if and ( eq (kindOf $value) "string") (not .SkipEscaping) -}}
-{{- $value = printf "\"%s\"" $value -}}
-{{- end -}}
-{{- if .SkipPadding -}}
-{{- $format = "%s" -}}
-{{- end -}}
-{{ indent (int $indent) "" }}{{ if not .SkipName }}{{ printf $format (toString $name) }} {{ if not .SkipEqual }}= {{ end }}{{ end }}{{ (toString $value) }}{{ if .AddComma }},{{ end }}
-{{- end -}}
-
 {{/*
 get configuration variable name for sources confg map
 

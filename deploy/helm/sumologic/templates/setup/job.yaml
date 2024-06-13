@@ -81,6 +81,8 @@ spec:
           value: {{ include "terraform.collector.name" . }}
         - name: SUMOLOGIC_FIELDS
           value: "{{ include "helm-toolkit.utils.joinListWithSpaces" (concat .Values.sumologic.logs.fields .Values.sumologic.logs.additionalFields) }}"
+        - name: CHART_VERSION
+          value: "{{ .Chart.Version }}"
         {{- include "proxy-env-variables" . | nindent 8 -}}
 {{- if .Values.sumologic.setup.debug }}
         - name: DEBUG_MODE
