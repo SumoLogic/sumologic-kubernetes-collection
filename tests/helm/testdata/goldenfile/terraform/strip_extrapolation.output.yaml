@@ -435,15 +435,17 @@ data:
       echo "You can (re)install them manually with:"
       echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
     fi
-  providers.tf: |-
-    provider "sumologic" {}
-
-    provider "kubernetes" {
-
-        cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
-        extrapolation             = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}/${test}"
-        host                      = "https://kubernetes.default.svc"
-        token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
+  providers.tf.json: |
+    {
+      "provider": {
+        "kubernetes": {
+          "cluster_ca_certificate": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}",
+          "extrapolation": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}/${test}",
+          "host": "https://kubernetes.default.svc",
+          "token": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
+        },
+        "sumologic": {}
+      }
     }
   resources.tf: |
     resource "sumologic_collector" "collector" {

@@ -148,29 +148,6 @@ Example usage:
 {{- end -}}
 
 {{/*
-Add or skip quotation denending on the value
-
-Examples:
-  - "${test}" will be printed as `test`
-  - "test" will be printed as `"test"`
-
-Example Usage:
-{{ include "terraform.sources.config-map-variable" "${file(\"/var/test\")}" }}
-
-*/}}
-{{- define "terraform.print_value" -}}
-{{- if and (kindIs "string" .) -}}
-{{- if (regexMatch "^\\$\\{[^\\$]*\\}$" .) -}}
-{{ regexReplaceAll "^\\$\\{(.*)\\}$" . "${1}" }}
-{{- else -}}
-{{ printf "\"%s\"" . }}
-{{- end -}}
-{{- else -}}
-{{ printf "\"%s\"" (toString .) }}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Check if component (source/events/logs/traces etc.) is enabled or not
 
 Example Usage:
