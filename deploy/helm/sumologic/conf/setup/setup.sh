@@ -131,24 +131,9 @@ fi
 # Sumo Logic Collector and HTTP sources
 # Only import sources when collector exists.
 if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
-true  # prevent to render empty if; then
-{{- $ctx := .Values -}}
-{{- range $type, $sources := .Values.sumologic.collector.sources }}
-{{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" }}
-{{- range $key, $source := $sources }}
-{{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
-terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "${SUMOLOGIC_COLLECTOR_NAME}/{{ $source.name }}"
-{{- end }}
-{{- end }}
-{{- else if and (eq $type "metrics") $ctx.sumologic.traces.enabled }}
-{{- /*
-If traces are enabled and metrics are disabled, create default metrics source anyway
-*/}}
-{{- if hasKey $sources "default" }}
-terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" "default" "Type" $type) }} "${SUMOLOGIC_COLLECTOR_NAME}/{{ $sources.default.name }}"
-{{- end }}
-{{- end }}
-{{- end }}
+    jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
+        terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
+    done
 fi
 
 # Kubernetes Secret
