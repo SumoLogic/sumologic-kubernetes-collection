@@ -348,6 +348,7 @@ data:
       }
 
       type = "Opaque"
+      wait_for_service_account_token = false
     }
   setup.sh: |
     #!/bin/bash

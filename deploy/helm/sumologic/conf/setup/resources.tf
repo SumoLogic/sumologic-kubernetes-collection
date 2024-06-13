@@ -15,4 +15,5 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
   }
 
   type = "Opaque"
+  wait_for_service_account_token = false
 }
