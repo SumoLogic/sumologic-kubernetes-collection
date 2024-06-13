@@ -479,22 +479,9 @@ data:
     # Sumo Logic Collector and HTTP sources
     # Only import sources when collector exists.
     if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
-    true  # prevent to render empty if; then
-    terraform import sumologic_http_source.default_events_source "${SUMOLOGIC_COLLECTOR_NAME}/events"
-    terraform import sumologic_http_source.default_otlp_events_source "${SUMOLOGIC_COLLECTOR_NAME}/events-otlp"
-    terraform import sumologic_http_source.default_logs_source "${SUMOLOGIC_COLLECTOR_NAME}/logs"
-    terraform import sumologic_http_source.default_otlp_logs_source "${SUMOLOGIC_COLLECTOR_NAME}/logs-otlp"
-    terraform import sumologic_http_source.apiserver_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/apiserver-metrics"
-    terraform import sumologic_http_source.control_plane_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/control-plane-metrics"
-    terraform import sumologic_http_source.controller_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kube-controller-manager-metrics"
-    terraform import sumologic_http_source.default_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/(default-metrics)"
-    terraform import sumologic_http_source.default_otlp_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/metrics-otlp"
-    terraform import sumologic_http_source.kubelet_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kubelet-metrics"
-    terraform import sumologic_http_source.node_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/node-exporter-metrics"
-    terraform import sumologic_http_source.scheduler_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kube-scheduler-metrics"
-    terraform import sumologic_http_source.state_metrics_source "${SUMOLOGIC_COLLECTOR_NAME}/kube-state-metrics"
-    terraform import sumologic_http_source.default_traces_source "${SUMOLOGIC_COLLECTOR_NAME}/traces"
-    terraform import sumologic_http_source.default_otlp_traces_source "${SUMOLOGIC_COLLECTOR_NAME}/traces-otlp"
+        jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
+            terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
+        done
     fi
 
     # Kubernetes Secret

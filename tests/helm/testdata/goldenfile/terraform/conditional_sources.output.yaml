@@ -479,7 +479,9 @@ data:
     # Sumo Logic Collector and HTTP sources
     # Only import sources when collector exists.
     if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
-    true  # prevent to render empty if; then
+        jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
+            terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
+        done
     fi
 
     # Kubernetes Secret

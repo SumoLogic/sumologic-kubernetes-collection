@@ -52,17 +52,25 @@ spec:
           - secretRef:
               name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.cleanup.secret" .)}}
           env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
           - name: SUMOLOGIC_BASE_URL
-{{- if eq (include "sumologic-mock.local-mode-enabled" .) "true" }}
+  {{- if eq (include "sumologic-mock.local-mode-enabled" .) "true" }}
             value: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/terraform/api/
-{{- else }}
+  {{- else }}
             value: {{ .Values.sumologic.endpoint }}
-{{- end }}
+  {{- end }}
           - name: SUMOLOGIC_COLLECTOR_NAME
             value: {{ include "terraform.collector.name" . }}
           - name: SUMOLOGIC_SECRET_NAME
             value: "{{ template "terraform.secret.name" }}"
-          {{- include "proxy-env-variables" . | nindent 10 }}
+          - name: SUMOLOGIC_FIELDS
+            value: "{{ include "helm-toolkit.utils.joinListWithSpaces" (concat .Values.sumologic.logs.fields .Values.sumologic.logs.additionalFields) }}"
+          - name: CHART_VERSION
+            value: "{{ .Chart.Version }}"
+            {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 999
 {{- end }}
