@@ -3,11 +3,14 @@
 readonly DEBUG_MODE=${DEBUG_MODE:="false"}
 readonly DEBUG_MODE_ENABLED_FLAG="true"
 readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
+readonly NAMESPACE="${NAMESPACE:?}"
+readonly SUMOLOGIC_SECRET_NAME="${SUMOLOGIC_SECRET_NAME:?}"
 
 # Set variables for terraform
 export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
+export TF_VAR_namespace_name="${NAMESPACE}"
+export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
-export TF_VAR_namespace_name="${NAMESPACE:?}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -149,7 +152,7 @@ terraform import sumologic_http_source.{{ template "terraform.sources.name" (dic
 fi
 
 # Kubernetes Secret
-terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
+terraform import kubernetes_secret.sumologic_collection_secret "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}"
 
 # Apply planned changes
 TF_LOG_PROVIDER=DEBUG terraform apply \

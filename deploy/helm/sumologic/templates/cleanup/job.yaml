@@ -66,6 +66,8 @@ spec:
             value: {{ include "terraform.collector.name" . }}
           - name: CHART_VERSION
             value: "{{ .Chart.Version }}"
+          - name: SUMOLOGIC_SECRET_NAME
+            value: "{{ template "terraform.secret.name" }}"
           {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 999
