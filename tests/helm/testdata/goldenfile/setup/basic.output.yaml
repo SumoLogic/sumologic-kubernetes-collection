@@ -63,6 +63,8 @@ spec:
               value:
             - name: SUMOLOGIC_COLLECTOR_NAME
               value: kubernetes
+            - name: SUMOLOGIC_SECRET_NAME
+              value: "sumologic"
             - name: CHART_VERSION
               value: "%CURRENT_CHART_VERSION%"
 
