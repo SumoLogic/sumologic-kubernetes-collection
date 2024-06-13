@@ -146,22 +146,22 @@ TF_LOG_PROVIDER=DEBUG terraform apply \
     || { echo "Error during applying Terraform changes"; exit 1; }
 
 # Setup Sumo Logic monitors if enabled
-{{- if .Values.sumologic.setup.monitors.enabled }}
-bash /etc/terraform/monitors.sh
-{{- else }}
-echo "Installation of the Sumo Logic monitors is disabled."
-echo "You can install them manually later with:"
-echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
-{{- end }}
+if [ "${SUMOLOGIC_MONITORS_ENABLED}" = "true" ]; then
+    bash /etc/terraform/monitors.sh
+else
+    echo "Installation of the Sumo Logic monitors is disabled."
+    echo "You can install them manually later with:"
+    echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
+fi
 
 # Setup Sumo Logic dashboards if enabled
-{{- if .Values.sumologic.setup.dashboards.enabled }}
-bash /etc/terraform/dashboards.sh
-{{- else }}
-echo "Installation of the Sumo Logic dashboards is disabled."
-echo "You can install them manually later with:"
-echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
-{{- end }}
+if [ "${SUMOLOGIC_DASHBOARDS_ENABLED}" = "true" ]; then
+    bash /etc/terraform/dashboards.sh
+else
+    echo "Installation of the Sumo Logic dashboards is disabled."
+    echo "You can install them manually later with:"
+    echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
+fi
 
 # Cleanup env variables
 export SUMOLOGIC_BASE_URL=
