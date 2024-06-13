@@ -11,18 +11,6 @@ Example usage:
 {{- end -}}
 
 {{/*
-Returns the name of Kubernetes secret prefixed with release namespace.
-
-Example usage:
-
-{{ include "terraform.secret.fullname" }}
-
-*/}}
-{{- define "terraform.secret.fullname" -}}
-{{ template "sumologic.namespace" . }}/{{ template "terraform.secret.name" . }}
-{{- end -}}
-
-{{/*
 Convert source name to Terraform metric name:
  * converts all `-` to `_`
  * adds `_$type_source` suffix

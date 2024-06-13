@@ -10,6 +10,8 @@ export HTTPS_PROXY="${HTTPS_PROXY:=""}"
 export NO_PROXY="${NO_PROXY:=""}"
 
 readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
+readonly SUMOLOGIC_SECRET_NAME="${SUMOLOGIC_SECRET_NAME:?}"
+readonly NAMESPACE="${NAMESPACE:?}"
 
 cp /etc/terraform/*.tf /terraform/
 cd /terraform || exit 1
@@ -21,7 +23,7 @@ terraform init -input=false -get=false || terraform init -input=false -upgrade
 # shellcheck disable=SC1083
 terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"
 # shellcheck disable=SC1083
-terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
+terraform import kubernetes_secret.sumologic_collection_secret "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}"
 
 terraform destroy -auto-approve
 

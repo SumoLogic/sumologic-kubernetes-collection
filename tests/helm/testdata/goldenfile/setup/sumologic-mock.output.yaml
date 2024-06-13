@@ -63,6 +63,8 @@ spec:
               value: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/terraform/api/
             - name: SUMOLOGIC_COLLECTOR_NAME
               value: kubernetes
+            - name: SUMOLOGIC_SECRET_NAME
+              value: "sumologic"
             - name: SUMOLOGIC_FIELDS
               value: "cluster container daemonset deployment host namespace node pod service statefulset"
             - name: CHART_VERSION

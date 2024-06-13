@@ -6,7 +6,7 @@ resource "sumologic_collector" "collector" {
 
 resource "kubernetes_secret" "sumologic_collection_secret" {
   metadata {
-    name = "{{ template "terraform.secret.name" }}"
+    name = var.secret_name
     namespace = var.namespace_name
   }
 

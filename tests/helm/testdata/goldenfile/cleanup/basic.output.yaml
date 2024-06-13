@@ -55,6 +55,8 @@ spec:
               value:
             - name: SUMOLOGIC_COLLECTOR_NAME
               value: kubernetes
+            - name: SUMOLOGIC_SECRET_NAME
+              value: "sumologic"
 
             - name: NO_PROXY
               value: kubernetes.default.svc
