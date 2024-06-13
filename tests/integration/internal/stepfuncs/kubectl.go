@@ -61,15 +61,15 @@ func KubectlCreateOperatorNamespacesOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		valuesFileBytes := GetHelmValuesForT(t)
 		var values struct {
-			Operator struct {
+			Instrumentation struct {
 				InstrumentationNamespaces string `yaml:"instrumentationNamespaces"`
-			} `yaml:"opentelemetry-operator"`
+			} `yaml:"instrumentation"`
 		}
 
 		err := yaml.Unmarshal(valuesFileBytes, &values)
 		require.NoError(t, err)
-		if values.Operator.InstrumentationNamespaces != "" {
-			namespaces := stdstrings.Split(values.Operator.InstrumentationNamespaces, ",")
+		if values.Instrumentation.InstrumentationNamespaces != "" {
+			namespaces := stdstrings.Split(values.Instrumentation.InstrumentationNamespaces, ",")
 			for _, namespace := range namespaces {
 				k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx, envConf), namespace)
 			}
@@ -83,15 +83,15 @@ func KubectlDeleteOperatorNamespacesOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		valuesFileBytes := GetHelmValuesForT(t)
 		var values struct {
-			Operator struct {
+			Instrumentation struct {
 				InstrumentationNamespaces string `yaml:"instrumentationNamespaces"`
-			} `yaml:"opentelemetry-operator"`
+			} `yaml:"instrumentation"`
 		}
 
 		err := yaml.Unmarshal(valuesFileBytes, &values)
 		require.NoError(t, err)
-		if values.Operator.InstrumentationNamespaces != "" {
-			namespaces := stdstrings.Split(values.Operator.InstrumentationNamespaces, ",")
+		if values.Instrumentation.InstrumentationNamespaces != "" {
+			namespaces := stdstrings.Split(values.Instrumentation.InstrumentationNamespaces, ",")
 			for _, namespace := range namespaces {
 				ctx = KubectlDeleteNamespaceOpt(namespace, true)(ctx, t, envConf)
 			}

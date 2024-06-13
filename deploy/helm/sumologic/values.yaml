@@ -2462,78 +2462,6 @@ tailing-sidecar-operator:
 opentelemetry-operator:
   enabled: true
 
-  ## Specific for Sumo Logic chart - Instrumentation resource creation
-  instrumentationJobImage:
-    image:
-      repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.22.0
-
-  createDefaultInstrumentation: false
-  instrumentationNamespaces: ""
-
-  instrumentation:
-    dotnet:
-      repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
-      tag: 0.7.0
-
-      ## image is deprecated, it should be specified in ${repository}:${tag} format
-      image: ""
-      traces:
-        enabled: true
-      metrics:
-        enabled: true
-
-      ## Extra Environment Values - allows yaml definitions
-      # extraEnvVars:
-      #   - name: OTEL_CUSTOM_ENV_VAR
-      #     value: my_value
-
-    java:
-      repository: public.ecr.aws/sumologic/autoinstrumentation-java
-      tag: 1.26.0
-
-      ## image is deprecated, it should be specified in ${repository}:${tag} format
-      image: ""
-      traces:
-        enabled: true
-      metrics:
-        enabled: true
-
-      ## Extra Environment Values - allows yaml definitions
-      # extraEnvVars:
-      #   - name: OTEL_CUSTOM_ENV_VAR
-      #     value: my_value
-
-    python:
-      repository: public.ecr.aws/sumologic/autoinstrumentation-python
-      tag: 0.39b0
-
-      ## image is deprecated, it should be specified in ${repository}:${tag} format
-      image: ""
-      traces:
-        enabled: true
-      metrics:
-        enabled: true
-
-      ## Extra Environment Values - allows yaml definitions
-      # extraEnvVars:
-      #   - name: OTEL_CUSTOM_ENV_VAR
-      #     value: my_value
-
-    ## Current instrumentation doesn't support customization
-    ## for nodejs. Traces are always enabled.
-    nodejs:
-      repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
-      tag: 0.40.0
-
-      ## image is deprecated, it should be specified in ${repository}:${tag} format
-      image: ""
-
-      ## Extra Environment Values - allows yaml definitions
-      # extraEnvVars:
-      #   - name: OTEL_CUSTOM_ENV_VAR
-      #     value: my_value
-
   ## Specific for OpenTelemetry Operator chart values
   admissionWebhooks:
     failurePolicy: Fail
@@ -2556,6 +2484,19 @@ opentelemetry-operator:
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
       tag: "0.102.1-sumo-0"
+    autoInstrumentationImage:
+      java:
+        repository: public.ecr.aws/sumologic/autoinstrumentation-java
+        tag: 1.26.0
+      dotnet:
+        repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
+        tag: 0.7.0
+      python:
+        repository: public.ecr.aws/sumologic/autoinstrumentation-python
+        tag: 0.39b0
+      nodejs:
+        repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
+        tag: 0.40.0
     env:
       {}
       # ENABLE_WEBHOOKS: "true"
@@ -2619,6 +2560,59 @@ pvcCleaner:
     ## securityContext for pvcCleaner pods
     securityContext:
       runAsUser: 1000
+
+## Configure instrumentation for OpenTelemetry-Operator
+instrumentation:
+  ## Specific for Sumo Logic chart - Instrumentation resource creation
+  instrumentationJobImage:
+    image:
+      repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
+      tag: 2.22.0
+
+  createDefaultInstrumentation: false
+  instrumentationNamespaces: ""
+
+  dotnet:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: OTEL_CUSTOM_ENV_VAR
+    #     value: my_value
+
+  java:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: OTEL_CUSTOM_ENV_VAR
+    #     value: my_value
+
+  python:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: OTEL_CUSTOM_ENV_VAR
+    #     value: my_value
+
+  ## Current instrumentation doesn't support customization
+  ## for nodejs traces are always enabled.
+  nodejs:
+    metrics:
+      enabled: true
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: OTEL_CUSTOM_ENV_VAR
+    #     value: my_value
 
 ## The following section is not a subject of standard support scope and should be considered experimental
 ## All of them are meant for debugging purposed and shouldn't be used on production environments

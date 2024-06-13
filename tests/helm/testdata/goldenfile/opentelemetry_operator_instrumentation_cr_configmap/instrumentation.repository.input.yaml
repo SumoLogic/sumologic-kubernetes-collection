@@ -1,17 +1,23 @@
 opentelemetry-operator:
   enabled: true
+  manager:
+    autoInstrumentationImage:
+      dotnet:
+        repository: mydotnetrepo
+        tag: mydotnettag
+      python:
+        repository: mypythonrepo
+        tag: mypythontag
+      nodejs:
+        repository: mynodejsrepo
+        tag: mynodejstag
+      java:
+        repository: myjavarepo
+        tag: myjavatag
+instrumentation:
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator1,ot-operator2"
-  instrumentation:
-    dotnet:
-      repository: mydotnetrepo
-      tag: mydotnettag
-    python:
-      repository: mypythonrepo
-      tag: mypythontag
-    nodejs:
-      repository: mynodejsrepo
-      tag: mynodejstag
-    java:
-      repository: myjavarepo
-      tag: myjavatag
+  instrumentationJobImage:
+    image:
+      repository: asd
+      tag: asd

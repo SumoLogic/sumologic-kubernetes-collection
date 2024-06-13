@@ -61,6 +61,8 @@ data:
       nodejs:
         image: public.ecr.aws/sumologic/autoinstrumentation-nodejs:0.40.0
         env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:
@@ -123,6 +125,8 @@ data:
       nodejs:
         image: public.ecr.aws/sumologic/autoinstrumentation-nodejs:0.40.0
         env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:

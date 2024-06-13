@@ -35,7 +35,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator1
       dotnet:
-        image: dotnetimg
+        image: myrepo:mytag
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -50,7 +50,7 @@ data:
           - name: test
             value: dotnetval
       python:
-        image: pythonimg
+        image: myrepo:mytag
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -63,14 +63,16 @@ data:
           - name: test
             value: pythonval
       nodejs:
-        image: nodejsimg
+        image: myrepo:mytag
         env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
           - name: test
             value: nodeval
       java:
-        image: javaimg
+        image: myrepo:mytag
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -105,7 +107,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator2
       dotnet:
-        image: dotnetimg
+        image: myrepo:mytag
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -120,7 +122,7 @@ data:
           - name: test
             value: dotnetval
       python:
-        image: pythonimg
+        image: myrepo:mytag
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -133,14 +135,16 @@ data:
           - name: test
             value: pythonval
       nodejs:
-        image: nodejsimg
+        image: myrepo:mytag
         env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
           - name: test
             value: nodeval
       java:
-        image: javaimg
+        image: myrepo:mytag
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp

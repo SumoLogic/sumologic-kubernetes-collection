@@ -1,4 +1,9 @@
 opentelemetry-operator:
   enabled: true
+instrumentation:
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator1,ot-operator2"
+  instrumentationJobImage:
+    image:
+      repository: asd
+      tag: asd

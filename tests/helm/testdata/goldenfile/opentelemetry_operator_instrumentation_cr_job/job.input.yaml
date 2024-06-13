@@ -1,4 +1,5 @@
 opentelemetry-operator:
   enabled: true
+instrumentation:
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator1"
