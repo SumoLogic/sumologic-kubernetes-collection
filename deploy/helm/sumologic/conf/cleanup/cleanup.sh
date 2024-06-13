@@ -15,6 +15,7 @@ readonly NAMESPACE="${NAMESPACE:?}"
 
 # Set variables for terraform
 export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
+export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
 export TF_VAR_namespace_name="${NAMESPACE:?}"
 
