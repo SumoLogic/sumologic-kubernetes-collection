@@ -1,3 +1,9 @@
+{{ $notificationEmails := list }}
+{{ if kindIs "string" .Values.sumologic.setup.monitors.notificationEmails }}
+{{ $notificationEmails = append $notificationEmails .Values.sumologic.setup.monitors.notificationEmails }}
+{{ else }}
+{{ $notificationEmails = concat $notificationEmails .Values.sumologic.setup.monitors.notificationEmails }}
+{{ end }}
 {{- if .Values.sumologic.setupEnabled }}
 apiVersion: batch/v1
 kind: Job
@@ -85,6 +91,13 @@ spec:
           value: "{{ .Chart.Version }}"
         - name: SUMOLOGIC_MONITORS_ENABLED
           value: "{{ .Values.sumologic.setup.monitors.enabled }}"
+        - name: SUMOLOGIC_MONITORS_STATUS
+          value: "{{ .Values.sumologic.setup.monitors.monitorStatus }}"
+{{- if not (empty $notificationEmails) }}
+        - name: SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS
+          value: |
+            {{ toRawJson $notificationEmails }}
+{{- end }}
         - name: SUMOLOGIC_DASHBOARDS_ENABLED
           value: "{{ .Values.sumologic.setup.dashboards.enabled }}"
         {{- include "proxy-env-variables" . | nindent 8 -}}

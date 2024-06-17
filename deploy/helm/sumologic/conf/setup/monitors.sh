@@ -9,11 +9,12 @@ readonly SUMOLOGIC_BASE_URL
 
 INTEGRATIONS_FOLDER_NAME="Sumo Logic Integrations"
 MONITORS_FOLDER_NAME="Kubernetes"
-{{- if eq .Values.sumologic.setup.monitors.monitorStatus "enabled" }}
-MONITORS_DISABLED="false"
-{{- else }}
-MONITORS_DISABLED="true"
-{{- end}}
+
+if [ "${SUMOLOGIC_MONITORS_STATUS}" = "enabled" ]; then
+  MONITORS_DISABLED="false"
+else
+  MONITORS_DISABLED="true"
+fi
 
 MONITORS_ROOT_ID="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
@@ -68,29 +69,27 @@ if [[ -z "${MONITORS_FOLDER_ID}" ]]; then
     SUMOLOGIC_ENV="us1"
   fi
 
-{{- if not (.Values.sumologic.setup.monitors.notificationEmails | empty) }}
-{{- if kindIs "slice" .Values.sumologic.setup.monitors.notificationEmails }}
-  NOTIFICATIONS_RECIPIENTS='{{- .Values.sumologic.setup.monitors.notificationEmails | toRawJson }}'
-{{- else }}
-  NOTIFICATIONS_RECIPIENTS='[{{- .Values.sumologic.setup.monitors.notificationEmails | toRawJson }}]'
-{{- end }}
-  NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ printf `{{TriggerType}}` }} on {{ printf `{{Name}}` }}\",message_body=\"Triggered {{ printf `{{TriggerType}}` }} alert on {{ printf `{{Name}}` }}: {{ printf `{{QueryURL}}` }}\""
-  NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
-{{- end }}
+  TERRAFORM_ARGS=(
+    -auto-approve
+    -var="access_id=${SUMOLOGIC_ACCESSID}"
+    -var="access_key=${SUMOLOGIC_ACCESSKEY}"
+    -var="environment=${SUMOLOGIC_ENV}"
+    -var="folder=${MONITORS_FOLDER_NAME}"
+    -var="folder_parent_id=${INTEGRATIONS_FOLDER_ID}"
+    -var="monitors_disabled=${MONITORS_DISABLED}"
+  )
 
-  TF_LOG_PROVIDER=DEBUG terraform apply \
-      -auto-approve \
-      -var="access_id=${SUMOLOGIC_ACCESSID}" \
-      -var="access_key=${SUMOLOGIC_ACCESSKEY}" \
-      -var="environment=${SUMOLOGIC_ENV}" \
-      -var="folder=${MONITORS_FOLDER_NAME}" \
-      -var="folder_parent_id=${INTEGRATIONS_FOLDER_ID}" \
-      -var="monitors_disabled=${MONITORS_DISABLED}" \
-{{- if not (.Values.sumologic.setup.monitors.notificationEmails | empty) }}
-      -var="email_notifications_critical=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Critical\", \"ResolvedCritical\"]}]" \
-      -var="email_notifications_warning=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Warning\", \"ResolvedWarning\"]}]" \
-      -var="email_notifications_missingdata=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"MissingData\", \"ResolvedMissingData\"]}]" \
-{{- end }}
+  if [ -z ${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS+x} ]; then
+    NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ printf `{{TriggerType}}` }} on {{ printf `{{Name}}` }}\",message_body=\"Triggered {{ printf `{{TriggerType}}` }} alert on {{ printf `{{Name}}` }}: {{ printf `{{QueryURL}}` }}\""
+    NOTIFICATIONS_SETTINGS="recipients=${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
+    TERRAFORM_ARGS+=(
+      -var="email_notifications_critical=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Critical\", \"ResolvedCritical\"]}]"
+      -var="email_notifications_warning=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Warning\", \"ResolvedWarning\"]}]"
+      -var="email_notifications_missingdata=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"MissingData\", \"ResolvedMissingData\"]}]"
+    )
+  fi
+
+  TF_LOG_PROVIDER=DEBUG terraform apply "${TERRAFORM_ARGS[@]}" \
       || { echo "Error during applying Terraform monitors."; exit 1; }
 else
   echo "The monitors have been already installed in ${MONITORS_FOLDER_NAME}."
