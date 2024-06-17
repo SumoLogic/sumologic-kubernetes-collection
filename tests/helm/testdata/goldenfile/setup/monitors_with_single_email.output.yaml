@@ -71,6 +71,9 @@ spec:
               value: "true"
             - name: SUMOLOGIC_MONITORS_STATUS
               value: "enabled"
+            - name: SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS
+              value: |
+                ["email@locahost.lh"]
             - name: SUMOLOGIC_DASHBOARDS_ENABLED
               value: "true"
 

@@ -69,6 +69,8 @@ spec:
               value: "%CURRENT_CHART_VERSION%"
             - name: SUMOLOGIC_MONITORS_ENABLED
               value: "true"
+            - name: SUMOLOGIC_MONITORS_STATUS
+              value: "enabled"
             - name: SUMOLOGIC_DASHBOARDS_ENABLED
               value: "true"
 
