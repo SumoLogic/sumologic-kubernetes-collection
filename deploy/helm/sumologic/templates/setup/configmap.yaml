@@ -10,5 +10,6 @@ metadata:
     app: {{ template "sumologic.labels.app.setup.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
-  {{- (tpl (.Files.Glob "conf/setup/*").AsConfig .) | nindent 2 }}
+  {{- (.Files.Glob "conf/setup/*.{tf,sh}").AsConfig | nindent 2 }}
+  {{- (tpl (.Files.Glob "conf/setup/*.json").AsConfig .) | nindent 2 }}
 {{- end }}
