@@ -1,9 +1,9 @@
 variable "collector_name" {
-  type  = string
+  type = string
 }
 
 variable "namespace_name" {
-  type  = string
+  type = string
 }
 
 variable "secret_name" {
@@ -18,15 +18,15 @@ variable "create_fields" {
 
 variable "fields" {
   description = "Log fields to create."
-  type = list(string)
+  type        = list(string)
 }
 
 variable "collector_fields" {
   description = "Fields to set on the collector."
-  type = map(string)
+  type        = map(string)
 }
 
 variable "chart_version" {
   description = "The Helm Chart version."
-  type = string
+  type        = string
 }

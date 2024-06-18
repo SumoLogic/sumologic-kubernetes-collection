@@ -220,9 +220,9 @@ data:
         ignore_changes = [field_name, data_type]
       }
 
-      field_name = "${ each.key }"
-      data_type = "String"
-      state = "Enabled"
+      field_name = each.key
+      data_type  = "String"
+      state      = "Enabled"
     }
   main.tf: |
     terraform {
@@ -339,14 +339,14 @@ data:
     fi
   resources.tf: |
     resource "sumologic_collector" "collector" {
-        name  = var.collector_name
-        description = format("Sumo Logic Kubernetes Collection\nversion: %s", var.chart_version)
-        fields  = var.collector_fields
+      name        = var.collector_name
+      description = format("Sumo Logic Kubernetes Collection\nversion: %s", var.chart_version)
+      fields      = var.collector_fields
     }
 
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
-        name = var.secret_name
+        name      = var.secret_name
         namespace = var.namespace_name
       }
 
@@ -354,7 +354,7 @@ data:
         for name, config in local.source_configs : config["config-name"] => lookup(local.sources, name).url
       }
 
-      type = "Opaque"
+      type                           = "Opaque"
       wait_for_service_account_token = false
     }
   setup.sh: |
@@ -531,11 +531,11 @@ data:
     bash /etc/terraform/custom.sh
   variables.tf: |
     variable "collector_name" {
-      type  = string
+      type = string
     }
 
     variable "namespace_name" {
-      type  = string
+      type = string
     }
 
     variable "secret_name" {
@@ -550,17 +550,17 @@ data:
 
     variable "fields" {
       description = "Log fields to create."
-      type = list(string)
+      type        = list(string)
     }
 
     variable "collector_fields" {
       description = "Fields to set on the collector."
-      type = map(string)
+      type        = map(string)
     }
 
     variable "chart_version" {
       description = "The Helm Chart version."
-      type = string
+      type        = string
     }
   providers.tf.json: |
     {

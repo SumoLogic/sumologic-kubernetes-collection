@@ -7,7 +7,7 @@ resource "sumologic_field" "collection_field" {
     ignore_changes = [field_name, data_type]
   }
 
-  field_name = "${ each.key }"
-  data_type = "String"
-  state = "Enabled"
+  field_name = each.key
+  data_type  = "String"
+  state      = "Enabled"
 }
