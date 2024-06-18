@@ -80,7 +80,7 @@ if [[ -z "${MONITORS_FOLDER_ID}" ]]; then
   )
 
   if [ -z ${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS+x} ]; then
-    NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ printf `{{TriggerType}}` }} on {{ printf `{{Name}}` }}\",message_body=\"Triggered {{ printf `{{TriggerType}}` }} alert on {{ printf `{{Name}}` }}: {{ printf `{{QueryURL}}` }}\""
+    NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{TriggerType}} on {{Name}}\",message_body=\"Triggered {{TriggerType}} alert on {{Name}}: {{QueryURL}}\""
     NOTIFICATIONS_SETTINGS="recipients=${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
     TERRAFORM_ARGS+=(
       -var="email_notifications_critical=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Critical\", \"ResolvedCritical\"]}]"
