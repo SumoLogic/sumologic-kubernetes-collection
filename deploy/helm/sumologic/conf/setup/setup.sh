@@ -95,7 +95,7 @@ function should_create_fields() {
 cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
 
-declare -ra FIELDS=($(jq -r '.fields[]' terraform.tfvars.json))
+declare -ra FIELDS=("$(jq -r '.fields[]' terraform.tfvars.json)")
 
 # Fall back to init -upgrade to prevent:
 # Error: Inconsistent dependency lock file
@@ -119,7 +119,7 @@ if should_create_fields ; then
 
         terraform import \
             -var="create_fields=1" \
-            sumologic_field.collection_field[\"${FIELD}\"] "${FIELD_ID}"
+            sumologic_field.collection_field[\""${FIELD}"\"] "${FIELD_ID}"
     done
 else
     readonly CREATE_FIELDS=0
@@ -133,7 +133,7 @@ fi
 if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
     jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
         terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
-    done
+    done || true
 fi
 
 # Kubernetes Secret
@@ -146,7 +146,7 @@ TF_LOG_PROVIDER=DEBUG terraform apply \
     || { echo "Error during applying Terraform changes"; exit 1; }
 
 # Setup Sumo Logic monitors if enabled
-if [ "${SUMOLOGIC_MONITORS_ENABLED}" = "true" ]; then
+if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" ]]; then
     bash /etc/terraform/monitors.sh
 else
     echo "Installation of the Sumo Logic monitors is disabled."
@@ -155,7 +155,7 @@ else
 fi
 
 # Setup Sumo Logic dashboards if enabled
-if [ "${SUMOLOGIC_DASHBOARDS_ENABLED}" = "true" ]; then
+if [[ "${SUMOLOGIC_DASHBOARDS_ENABLED:?}" = "true" ]]; then
     bash /etc/terraform/dashboards.sh
 else
     echo "Installation of the Sumo Logic dashboards is disabled."

@@ -250,23 +250,24 @@ data:
     INTEGRATIONS_FOLDER_NAME="Sumo Logic Integrations"
     MONITORS_FOLDER_NAME="Kubernetes"
 
-    if [ "${SUMOLOGIC_MONITORS_STATUS}" = "enabled" ]; then
+    if [[ "${SUMOLOGIC_MONITORS_STATUS:?}" = "enabled" ]]; then
       MONITORS_DISABLED="false"
     else
       MONITORS_DISABLED="true"
     fi
 
-    MONITORS_ROOT_ID="$(curl -XGET -s \
+    MONITORS_CURL_RESPONSE=$(curl -XGET -s \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-            "${SUMOLOGIC_BASE_URL}"v1/monitors/root | jq -r '.id' )"
+            "${SUMOLOGIC_BASE_URL}"v1/monitors/root)
+    MONITORS_ROOT_ID="$(echo "${MONITORS_CURL_RESPONSE}" | jq -r '.id' )"
     readonly MONITORS_ROOT_ID
 
     # verify if the integrations folder already exists
-    INTEGRATIONS_RESPONSE="$(curl -XGET -s -G \
+    INTEGRATIONS_CURL_RESPONSE=$(curl -XGET -s -G \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/monitors/search \
-            --data-urlencode "query=type:folder ${INTEGRATIONS_FOLDER_NAME}" | \
-            jq '.[]' )"
+            --data-urlencode "query=type:folder ${INTEGRATIONS_FOLDER_NAME}")
+    INTEGRATIONS_RESPONSE="$(echo "${INTEGRATIONS_CURL_RESPONSE}" | jq '.[]' )"
     readonly INTEGRATIONS_RESPONSE
 
     INTEGRATIONS_FOLDER_ID="$( echo "${INTEGRATIONS_RESPONSE}" | \
@@ -274,20 +275,20 @@ data:
 
     # and create it if necessary
     if [[ -z "${INTEGRATIONS_FOLDER_ID}" ]]; then
-      INTEGRATIONS_FOLDER_ID="$(curl -XPOST -s \
+      INTEGRATIONS_FOLDER_CURL_RESPONSE=$(curl -XPOST -s \
                   -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
                   -H "Content-Type: application/json" \
                   -d "{\"name\":\"${INTEGRATIONS_FOLDER_NAME}\",\"type\":\"MonitorsLibraryFolder\",\"description\":\"Monitors provided by the Sumo Logic integrations.\"}" \
-                  "${SUMOLOGIC_BASE_URL}"v1/monitors?parentId="${MONITORS_ROOT_ID}" | \
-                  jq -r " .id" )"
+                  "${SUMOLOGIC_BASE_URL}"v1/monitors?parentId="${MONITORS_ROOT_ID}")
+      INTEGRATIONS_FOLDER_ID="$(echo "${INTEGRATIONS_FOLDER_CURL_RESPONSE}" | jq -r " .id" )"
     fi
 
     # verify if the k8s monitors folder already exists
-    MONITORS_RESPONSE="$(curl -XGET -s -G \
+    MONITORS_CURL_RESPONSE="$(curl -XGET -s -G \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/monitors/search \
-            --data-urlencode "query=type:folder ${MONITORS_FOLDER_NAME}" | \
-            jq '.[]' )"
+            --data-urlencode "query=type:folder ${MONITORS_FOLDER_NAME}")"
+    MONITORS_RESPONSE="$(echo "${MONITORS_CURL_RESPONSE}" | jq '.[]' )"
     readonly MONITORS_RESPONSE
 
     MONITORS_FOLDER_ID="$( echo "${MONITORS_RESPONSE}" | \
@@ -319,7 +320,7 @@ data:
         -var="monitors_disabled=${MONITORS_DISABLED}"
       )
 
-      if [ -z ${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS+x} ]; then
+      if [[ -z ${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS+x} ]]; then
         NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{TriggerType}} on {{Name}}\",message_body=\"Triggered {{TriggerType}} alert on {{Name}}: {{QueryURL}}\""
         NOTIFICATIONS_SETTINGS="recipients=${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
         TERRAFORM_ARGS+=(
@@ -336,17 +337,6 @@ data:
       echo "You can (re)install them manually with:"
       echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
     fi
-  providers.tf.json: |
-    {
-      "provider": {
-        "kubernetes": {
-          "cluster_ca_certificate": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}",
-          "host": "https://kubernetes.default.svc",
-          "token": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
-        },
-        "sumologic": {}
-      }
-    }
   resources.tf: |
     resource "sumologic_collector" "collector" {
         name  = var.collector_name
@@ -465,7 +455,7 @@ data:
     cp /etc/terraform/* /terraform/
     cd /terraform || exit 1
 
-    declare -ra FIELDS=($(jq -r '.fields[]' terraform.tfvars.json))
+    declare -ra FIELDS=("$(jq -r '.fields[]' terraform.tfvars.json)")
 
     # Fall back to init -upgrade to prevent:
     # Error: Inconsistent dependency lock file
@@ -489,7 +479,7 @@ data:
 
             terraform import \
                 -var="create_fields=1" \
-                sumologic_field.collection_field[\"${FIELD}\"] "${FIELD_ID}"
+                sumologic_field.collection_field[\""${FIELD}"\"] "${FIELD_ID}"
         done
     else
         readonly CREATE_FIELDS=0
@@ -503,7 +493,7 @@ data:
     if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
         jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
             terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
-        done
+        done || true
     fi
 
     # Kubernetes Secret
@@ -516,7 +506,7 @@ data:
         || { echo "Error during applying Terraform changes"; exit 1; }
 
     # Setup Sumo Logic monitors if enabled
-    if [ "${SUMOLOGIC_MONITORS_ENABLED}" = "true" ]; then
+    if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" ]]; then
         bash /etc/terraform/monitors.sh
     else
         echo "Installation of the Sumo Logic monitors is disabled."
@@ -525,7 +515,7 @@ data:
     fi
 
     # Setup Sumo Logic dashboards if enabled
-    if [ "${SUMOLOGIC_DASHBOARDS_ENABLED}" = "true" ]; then
+    if [[ "${SUMOLOGIC_DASHBOARDS_ENABLED:?}" = "true" ]]; then
         bash /etc/terraform/dashboards.sh
     else
         echo "Installation of the Sumo Logic dashboards is disabled."
@@ -539,6 +529,50 @@ data:
     export SUMOLOGIC_ACCESSID=
 
     bash /etc/terraform/custom.sh
+  variables.tf: |
+    variable "collector_name" {
+      type  = string
+    }
+
+    variable "namespace_name" {
+      type  = string
+    }
+
+    variable "secret_name" {
+      type = string
+    }
+
+    variable "create_fields" {
+      description = "If set, Terraform will attempt to create fields at Sumo Logic"
+      type        = bool
+      default     = true
+    }
+
+    variable "fields" {
+      description = "Log fields to create."
+      type = list(string)
+    }
+
+    variable "collector_fields" {
+      description = "Fields to set on the collector."
+      type = map(string)
+    }
+
+    variable "chart_version" {
+      description = "The Helm Chart version."
+      type = string
+    }
+  providers.tf.json: |
+    {
+      "provider": {
+        "kubernetes": {
+          "cluster_ca_certificate": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}",
+          "host": "https://kubernetes.default.svc",
+          "token": "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
+        },
+        "sumologic": {}
+      }
+    }
   sources.tf.json: |
     {
       "locals": {
@@ -752,37 +786,4 @@ data:
         "addfield1",
         "addfield2"
       ]
-    }
-  variables.tf: |
-    variable "collector_name" {
-      type  = string
-    }
-
-    variable "namespace_name" {
-      type  = string
-    }
-
-    variable "secret_name" {
-      type = string
-    }
-
-    variable "create_fields" {
-      description = "If set, Terraform will attempt to create fields at Sumo Logic"
-      type        = bool
-      default     = true
-    }
-
-    variable "fields" {
-      description = "Log fields to create."
-      type = list(string)
-    }
-
-    variable "collector_fields" {
-      description = "Fields to set on the collector."
-      type = map(string)
-    }
-
-    variable "chart_version" {
-      description = "The Helm Chart version."
-      type = string
     }
