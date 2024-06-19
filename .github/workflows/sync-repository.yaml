@@ -1,0 +1,41 @@
+name: Sync Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      input:
+        type: choice
+        description: Repository and suffix
+        options:
+          - '["docker.io/bitnami/metrics-server", "METRICS_SERVER"]'
+          - '["docker.io/busybox", "BUSYBOX"]'
+          - '["docker.io/nginxinc/nginx-unprivileged", "NGINX_UNPRIVILEGED"]'
+          - '["docker.io/telegraf", "TELEGRAF"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet", "AUTOINSTRUMENTATION_DOTNET"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java", "AUTOINSTRUMENTATION_JAVA"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs", "AUTOINSTRUMENTATION_NODEJS"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python", "AUTOINSTRUMENTATION_PYTHON"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator", "OPENTELEMETRY_OPERATOR"]'
+          - '["public.ecr.aws/falcosecurity/falco-driver-loader", "FALCO_DRIVER_LOADER"]'
+          - '["public.ecr.aws/falcosecurity/falco-no-driver", "FALCO_NO_DRIVER"]'
+          - '["quay.io/brancz/kube-rbac-proxy", "KUBE_RBAC_PROXY"]'
+          - '["quay.io/influxdb/telegraf-operator", "TELEGRAF_OPERATOR"]'
+          - '["quay.io/prometheus/node-exporter", "NODE_EXPORTER"]'
+          - '["quay.io/prometheus/prometheus", "PROMETHEUS"]'
+          - '["quay.io/prometheus-operator/prometheus-config-reloader", "PROMETHEUS_CONFIG_RELOADER"]'
+          - '["quay.io/prometheus-operator/prometheus-operator", "PROMETHEUS_OPERATOR"]'
+          - '["quay.io/thanos/thanos", "THANOS"]'
+          - '["registry.k8s.io/kube-state-metrics/kube-state-metrics", "KUBE_STATE_METRICS"]'
+jobs:
+  sync-repository:
+    name: Sync container repository
+    uses: ./.github/workflows/workflow-sync-repositories.yaml
+    with:
+      src_repository: ${{ fromJSON(inputs.input)[0] }}
+      dest_docker_namespace: docker.io/sumologic
+      dest_ecr_namespace: public.ecr.aws/a4t4y2n3
+    secrets:
+      DOCKER_USERNAME: ${{ secrets[format('DOCKERHUB_LOGIN_{0}', fromJSON(inputs.input)[0])] }}
+      DOCKER_PASSWORD: ${{ secrets[format('DOCKERHUB_PASSWORD_{0}', fromJSON(inputs.input)[0])] }}
+      AWS_ACCESS_KEY_ID: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', fromJSON(inputs.input)[0])] }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', fromJSON(inputs.input)[0])] }}
