@@ -1,6 +1,7 @@
 name: Sync Repository
 
 on:
+  
   workflow_dispatch:
     inputs:
       input:
@@ -35,7 +36,7 @@ jobs:
       dest_docker_namespace: docker.io/sumologic
       dest_ecr_namespace: public.ecr.aws/a4t4y2n3
     secrets:
-      DOCKER_USERNAME: ${{ secrets[format('DOCKERHUB_LOGIN_{0}', fromJSON(inputs.input)[0])] }}
-      DOCKER_PASSWORD: ${{ secrets[format('DOCKERHUB_PASSWORD_{0}', fromJSON(inputs.input)[0])] }}
-      AWS_ACCESS_KEY_ID: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', fromJSON(inputs.input)[0])] }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', fromJSON(inputs.input)[0])] }}
+      DOCKER_USERNAME: ${{ secrets[format('DOCKERHUB_LOGIN_{0}', fromJSON(inputs.input)[1])] }}
+      DOCKER_PASSWORD: ${{ secrets[format('DOCKERHUB_PASSWORD_{0}', fromJSON(inputs.input)[1])] }}
+      AWS_ACCESS_KEY_ID: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', fromJSON(inputs.input)[1])] }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', fromJSON(inputs.input)[1])] }}
