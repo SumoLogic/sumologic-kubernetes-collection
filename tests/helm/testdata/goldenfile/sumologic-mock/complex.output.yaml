@@ -79,7 +79,7 @@ spec:
       containers:
         - ports:
             - containerPort: 3000
-          image: public.ecr.aws/sumologic/sumologic-mock:2.22.0-59-g245ae92
+          image: public.ecr.aws/sumologic/sumologic-mock:2.24.0
           name: sumologic-mock
           args:
             - sumologic-mock

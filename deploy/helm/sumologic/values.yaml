@@ -2526,7 +2526,7 @@ pvcCleaner:
   job:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.22.0
+      tag: 2.24.0
       pullPolicy: IfNotPresent
 
     resources:
@@ -2567,7 +2567,7 @@ instrumentation:
   instrumentationJobImage:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.22.0
+      tag: 2.24.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
@@ -2623,7 +2623,7 @@ debug:
     enabled: false
     image:
       repository: public.ecr.aws/sumologic/sumologic-mock
-      tag: 2.22.0-59-g245ae92
+      tag: 2.24.0
       pullPolicy: IfNotPresent
     deployment:
       nodeSelector: {}

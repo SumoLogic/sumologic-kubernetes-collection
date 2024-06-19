@@ -19,7 +19,7 @@ spec:
       serviceAccountName: RELEASE-NAME-sumologic
       containers:
         - name: instrumentation-cr-applier
-          image: public.ecr.aws/sumologic/kubernetes-tools-kubectl:2.22.0
+          image: public.ecr.aws/sumologic/kubernetes-tools-kubectl:2.24.0
           volumeMounts:
             - name: instrumentation-cr-configmap
               mountPath: /tmp/instrumentation-cr.yaml
