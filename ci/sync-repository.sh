@@ -10,7 +10,6 @@ docker run \
             --all \
             --keep-going \
             --preserve-digests \
-            -f oci \
             --retry-times 5 \
             --src docker \
             --dest docker \
