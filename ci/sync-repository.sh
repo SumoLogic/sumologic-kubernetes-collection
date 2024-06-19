@@ -12,6 +12,7 @@ docker run \
             --preserve-digests \
             --retry-times 5 \
             --src docker \
+            --src-no-creds \
             --dest docker \
             "${SRC_REPOSITORY}" \
             "${DESTINATION_NAMESPACE}"
