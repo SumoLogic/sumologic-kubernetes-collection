@@ -2464,8 +2464,7 @@ opentelemetry-operator:
 
   ## Specific for OpenTelemetry Operator chart values
   admissionWebhooks:
-    failurePolicy: Fail
-    enabled: true
+    create: true
 
     ## skip admission webhook on our own OpenTelemetryCollector object to avoid having to wait for operator to start
     objectSelector:
@@ -2476,7 +2475,6 @@ opentelemetry-operator:
 
     certManager:
       enabled: false
-      issuerRef: {}
 
   manager:
     image:
