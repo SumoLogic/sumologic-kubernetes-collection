@@ -95,7 +95,8 @@ function should_create_fields() {
 cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
 
-declare -ra FIELDS=("$(jq -r '.fields[]' terraform.tfvars.json)")
+FIELDS_STRING=$(jq -r '.fields[]' terraform.tfvars.json)
+mapfile -t FIELDS < <(echo "${FIELDS_STRING}")
 
 # Fall back to init -upgrade to prevent:
 # Error: Inconsistent dependency lock file
