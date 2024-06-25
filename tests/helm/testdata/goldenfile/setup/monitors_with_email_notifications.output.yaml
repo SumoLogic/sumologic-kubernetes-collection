@@ -36,7 +36,7 @@ spec:
             defaultMode: 0777
       containers:
         - name: setup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.14.0
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.15.0
           imagePullPolicy: IfNotPresent
           command: ["/etc/terraform/setup.sh"]
           resources:
@@ -80,4 +80,4 @@ spec:
             - name: NO_PROXY
               value: kubernetes.default.svc
       securityContext:
-        runAsUser: 999
+        runAsUser: 1000

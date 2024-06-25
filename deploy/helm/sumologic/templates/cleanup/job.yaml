@@ -70,5 +70,5 @@ spec:
             value: "{{ template "terraform.secret.name" }}"
           {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
-        runAsUser: 999
+        runAsUser: 1000
 {{- end }}
