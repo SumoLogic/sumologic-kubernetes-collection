@@ -77,4 +77,4 @@ spec:
             - name: NO_PROXY
               value: kubernetes.default.svc
       securityContext:
-        runAsUser: 999
+        runAsUser: 1000

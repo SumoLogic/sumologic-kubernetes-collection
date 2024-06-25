@@ -30,7 +30,7 @@ fsGroup:
     - min: 65534
       max: 65534
     - min: 999 # otelcol
-      max: 1000 # prometheus, kubernetes-setup
+      max: 1000 # prometheus
     - min: 2000 # prometheus
       max: 2000 # prometheus
     - min: 0  # otelcol-logs-collector

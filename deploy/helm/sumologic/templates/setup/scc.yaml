@@ -31,8 +31,8 @@ readOnlyRootFilesystem: false
 requiredDropCapabilities: []
 runAsUser:
   type: MustRunAsRange 
-  uidRangeMax: 999 
-  uidRangeMin: 999
+  uidRangeMax: 1000
+  uidRangeMin: 1000
 seLinuxContext:
   type: MustRunAs
 seccompProfiles: []
