@@ -16,7 +16,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: apple silicon instructions for CONTRIBUTING.md & vagrant/README.md [#3691]
 
 ### Changed
-- chore: Upgrade tailing-sidecar to v0.15.0
 - chore: update Sumo Logic Kubernetes Setup to v3.14.0 [#3697]
 - feat: expose additional exporters and routing configuration [#3711]
 - chore: upgrade tailing sidecar (#3719) [#3720]
@@ -25,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: Upgrade tailing-sidecar to v0.14.0 [#3753]
 - chore: update OpenTelemetry Collector to 0.102.1-sumo-0 [#3755] This change fixes
   [CVE-2024-36129](https://github.com/open-telemetry/opentelemetry-collector/security/advisories/GHSA-c74f-6mfw-mm4v).
+- chore: Upgrade tailing-sidecar to v0.14.0 [#3783]
 
 [#3691]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3691
 [#3697]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3697
@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#3737]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3737
 [#3753]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3753
 [#3755]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3755
+[#3783]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3783
 
 [v4.8.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.8.0## [v4.7.1]
 
