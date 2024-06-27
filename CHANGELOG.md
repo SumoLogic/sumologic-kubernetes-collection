@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: apple silicon instructions for CONTRIBUTING.md & vagrant/README.md [#3691]
 
 ### Changed
+
 - chore: update Sumo Logic Kubernetes Setup to v3.14.0 [#3697]
 - feat: expose additional exporters and routing configuration [#3711]
 - chore: upgrade tailing sidecar (#3719) [#3720]
