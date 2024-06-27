@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: Upgrade tailing-sidecar to v0.14.0 [#3753]
 - chore: update OpenTelemetry Collector to 0.102.1-sumo-0 [#3755] This change fixes
   [CVE-2024-36129](https://github.com/open-telemetry/opentelemetry-collector/security/advisories/GHSA-c74f-6mfw-mm4v).
-- chore: Upgrade tailing-sidecar to v0.14.0 [#3783]
+- chore: Upgrade tailing-sidecar to v0.15.0 [#3783]
 
 [#3691]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3691
 [#3697]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3697
