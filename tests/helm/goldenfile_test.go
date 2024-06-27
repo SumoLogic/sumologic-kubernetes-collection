@@ -1,7 +1,6 @@
 package helm
 
 import (
-	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -133,19 +132,10 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 // expected templates
 func fixupRenderedYaml(yaml string, chartVersion string) string {
 	checksumRegex := regexp.MustCompile("checksum/config: [a-z0-9]{64}")
-	patternString := fmt.Sprintf(`(?m)^(\s*app\.kubernetes\.io\/version:\s*"%s"\s*)$|^(\s*chart:\s*"sumologic-%s"\s*)$|^(\s*chart:\s*sumologic-%s\s*)$|^(\s*client:\s*k8s_%s\s*)$|^(\s*value:\s*"%s"\s*)$`,
-	chartVersion, chartVersion, chartVersion, chartVersion, chartVersion)
-	pattern := regexp.MustCompile(patternString)
-	replacement := `%CURRENT_CHART_VERSION%`
 
 	output := yaml
 	output = strings.ReplaceAll(output, releaseName, "RELEASE-NAME")
-	output = pattern.ReplaceAllStringFunc(output, func(match string) string {
-		versionRegex := regexp.MustCompile(chartVersion)
-		version := versionRegex.FindString(match)
-
-		return strings.Replace(match, version, replacement, 1)
-	})	
+	output = strings.ReplaceAll(output, chartVersion, "%CURRENT_CHART_VERSION%")
 	output = checksumRegex.ReplaceAllLiteralString(output, "checksum/config: '%CONFIG_CHECKSUM%'")
 	output = strings.TrimSuffix(output, "\n")
 	return output
