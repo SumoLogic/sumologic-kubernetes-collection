@@ -61,7 +61,7 @@ processors:
         overwrite_with: newest
         source_identifier: resource["cloudwatch.log.stream"]
         type: recombine
-        ## Ensure we are combine everything up to `is_last_entry` even on the file beginning
+        ## Ensure we combine everything up to `is_last_entry` even on the file beginning
         max_unmatched_batch_size: 0
       - id: merge-multiline-logs
         combine_field: attributes.log

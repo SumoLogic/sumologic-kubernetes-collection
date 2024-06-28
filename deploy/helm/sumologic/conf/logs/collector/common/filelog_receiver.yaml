@@ -99,7 +99,7 @@ filelog/containers:
       output: strip-trailing-newline
       source_identifier: attributes["log.file.path"]
       type: recombine
-      ## Ensure we are combine everything up to `is_last_entry` even on the file beginning
+      ## Ensure we combine everything up to `is_last_entry` even on the file beginning
       max_unmatched_batch_size: 0
 
     ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
@@ -114,7 +114,7 @@ filelog/containers:
       overwrite_with: newest
       source_identifier: attributes["log.file.path"]
       type: recombine
-      ## Ensure we are combine everything up to `is_last_entry` even on the file beginning
+      ## Ensure we combine everything up to `is_last_entry` even on the file beginning
       max_unmatched_batch_size: 0
 
     ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
