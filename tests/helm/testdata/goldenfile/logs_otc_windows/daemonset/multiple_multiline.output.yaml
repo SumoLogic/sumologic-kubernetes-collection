@@ -78,7 +78,7 @@ data:
           combine_with: ""
           id: merge-docker-lines
           is_last_entry: body.log matches "\n$"
-          max_unmatched_batch_size: 1
+          max_unmatched_batch_size: 0
           output: strip-trailing-newline
           source_identifier: attributes["log.file.path"]
           type: recombine
@@ -86,7 +86,7 @@ data:
           combine_with: ""
           id: merge-cri-lines
           is_last_entry: body.logtag == "F"
-          max_unmatched_batch_size: 1
+          max_unmatched_batch_size: 0
           output: extract-metadata-from-filepath
           overwrite_with: newest
           source_identifier: attributes["log.file.path"]
