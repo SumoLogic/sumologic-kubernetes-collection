@@ -7,7 +7,71 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v4.8.0]
+## [v4.9.0]
+
+### Released 2024-07-01
+
+### Breaking Changes
+
+- chore(instrumentation): move instrumentation configuration from opentelemetry-operator values [#3733]
+
+  #### Moved:
+
+  - From `opentelemetry-operator.instrumentationJobImage` to `instrumentation.instrumentationJobImage`
+  - From `opentelemetry-operator.createDefaultInstrumentation` to `instrumentation.createDefaultInstrumentation`
+  - From `opentelemetry-operator.instrumentationNamespaces` to `instrumentation.instrumentationNamespaces`
+  - From `opentelemetry-operator.instrumentation.dotnet.traces` to `instrumentation.dotnet.traces`
+  - From `opentelemetry-operator.instrumentation.dotnet.metrics` to `instrumentation.dotnet.metrics`
+  - From `opentelemetry-operator.instrumentation.dotnet.extraEnvVars` to `instrumentation.dotnet.extraEnvVars`
+  - From `opentelemetry-operator.instrumentation.java.traces` to `instrumentation.java.traces`
+  - From `opentelemetry-operator.instrumentation.java.metrics` to `instrumentation.java.metrics`
+  - From `opentelemetry-operator.instrumentation.java.extraEnvVars` to `instrumentation.java.extraEnvVars`
+  - From `opentelemetry-operator.instrumentation.nodejs` to `instrumentation.nodejs`
+  - From `opentelemetry-operator.instrumentation.python.traces` to `instrumentation.python.traces`
+  - From `opentelemetry-operator.instrumentation.python.metrics` to `instrumentation.python.metrics`
+  - From `opentelemetry-operator.instrumentation.python.extraEnvVars` to `instrumentation.python.extraEnvVars`
+
+  #### Changed:
+
+  - From `opentelemetry-operator.instrumentation.dotnet.repository` to `opentelemetry-operator.autoInstrumentationImage.dotnet.repository`
+  - From `opentelemetry-operator.instrumentation.dotnet.tag` to `opentelemetry-operator.autoInstrumentationImage.dotnet.tag`
+  - From `opentelemetry-operator.instrumentation.java.repository` to `opentelemetry-operator.autoInstrumentationImage.java.repository`
+  - From `opentelemetry-operator.instrumentation.java.tag` to `opentelemetry-operator.autoInstrumentationImage.java.tag`
+  - From `opentelemetry-operator.instrumentation.nodejs.repository` to `opentelemetry-operator.autoInstrumentationImage.nodejs.repository`
+  - From `opentelemetry-operator.instrumentation.nodejs.tag` to `opentelemetry-operator.autoInstrumentationImage.nodejs.tag`
+  - From `opentelemetry-operator.instrumentation.python.repository` to `opentelemetry-operator.autoInstrumentationImage.python.repository`
+  - From `opentelemetry-operator.instrumentation.python.tag` to `opentelemetry-operator.autoInstrumentationImage.python.tag`
+
+  #### Deleted:
+
+  - `opentelemetry-operator.instrumentation.dotnet.image`
+  - `opentelemetry-operator.instrumentation.java.image`
+  - `opentelemetry-operator.instrumentation.nodejs.image`
+  - `opentelemetry-operator.instrumentation.python.image`
+
+### Changed
+
+- deps: upgrade kubectl and mock images to 2.24.0 [#3775]
+- deps: upgrade opentelemetry-operator Chart to 0.56.1 [#3777]
+- chore: update Sumo Logic Kubernetes Setup to v3.15.0 [#3780]
+- chore: Upgrade tailing-sidecar to v0.15.0 [#3783]
+- chore: upgrade terraform providers versions in setup [#3791]
+- chore: update Sumo Logic Kubernetes Setup to v3.15.1 [#3793]
+
+### Fixed
+
+- fix: join multiparts on file beginning [#3784]
+
+[#3733]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3733
+[#3775]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3775
+[#3777]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3777
+[#3780]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3780
+[#3783]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3783
+[#3791]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3791
+[#3793]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3793
+[#3784]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3784
+
+[v4.9.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.9.0## [v4.8.0]
 
 ### Released 2024-06-07
 
