@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - chore(instrumentation): move instrumentation configuration from opentelemetry-operator values [#3733]
 
-  #### Moved:
+  **Moved:**
 
   - From `opentelemetry-operator.instrumentationJobImage` to `instrumentation.instrumentationJobImage`
   - From `opentelemetry-operator.createDefaultInstrumentation` to `instrumentation.createDefaultInstrumentation`
@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - From `opentelemetry-operator.instrumentation.python.metrics` to `instrumentation.python.metrics`
   - From `opentelemetry-operator.instrumentation.python.extraEnvVars` to `instrumentation.python.extraEnvVars`
 
-  #### Changed:
+  **Changed:**
 
   - From `opentelemetry-operator.instrumentation.dotnet.repository` to `opentelemetry-operator.autoInstrumentationImage.dotnet.repository`
   - From `opentelemetry-operator.instrumentation.dotnet.tag` to `opentelemetry-operator.autoInstrumentationImage.dotnet.tag`
@@ -42,7 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - From `opentelemetry-operator.instrumentation.python.repository` to `opentelemetry-operator.autoInstrumentationImage.python.repository`
   - From `opentelemetry-operator.instrumentation.python.tag` to `opentelemetry-operator.autoInstrumentationImage.python.tag`
 
-  #### Deleted:
+  **Deleted:**
 
   - `opentelemetry-operator.instrumentation.dotnet.image`
   - `opentelemetry-operator.instrumentation.java.image`
@@ -53,10 +53,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - deps: upgrade kubectl and mock images to 2.24.0 [#3775]
 - deps: upgrade opentelemetry-operator Chart to 0.56.1 [#3777]
-- chore: update Sumo Logic Kubernetes Setup to v3.15.0 [#3780]
+- chore: update Sumo Logic Kubernetes Setup to v3.15.1 [#3780] [#3793]
 - chore: Upgrade tailing-sidecar to v0.15.0 [#3783]
 - chore: upgrade terraform providers versions in setup [#3791]
-- chore: update Sumo Logic Kubernetes Setup to v3.15.1 [#3793]
 
 ### Fixed
 
