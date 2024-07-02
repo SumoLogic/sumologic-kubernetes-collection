@@ -110,6 +110,7 @@ func TestOtelImageFIPSSuffix(t *testing.T) {
 	for _, renderedObject := range renderedObjects {
 		podSpec, err := GetPodSpec(renderedObject)
 		require.NoError(t, err)
+
 		if podSpec != nil {
 			for _, container := range podSpec.Containers {
 				if container.Name == otelContainerName {
@@ -369,9 +370,17 @@ func isSubchartObject(object metav1.Object) bool {
 	return false
 }
 
-// Get a PodSpec from the unstructured object, if possible
-// This only works on Deployments, StatefulSets and DaemonSets
 func GetPodSpec(object unstructured.Unstructured) (*corev1.PodSpec, error) {
+	podTemplateSpec, err := GetPodTemplateSpec(object)
+
+	if err != nil || podTemplateSpec == nil {
+		return nil, err
+	}
+
+	return &podTemplateSpec.Spec, nil
+}
+
+func GetPodTemplateSpec(object unstructured.Unstructured) (*corev1.PodTemplateSpec, error) {
 	switch object.GetKind() {
 	case "Deployment":
 		deployment := &appsv1.Deployment{}
@@ -379,35 +388,35 @@ func GetPodSpec(object unstructured.Unstructured) (*corev1.PodSpec, error) {
 		if err != nil {
 			return nil, err
 		}
-		return &deployment.Spec.Template.Spec, nil
+		return &deployment.Spec.Template, nil
 	case "StatefulSet":
 		statefulset := &appsv1.StatefulSet{}
 		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &statefulset)
 		if err != nil {
 			return nil, err
 		}
-		return &statefulset.Spec.Template.Spec, nil
+		return &statefulset.Spec.Template, nil
 	case "DaemonSet":
 		daemonset := &appsv1.DaemonSet{}
 		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &daemonset)
 		if err != nil {
 			return nil, err
 		}
-		return &daemonset.Spec.Template.Spec, nil
+		return &daemonset.Spec.Template, nil
 	case "Job":
-		jobs := &batchv1.Job{}
-		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &jobs)
+		job := &batchv1.Job{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &job)
 		if err != nil {
 			return nil, err
 		}
-		return &jobs.Spec.Template.Spec, nil
+		return &job.Spec.Template, nil
 	case "CronJob":
-		jobs := &batchv1.CronJob{}
-		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &jobs)
+		cronJob := &batchv1.CronJob{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &cronJob)
 		if err != nil {
 			return nil, err
 		}
-		return &jobs.Spec.JobTemplate.Spec.Template.Spec, nil
+		return &cronJob.Spec.JobTemplate.Spec.Template, nil
 	default:
 		return nil, nil
 	}
@@ -415,6 +424,7 @@ func GetPodSpec(object unstructured.Unstructured) (*corev1.PodSpec, error) {
 
 func GetNodeSelector(object unstructured.Unstructured) (map[string]string, error) {
 	podSpec, err := GetPodSpec(object)
+
 	if err != nil {
 		return nil, err
 	} else if podSpec != nil {
@@ -434,6 +444,7 @@ func GetNodeSelector(object unstructured.Unstructured) (map[string]string, error
 }
 func GetAffinity(object unstructured.Unstructured) (*corev1.Affinity, error) {
 	podSpec, err := GetPodSpec(object)
+
 	if err != nil {
 		return nil, err
 	} else if podSpec != nil {
@@ -445,6 +456,7 @@ func GetAffinity(object unstructured.Unstructured) (*corev1.Affinity, error) {
 
 func GetTolerations(object unstructured.Unstructured) ([]corev1.Toleration, error) {
 	podSpec, err := GetPodSpec(object)
+
 	if err != nil {
 		return nil, err
 	} else if podSpec != nil {
@@ -545,5 +557,67 @@ func TestServiceAccountPullSecrets(t *testing.T) {
 			}
 			assert.Equal(t, expectedPullSecrets, actualPullSecrets)
 		})
+	}
+}
+
+func TestCustomPodLabels(t *testing.T) {
+	t.Parallel()
+	valuesFilePath := path.Join(testDataDirectory, "custom-podData.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard,
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+
+	for _, renderedObject := range renderedObjects {
+		podTemplateSpec, err := GetPodTemplateSpec(renderedObject)
+
+		if err != nil {
+			t.Logf("Error getting PodTemplateSpec for object %s: %v", renderedObject.GetName(), err)
+			continue
+		}
+
+		if podTemplateSpec == nil {
+			t.Logf("PodTemplateSpec is nil for object %s", renderedObject.GetName())
+			continue
+		}
+
+		require.NoError(t, err)
+
+		labels := podTemplateSpec.Labels
+		labelValue, ok := labels[customLabelKey]
+
+		assert.True(
+			t,
+			ok,
+			"%s should have label %s",
+			renderedObject.GetName(),
+			customLabelKey,
+		)
+
+		assert.Equal(
+			t,
+			customLabelValue,
+			labelValue,
+			"%s should have label %s set to %s, found %s instead",
+			renderedObject.GetName(),
+			customLabelKey,
+			customLabelValue,
+			labelValue,
+		)
 	}
 }

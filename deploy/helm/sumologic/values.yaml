@@ -2351,6 +2351,8 @@ telegraf-operator:
 falco:
   enabled: false
 
+  podLabels: {}
+
   ## Put here the new name if you want to override the full name used for Falco components.
   # fullnameOverride: ""
 
@@ -2505,6 +2507,7 @@ opentelemetry-operator:
       requests:
         cpu: 150m
         memory: 256Mi
+    podLabels: {}
 
   kubeRBACProxy:
     image:

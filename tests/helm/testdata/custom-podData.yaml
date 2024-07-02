@@ -1,0 +1,36 @@
+sumologic:
+  metrics:
+    remoteWriteProxy:
+      enabled: true
+
+  podLabels:
+    customLabelKey: customLabelValue
+
+kube-prometheus-stack:
+  kube-state-metrics:
+    customLabels:
+      customLabelKey: customLabelValue
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      podMetadata:
+        labels:
+          customLabelKey: customLabelValue
+  prometheus-node-exporter:
+    podLabels:
+      customLabelKey: customLabelValue
+
+opentelemetry-operator:
+  manager:
+    podLabels:
+      customLabelKey: customLabelValue
+
+falco:
+  enabled: true
+  podLabels:
+    customLabelKey: customLabelValue
+
+prometheus-windows-exporter:
+  enabled: true
+  podLabels:
+    customLabelKey: customLabelValue
