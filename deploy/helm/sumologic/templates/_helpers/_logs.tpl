@@ -127,6 +127,7 @@ Return all exporters for .Type pipeline
 {{- $exporters = append $exporters $exporter -}}
 {{- end -}}
 {{- end -}}
+{{- $exporters = uniq $exporters -}}
 {{- range $_, $exporter := $exporters }}
 {{ printf "- %s" $exporter }}
 {{- end }}
