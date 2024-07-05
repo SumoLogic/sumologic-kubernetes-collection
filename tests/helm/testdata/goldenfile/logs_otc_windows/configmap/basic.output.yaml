@@ -46,12 +46,15 @@ data:
         - from: resource["log.iostream"]
           to: resource["stream"]
           type: move
+        - from: resource["time"]
+          to: attributes["time"]
+          type: move
         - fields:
           - resource["stream"]
           - resource["k8s.pod.name"]
           - resource["k8s.container.name"]
           - resource["k8s.namespace.name"]
-          - resource["log.file.path"]
+          - attributes["log.file.path"]
           id: keep-fields
           type: retain
         - default: multiline

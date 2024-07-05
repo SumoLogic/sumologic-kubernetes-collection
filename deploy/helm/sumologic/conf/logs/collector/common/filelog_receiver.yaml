@@ -49,6 +49,9 @@ filelog/containers:
     - type: move
       from: resource["log.iostream"]
       to: resource["stream"]
+    - type: move
+      from: resource["time"]
+      to: attributes["time"]
     ## Keep only the following attributes:
     ## - stream
     ## - k8s.pod.name
@@ -63,9 +66,9 @@ filelog/containers:
         - resource["k8s.pod.name"]
         - resource["k8s.container.name"]
         - resource["k8s.namespace.name"]
-        - resource["log.file.path"]
+        - attributes["log.file.path"]
 {{ if .Values.sumologic.logs.container.keep_time_attribute }}
-        - resource["time"]
+        - attributes["time"]
 {{ end }}
 
     ## Strip trailing "\n" from the log body
