@@ -13,6 +13,7 @@ sumologic:
       routing:
         fallbackExporters:
           - debug
+          - sumologic/test
         table:
           - exporter: sumologic/test
             statement: route() where resource.attributes["exporter"] == "test"

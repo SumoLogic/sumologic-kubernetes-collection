@@ -221,6 +221,7 @@ data:
       routing/containers:
         default_exporters:
         - debug
+        - sumologic/test
         table:
         - exporters:
           - sumologic/test
@@ -228,6 +229,7 @@ data:
       routing/systemd:
         default_exporters:
         - debug
+        - sumologic/test
         table:
         - exporters:
           - sumologic/test
