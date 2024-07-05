@@ -2034,8 +2034,8 @@ otellogs:
 
   ## Configure image for Opentelemetry Collector
   image:
-    # repository: ""
-    # tag: ""
+    repository: "otel/opentelemetry-collector-contrib"
+    tag: "0.104.0"
     pullPolicy: IfNotPresent
 
   logLevel: info
