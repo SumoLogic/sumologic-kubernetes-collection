@@ -133,24 +133,19 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 // expected templates
 func fixupRenderedYaml(yaml string, chartVersion string) string {
 	checksumRegex := regexp.MustCompile("checksum/config: [a-z0-9]{64}")
-	patternString := fmt.Sprintf(
-		`(?m)^(\s*app\.kubernetes\.io\/version:\s*"%s"\s*)$`+
-			`|^(\s*chart:\s*"sumologic-%s"\s*)$`+
-			`|^(\s*chart:\s*sumologic-%s\s*)$`+
-			`|^(\s*client:\s*k8s_%s\s*)$`+
-			`|^(\s*value:\s*"%s"\s*)$`,
-		chartVersion, chartVersion, chartVersion, chartVersion, chartVersion)
-	pattern := regexp.MustCompile(patternString)
-	replacement := `%CURRENT_CHART_VERSION%`
+	replacements := map[string]string{
+		fmt.Sprintf("app.kubernetes.io/version: \"%s\"", chartVersion): "app.kubernetes.io/version: \"%CURRENT_CHART_VERSION%\"",
+		fmt.Sprintf("chart: \"sumologic-%s\"", chartVersion):           "chart: \"sumologic-%CURRENT_CHART_VERSION%\"",
+		fmt.Sprintf("chart: sumologic-%s", chartVersion):               "chart: sumologic-%CURRENT_CHART_VERSION%",
+		fmt.Sprintf("client: k8s_%s", chartVersion):                    "client: k8s_%CURRENT_CHART_VERSION%",
+		fmt.Sprintf("value: \"%s\"", chartVersion):                     "value: \"%CURRENT_CHART_VERSION%\"",
+	}
 
 	output := yaml
 	output = strings.ReplaceAll(output, releaseName, "RELEASE-NAME")
-	output = pattern.ReplaceAllStringFunc(output, func(match string) string {
-		versionRegex := regexp.MustCompile(chartVersion)
-		version := versionRegex.FindString(match)
-
-		return strings.Replace(match, version, replacement, 1)
-	})
+	for oldString, newString := range replacements {
+		output = strings.ReplaceAll(output, oldString, newString)
+	}
 	output = checksumRegex.ReplaceAllLiteralString(output, "checksum/config: '%CONFIG_CHECKSUM%'")
 	output = strings.TrimSuffix(output, "\n")
 	return output
