@@ -133,18 +133,24 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 // expected templates
 func fixupRenderedYaml(yaml string, chartVersion string) string {
 	checksumRegex := regexp.MustCompile("checksum/config: [a-z0-9]{64}")
-	replacements := map[string]string{
-		fmt.Sprintf("app.kubernetes.io/version: \"%s\"", chartVersion): "app.kubernetes.io/version: \"%CURRENT_CHART_VERSION%\"",
-		fmt.Sprintf("chart: \"sumologic-%s\"", chartVersion):           "chart: \"sumologic-%CURRENT_CHART_VERSION%\"",
-		fmt.Sprintf("chart: sumologic-%s", chartVersion):               "chart: sumologic-%CURRENT_CHART_VERSION%",
-		fmt.Sprintf("client: k8s_%s", chartVersion):                    "client: k8s_%CURRENT_CHART_VERSION%",
-		fmt.Sprintf("value: \"%s\"", chartVersion):                     "value: \"%CURRENT_CHART_VERSION%\"",
+	// replacements := map[string]string{
+	// 	fmt.Sprintf("app.kubernetes.io/version: \"%s\"", chartVersion): "app.kubernetes.io/version: \"%CURRENT_CHART_VERSION%\"",
+	// 	fmt.Sprintf("chart: \"sumologic-%s\"", chartVersion):           "chart: \"sumologic-%CURRENT_CHART_VERSION%\"",
+	// 	fmt.Sprintf("chart: sumologic-%s", chartVersion):               "chart: sumologic-%CURRENT_CHART_VERSION%",
+	// 	fmt.Sprintf("client: k8s_%s", chartVersion):                    "client: k8s_%CURRENT_CHART_VERSION%",
+	// 	fmt.Sprintf("value: \"%s\"", chartVersion):                     "value: \"%CURRENT_CHART_VERSION%\"",
+	// }
+	replacements := []string{
+		"app.kubernetes.io/version: \"%s\"",
+		"chart: \"sumologic-%s\"",
+		"chart: sumologic-%s",
+		"client: k8s_%s",
+		"value: \"%s\"",
 	}
-
 	output := yaml
 	output = strings.ReplaceAll(output, releaseName, "RELEASE-NAME")
-	for oldString, newString := range replacements {
-		output = strings.ReplaceAll(output, oldString, newString)
+	for _, r := range replacements {
+		output = strings.ReplaceAll(output, fmt.Sprintf(r, chartVersion), fmt.Sprintf(r, "%CURRENT_CHART_VERSION%"))
 	}
 	output = checksumRegex.ReplaceAllLiteralString(output, "checksum/config: '%CONFIG_CHECKSUM%'")
 	output = strings.TrimSuffix(output, "\n")
