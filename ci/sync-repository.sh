@@ -10,9 +10,9 @@ docker run \
             --all \
             --keep-going \
             --preserve-digests \
-            -f oci \
             --retry-times 5 \
             --src docker \
+            --src-no-creds \
             --dest docker \
             "${SRC_REPOSITORY}" \
             "${DESTINATION_NAMESPACE}"
