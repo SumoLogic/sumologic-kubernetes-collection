@@ -21,6 +21,8 @@ const (
 	k8sMaxLabelLength        = 63  // see https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
 	customLabelKey           = "customLabelKey"
 	customLabelValue         = "customLabelValue"
+	customAnnotationsKey     = "customAnnotationsKey"
+	customAnnotationsValue   = "customAnnotationsValue"
 )
 
 var subChartNames []string = []string{

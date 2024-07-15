@@ -560,7 +560,8 @@ func TestServiceAccountPullSecrets(t *testing.T) {
 	}
 }
 
-func TestCustomPodLabels(t *testing.T) {
+// tests podLabels and podAnnotations
+func TestCustomPodData(t *testing.T) {
 	t.Parallel()
 	valuesFilePath := path.Join(testDataDirectory, "custom-podData.yaml")
 	renderedYamlString := RenderTemplate(
@@ -596,14 +597,15 @@ func TestCustomPodLabels(t *testing.T) {
 			continue
 		}
 
-		require.NoError(t, err)
-
 		labels := podTemplateSpec.Labels
-		labelValue, ok := labels[customLabelKey]
+		labelValue, labelOk := labels[customLabelKey]
+
+		annotations := podTemplateSpec.Annotations
+		annotationsValue, annotationsOk := annotations[customAnnotationsKey]
 
 		assert.True(
 			t,
-			ok,
+			labelOk,
 			"%s should have label %s",
 			renderedObject.GetName(),
 			customLabelKey,
@@ -618,6 +620,25 @@ func TestCustomPodLabels(t *testing.T) {
 			customLabelKey,
 			customLabelValue,
 			labelValue,
+		)
+
+		assert.True(
+			t,
+			annotationsOk,
+			"%s should have annotations %s",
+			renderedObject.GetName(),
+			customAnnotationsKey,
+		)
+
+		assert.Equal(
+			t,
+			customAnnotationsValue,
+			annotationsValue,
+			"%s should have annotations %s set to %s, found %s instead",
+			renderedObject.GetName(),
+			customAnnotationsKey,
+			customAnnotationsValue,
+			annotationsValue,
 		)
 	}
 }
