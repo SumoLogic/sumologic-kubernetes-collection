@@ -1,6 +1,7 @@
 package helm
 
 import (
+	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -133,10 +134,166 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 func fixupRenderedYaml(yaml string, chartVersion string) string {
 	checksumRegex := regexp.MustCompile("checksum/config: [a-z0-9]{64}")
 
+	replacements := []string{
+		"app.kubernetes.io/version: %q",
+		"chart: \"sumologic-%s\"",
+		"chart: sumologic-%s",
+		"client: k8s_%s",
+		"value: %q",
+	}
 	output := yaml
 	output = strings.ReplaceAll(output, releaseName, "RELEASE-NAME")
-	output = strings.ReplaceAll(output, chartVersion, "%CURRENT_CHART_VERSION%")
+	for _, r := range replacements {
+		output = strings.ReplaceAll(output, fmt.Sprintf(r, chartVersion), fmt.Sprintf(r, "%CURRENT_CHART_VERSION%"))
+	}
 	output = checksumRegex.ReplaceAllLiteralString(output, "checksum/config: '%CONFIG_CHECKSUM%'")
 	output = strings.TrimSuffix(output, "\n")
 	return output
+}
+
+func TestFixupRenderedYaml_MultipleOccurrences(t *testing.T) {
+	testcases := []struct {
+		name         string
+		yaml         string
+		chartVersion string
+		expected     string
+	}{
+		{
+			name: "single occurrence",
+			yaml: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "2.0.0"
+  chart: "sumologic-2.0.0"
+  client: k8s_2.0.0
+  value: "2.0.0"
+  another_value: "sumologic-2.0.0"
+checksum/config: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+`,
+			chartVersion: "2.0.0",
+			expected: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+  chart: "sumologic-%CURRENT_CHART_VERSION%"
+  client: k8s_%CURRENT_CHART_VERSION%
+  value: "%CURRENT_CHART_VERSION%"
+  another_value: "sumologic-2.0.0"
+checksum/config: '%CONFIG_CHECKSUM%'`,
+		},
+		{
+			name: "multiple occurrences",
+			yaml: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "3.0.0"
+  chart: "sumologic-3.0.0"
+  client: k8s_3.0.0
+  value: "3.0.0"
+  another_value: "sumologic-3.0.0"
+  some_field: "3.0.0"
+  yet_another_field: "sumologic-3.0.0"
+checksum/config: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890`,
+			chartVersion: "3.0.0",
+			expected: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+  chart: "sumologic-%CURRENT_CHART_VERSION%"
+  client: k8s_%CURRENT_CHART_VERSION%
+  value: "%CURRENT_CHART_VERSION%"
+  another_value: "sumologic-3.0.0"
+  some_field: "3.0.0"
+  yet_another_field: "sumologic-3.0.0"
+checksum/config: '%CONFIG_CHECKSUM%'`,
+		},
+		{
+			name: "no occurrence",
+			yaml: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "4.0.0"
+  chart: "sumologic-4.0.0"
+  client: k8s_4.0.0
+  value: "4.0.0"
+checksum/config: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890`,
+			chartVersion: "5.0.0",
+			expected: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "4.0.0"
+  chart: "sumologic-4.0.0"
+  client: k8s_4.0.0
+  value: "4.0.0"
+checksum/config: '%CONFIG_CHECKSUM%'`,
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			fixedYAML := fixupRenderedYaml(tc.yaml, tc.chartVersion)
+			assert.Equal(t, tc.expected, fixedYAML, "Unexpected result for test case %s", tc.name)
+		})
+	}
+}
+
+func TestFixupRenderedYaml_NoReplacement(t *testing.T) {
+	testcases := []struct {
+		name         string
+		yaml         string
+		chartVersion string
+		expected     string
+	}{
+		{
+			name: "no chartVersion present",
+			yaml: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "1.0.0"
+  chart: "sumologic-1.0.0"
+  client: k8s_1.0.0
+  value: "1.0.0"
+checksum/config: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890`,
+			chartVersion: "2.0.0",
+			expected: `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  app.kubernetes.io/version: "1.0.0"
+  chart: "sumologic-1.0.0"
+  client: k8s_1.0.0
+  value: "1.0.0"
+checksum/config: '%CONFIG_CHECKSUM%'`,
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			fixedYAML := fixupRenderedYaml(tc.yaml, tc.chartVersion)
+			assert.Equal(t, tc.expected, fixedYAML, "Unexpected result for test case %s", tc.name)
+		})
+	}
 }
