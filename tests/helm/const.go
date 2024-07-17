@@ -36,6 +36,10 @@ var subChartNames []string = []string{
 	"opentelemetry-operator",
 }
 
+var expectedAnnotations = map[string]string{
+	"customServiceAccountAnnotationKey": "customServiceAccountAnnotationValue",
+}
+
 var toleration = corev1.Toleration{
 	Key:      "key",
 	Value:    "value",

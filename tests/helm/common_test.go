@@ -563,7 +563,7 @@ func TestServiceAccountPullSecrets(t *testing.T) {
 // tests podLabels and podAnnotations
 func TestCustomPodData(t *testing.T) {
 	t.Parallel()
-	valuesFilePath := path.Join(testDataDirectory, "custom-podData.yaml")
+	valuesFilePath := path.Join(testDataDirectory, "custom-global-config-attributes.yaml")
 	renderedYamlString := RenderTemplate(
 		t,
 		&helm.Options{
@@ -640,5 +640,55 @@ func TestCustomPodData(t *testing.T) {
 			customAnnotationsValue,
 			annotationsValue,
 		)
+	}
+}
+
+func TestCustomServiceAccountAnnotations(t *testing.T) {
+	t.Parallel()
+	valuesFilePath := path.Join(testDataDirectory, "custom-global-config-attributes.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	renderedObjects, err := UnmarshalMultipleK8sObjectsFromYaml(renderedYamlString)
+	require.NoError(t, err)
+
+	for _, object := range renderedObjects {
+		kind := object.GetObjectKind().GroupVersionKind().Kind
+		if kind != "ServiceAccount" {
+			continue
+		}
+		serviceAccount := object.(*corev1.ServiceAccount)
+		if isSubchartObject(serviceAccount) {
+			continue
+		}
+
+		for key, expectedValue := range expectedAnnotations {
+			actualValue, exists := serviceAccount.Annotations[key]
+			require.True(t, exists, "Annotation %s not found in service account %s", key, serviceAccount.Name)
+
+			assert.Equal(
+				t,
+				expectedValue,
+				actualValue,
+				"Annotation %s value mismatch in service account %s",
+				key,
+				serviceAccount.Name,
+			)
+		}
 	}
 }
