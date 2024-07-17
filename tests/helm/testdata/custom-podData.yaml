@@ -5,32 +5,46 @@ sumologic:
 
   podLabels:
     customLabelKey: customLabelValue
+  podAnnotations:
+    customAnnotationsKey: customAnnotationsValue
 
 kube-prometheus-stack:
   kube-state-metrics:
     customLabels:
       customLabelKey: customLabelValue
+    podAnnotations:
+      customAnnotationsKey: customAnnotationsValue
   prometheus:
     enabled: true
     prometheusSpec:
       podMetadata:
         labels:
           customLabelKey: customLabelValue
+        annotations:
+          customAnnotationsKey: customAnnotationsValue
   prometheus-node-exporter:
     podLabels:
       customLabelKey: customLabelValue
+    podAnnotations:
+      customAnnotationsKey: customAnnotationsValue
 
 opentelemetry-operator:
   manager:
     podLabels:
       customLabelKey: customLabelValue
+    podAnnotations:
+      customAnnotationsKey: customAnnotationsValue
 
 falco:
   enabled: true
   podLabels:
     customLabelKey: customLabelValue
+  podAnnotations:
+    customAnnotationsKey: customAnnotationsValue
 
 prometheus-windows-exporter:
   enabled: true
   podLabels:
     customLabelKey: customLabelValue
+  podAnnotations:
+    customAnnotationsKey: customAnnotationsValue
