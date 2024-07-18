@@ -7,6 +7,9 @@ sumologic:
     customLabelKey: customLabelValue
   podAnnotations:
     customAnnotationsKey: customAnnotationsValue
+  serviceAccount:
+    annotations:
+      customServiceAccountAnnotationKey: customServiceAccountAnnotationValue
 
 kube-prometheus-stack:
   kube-state-metrics:
