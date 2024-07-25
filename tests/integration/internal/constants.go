@@ -231,6 +231,12 @@ var (
 		"otelcol_otelsvc_k8s_owner_table_size",
 		"otelcol_exporter_send_failed_metric_points",
 	}
+
+	FileConsumerOtelColMetrics = []string{
+		"otelcol_fileconsumer_reading_files",
+		"otelcol_fileconsumer_open_files",
+	}
+
 	LogsOtelcolMetrics = []string{
 		"otelcol_exporter_sent_log_records",
 		"otelcol_exporter_send_failed_log_records",
