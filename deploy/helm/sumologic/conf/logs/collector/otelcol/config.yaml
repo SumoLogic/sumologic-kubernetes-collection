@@ -122,6 +122,7 @@ receivers:
         output: strip-trailing-newline
         source_identifier: attributes["log.file.path"]
         type: recombine
+        max_unmatched_batch_size: 0
 
       ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
@@ -135,6 +136,7 @@ receivers:
         overwrite_with: newest
         source_identifier: attributes["log.file.path"]
         type: recombine
+        max_unmatched_batch_size: 0
 
       ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
