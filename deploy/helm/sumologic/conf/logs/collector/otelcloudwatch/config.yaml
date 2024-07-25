@@ -61,6 +61,7 @@ processors:
         overwrite_with: newest
         source_identifier: resource["cloudwatch.log.stream"]
         type: recombine
+        ## Ensure we combine everything up to `is_last_entry` even on the file beginning
         max_unmatched_batch_size: 0
       - id: merge-multiline-logs
         combine_field: attributes.log
@@ -68,7 +69,8 @@ processors:
         is_first_entry: attributes.log matches {{ .Values.sumologic.logs.multiline.first_line_regex | quote }}
         source_identifier: resource["cloudwatch.log.stream"]
         type: recombine
-        max_unmatched_batch_size: 1
+        ## Ensure we combine everything up to `is_last_entry` even on the file beginning
+        max_unmatched_batch_size: 0
 receivers:
   awscloudwatch:
     region: {{ .Values.sumologic.logs.collector.otelcloudwatch.region }}
