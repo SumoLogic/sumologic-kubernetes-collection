@@ -67,5 +67,5 @@ spec:
             value: {{ .Values.sumologic.noProxy }}
           {{ end }}
       securityContext:
-        runAsUser: 999
+        runAsUser: 1000
 {{- end }}
