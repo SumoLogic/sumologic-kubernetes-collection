@@ -20,6 +20,8 @@ func Test_Helm_Default_OT_NamespaceOverride(t *testing.T) {
 	expectedMetrics := internal.DefaultExpectedMetrics
 	// we have tracing enabled, so check tracing-specific metrics
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
+	// File consumer metrics in v104
+	expectedMetrics = append(expectedMetrics, internal.FileConsumerOtelColMetrics...)
 
 	installChecks := []featureCheck{
 		CheckSumologicSecret(15),
