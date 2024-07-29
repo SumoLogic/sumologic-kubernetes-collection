@@ -92,16 +92,16 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 
 The following table displays the tested Kubernetes and Helm versions.
 
-| Name                   | Version                                  |
-| ---------------------- | ---------------------------------------- |
-| K8s with EKS           | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29 |
-| K8s with EKS (fargate) | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29 |
-| K8s with Kops          | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29 |
-| K8s with GKE           | 1.26<br/>1.27<br/>1.28<br/>1.29          |
-| K8s with AKS           | 1.26<br/>1.27<br/>1.28<br/>1.29          |
-| OpenShift              | 4.12<br/>4.13<br/>4.14<br/>4.15          |
-| Helm                   | 3.8.2 (Linux)                            |
-| kubectl                | 1.23.6                                   |
+| Name                   | Version                                           |
+| ---------------------- | ------------------------------------------------- |
+| K8s with EKS           | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30 |
+| K8s with EKS (fargate) | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30 |
+| K8s with Kops          | 1.25<br/>1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30 |
+| K8s with GKE           | 1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30          |
+| K8s with AKS           | 1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30          |
+| OpenShift              | 4.12<br/>4.13<br/>4.14<br/>4.15<br/>4.16          |
+| Helm                   | 3.8.2 (Linux)                                     |
+| kubectl                | 1.23.6                                            |
 
 The following table displays the currently used software versions for our Helm chart.
 
