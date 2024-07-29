@@ -7,6 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.19.5]
+
+### Released 2024-07-29
+
+### Changed
+
+- deps: upgrade kubectl and mock images to 2.24.0 [#3775]
+- chore: Upgrade tailing-sidecar to v0.15.0 [#3783]
+- chore: upgrade terraform providers versions in setup [#3791]
+- chore: update Sumo Logic Kubernetes Setup to v3.15.1 [#3793]
+- chore: Upgrade otel to v0.102.1-sumo-0 [#3814]
+
+### Fixed
+
+- fix: join multiparts on file beginning [#3787]
+
+[#3775]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3775
+[#3783]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3783
+[#3791]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3791
+[#3793]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3793
+[#3814]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3814
+[#3787]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3787
+[v3.19.5]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.19.5
+
 ## [v3.19.4]
 
 ### Released 2024-05-27
