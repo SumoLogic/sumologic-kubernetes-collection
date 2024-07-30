@@ -14,6 +14,7 @@ metadata:
 {{ include "sumologic.annotations.app.setup.helmsh" "3" | indent 4 }}
   labels:
     app: {{ template "sumologic.labels.app.setup.job" . }}
+    sumologic.com/app: setup
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   ttlSecondsAfterFinished: {{ .Values.sumologic.setup.job.ttlSecondsAfterFinished }}
@@ -27,6 +28,8 @@ spec:
 {{ toYaml .Values.sumologic.setup.job.podAnnotations | indent 8 }}
 {{- end }}
       labels:
+        app: {{ template "sumologic.labels.app.setup.job" . }}
+        sumologic.com/app: setup
 {{- if .Values.sumologic.podLabels }}
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
