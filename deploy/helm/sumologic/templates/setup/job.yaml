@@ -16,7 +16,6 @@ metadata:
     app: {{ template "sumologic.labels.app.setup.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
     {{- include "sumologic.labels.otelcol.events" . | nindent 8 }}
-    {{- include "sumologic.labels.sumologic-mock" . | nindent 8 }}
 spec:
   ttlSecondsAfterFinished: {{ .Values.sumologic.setup.job.ttlSecondsAfterFinished }}
   template:
