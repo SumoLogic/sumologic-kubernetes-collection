@@ -14,8 +14,9 @@ metadata:
 {{ include "sumologic.annotations.app.setup.helmsh" "3" | indent 4 }}
   labels:
     app: {{ template "sumologic.labels.app.setup.job" . }}
-    sumologic.com/app: setup
     {{- include "sumologic.labels.common" . | nindent 4 }}
+    {{- include "sumologic.labels.otelcol.events" . | nindent 8 }}
+    {{- include "sumologic.labels.sumologic-mock" . | nindent 8 }}
 spec:
   ttlSecondsAfterFinished: {{ .Values.sumologic.setup.job.ttlSecondsAfterFinished }}
   template:
@@ -28,9 +29,8 @@ spec:
 {{ toYaml .Values.sumologic.setup.job.podAnnotations | indent 8 }}
 {{- end }}
       labels:
-        app: {{ template "sumologic.labels.app.setup.job" . }}
-        sumologic.com/app: setup
 {{- if .Values.sumologic.podLabels }}
+{{- include "sumologic.labels.otelcol.events" . | nindent 8 }}
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
 {{- if .Values.sumologic.setup.job.podLabels }}

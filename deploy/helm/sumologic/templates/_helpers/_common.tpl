@@ -77,7 +77,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.labels.app.setup" -}}
 {{- template "sumologic.labels.app" . }}
-sumologic.com/app: otelcol-events
 {{- end -}}
 
 {{- define "sumologic.labels.app.setup.job" -}}
@@ -142,7 +141,6 @@ sumologic.com/app: otelcol-events
 
 {{- define "sumologic.labels.app.machineconfig.worker" -}}
 {{- template "sumologic.fullname" . }}-worker-extensions
-sumologic.com/app: otelcol-events
 {{- end -}}
 
 {{- define "sumologic.labels.machineconfig.worker" -}}
@@ -151,14 +149,17 @@ machineconfiguration.openshift.io/role: worker
 
 {{- define "sumologic.labels.app.machineconfig.master" -}}
 {{- template "sumologic.fullname" . }}-master-extensions
-sumologic.com/app: otelcol-events
 {{- end -}}
 
 {{- define "sumologic.labels.machineconfig.master" -}}
 machineconfiguration.openshift.io/role: master
 {{- end -}}
 
-{{/*
+{{- define "sumologic.labels.otelcol.events" -}}
+sumologic.com/app: otelcol-events
+{{- end -}}
+
+{{/* 
 Generate cleanup job helm.sh annotations. It takes weight as parameter.
 
 Example usage:
