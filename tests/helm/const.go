@@ -23,6 +23,8 @@ const (
 	customLabelValue         = "customLabelValue"
 	customAnnotationsKey     = "customAnnotationsKey"
 	customAnnotationsValue   = "customAnnotationsValue"
+	customImagePullSecrets   = "customImagePullSecrets"
+	customImagePullSecrets2  = "customImagePullSecrets2"
 )
 
 var subChartNames []string = []string{

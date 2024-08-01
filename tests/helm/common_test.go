@@ -475,6 +475,24 @@ func GetTolerations(object unstructured.Unstructured) ([]corev1.Toleration, erro
 	return nil, nil
 }
 
+func GetPullSecrets(serviceAccountName string, podTemplateSpec *corev1.PodTemplateSpec, serviceAccounts map[string]*corev1.ServiceAccount) []corev1.LocalObjectReference {
+	if serviceAccount, exists := serviceAccounts[serviceAccountName]; exists {
+		if len(serviceAccount.ImagePullSecrets) > 0 {
+			return serviceAccount.ImagePullSecrets
+		}
+	}
+	return podTemplateSpec.Spec.ImagePullSecrets
+}
+
+func ContainsImagePullSecret(imagePullSecrets []corev1.LocalObjectReference, expectedSecret string) bool {
+	for _, secret := range imagePullSecrets {
+		if secret.Name == expectedSecret {
+			return true
+		}
+	}
+	return false
+}
+
 func TestNamespaceOverride(t *testing.T) {
 	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
 	namespaceOverride := "override"
@@ -690,5 +708,74 @@ func TestCustomServiceAccountAnnotations(t *testing.T) {
 				serviceAccount.Name,
 			)
 		}
+	}
+}
+
+func TestCustomImagePullSecrets(t *testing.T) {
+	t.Parallel()
+	valuesFilePath := path.Join(testDataDirectory, "custom-global-config-attributes.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard,
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+	serviceAccounts := make(map[string]*corev1.ServiceAccount)
+
+	for _, renderedObject := range renderedObjects {
+		if renderedObject.GetKind() == "ServiceAccount" {
+			serviceAccount := &corev1.ServiceAccount{}
+
+			err := runtime.DefaultUnstructuredConverter.FromUnstructured(renderedObject.Object, serviceAccount)
+			require.NoError(t, err)
+			serviceAccounts[serviceAccount.GetName()] = serviceAccount
+		}
+	}
+
+	for _, renderedObject := range renderedObjects {
+		kind := renderedObject.GetObjectKind().GroupVersionKind().Kind
+
+		// have a test for service account pull secrets: TestServiceAccountPullSecrets
+		if kind == "ServiceAccount" {
+			continue
+		}
+
+		podTemplateSpec, err := GetPodTemplateSpec(renderedObject)
+		if err != nil {
+			t.Logf("Error getting PodTemplateSpec for object %s: %v", renderedObject.GetName(), err)
+			continue
+		}
+
+		if podTemplateSpec == nil {
+			t.Logf("PodTemplateSpec is nil for object %s", renderedObject.GetName())
+			continue
+		}
+
+		serviceAccountName := podTemplateSpec.Spec.ServiceAccountName
+		actualPullSecrets := GetPullSecrets(serviceAccountName, podTemplateSpec, serviceAccounts)
+
+		require.NotEmpty(t, actualPullSecrets, "%s %s should have imagePullSecrets", kind, renderedObject.GetName())
+		assert.True(
+			t,
+			ContainsImagePullSecret(actualPullSecrets, customImagePullSecrets),
+			"Expected imagePullSecret %v not found in %s. object name: %s; service account: %s",
+			customImagePullSecrets,
+			kind,
+			renderedObject.GetName(),
+			serviceAccountName,
+		)
 	}
 }

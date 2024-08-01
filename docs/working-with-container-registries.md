@@ -18,7 +18,7 @@ kubectl create secret docker-registry ${SECRET_NAME} \
   --docker-password=$(aws ecr-public --region us-east-1 get-login-password)
 ```
 
-After creating the secret one can use it in the following way:
+After creating the secret, one can use it in the following way:
 
 ```yaml
 sumologic:

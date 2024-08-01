@@ -1,8 +1,10 @@
 sumologic:
+  pullSecrets:
+    - name: customImagePullSecrets
+    - name: customImagePullSecrets2
   metrics:
     remoteWriteProxy:
       enabled: true
-
   podLabels:
     customLabelKey: customLabelValue
   podAnnotations:
@@ -10,13 +12,27 @@ sumologic:
   serviceAccount:
     annotations:
       customServiceAccountAnnotationKey: customServiceAccountAnnotationValue
+  setup:
+    job:
+      pullSecrets:
+        - name: customImagePullSecrets
+        - name: customImagePullSecrets2
 
 kube-prometheus-stack:
+  global:
+    imagePullSecrets:
+      - name: customImagePullSecrets
+      - name: customImagePullSecrets2
   kube-state-metrics:
     customLabels:
       customLabelKey: customLabelValue
     podAnnotations:
       customAnnotationsKey: customAnnotationsValue
+    serviceAccount:
+      create: true
+      imagePullSecrets:
+        - name: customImagePullSecrets
+        - name: customImagePullSecrets2
   prometheus:
     enabled: true
     prometheusSpec:
@@ -26,6 +42,11 @@ kube-prometheus-stack:
         annotations:
           customAnnotationsKey: customAnnotationsValue
   prometheus-node-exporter:
+    serviceAccount:
+      create: true
+      imagePullSecrets:
+        - name: customImagePullSecrets
+        - name: customImagePullSecrets2
     podLabels:
       customLabelKey: customLabelValue
     podAnnotations:
@@ -37,9 +58,15 @@ opentelemetry-operator:
       customLabelKey: customLabelValue
     podAnnotations:
       customAnnotationsKey: customAnnotationsValue
+  imagePullSecrets:
+    - name: customImagePullSecrets
+    - name: customImagePullSecrets2
 
 falco:
   enabled: true
+  imagePullSecrets:
+    - name: customImagePullSecrets
+    - name: customImagePullSecrets2
   podLabels:
     customLabelKey: customLabelValue
   podAnnotations:
@@ -51,3 +78,8 @@ prometheus-windows-exporter:
     customLabelKey: customLabelValue
   podAnnotations:
     customAnnotationsKey: customAnnotationsValue
+  serviceAccount:
+    create: true
+    imagePullSecrets:
+      - name: customImagePullSecrets
+      - name: customImagePullSecrets2
