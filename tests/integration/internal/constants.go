@@ -354,19 +354,6 @@ var (
 		"scrape_duration_seconds",
 	}
 
-	// Bucket metrics are completely removed in OTC, but there may be still available in Prometheus
-	BucketMetrics = []string{
-		"etcd_disk_wal_fsync_duration_seconds_bucket",
-		"scheduler_scheduling_attempt_duration_seconds_bucket",
-		"scheduler_scheduling_algorithm_duration_seconds_bucket",
-		"otelcol_processor_groupbyattrs_metric_groups_bucket",
-		"prometheus_remote_storage_sent_batch_duration_seconds_bucket",
-		"otelcol_processor_batch_batch_send_size_bucket",
-		"etcd_disk_backend_commit_duration_seconds_bucket",
-		"coredns_proxy_request_duration_seconds_bucket",
-		"scheduler_framework_extension_point_duration_seconds_bucket",
-	}
-
 	// Some metrics might change over k8s versions
 	versionDependentMetrics = map[*version.Version](struct {
 		before []string
