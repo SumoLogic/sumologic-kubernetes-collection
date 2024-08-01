@@ -16,7 +16,7 @@ filter/drop_unnecessary_metrics:
       - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
 {{- if .Values.sumologic.metrics.dropHistogramBuckets }}
       # drop histograms we've extracted sums and counts from, but don't want the full thing
-      - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
+      - type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM
 {{- end }}
 
 # Prometheus receiver puts all labels in record-level attributes, and we need them in resource
