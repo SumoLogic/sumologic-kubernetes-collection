@@ -130,12 +130,10 @@ var (
 		"kubelet_runtime_operations_duration_seconds_sum",
 	}
 	KubeSchedulerMetrics = []string{
-		"scheduler_scheduling_algorithm_duration_seconds_count",       // not used by any App
-		"scheduler_scheduling_algorithm_duration_seconds_sum",         // used by Kubernetes - Control Plane
-		"scheduler_scheduling_algorithm_duration_seconds_bucket",      // not used by any App
-		"scheduler_framework_extension_point_duration_seconds_bucket", // not used by any App, probably will be used by Kubernetes - Control Plane
-		"scheduler_framework_extension_point_duration_seconds_count",  // not used by any App, probably will be used by Kubernetes - Control Plane
-		"scheduler_framework_extension_point_duration_seconds_sum",    // not used by any App, probably will be used by Kubernetes - Control Plane
+		"scheduler_scheduling_algorithm_duration_seconds_count",      // not used by any App
+		"scheduler_scheduling_algorithm_duration_seconds_sum",        // used by Kubernetes - Control Plane
+		"scheduler_framework_extension_point_duration_seconds_count", // not used by any App, probably will be used by Kubernetes - Control Plane
+		"scheduler_framework_extension_point_duration_seconds_sum",   // not used by any App, probably will be used by Kubernetes - Control Plane
 	}
 	KubeApiServerMetrics = []string{
 		"apiserver_request_total",                  // used by Kubernetes - Control Plane
@@ -146,10 +144,8 @@ var (
 		"etcd_mvcc_db_total_size_in_bytes", // not used by any App
 		"etcd_debugging_store_expires_total",
 		"etcd_debugging_store_watchers",
-		"etcd_disk_backend_commit_duration_seconds_bucket",
 		"etcd_disk_backend_commit_duration_seconds_count",
 		"etcd_disk_backend_commit_duration_seconds_sum",
-		"etcd_disk_wal_fsync_duration_seconds_bucket",
 		"etcd_disk_wal_fsync_duration_seconds_count",
 		"etcd_disk_wal_fsync_duration_seconds_sum",
 		"etcd_grpc_proxy_cache_hits_total",
@@ -237,12 +233,10 @@ var (
 		"otelcol_otelsvc_k8s_pod_table_size",
 		"otelcol_otelsvc_k8s_pod_updated",
 		"otelcol_processor_accepted_metric_points",
-		"otelcol_processor_batch_batch_send_size_bucket",
 		"otelcol_processor_batch_batch_send_size_count",
 		"otelcol_processor_batch_batch_send_size_sum",
 		"otelcol_processor_batch_timeout_trigger_send",
 		"otelcol_processor_dropped_metric_points",
-		"otelcol_processor_groupbyattrs_metric_groups_bucket",
 		"otelcol_processor_groupbyattrs_metric_groups_count",
 		"otelcol_processor_groupbyattrs_metric_groups_sum",
 		"otelcol_processor_groupbyattrs_num_non_grouped_metrics",
@@ -262,7 +256,6 @@ var (
 		"otelcol_processor_refused_log_records",
 		"otelcol_processor_dropped_log_records",
 		"otelcol_processor_groupbyattrs_num_grouped_logs",
-		"otelcol_processor_groupbyattrs_log_groups_bucket",
 		"otelcol_processor_groupbyattrs_log_groups_count",
 		"otelcol_processor_groupbyattrs_log_groups_sum",
 		"otelcol_fileconsumer_reading_files",
@@ -300,7 +293,6 @@ var (
 		"prometheus_remote_storage_samples_pending",
 		"prometheus_remote_storage_samples_retried_total",
 		"prometheus_remote_storage_samples_total",
-		"prometheus_remote_storage_sent_batch_duration_seconds_bucket",
 		"prometheus_remote_storage_sent_batch_duration_seconds_count",
 		"prometheus_remote_storage_sent_batch_duration_seconds_sum",
 		"prometheus_remote_storage_shard_capacity",
@@ -322,7 +314,6 @@ var (
 		"otelcol_http_server_response_content_length",
 		"otelcol_http_server_request_content_length",
 		"otelcol_http_server_duration_count",
-		"otelcol_http_server_duration_bucket",
 		"otelcol_processor_batch_batch_size_trigger_send",
 		"otelcol_processor_filter_datapoints_filtered",
 		"otelcol_otelsvc_k8s_ip_lookup_miss",
@@ -338,10 +329,8 @@ var (
 		// scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
 		"scheduler_e2e_scheduling_duration_seconds_count",
 		"scheduler_e2e_scheduling_duration_seconds_sum",
-		"scheduler_e2e_scheduling_duration_seconds_bucket",
 		"scheduler_scheduling_attempt_duration_seconds_count",
 		"scheduler_scheduling_attempt_duration_seconds_sum",
-		"scheduler_scheduling_attempt_duration_seconds_bucket",
 		"cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile",
 		"cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile",
 		"target_info",
@@ -376,7 +365,6 @@ var (
 			},
 			after: []string{
 				"coredns_proxy_request_duration_seconds_count",
-				"coredns_proxy_request_duration_seconds_bucket",
 				"coredns_proxy_request_duration_seconds_sum",
 			},
 		},
