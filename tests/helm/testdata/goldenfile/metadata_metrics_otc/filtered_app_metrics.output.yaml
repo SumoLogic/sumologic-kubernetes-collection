@@ -69,6 +69,7 @@ data:
           metric:
           - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
           - type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM
+            or type == METRIC_DATA_TYPE_SUMMARY
       groupbyattrs:
         keys:
         - container
