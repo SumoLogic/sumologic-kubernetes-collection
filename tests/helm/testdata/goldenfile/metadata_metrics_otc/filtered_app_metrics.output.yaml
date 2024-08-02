@@ -68,7 +68,8 @@ data:
         metrics:
           metric:
           - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
-          - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
+          - type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM
+            or type == METRIC_DATA_TYPE_SUMMARY or IsMatch(name, ".*_bucket")
       groupbyattrs:
         keys:
         - container
