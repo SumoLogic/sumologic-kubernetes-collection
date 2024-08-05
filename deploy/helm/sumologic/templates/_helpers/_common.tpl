@@ -79,6 +79,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.setup.pods" -}}
+sumologic.com/app: otelcol-events
+{{- end -}}
+
 {{- define "sumologic.labels.app.setup.job" -}}
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
@@ -153,10 +157,6 @@ machineconfiguration.openshift.io/role: worker
 
 {{- define "sumologic.labels.machineconfig.master" -}}
 machineconfiguration.openshift.io/role: master
-{{- end -}}
-
-{{- define "sumologic.labels.otelcol.events" -}}
-sumologic.com/app: otelcol-events
 {{- end -}}
 
 {{/* 
