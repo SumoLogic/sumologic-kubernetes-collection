@@ -115,10 +115,10 @@ spec:
         metric_statements:
         - context: metric
           statements:
-          - extract_sum_metric(true) where type == METRIC_DATA_TYPE_HISTOGRAM or type
-            == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY
-          - extract_count_metric(true) where type == METRIC_DATA_TYPE_HISTOGRAM or type
-            == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY
+          - extract_sum_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM
+            or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+          - extract_count_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM
+            or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
     receivers:
       prometheus:
         config:
