@@ -58,7 +58,7 @@ receivers:
 {{ tpl (.Files.Get "conf/logs/collector/common/filelog_receiver.yaml") . | nindent 2 }}
 {{- end }}
 
-{{- if .Values.sumologic.logs.systemd.enabled }}
+{{- if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
   journald:
     directory: /var/log/journal
     ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
@@ -67,6 +67,7 @@ receivers:
 {{- if .Values.sumologic.logs.systemd.units }}
 {{ toYaml .Values.sumologic.logs.systemd.units | nindent 6 }}
 {{- else }}
+{{- if .Values.sumologic.logs.systemd.enabled }}
       - addon-config.service
       - addon-run.service
       - cfn-etcd-environment.service
@@ -90,7 +91,6 @@ receivers:
       - flanneld.service
       - format-etcd2-volume.service
       - kube-node-taint-and-uncordon.service
-      - kubelet.service
       - ldconfig.service
       - locksmithd.service
       - logrotate.service
@@ -115,6 +115,8 @@ receivers:
       - update-ca-certificates.service
       - user-cloudinit.service
       - var-lib-etcd2.service
+{{- end }}
+      - kubelet.service
 {{- end }}
 {{- end }}
 
