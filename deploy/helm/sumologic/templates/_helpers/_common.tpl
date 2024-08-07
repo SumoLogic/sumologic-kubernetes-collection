@@ -79,6 +79,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.setup.pods" -}}
+sumologic.com/app: setup
+{{- end -}}
+
 {{- define "sumologic.labels.app.setup.job" -}}
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
