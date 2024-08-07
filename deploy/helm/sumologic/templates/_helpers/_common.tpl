@@ -80,7 +80,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.setup.pods" -}}
-sumologic.com/app: otelcol-events
+sumologic.com/app: setup
 {{- end -}}
 
 {{- define "sumologic.labels.app.setup.job" -}}
