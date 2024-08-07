@@ -159,7 +159,7 @@ machineconfiguration.openshift.io/role: worker
 machineconfiguration.openshift.io/role: master
 {{- end -}}
 
-{{/* 
+{{/*
 Generate cleanup job helm.sh annotations. It takes weight as parameter.
 
 Example usage:
