@@ -599,7 +599,7 @@ sumologic:
     ## - kubelet_runtime_operations_duration_seconds
     dropHistogramBuckets: true
 
-    # A regular expression to allow selected histogram metrics, including the buckets.
+    ## A regular expression to allow selected histogram metrics, including the buckets.
     allowHistogramRegex: "^$"
 
     ## A regular expression for namespaces.

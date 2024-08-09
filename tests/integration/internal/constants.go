@@ -140,6 +140,9 @@ var (
 		"apiserver_request_duration_seconds_count", // not used by any App
 		"apiserver_request_duration_seconds_sum",   // not used by any App
 	}
+	KubeApiHistogramMetrics = []string{
+		"apiserver_request_duration_seconds_bucket",
+	}
 	KubeEtcdMetrics = []string{ // used by Kubernetes - Control Plane
 		"etcd_mvcc_db_total_size_in_bytes", // not used by any App
 		"etcd_debugging_store_expires_total",
