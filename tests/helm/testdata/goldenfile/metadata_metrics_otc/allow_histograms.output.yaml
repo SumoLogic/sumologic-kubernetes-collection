@@ -13,8 +13,6 @@ metadata:
 data:
   config.yaml: |
     exporters:
-      debug:
-        verbosity: detailed
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
         decompose_otlp_histograms: true
@@ -46,9 +44,9 @@ data:
         metrics:
           metric:
           - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
-          - (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type
-            == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY
-            or IsMatch(name, ".*_bucket"))
+          - (not IsMatch(name, "^(apiserver_request_duration_seconds)$")) and (type ==
+            METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM
+            or type == METRIC_DATA_TYPE_SUMMARY or IsMatch(name, ".*_bucket"))
       groupbyattrs:
         keys:
         - container
@@ -183,7 +181,6 @@ data:
         metrics:
           exporters:
           - sumologic/default
-          - debug
           processors:
           - memory_limiter
           - metricstransform
