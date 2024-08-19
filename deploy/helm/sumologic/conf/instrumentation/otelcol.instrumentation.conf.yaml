@@ -12,7 +12,7 @@ exporters:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
     ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
     ## Empty string means no compression
-    compress_encoding: gzip
+    compression: gzip
     ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
     max_request_body_size: 1_048_576 # 1MB
     ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
