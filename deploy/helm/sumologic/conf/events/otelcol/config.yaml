@@ -29,7 +29,8 @@ extensions:
     directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}
     timeout: 10s
 {{- end }}
-  health_check: {}
+  health_check:
+    endpoint: ${env:MY_POD_IP}:13133
   pprof: {}
 
 processors:

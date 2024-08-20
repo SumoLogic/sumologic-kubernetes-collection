@@ -32,7 +32,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.102.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.104.0-sumo-1"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/conf/traces.sampler.conf.yaml
@@ -52,6 +52,11 @@ spec:
 
             - name: NO_PROXY
               value: kubernetes.default.svc
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
           resources:
             limits:
               cpu: 2000m

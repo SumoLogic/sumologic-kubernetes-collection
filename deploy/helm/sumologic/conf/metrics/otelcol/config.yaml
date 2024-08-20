@@ -11,7 +11,8 @@ extensions:
     directory: /var/lib/storage/otc
     timeout: 10s
 {{ end }}
-  health_check: {}
+  health_check:
+    endpoint: ${env:MY_POD_IP}:13133
   pprof: {}
 
 processors:
@@ -40,7 +41,7 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: ${env:MY_POD_IP}:4318
 
 service:
   extensions:

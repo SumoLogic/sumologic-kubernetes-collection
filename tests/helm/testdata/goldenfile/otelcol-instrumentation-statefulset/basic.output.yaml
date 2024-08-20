@@ -57,7 +57,7 @@ spec:
         fsGroup: 999
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.102.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.104.0-sumo-1"
           imagePullPolicy: IfNotPresent
           args:
             - "--config=/conf/otelcol.instrumentation.conf.yaml"
@@ -117,3 +117,9 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-metrics
+
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP

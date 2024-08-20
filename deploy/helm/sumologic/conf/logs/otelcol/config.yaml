@@ -95,7 +95,8 @@ exporters:
 {{- end }}
 
 extensions:
-  health_check: {}
+  health_check:
+    endpoint: ${env:MY_POD_IP}:13133
 {{ if .Values.metadata.persistence.enabled }}
   ## Configuration for File Storage extension
   file_storage:
@@ -509,7 +510,7 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: ${env:MY_POD_IP}:4318
 {{ end }}
 
 service:

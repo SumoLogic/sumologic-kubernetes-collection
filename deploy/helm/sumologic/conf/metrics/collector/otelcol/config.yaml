@@ -15,7 +15,8 @@ exporters:
     disable_keep_alives: true
 
 extensions:
-  health_check: {}
+  health_check:
+    endpoint: ${env:MY_POD_IP}:13133
   pprof: {}
   file_storage:
     directory: /var/lib/storage/otc

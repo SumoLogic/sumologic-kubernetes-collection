@@ -134,7 +134,8 @@ data:
           on_rebound: true
         directory: /var/lib/storage/otc
         timeout: 10s
-      health_check: {}
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
       batch:
@@ -305,7 +306,7 @@ data:
       otlp:
         protocols:
           http:
-            endpoint: 0.0.0.0:4318
+            endpoint: ${env:MY_POD_IP}:4318
       telegraf:
         agent_config: |
           [agent]

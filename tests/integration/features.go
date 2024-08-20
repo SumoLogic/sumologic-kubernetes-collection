@@ -134,7 +134,6 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 				// drop some unnecessary labels
 				delete(expectedLabels, "prometheus_service")
-
 				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
 			},
 		).
@@ -245,7 +244,10 @@ func addCollectorSpecificMetricLabels(labels sumologicmock.Labels, releaseName s
 		"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
 	}
 	otelcolLabels := sumologicmock.Labels{
-		"_collector": "kubernetes",
+		"_collector":     "kubernetes",
+		"server.address": ".*",
+		"server.port":    ".*",
+		"url.scheme":     ".*",
 	}
 
 	if collector == Prometheus {
