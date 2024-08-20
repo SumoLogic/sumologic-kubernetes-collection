@@ -493,6 +493,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "pod-ip" -}}
+- name: MY_POD_IP
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: status.podIP
+{{- end -}}
+
 {{/*
 Pod anti affinity "hard"
 

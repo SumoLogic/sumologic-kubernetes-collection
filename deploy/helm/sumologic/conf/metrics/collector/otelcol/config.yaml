@@ -15,7 +15,8 @@ exporters:
     disable_keep_alives: true
 
 extensions:
-  health_check: {}
+  health_check:
+    endpoint: ${env:MY_POD_IP}:13133
   pprof: {}
   file_storage:
     directory: /var/lib/storage/otc
@@ -199,7 +200,7 @@ service:
     logs:
       level: {{ .Values.metadata.metrics.logLevel }}
     metrics:
-      address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
+      address: ${env:MY_POD_IP}:8888 # this is the default, but setting it explicitly lets the operator add it automatically
   extensions:
     - health_check
     - pprof

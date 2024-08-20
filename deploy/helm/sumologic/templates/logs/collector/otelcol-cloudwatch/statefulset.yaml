@@ -117,4 +117,5 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+{{- include "pod-ip" . | nindent 8 -}}
 {{- end }}
