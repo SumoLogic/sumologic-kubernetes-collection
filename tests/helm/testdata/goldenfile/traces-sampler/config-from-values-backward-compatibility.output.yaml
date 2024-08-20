@@ -1,6 +1,5 @@
 ---
 # Source: sumologic/templates/instrumentation/traces-sampler/configmap.yaml
-# Just a part of the config is present here for test purposes. In practice whole config from values.yaml should be a content.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -22,7 +21,8 @@ data:
           num_consumers: 10
           queue_size: 10000
     extensions:
-      health_check: {}
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
       memory_ballast:
         size_mib: 683
       pprof: {}
@@ -41,9 +41,9 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: 0.0.0.0:4317
+            endpoint: ${env:MY_POD_IP}:4317
           http:
-            endpoint: 0.0.0.0:4318
+            endpoint: ${env:MY_POD_IP}:4318
     service:
       extensions:
       - health_check

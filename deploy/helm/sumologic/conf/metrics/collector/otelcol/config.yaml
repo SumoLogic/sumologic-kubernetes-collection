@@ -200,7 +200,7 @@ service:
     logs:
       level: {{ .Values.metadata.metrics.logLevel }}
     metrics:
-      address: ${env:MY_POD_IP}:8888 # this is the default, but setting it explicitly lets the operator add it automatically
+      address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
   extensions:
     - health_check
     - pprof

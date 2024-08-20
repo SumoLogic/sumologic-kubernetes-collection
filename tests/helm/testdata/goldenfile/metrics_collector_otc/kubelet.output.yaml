@@ -13,7 +13,7 @@ metadata:
     heritage: "Helm"
     sumologic.com/scrape: "true"
 spec:
-  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.102.1-sumo-0"
+  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.104.0-sumo-1"
   mode: statefulset
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
@@ -48,6 +48,11 @@ spec:
       valueFrom:
         fieldRef:
           fieldPath: metadata.namespace
+    - name: MY_POD_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
   podAnnotations:
     ## The operator adds this annotation by default, but we use our own ServiceMonitor
     prometheus.io/scrape: "false"
@@ -89,7 +94,8 @@ spec:
           on_rebound: true
         directory: /var/lib/storage/otc
         timeout: 10s
-      health_check: {}
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
       batch:

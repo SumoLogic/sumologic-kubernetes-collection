@@ -47,7 +47,7 @@ spec:
       containers:
         - args:
             - --config=/etc/otelcol/config.yaml
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.102.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.104.0-sumo-1"
           imagePullPolicy: IfNotPresent
           name: otelcol
           livenessProbe:
@@ -89,6 +89,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
           securityContext:
             capabilities:
               drop:
