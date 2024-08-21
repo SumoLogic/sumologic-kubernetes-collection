@@ -89,6 +89,11 @@ var (
 		"kube_statefulset_status_replicas",
 		"kube_statefulset_replicas",
 		"kube_statefulset_metadata_generation",
+		"kube_horizontalpodautoscaler_status_desired_replicas",
+		"kube_horizontalpodautoscaler_status_current_replicas",
+		"kube_horizontalpodautoscaler_status_condition",
+		"kube_horizontalpodautoscaler_spec_min_replicas",
+		"kube_horizontalpodautoscaler_spec_max_replicas",
 	}
 	KubeDaemonSetMetrics = []string{
 		"kube_daemonset_status_current_number_scheduled", // used by Kubernetes App
