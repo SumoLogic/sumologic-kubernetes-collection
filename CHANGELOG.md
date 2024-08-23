@@ -7,6 +7,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.10.0]
+
+### Released 2024-08-22
+
+### Breaking Changes
+
+- feat: Do not send any histogram or summary metric [#3818]
+
+### Added
+
+- feat(metrics): Define allowlist for histogram metrics [#3821]
+
+### Changed
+
+- test: Added custom pod label tests for global configuration attributes [#3795]
+- test: Added custom pod annotation tests for global configuration attributes [#3802]
+- test: Added custom service account annotation tests for global configuration attributes [#3803]
+- feat: add support for kubernetes 1.30 for GKE [#3804]
+- feat: add support for kubernetes 1.30 for EKS [#3804]
+- feat: add support for kubernetes 1.30 for AKS [#3804]
+- feat: add support for kubernetes 4.16 for OpenShift [#3804]
+- test: Added custom image pull secrets tests for global configuration attributes [#3808]
+- chore: update OpenTelemetry Collector to 0.104.0-sumo-1 [#3829]
+
+### Fixed
+
+- fix(logs): do not add exporters mutliple times to the pipeline [#3796]
+- fix(metrics): Correct the name of k8s hpa metrics (part of kube-state-metrics) [#3832]
+
+[#3821]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3821
+[#3795]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3795
+[#3802]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3802
+[#3803]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3803
+[#3804]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3804
+[#3808]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3808
+[#3818]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3818
+[#3829]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3829
+[#3796]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3796
+[#3832]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3832
+[v4.10.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.10.0
+
 ## [v4.9.0]
 
 ### Released 2024-07-01
