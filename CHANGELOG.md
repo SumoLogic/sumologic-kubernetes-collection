@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [v4.10.0]
 
-### Released 2024-08-22
+### Released 2024-08-23
 
 ### Breaking Changes
 
@@ -21,14 +21,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- test: Added custom pod label tests for global configuration attributes [#3795]
-- test: Added custom pod annotation tests for global configuration attributes [#3802]
-- test: Added custom service account annotation tests for global configuration attributes [#3803]
+- feat: Add support for custom pod label as global configuration [#3795]
+- feat: Add support for custom pod annotation as global configuration [#3802]
+- feat: Add support for custom service account annotation as global configuration [#3803]
 - feat: add support for kubernetes 1.30 for GKE [#3804]
 - feat: add support for kubernetes 1.30 for EKS [#3804]
 - feat: add support for kubernetes 1.30 for AKS [#3804]
 - feat: add support for kubernetes 4.16 for OpenShift [#3804]
-- test: Added custom image pull secrets tests for global configuration attributes [#3808]
+- feat: Add support for custom image pull secrets tests as global configuration [#3808]
 - chore: update OpenTelemetry Collector to 0.104.0-sumo-1 [#3829]
 
 ### Fixed
