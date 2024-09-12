@@ -588,7 +588,9 @@ service:
 {{- end }}
       receivers:
         - otlp
+{{- end }}
 
+{{ if .Values.sumologic.logs.systemd.enabled}}
     logs/otlp/systemd:
       exporters:
 {{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
