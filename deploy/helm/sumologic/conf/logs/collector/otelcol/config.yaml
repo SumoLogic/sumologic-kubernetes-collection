@@ -118,8 +118,8 @@ receivers:
 {{- end }}
 {{- end }}
 {{- if .Values.sumologic.logs.kubelet.enabled }}
-      - kubelet.service
-{{- end }}   
+      - snap.microk8s.daemon-kubelite.service
+{{- end }}
 {{- end }}
 
 service:
@@ -140,7 +140,7 @@ service:
       receivers:
         - filelog/containers
 {{- end }}
-{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled}}
+{{- if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}}
     logs/systemd:
       exporters:
         - otlphttp
