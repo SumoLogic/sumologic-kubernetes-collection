@@ -32,7 +32,7 @@ exporters:
 
 {{- end }}
 
-{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled}}
+{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
   sumologic/systemd:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     log_format: json
@@ -108,7 +108,7 @@ extensions:
   pprof: {}
 
 processors:
-{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled}}
+{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
   attributes/extract_systemd_source_fields:
     actions:
       - action: extract
@@ -140,7 +140,7 @@ processors:
         match_type: strict
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: kubelet.service
+            value: snap.microk8s.daemon-kubelite.service
 {{ end }}
 
 {{ if .Values.sumologic.logs.kubelet.enabled }}
@@ -233,7 +233,7 @@ processors:
             value: .+
 {{ end }}
 
-{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled}}
+{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
   filter/include_fluent_tag_host:
     logs:
       include:
@@ -250,7 +250,7 @@ processors:
         match_type: strict
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: kubelet.service
+            value: snap.microk8s.daemon-kubelite.service
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
@@ -273,7 +273,7 @@ processors:
       - _collector
 {{ end }}
 
-{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled}}
+{{ if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
   groupbyattrs/systemd:
     keys:
       - _sourceName
@@ -509,7 +509,7 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: ${env:MY_POD_IP}:4318
 {{ end }}
 
 service:
