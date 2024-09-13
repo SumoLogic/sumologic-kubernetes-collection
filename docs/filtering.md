@@ -280,6 +280,18 @@ sumologic:
 
 ## Metrics
 
+### Allow Histogram metrics
+
+All Histogram metrics are now dropped by default. To allow histogram metrics, please use the following regex
+
+```yaml
+sumologic:
+  metrics:
+    allowHistogramRegex: "^(apiserver_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$"
+```
+
+**Note**: Please use the base metric name to allow histogram metrics.
+
 ### Filter out app metrics
 
 We have defined some default filters to drop app metrics that are not relevant for Sumo Logic dashboards. To enable these filters, add the

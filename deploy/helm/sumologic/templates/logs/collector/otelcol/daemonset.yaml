@@ -127,6 +127,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+{{- include "pod-ip" . | nindent 8 -}}
 {{- if $daemonset.extraEnvVars }}
 {{ toYaml $daemonset.extraEnvVars | nindent 8 }}
 {{- end }}

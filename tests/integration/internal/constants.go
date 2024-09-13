@@ -89,6 +89,11 @@ var (
 		"kube_statefulset_status_replicas",
 		"kube_statefulset_replicas",
 		"kube_statefulset_metadata_generation",
+		"kube_horizontalpodautoscaler_status_desired_replicas",
+		"kube_horizontalpodautoscaler_status_current_replicas",
+		"kube_horizontalpodautoscaler_status_condition",
+		"kube_horizontalpodautoscaler_spec_min_replicas",
+		"kube_horizontalpodautoscaler_spec_max_replicas",
 	}
 	KubeDaemonSetMetrics = []string{
 		"kube_daemonset_status_current_number_scheduled", // used by Kubernetes App
@@ -139,6 +144,9 @@ var (
 		"apiserver_request_total",                  // used by Kubernetes - Control Plane
 		"apiserver_request_duration_seconds_count", // not used by any App
 		"apiserver_request_duration_seconds_sum",   // not used by any App
+	}
+	KubeApiHistogramMetrics = []string{
+		"apiserver_request_duration_seconds_bucket",
 	}
 	KubeEtcdMetrics = []string{ // used by Kubernetes - Control Plane
 		"etcd_mvcc_db_total_size_in_bytes", // not used by any App
@@ -233,6 +241,7 @@ var (
 		"otelcol_otelsvc_k8s_pod_table_size",
 		"otelcol_otelsvc_k8s_pod_updated",
 		"otelcol_processor_accepted_metric_points",
+		"otelcol_processor_inserted_metric_points",
 		"otelcol_processor_batch_batch_send_size_count",
 		"otelcol_processor_batch_batch_send_size_sum",
 		"otelcol_processor_batch_timeout_trigger_send",
@@ -252,6 +261,7 @@ var (
 		"otelcol_processor_filter_logs_filtered",
 		"otelcol_receiver_accepted_log_records",
 		"otelcol_processor_accepted_log_records",
+		"otelcol_processor_inserted_log_records",
 		"otelcol_receiver_refused_log_records",
 		"otelcol_processor_refused_log_records",
 		"otelcol_processor_dropped_log_records",

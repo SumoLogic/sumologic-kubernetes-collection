@@ -118,3 +118,9 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-metrics
+
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP

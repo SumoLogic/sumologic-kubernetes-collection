@@ -34,7 +34,8 @@ data:
           on_rebound: true
         directory: /var/lib/storage/otc
         timeout: 10s
-      health_check: {}
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
       batch:
@@ -46,8 +47,9 @@ data:
         metrics:
           metric:
           - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
-          - type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM
-            or type == METRIC_DATA_TYPE_SUMMARY or IsMatch(name, ".*_bucket")
+          - (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type
+            == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY
+            or IsMatch(name, ".*_bucket"))
       groupbyattrs:
         keys:
         - container
@@ -157,7 +159,7 @@ data:
       otlp:
         protocols:
           http:
-            endpoint: 0.0.0.0:4318
+            endpoint: ${env:MY_POD_IP}:4318
       telegraf:
         agent_config: |
           [agent]

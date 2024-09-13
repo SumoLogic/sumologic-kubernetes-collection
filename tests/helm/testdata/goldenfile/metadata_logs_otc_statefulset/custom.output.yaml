@@ -123,6 +123,11 @@ spec:
 
             - name: NO_PROXY
               value: kubernetes.default.svc
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
             - name: VALUE_FROM_SECRET
               valueFrom:
                 secretKeyRef:

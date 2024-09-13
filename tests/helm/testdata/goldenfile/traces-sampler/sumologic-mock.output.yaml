@@ -26,7 +26,8 @@ data:
         compression: gzip
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
     extensions:
-      health_check: {}
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
       memory_ballast:
         size_mib: 683
       pprof: {}
@@ -45,9 +46,9 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: 0.0.0.0:4317
+            endpoint: ${env:MY_POD_IP}:4317
           http:
-            endpoint: 0.0.0.0:4318
+            endpoint: ${env:MY_POD_IP}:4318
     service:
       extensions:
       - health_check

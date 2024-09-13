@@ -79,6 +79,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.setup.pods" -}}
+sumologic.com/app: setup
+{{- end -}}
+
 {{- define "sumologic.labels.app.setup.job" -}}
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
@@ -487,6 +491,14 @@ Example Usage:
 - name: NO_PROXY
   value: {{ .Values.sumologic.noProxy }}
 {{- end -}}
+{{- end -}}
+
+{{- define "pod-ip" -}}
+- name: MY_POD_IP
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: status.podIP
 {{- end -}}
 
 {{/*

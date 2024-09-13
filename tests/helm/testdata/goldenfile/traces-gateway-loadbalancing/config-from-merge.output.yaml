@@ -28,7 +28,8 @@ data:
             hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
             port: 4317
     extensions:
-      health_check: {}
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
       memory_ballast:
         size_mib: 256
       pprof: {}
@@ -45,9 +46,9 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: 0.0.0.0:4317
+            endpoint: ${env:MY_POD_IP}:4317
           http:
-            endpoint: 0.0.0.0:4318
+            endpoint: ${env:MY_POD_IP}:4318
     service:
       extensions:
       - health_check

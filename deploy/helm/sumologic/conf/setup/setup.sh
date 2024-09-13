@@ -40,7 +40,7 @@ function fix_sumo_base_url() {
           | grep -Fi location )"
 
   if [[ ! ${OPTIONAL_REDIRECTION} =~ ^\s*$ ]]; then
-    BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)?\.sumologic\.com\/api\/).*/\1/' )
+    BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|us2)?\.sumologic\.com\/api\/).*/\1/' )
   fi
 
   BASE_URL=${BASE_URL%v1*}

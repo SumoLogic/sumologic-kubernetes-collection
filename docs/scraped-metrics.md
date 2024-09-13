@@ -32,163 +32,119 @@
 
 ## Metrics
 
-The following table contains information about metrics scraped by Sumo Logic's Prometheus:
+The following table contains information about metrics scraped by Sumo Logic's metrics collector:
 
 - name - name of the metric
 - source - originated source of the metric
-- forwarded - `yes` if metric is being forwarded to Sumo Logic
 
-| name                                                     | source             | forwarded |
-| -------------------------------------------------------- | ------------------ | --------- |
-| `apiserver_request_count`                                | apiserver          | yes       |
-| `apiserver_request_total`                                | apiserver          | yes       |
-| `apiserver_request_duration_seconds_count`               | apiserver          | yes       |
-| `apiserver_request_duration_seconds_bucket`              | apiserver          | no        |
-| `apiserver_request_duration_seconds_sum`                 | apiserver          | yes       |
-| `apiserver_request_latencies_count`                      | apiserver          | yes       |
-| `apiserver_request_latencies_sum`                        | apiserver          | yes       |
-| `apiserver_request_latencies_summary`                    | apiserver          | yes       |
-| `apiserver_request_latencies_summary_count`              | apiserver          | yes       |
-| `apiserver_request_latencies_summary_sum`                | apiserver          | yes       |
-| `kubelet_docker_operations_errors`                       | kubelet            | yes       |
-| `kubelet_docker_operations_errors_total`                 | kubelet            | yes       |
-| `kubelet_docker_operations_duration_seconds_count`       | kubelet            | yes       |
-| `kubelet_docker_operations_duration_seconds_sum`         | kubelet            | yes       |
-| `kubelet_runtime_operations_duration_seconds_count`      | kubelet            | yes       |
-| `kubelet_runtime_operations_duration_seconds_sum`        | kubelet            | yes       |
-| `kubelet_running_container_count`                        | kubelet            | yes       |
-| `kubelet_running_containers`                             | kubelet            | yes       |
-| `kubelet_running_pod_count`                              | kubelet            | yes       |
-| `kubelet_running_pods`                                   | kubelet            | yes       |
-| `kubelet_docker_operations_latency_microseconds`         | kubelet            | yes       |
-| `kubelet_docker_operations_latency_microseconds_count`   | kubelet            | yes       |
-| `kubelet_docker_operations_latency_microseconds_sum`     | kubelet            | yes       |
-| `kubelet_runtime_operations_latency_microseconds`        | kubelet            | yes       |
-| `kubelet_runtime_operations_latency_microseconds_count`  | kubelet            | yes       |
-| `kubelet_runtime_operations_latency_microseconds_sum`    | kubelet            | yes       |
-| `container_cpu_usage_seconds_total`                      | cadvisor           | yes       |
-| `container_fs_limit_bytes`                               | cadvisor           | yes       |
-| `container_fs_usage_bytes`                               | cadvisor           | yes       |
-| `container_memory_working_set_bytes`                     | cadvisor           | yes       |
-| `container_cpu_cfs_throttled_seconds_total`              | cadvisor           | yes       |
-| `container_network_receive_bytes_total`                  | cadvisor           | yes       |
-| `container_network_transmit_bytes_total`                 | cadvisor           | yes       |
-| `cloudprovider_aws_api_request_duration_seconds_bucket`  | kube-controller    | yes       |
-| `cloudprovider_aws_api_request_duration_seconds_count`   | kube-controller    | yes       |
-| `cloudprovider_aws_api_request_duration_seconds_sum`     | kube-controller    | yes       |
-| `coredns_cache_size`                                     | coredns            | yes       |
-| `coredns_cache_entries`                                  | coredns            | yes       |
-| `coredns_cache_hits_total`                               | coredns            | yes       |
-| `coredns_cache_misses_total`                             | coredns            | yes       |
-| `coredns_dns_request_duration_seconds_count`             | coredns            | yes       |
-| `coredns_dns_request_duration_seconds_sum`               | coredns            | yes       |
-| `coredns_dns_request_count_total`                        | coredns            | yes       |
-| `coredns_dns_requests_total`                             | coredns            | yes       |
-| `coredns_dns_response_rcode_count_total`                 | coredns            | yes       |
-| `coredns_dns_responses_total`                            | coredns            | yes       |
-| `coredns_forward_request_count_total`                    | coredns            | yes       |
-| `coredns_forward_requests_total`                         | coredns            | yes       |
-| `coredns_proxy_request_duration_seconds_sum`             | coredns            | yes       |
-| `coredns_proxy_request_duration_seconds_count`           | coredns            | yes       |
-| `coredns_proxy_request_duration_seconds_bucket`          | coredns            | yes       |
-| `process_cpu_seconds_total`                              | coredns            | yes       |
-| `process_open_fds`                                       | coredns            | yes       |
-| `process_resident_memory_bytes`                          | coredns            | yes       |
-| `etcd_request_cache_get_duration_seconds_count`          | kube-etcd          | yes       |
-| `etcd_request_cache_get_duration_seconds_sum`            | kube-etcd          | yes       |
-| `etcd_request_cache_add_duration_seconds_count`          | kube-etcd          | yes       |
-| `etcd_request_cache_add_duration_seconds_sum`            | kube-etcd          | yes       |
-| `etcd_request_cache_add_latencies_summary_count`         | kube-etcd          | yes       |
-| `etcd_request_cache_add_latencies_summary_sum`           | kube-etcd          | yes       |
-| `etcd_request_cache_get_latencies_summary_count`         | kube-etcd          | yes       |
-| `etcd_request_cache_get_latencies_summary_sum`           | kube-etcd          | yes       |
-| `etcd_helper_cache_hit_count`                            | kube-etcd          | yes       |
-| `etcd_helper_cache_hit_total`                            | kube-etcd          | yes       |
-| `etcd_helper_cache_miss_count`                           | kube-etcd          | yes       |
-| `etcd_helper_cache_miss_total`                           | kube-etcd          | yes       |
-| `etcd_debugging_mvcc_db_total_size_in_bytes`             | etcd-server        | yes       |
-| `etcd_debugging_store_expires_total`                     | etcd-server        | yes       |
-| `etcd_debugging_store_watchers`                          | etcd-server        | yes       |
-| `etcd_disk_backend_commit_duration_seconds_bucket`       | etcd-server        | yes       |
-| `etcd_disk_wal_fsync_duration_seconds_bucket`            | etcd-server        | yes       |
-| `etcd_grpc_proxy_cache_hits_total`                       | etcd-server        | yes       |
-| `etcd_grpc_proxy_cache_misses_total`                     | etcd-server        | yes       |
-| `etcd_network_client_grpc_received_bytes_total`          | etcd-server        | yes       |
-| `etcd_network_client_grpc_sent_bytes_total`              | etcd-server        | yes       |
-| `etcd_server_has_leader`                                 | etcd-server        | yes       |
-| `etcd_server_leader_changes_seen_total`                  | etcd-server        | yes       |
-| `etcd_server_proposals_applied_total`                    | etcd-server        | yes       |
-| `etcd_server_proposals_committed_total`                  | etcd-server        | yes       |
-| `etcd_server_proposals_failed_total`                     | etcd-server        | yes       |
-| `etcd_server_proposals_pending`                          | etcd-server        | yes       |
-| `process_cpu_seconds_total`                              | etcd-server        | yes       |
-| `process_open_fds`                                       | etcd-server        | yes       |
-| `process_resident_memory_bytes`                          | etcd-server        | yes       |
-| `scheduler` metrics_latency_microseconds                 | kube-scheduler     | yes       |
-| `scheduler_e2e_scheduling_duration_seconds_bucket`       | kube-scheduler     | yes       |
-| `scheduler_e2e_scheduling_duration_seconds_count`        | kube-scheduler     | yes       |
-| `scheduler_e2e_scheduling_duration_seconds_sum`          | kube-scheduler     | yes       |
-| `scheduler_binding_duration_seconds_bucket`              | kube-scheduler     | no        |
-| `scheduler_binding_duration_seconds_count`               | kube-scheduler     | yes       |
-| `scheduler_binding_duration_seconds_sum`                 | kube-scheduler     | yes       |
-| `scheduler_scheduling_algorithm_duration_seconds_bucket` | kube-scheduler     | no        |
-| `scheduler_scheduling_algorithm_duration_seconds_count`  | kube-scheduler     | yes       |
-| `scheduler_scheduling_algorithm_duration_seconds_sum`    | kube-scheduler     | yes       |
-| `kube_daemonset_status_current_number_scheduled`         | kube-state-metrics | yes       |
-| `kube_daemonset_status_desired_number_scheduled`         | kube-state-metrics | yes       |
-| `kube_daemonset_status_number_misscheduled`              | kube-state-metrics | yes       |
-| `kube_daemonset_status_number_unavailable`               | kube-state-metrics | yes       |
-| `kube_deployment_spec_replicas`                          | kube-state-metrics | yes       |
-| `kube_deployment_status_replicas_available`              | kube-state-metrics | yes       |
-| `kube_deployment_status_replicas_unavailable`            | kube-state-metrics | yes       |
-| `kube_node_info`                                         | kube-state-metrics | yes       |
-| `kube_node_status_allocatable`                           | kube-state-metrics | yes       |
-| `kube_node_status_capacity`                              | kube-state-metrics | yes       |
-| `kube_node_status_condition`                             | kube-state-metrics | yes       |
-| `kube_statefulset_metadata_generation`                   | kube-state-metrics | yes       |
-| `kube_statefulset_replicas`                              | kube-state-metrics | yes       |
-| `kube_statefulset_status_observed_generation`            | kube-state-metrics | yes       |
-| `kube_statefulset_status_replicas`                       | kube-state-metrics | yes       |
-| `kube_hpa_spec_max_replicas`                             | kube-state-metrics | yes       |
-| `kube_hpa_spec_min_replicas`                             | kube-state-metrics | yes       |
-| `kube_hpa_status_condition`                              | kube-state-metrics | yes       |
-| `kube_hpa_status_current_replicas`                       | kube-state-metrics | yes       |
-| `kube_hpa_status_desired_replicas`                       | kube-state-metrics | yes       |
-| `kube` pod state metrics                                 | kube-state-metrics | yes       |
-| `kube_pod_container_info`                                | kube-state-metrics | yes       |
-| `kube_pod_container_resource_limits`                     | kube-state-metrics | yes       |
-| `kube_pod_container_resource_requests`                   | kube-state-metrics | yes       |
-| `kube_pod_container_status_ready`                        | kube-state-metrics | yes       |
-| `kube_pod_container_status_restarts_total`               | kube-state-metrics | yes       |
-| `kube_pod_container_status_terminated_reason`            | kube-state-metrics | yes       |
-| `kube_pod_container_status_waiting_reason`               | kube-state-metrics | yes       |
-| `kube_pod_status_phase`                                  | kube-state-metrics | yes       |
-| `kube_pod_info`                                          | kube-state-metrics | yes       |
-| `kube_service_info`                                      | kube-state-metrics | yes       |
-| `kube_service_spec_external_ip`                          | kube-state-metrics | yes       |
-| `kube_service_spec_type`                                 | kube-state-metrics | yes       |
-| `kube_service_status_load_balancer_ingress`              | kube-state-metrics | yes       |
-| `node_cpu_seconds_total`                                 | node-exporter      | yes       |
-| `node_load1`                                             | node-exporter      | yes       |
-| `node_load5`                                             | node-exporter      | yes       |
-| `node_load15`                                            | node-exporter      | yes       |
-| `node_disk_io_time_weighted_seconds_total`               | node-exporter      | yes       |
-| `node_disk_io_time_seconds_total`                        | node-exporter      | yes       |
-| `node_vmstat_pgpgin`                                     | node-exporter      | yes       |
-| `node_vmstat_pgpgout`                                    | node-exporter      | yes       |
-| `node_memory_MemFree_bytes`                              | node-exporter      | yes       |
-| `node_memory_MemAvailable_bytes`                         | node-exporter      | yes       |
-| `node_memory_Cached_bytes`                               | node-exporter      | yes       |
-| `node_memory_Buffers_bytes`                              | node-exporter      | yes       |
-| `node_memory_MemTotal_bytes`                             | node-exporter      | yes       |
-| `node_network_receive_drop_total`                        | node-exporter      | yes       |
-| `node_network_transmit_drop_total`                       | node-exporter      | yes       |
-| `node_network_receive_bytes_total`                       | node-exporter      | yes       |
-| `node_network_transmit_bytes_total`                      | node-exporter      | yes       |
-| `node_filesystem_avail_bytes`                            | node-exporter      | yes       |
-| `node_filesystem_size_bytes`                             | node-exporter      | yes       |
-| `node_filesystem_files_free`                             | node-exporter      | yes       |
-| `node_filesystem_files`                                  | node-exporter      | yes       |
+| name                                                   | source             |
+| ------------------------------------------------------ | ------------------ |
+| `apiserver_request_count`                              | apiserver          |
+| `apiserver_request_total`                              | apiserver          |
+| `kubelet_docker_operations_errors`                     | kubelet            |
+| `kubelet_docker_operations_errors_total`               | kubelet            |
+| `kubelet_running_container_count`                      | kubelet            |
+| `kubelet_running_containers`                           | kubelet            |
+| `kubelet_running_pod_count`                            | kubelet            |
+| `kubelet_running_pods`                                 | kubelet            |
+| `kubelet_docker_operations_latency_microseconds`       | kubelet            |
+| `kubelet_runtime_operations_latency_microseconds`      | kubelet            |
+| `container_cpu_usage_seconds_total`                    | cadvisor           |
+| `container_fs_limit_bytes`                             | cadvisor           |
+| `container_fs_usage_bytes`                             | cadvisor           |
+| `container_memory_working_set_bytes`                   | cadvisor           |
+| `container_cpu_cfs_throttled_seconds_total`            | cadvisor           |
+| `container_network_receive_bytes_total`                | cadvisor           |
+| `container_network_transmit_bytes_total`               | cadvisor           |
+| `coredns_cache_size`                                   | coredns            |
+| `coredns_cache_entries`                                | coredns            |
+| `coredns_cache_hits_total`                             | coredns            |
+| `coredns_cache_misses_total`                           | coredns            |
+| `coredns_dns_request_count_total`                      | coredns            |
+| `coredns_dns_requests_total`                           | coredns            |
+| `coredns_dns_response_rcode_count_total`               | coredns            |
+| `coredns_dns_responses_total`                          | coredns            |
+| `coredns_forward_request_count_total`                  | coredns            |
+| `coredns_forward_requests_total`                       | coredns            |
+| `process_cpu_seconds_total`                            | coredns            |
+| `process_open_fds`                                     | coredns            |
+| `process_resident_memory_bytes`                        | coredns            |
+| `etcd_helper_cache_hit_count`                          | kube-etcd          |
+| `etcd_helper_cache_hit_total`                          | kube-etcd          |
+| `etcd_helper_cache_miss_count`                         | kube-etcd          |
+| `etcd_helper_cache_miss_total`                         | kube-etcd          |
+| `etcd_debugging_mvcc_db_total_size_in_bytes`           | etcd-server        |
+| `etcd_debugging_store_expires_total`                   | etcd-server        |
+| `etcd_debugging_store_watchers`                        | etcd-server        |
+| `etcd_grpc_proxy_cache_hits_total`                     | etcd-server        |
+| `etcd_grpc_proxy_cache_misses_total`                   | etcd-server        |
+| `etcd_network_client_grpc_received_bytes_total`        | etcd-server        |
+| `etcd_network_client_grpc_sent_bytes_total`            | etcd-server        |
+| `etcd_server_has_leader`                               | etcd-server        |
+| `etcd_server_leader_changes_seen_total`                | etcd-server        |
+| `etcd_server_proposals_applied_total`                  | etcd-server        |
+| `etcd_server_proposals_committed_total`                | etcd-server        |
+| `etcd_server_proposals_failed_total`                   | etcd-server        |
+| `etcd_server_proposals_pending`                        | etcd-server        |
+| `process_cpu_seconds_total`                            | etcd-server        |
+| `process_open_fds`                                     | etcd-server        |
+| `process_resident_memory_bytes`                        | etcd-server        |
+| `scheduler` metrics_latency_microseconds               | kube-scheduler     |
+| `kube_daemonset_status_current_number_scheduled`       | kube-state-metrics |
+| `kube_daemonset_status_desired_number_scheduled`       | kube-state-metrics |
+| `kube_daemonset_status_number_misscheduled`            | kube-state-metrics |
+| `kube_daemonset_status_number_unavailable`             | kube-state-metrics |
+| `kube_deployment_spec_replicas`                        | kube-state-metrics |
+| `kube_deployment_status_replicas_available`            | kube-state-metrics |
+| `kube_deployment_status_replicas_unavailable`          | kube-state-metrics |
+| `kube_node_info`                                       | kube-state-metrics |
+| `kube_node_status_allocatable`                         | kube-state-metrics |
+| `kube_node_status_capacity`                            | kube-state-metrics |
+| `kube_node_status_condition`                           | kube-state-metrics |
+| `kube_statefulset_metadata_generation`                 | kube-state-metrics |
+| `kube_statefulset_replicas`                            | kube-state-metrics |
+| `kube_statefulset_status_observed_generation`          | kube-state-metrics |
+| `kube_statefulset_status_replicas`                     | kube-state-metrics |
+| `kube_horizontalpodautoscaler_spec_max_replicas`       | kube-state-metrics |
+| `kube_horizontalpodautoscaler_spec_min_replicas`       | kube-state-metrics |
+| `kube_horizontalpodautoscaler_status_condition`        | kube-state-metrics |
+| `kube_horizontalpodautoscaler_status_current_replicas` | kube-state-metrics |
+| `kube_horizontalpodautoscaler_status_desired_replicas` | kube-state-metrics |
+| `kube` pod state metrics                               | kube-state-metrics |
+| `kube_pod_container_info`                              | kube-state-metrics |
+| `kube_pod_container_resource_limits`                   | kube-state-metrics |
+| `kube_pod_container_resource_requests`                 | kube-state-metrics |
+| `kube_pod_container_status_ready`                      | kube-state-metrics |
+| `kube_pod_container_status_restarts_total`             | kube-state-metrics |
+| `kube_pod_container_status_terminated_reason`          | kube-state-metrics |
+| `kube_pod_container_status_waiting_reason`             | kube-state-metrics |
+| `kube_pod_status_phase`                                | kube-state-metrics |
+| `kube_pod_info`                                        | kube-state-metrics |
+| `kube_service_info`                                    | kube-state-metrics |
+| `kube_service_spec_external_ip`                        | kube-state-metrics |
+| `kube_service_spec_type`                               | kube-state-metrics |
+| `kube_service_status_load_balancer_ingress`            | kube-state-metrics |
+| `node_cpu_seconds_total`                               | node-exporter      |
+| `node_load1`                                           | node-exporter      |
+| `node_load5`                                           | node-exporter      |
+| `node_load15`                                          | node-exporter      |
+| `node_disk_io_time_weighted_seconds_total`             | node-exporter      |
+| `node_disk_io_time_seconds_total`                      | node-exporter      |
+| `node_vmstat_pgpgin`                                   | node-exporter      |
+| `node_vmstat_pgpgout`                                  | node-exporter      |
+| `node_memory_MemFree_bytes`                            | node-exporter      |
+| `node_memory_MemAvailable_bytes`                       | node-exporter      |
+| `node_memory_Cached_bytes`                             | node-exporter      |
+| `node_memory_Buffers_bytes`                            | node-exporter      |
+| `node_memory_MemTotal_bytes`                           | node-exporter      |
+| `node_network_receive_drop_total`                      | node-exporter      |
+| `node_network_transmit_drop_total`                     | node-exporter      |
+| `node_network_receive_bytes_total`                     | node-exporter      |
+| `node_network_transmit_bytes_total`                    | node-exporter      |
+| `node_filesystem_avail_bytes`                          | node-exporter      |
+| `node_filesystem_size_bytes`                           | node-exporter      |
+| `node_filesystem_files_free`                           | node-exporter      |
+| `node_filesystem_files`                                | node-exporter      |
 
 ## Aggregations (removed)
 
