@@ -416,6 +416,7 @@ sumologic:
       excludeUnitRegex: ""
 
     kubelet:
+      enabled: true
       otelcol:
         ## Extra processors for kubelet logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
