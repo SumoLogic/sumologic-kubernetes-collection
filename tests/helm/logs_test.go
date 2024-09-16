@@ -336,6 +336,8 @@ sumologic:
   logs:
     systemd:
       enabled: false
+    kubelet:
+      enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
@@ -432,6 +434,8 @@ sumologic:
     systemd:
       units:
         - test
+    kubelet:
+      enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
