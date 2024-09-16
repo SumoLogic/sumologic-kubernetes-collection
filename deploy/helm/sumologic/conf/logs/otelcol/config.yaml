@@ -141,7 +141,7 @@ processors:
         match_type: strict
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: snap.microk8s.daemon-kubelite.servicee
+            value: kubelet.service
 {{ end }}
 
 {{ if .Values.sumologic.logs.kubelet.enabled }}
@@ -251,7 +251,7 @@ processors:
         match_type: strict
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: snap.microk8s.daemon-kubelite.service
+            value: kubelet.service
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
