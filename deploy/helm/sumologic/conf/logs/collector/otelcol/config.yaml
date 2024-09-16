@@ -92,7 +92,6 @@ receivers:
       - flanneld.service
       - format-etcd2-volume.service
       - kube-node-taint-and-uncordon.service
-      - kubelet.service
       - ldconfig.service
       - locksmithd.service
       - logrotate.service
@@ -117,11 +116,10 @@ receivers:
       - update-ca-certificates.service
       - user-cloudinit.service
       - var-lib-etcd2.service
-      - snap.microk8s.daemon-kubelite.service
 {{- end }}
 {{- end }}
 {{- if or .Values.sumologic.logs.kubelet.enabled }}
-      - snap.microk8s.daemon-kubelite.service
+      - kubelet.service
 {{- end }}
 {{- end }}
 
