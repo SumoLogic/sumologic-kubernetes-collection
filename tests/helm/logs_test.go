@@ -57,13 +57,15 @@ metadata:
 	require.Equal(t, expected, otelConfig)
 }
 
-func TestMetadataOtelConfigSystemdDisabled(t *testing.T) {
+func TestMetadataOtelConfigSystemdAndKubeletDisabled(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/logs/otelcol/configmap.yaml"
 	valuesYaml := `
 sumologic:
   logs:
     systemd:
+      enabled: false
+    kubelet:
       enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
