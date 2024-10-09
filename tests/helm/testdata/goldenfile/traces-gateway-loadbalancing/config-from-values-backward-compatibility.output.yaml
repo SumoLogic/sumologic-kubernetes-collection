@@ -26,7 +26,7 @@ data:
         resolver:
           dns:
             hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
-            port: 4317
+            port: "4317"
     extensions:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133

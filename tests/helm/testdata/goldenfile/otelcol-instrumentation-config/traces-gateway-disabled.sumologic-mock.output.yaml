@@ -28,7 +28,7 @@ data:
         resolver:
           dns:
             hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
-            port: 4317
+            port: "4317"
       sumologic/metrics:
         client: k8s_%CURRENT_CHART_VERSION%
         compression: gzip
