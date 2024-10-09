@@ -116,7 +116,7 @@ sumologic:
     job:
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.15.1
+        tag: 3.16.0
         pullPolicy: IfNotPresent
       initContainerImage:
         repository: public.ecr.aws/sumologic/busybox
