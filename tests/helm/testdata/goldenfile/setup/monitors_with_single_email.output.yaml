@@ -14,14 +14,14 @@ metadata:
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
-    sumologic.com/app: "setup"
+    sumologic.com/app: setup
 spec:
   ttlSecondsAfterFinished: 120
   template:
     metadata:
       annotations:
       labels:
-        sumologic.com/app: "setup"
+        sumologic.com/app: setup
     spec:
       restartPolicy: OnFailure
       serviceAccountName: RELEASE-NAME-sumologic-setup
@@ -38,7 +38,7 @@ spec:
             defaultMode: 0777
       containers:
         - name: setup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.15.1
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.16.0
           imagePullPolicy: IfNotPresent
           command: ["/etc/terraform/setup.sh"]
           resources:
