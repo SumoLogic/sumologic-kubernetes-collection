@@ -70,10 +70,10 @@ memory_limiter:
 metricstransform:
   transforms:
     ## rename all prometheus_remote_write_$name metrics to $name
-    action: update
-    include: ^prometheus_remote_write_(.*)$$
-    match_type: regexp
-    new_name: $$1
+    - action: update
+      include: ^prometheus_remote_write_(.*)$$
+      match_type: regexp
+      new_name: $$1
 
 ## Configuration for Resource Processor
 resource:

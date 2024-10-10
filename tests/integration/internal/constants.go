@@ -235,11 +235,6 @@ var (
 		"otelcol_exporter_requests_records",
 		"otelcol_exporter_requests_sent",
 		"otelcol_exporter_sent_metric_points",
-		"otelcol_otelsvc_k8s_other_added",
-		"otelcol_otelsvc_k8s_other_updated",
-		"otelcol_otelsvc_k8s_pod_added",
-		"otelcol_otelsvc_k8s_pod_table_size",
-		"otelcol_otelsvc_k8s_pod_updated",
 		"otelcol_processor_accepted_metric_points",
 		"otelcol_processor_inserted_metric_points",
 		"otelcol_processor_batch_batch_send_size_count",
@@ -251,8 +246,6 @@ var (
 		"otelcol_processor_groupbyattrs_num_non_grouped_metrics",
 		"otelcol_processor_refused_metric_points",
 		"otelcol_processor_batch_metadata_cardinality",
-		"otelcol_otelsvc_k8s_service_table_size",
-		"otelcol_otelsvc_k8s_owner_table_size",
 		"otelcol_exporter_send_failed_metric_points",
 	}
 	LogsOtelcolMetrics = []string{

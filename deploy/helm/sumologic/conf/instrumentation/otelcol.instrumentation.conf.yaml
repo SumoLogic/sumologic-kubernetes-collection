@@ -56,7 +56,7 @@ exporters:
     resolver:
       dns:
         hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
-        port: 4317
+        port: '4317'
 {{- end }}
 receivers:
   jaeger:
