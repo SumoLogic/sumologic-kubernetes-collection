@@ -7,6 +7,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.11.0]
+
+### Released 2024-10-11
+
+### Changed
+
+- chore: upgrade terraform provider [#3852]
+- chore: upgrade k8s setup to 3.16.0 [#3854]
+- chore: Upgrading otel to v0.108.0-sumo-0 [#3855]
+- chore: upgrade tailing-sidecar to v0.16.0 [#3856]
+
+### Fixed
+
+- fix(timestamp): Fix the timestamp locator for log sources [#3853]
+
+[#3852]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3852
+[#3854]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3854
+[#3855]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3855
+[#3856]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3856
+[#3853]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3853
+[v4.11.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.11.0
+
 ## [v4.10.0]
 
 ### Released 2024-08-23
