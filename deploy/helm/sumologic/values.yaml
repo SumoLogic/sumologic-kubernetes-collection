@@ -1910,7 +1910,7 @@ kube-prometheus-stack:
     ## uses version 2.6.0 of kube-state-metrics, but this version has some critical vulnerabilities,
     ## so we bump the image manually.
     image:
-      tag: "v2.7.0"
+      tag: "v2.14.0"
     prometheus:
       monitor:
         ## Scrape interval. If not set, the Prometheus default scrape interval is used.
