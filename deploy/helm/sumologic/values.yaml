@@ -1098,7 +1098,7 @@ kube-prometheus-stack:
     ## so we bump the image manually.
     image:
       repository: public.ecr.aws/sumologic/kube-state-metrics
-      tag: "v2.7.0"
+      tag: "v2.14.0"
     prometheus:
       monitor:
         ## Scrape interval. If not set, the Prometheus default scrape interval is used.
