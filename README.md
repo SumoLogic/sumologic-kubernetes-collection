@@ -26,12 +26,12 @@ release.
 | [v4.10](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.10/docs/README.md) | 2025-04-01               |
 | [v4.9](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.9/docs/README.md)   | 2025-02-01               |
 | [v4.8](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.8/docs/README.md)   | 2025-01-01               |
-| [v4.7](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.7/docs/README.md)   | 2024-12-07               |
 
 ### Unsupported versions
 
 | version                                                                                                   | end of life date |
 | --------------------------------------------------------------------------------------------------------- | ---------------- |
+| [v4.7](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.7/docs/README.md)     | 2024-12-07       |
 | [v4.6](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.6/docs/README.md)     | 2024-10-10       |
 | [v4.5](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.5/docs/README.md)     | 2024-09-27       |
 | [v4.4](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.4/docs/README.md)     | 2024-08-22       |

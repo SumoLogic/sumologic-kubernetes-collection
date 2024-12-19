@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.11.1]
+
+### Released 2024-12-19
+
+### Fixed
+
+- fix(metrics): upgrade kube-state-metrics to 2.14.0 [#3865]
+
+[#3865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3865
+[v4.11.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.11.1
+
 ## [v4.11.0]
 
 ### Released 2024-10-11
