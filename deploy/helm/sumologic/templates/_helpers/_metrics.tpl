@@ -98,6 +98,14 @@ Return the otelcol metrics collector image
 {{- end -}}
 {{- end -}}
 
+{{- define "sumologic.metrics.collector.otelcol.managementState" -}}
+{{printf "managed"}}
+{{- end -}}
+
+{{- define "sumologic.metrics.collector.otelcol.upgradeStrategy" -}}
+{{printf "automatic"}}
+{{- end -}}
+
 {{- define "metrics.collector.otelcol.affinity" -}}
 {{- if .Values.sumologic.metrics.collector.otelcol.affinity -}}
 {{- toYaml .Values.sumologic.metrics.collector.otelcol.affinity -}}

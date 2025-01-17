@@ -59,11 +59,15 @@ spec:
         configMap:
           name: {{ template "sumologic.metadata.name.setup.configmap-custom" . }}
           defaultMode: 0777
+      - name: manifests
+        configMap:
+          name: {{ template "sumologic.metadata.name.setup.configmap-crds" . }}
+          defaultMode: 0777
       containers:
       - name: setup
         image: {{ .Values.sumologic.setup.job.image.repository }}:{{ .Values.sumologic.setup.job.image.tag }}
         imagePullPolicy: {{ .Values.sumologic.setup.job.image.pullPolicy }}
-        command: ["/etc/terraform/setup.sh"]
+        command: ["/etc/terraform/setup.sh", "kubectl apply --server-side -f /manifests/crds-configmaps.yaml --force-conflicts"]
         resources:
           {{- toYaml .Values.sumologic.setup.job.resources | nindent 10 }}
         volumeMounts:
@@ -71,6 +75,8 @@ spec:
           mountPath: /etc/terraform
         - name: custom
           mountPath: /customer-scripts
+        - name: manifests
+          mountPath: /manifests
         envFrom:
         - secretRef:
             name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.setup.secret" .)}}
