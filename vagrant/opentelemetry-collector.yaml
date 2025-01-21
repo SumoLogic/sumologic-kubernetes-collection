@@ -1,4 +1,4 @@
-apiVersion: opentelemetry.io/v1alpha1
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: prometheus
@@ -13,7 +13,7 @@ spec:
     image: ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.64.1
     serviceAccount: prometheus-collector
   replicas: 3
-  config: |
+  config:
     receivers:
       prometheus:
         config:
@@ -22,10 +22,10 @@ spec:
             interval: 30s
             collector_id: ${POD_NAME}
           scrape_configs:
-            - job_name: 'otel-collector'
+            - job_name: "otel-collector"
               scrape_interval: 10s
               static_configs:
-                - targets: [ '0.0.0.0:8888' ]
+                - targets: ["0.0.0.0:8888"]
     processors:
       memory_limiter:
         check_interval: 1s

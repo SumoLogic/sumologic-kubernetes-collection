@@ -215,10 +215,6 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.setup.job-crd" -}}
-{{ template "sumologic.metadata.name.setup.job" . }}-crd
-{{- end -}}
-
 {{- define "sumologic.metadata.name.setup.configmap-custom" -}}
 {{ template "sumologic.metadata.name.setup" . }}-custom
 {{- end -}}
