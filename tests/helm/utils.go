@@ -16,7 +16,7 @@ import (
 	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
-	otoperator "github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
+	otoperator "github.com/open-telemetry/opentelemetry-operator/apis/v1beta1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
@@ -146,7 +146,6 @@ func UnmarshalMultipleK8sObjectsFromYaml(yamlDocs string) (objects []runtime.Obj
 		}
 		objects = append(objects, obj)
 	}
-
 	return objects, err
 }
 

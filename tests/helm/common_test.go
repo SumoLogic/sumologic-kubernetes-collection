@@ -10,7 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
 
-	otelv1alpha1 "github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
+	otelv1beta1 "github.com/open-telemetry/opentelemetry-operator/apis/v1beta1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
@@ -46,7 +46,7 @@ func TestK8sResourceValidation(t *testing.T) {
 }
 
 func TestBuiltinLabels(t *testing.T) {
-	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
+	valuesFilePath := path.Join(testDataDirectory, "operator-crds-disabled.yaml")
 	chartVersion, err := GetChartVersion()
 	require.NoError(t, err)
 	renderedYamlString := RenderTemplate(
@@ -432,7 +432,7 @@ func GetNodeSelector(object unstructured.Unstructured) (map[string]string, error
 	}
 
 	if object.GetKind() == "OpenTelemetryCollector" {
-		otelcol := &otelv1alpha1.OpenTelemetryCollector{}
+		otelcol := &otelv1beta1.OpenTelemetryCollector{}
 		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &otelcol)
 		if err != nil {
 			return nil, err
@@ -464,7 +464,7 @@ func GetTolerations(object unstructured.Unstructured) ([]corev1.Toleration, erro
 	}
 
 	if object.GetKind() == "OpenTelemetryCollector" {
-		otelcol := &otelv1alpha1.OpenTelemetryCollector{}
+		otelcol := &otelv1beta1.OpenTelemetryCollector{}
 		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &otelcol)
 		if err != nil {
 			return nil, err

@@ -164,7 +164,7 @@ jobs:
           version: v1.57.1
           working-directory: ./tests/helm/
           # Optional: golangci-lint command line arguments.
-          args: --timeout=10m --verbose
+          args: --timeout=15m --verbose
 
   test:
     runs-on: ubuntu-22.04

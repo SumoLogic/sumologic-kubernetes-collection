@@ -265,6 +265,9 @@ sumologic:
           matchLabels:
             sumologic.com/app: fluentd-logs
             sumologic.com/scrape: "true"
+opentelemetry-operator:
+  crds:
+    create: true
 `,
 			ExpectedNames: []string{
 				"collection-sumologic-otelcol-logs",
@@ -297,6 +300,9 @@ sumologic:
         matchLabels:
           sumologic.com/app: fluentd-logs
           sumologic.com/scrape: "true"
+opentelemetry-operator:
+  crds:
+    create: true
 `,
 			ExpectedNames: []string{
 				"collection-sumologic-fluentd-logs-test",
@@ -304,8 +310,10 @@ sumologic:
 			TemplatePaths: allTemplatePaths,
 		},
 		{
-			Name:       "default",
-			ValuesYaml: "",
+			Name: "default",
+			ValuesYaml: `opentelemetry-operator:
+  crds:
+    create: true`,
 			ExpectedNames: []string{
 				"collection-sumologic-otelcol-logs",
 				"collection-sumologic-otelcol-metrics",
