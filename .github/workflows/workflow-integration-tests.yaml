@@ -50,10 +50,10 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.57.1
+          version: v1.63.4
           working-directory: ./tests/integration/
           # Optional: golangci-lint command line arguments.
-          args: --timeout=15m --verbose
+          args: --timeout=10m
 
   integration-tests-onlylatest:
     runs-on: ubuntu-22.04
