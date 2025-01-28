@@ -1,6 +1,6 @@
 ---
 # Source: sumologic/templates/metrics/collector/otelcol/opentelemetrycollector.yaml
-apiVersion: opentelemetry.io/v1alpha1
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: RELEASE-NAME-sumologic-metrics
@@ -21,6 +21,8 @@ spec:
   mode: statefulset
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
+  managementState: managed
+  upgradeStrategy: automatic
   targetAllocator:
     allocationStrategy: consistent-hashing
     enabled: true
@@ -29,9 +31,13 @@ spec:
       enabled: true
       scrapeInterval: 60s
       serviceMonitorSelector:
-        smkey: smvalue
+        matchLabels:
+          smkey: smvalue
+
       podMonitorSelector:
-        pmkey: pmvalue
+        matchLabels:
+          pmkey: pmvalue
+
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     nodeSelector:
       kubernetes.io/os: linux
@@ -115,7 +121,7 @@ spec:
       mountPath: /tmp
     - name: file-storage
       mountPath: /var/lib/storage/otc
-  config: |
+  config:
     exporters:
       otlphttp:
         disable_keep_alives: true
@@ -142,17 +148,17 @@ spec:
       filter/drop_stale_datapoints:
         metrics:
           datapoint:
-          - flags == FLAG_NO_RECORDED_VALUE
+            - flags == FLAG_NO_RECORDED_VALUE
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
-        - context: resource
-          statements:
-          - delete_key(attributes, "http.scheme")
-          - delete_key(attributes, "net.host.name")
-          - delete_key(attributes, "net.host.port")
-          - delete_key(attributes, "service.instance.id")
-          - delete_matching_keys(attributes, "k8s.*")
+          - context: resource
+            statements:
+              - delete_key(attributes, "http.scheme")
+              - delete_key(attributes, "net.host.name")
+              - delete_key(attributes, "net.host.port")
+              - delete_key(attributes, "service.instance.id")
+              - delete_matching_keys(attributes, "k8s.*")
     receivers:
       prometheus:
         config:
@@ -161,19 +167,19 @@ spec:
           scrape_configs: []
     service:
       extensions:
-      - health_check
-      - pprof
-      - file_storage
+        - health_check
+        - pprof
+        - file_storage
       pipelines:
         metrics:
           exporters:
-          - otlphttp
+            - otlphttp
           processors:
-          - batch
-          - filter/drop_stale_datapoints
-          - transform/drop_unnecessary_attributes
+            - batch
+            - filter/drop_stale_datapoints
+            - transform/drop_unnecessary_attributes
           receivers:
-          - prometheus
+            - prometheus
       telemetry:
         logs:
           level: info

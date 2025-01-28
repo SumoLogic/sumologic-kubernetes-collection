@@ -8,7 +8,7 @@
 {{ else }}
 {{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
 {{ end }}
-apiVersion: opentelemetry.io/v1alpha1
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.collector.opentelemetrycollector" . }}
@@ -28,6 +28,8 @@ spec:
   mode: statefulset
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
   serviceAccount: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
+  managementState: {{ template "sumologic.metrics.collector.otelcol.managementState" . }}
+  upgradeStrategy: {{ template "sumologic.metrics.collector.otelcol.upgradeStrategy" . }}
   targetAllocator:
 {{- if .Values.sumologic.metrics.collector.otelcol.allocationStrategy }}
     allocationStrategy: {{ .Values.sumologic.metrics.collector.otelcol.allocationStrategy }}
@@ -37,17 +39,21 @@ spec:
     prometheusCR:
       enabled: true
       scrapeInterval: {{ .Values.sumologic.metrics.collector.otelcol.scrapeInterval }}
+{{- if not (empty (include "metrics.collector.otelcol.serviceMonitorSelector" .)) }}
       serviceMonitorSelector:
-{{- if .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector }}
-        {{ .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | toYaml | nindent 8 }}
-{{- else }}
-        release: {{ .Release.Name }}
+        matchLabels:
+{{ include "metrics.collector.otelcol.serviceMonitorSelector" . | indent 10 }}
+{{ else }}
+      serviceMonitorSelector: 
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | nindent 8 }}
 {{- end }}
+{{- if not (empty (include "metrics.collector.otelcol.podMonitorSelector" .)) }}
       podMonitorSelector:
-{{- if .Values.sumologic.metrics.collector.otelcol.podMonitorSelector }}
-        {{ .Values.sumologic.metrics.collector.otelcol.podMonitorSelector | toYaml | nindent 8 }}
-{{- else }}
-        release: {{ .Release.Name }}
+        matchLabels:
+{{ include "metrics.collector.otelcol.podMonitorSelector" . | indent 10 }}
+{{ else }}
+      podMonitorSelector:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.podMonitorSelector | nindent 8 }}
 {{- end }}
     serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
 {{- if not (empty (include "metrics.collector.otelcol.nodeSelector" .)) }}
@@ -129,6 +135,6 @@ spec:
     mountPath: /tmp
   - name: file-storage
     mountPath: /var/lib/storage/otc
-  config: |
+  config:
 {{- $finalConfig | toYaml | nindent 4 }}
 {{- end }}

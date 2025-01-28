@@ -95,6 +95,10 @@ sumologic.com/app: setup
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.setup.configmap.crds" -}}
+{{- template "sumologic.labels.app.setup" . }}-crds
+{{- end -}}
+
 {{- define "sumologic.labels.app.setup.roles.role" -}}
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
@@ -217,6 +221,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.setup.configmap" -}}
 {{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.configmap-crds" -}}
+{{ template "sumologic.metadata.name.setup" . }}-crds
 {{- end -}}
 
 {{- define "sumologic.metadata.name.setup.roles.role" -}}

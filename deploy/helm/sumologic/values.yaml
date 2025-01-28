@@ -532,11 +532,11 @@ sumologic:
 
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
-        # serviceMonitorSelector:
+        serviceMonitorSelector: {}
 
         ## Selector for PodMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
-        # podMonitorSelector:
+        podMonitorSelector: {}
 
         securityContext:
           ## The group ID of all processes in the statefulset containers. This can be anything, but it does need to be set.
@@ -2467,6 +2467,10 @@ tailing-sidecar-operator:
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:
   enabled: true
+
+  ## CRDs are installed manually, do not create them
+  crds:
+    create: false
 
   ## Specific for OpenTelemetry Operator chart values
   admissionWebhooks:

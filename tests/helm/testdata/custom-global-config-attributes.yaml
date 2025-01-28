@@ -53,6 +53,8 @@ kube-prometheus-stack:
       customAnnotationsKey: customAnnotationsValue
 
 opentelemetry-operator:
+  crds:
+    create: true
   manager:
     podLabels:
       customLabelKey: customLabelValue

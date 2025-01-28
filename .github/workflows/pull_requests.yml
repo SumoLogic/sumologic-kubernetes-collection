@@ -161,10 +161,10 @@ jobs:
         if: needs.chart-changed.outputs.any_changed == 'true'
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.57.1
+          version: v1.63.4
           working-directory: ./tests/helm/
           # Optional: golangci-lint command line arguments.
-          args: --timeout=10m --verbose
+          args: --timeout=10m
 
   test:
     runs-on: ubuntu-22.04

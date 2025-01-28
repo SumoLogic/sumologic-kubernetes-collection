@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.setup.configmap-crds" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
+  annotations:
+{{ include "sumologic.annotations.app.setup.helmsh" "2" | indent 4 }}
+  labels:
+    app: {{ template "sumologic.labels.app.setup.configmap.crds" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  crds-configmaps.yaml: |-
+      {{ range $path, $bytes := .Files.Glob (printf "crds/*")}}
+      {{- $.Files.Get $path | nindent 8 }}
+      {{ end }}
