@@ -90,6 +90,18 @@ Return the otelcol metrics collector image
 {{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.sumologic.metrics.collector.otelcol.nodeSelector)}}
 {{- end -}}
 
+{{- define "metrics.collector.otelcol.serviceMonitorSelector" -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector -}}
+{{- toYaml .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metrics.collector.otelcol.podMonitorSelector" -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.podMonitorSelector -}}
+{{- toYaml .Values.sumologic.metrics.collector.otelcol.podMonitorSelector -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "metrics.collector.otelcol.tolerations" -}}
 {{- if .Values.sumologic.metrics.collector.otelcol.tolerations -}}
 {{- toYaml .Values.sumologic.metrics.collector.otelcol.tolerations -}}

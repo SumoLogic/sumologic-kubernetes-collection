@@ -25,10 +25,8 @@ spec:
     prometheusCR:
       enabled: true
       scrapeInterval: 30s
-      serviceMonitorSelector:
-        matchLabels: {}
-      podMonitorSelector:
-        matchLabels: {}
+      serviceMonitorSelector: {}
+      podMonitorSelector: {}
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     nodeSelector:
       kubernetes.io/os: linux

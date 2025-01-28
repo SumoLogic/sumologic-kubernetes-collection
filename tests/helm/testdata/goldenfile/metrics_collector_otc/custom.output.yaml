@@ -31,11 +31,13 @@ spec:
       enabled: true
       scrapeInterval: 60s
       serviceMonitorSelector:
-        matchLabels: {}
-        smkey: smvalue
+        matchLabels:
+          smkey: smvalue
+
       podMonitorSelector:
-        matchLabels: {}
-        pmkey: pmvalue
+        matchLabels:
+          pmkey: pmvalue
+
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     nodeSelector:
       kubernetes.io/os: linux

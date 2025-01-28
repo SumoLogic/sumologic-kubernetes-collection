@@ -532,13 +532,11 @@ sumologic:
 
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
-        serviceMonitorSelector:
-          matchLabels: {}
+        serviceMonitorSelector: {}
 
         ## Selector for PodMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
-        podMonitorSelector:
-          matchLabels: {}
+        podMonitorSelector: {}
 
         securityContext:
           ## The group ID of all processes in the statefulset containers. This can be anything, but it does need to be set.
