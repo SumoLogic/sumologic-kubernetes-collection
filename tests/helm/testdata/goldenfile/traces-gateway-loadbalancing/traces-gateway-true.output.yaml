@@ -30,8 +30,6 @@ data:
     extensions:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
-      memory_ballast:
-        size_mib: 512
       pprof: {}
     processors:
       batch:
@@ -52,7 +50,6 @@ data:
     service:
       extensions:
       - health_check
-      - memory_ballast
       - pprof
       pipelines:
         traces:

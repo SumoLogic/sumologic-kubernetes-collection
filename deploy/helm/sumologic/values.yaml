@@ -264,7 +264,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.108.0-sumo-0"
+    tag: "0.114.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -2491,20 +2491,20 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.108.0-sumo-0"
+      tag: "0.114.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
-        tag: 1.26.0
+        tag: 2.10.0
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
-        tag: 0.7.0
+        tag: 1.9.0
       python:
         repository: public.ecr.aws/sumologic/autoinstrumentation-python
-        tag: 0.39b0
+        tag: 0.48b0
       nodejs:
         repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
-        tag: 0.40.0
+        tag: 0.54.0
     env:
       {}
       # ENABLE_WEBHOOKS: "true"

@@ -57,13 +57,10 @@ processors:
 extensions:
   health_check:
     endpoint: ${env:MY_POD_IP}:13133
-  memory_ballast:
-    ## Memory Ballast size should be max 1/3 to 1/2 of memory.
-    size_mib: 512
   pprof: {}
 
 service:
-  extensions: [health_check, memory_ballast, pprof]
+  extensions: [health_check, pprof]
   pipelines:
     traces:
       receivers: [otlp]

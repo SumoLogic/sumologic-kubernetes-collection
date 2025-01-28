@@ -30,8 +30,6 @@ data:
         timeout: 10s
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
-      memory_ballast:
-        size_mib: 683
       pprof: {}
     processors:
       batch:
@@ -55,7 +53,6 @@ data:
       extensions:
       - health_check
       - file_storage
-      - memory_ballast
       - pprof
       pipelines:
         traces:
