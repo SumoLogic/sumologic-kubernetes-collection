@@ -272,4 +272,10 @@ spec:
         logs:
           level: info
         metrics:
-          address: 0.0.0.0:8888
+          level: normal
+          readers:
+            - pull:
+                exporter:
+                  prometheus:
+                    host: ${env:MY_POD_IP}
+                    port: 8888

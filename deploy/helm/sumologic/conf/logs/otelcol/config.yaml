@@ -626,3 +626,11 @@ service:
   telemetry:
     logs:
       level: {{ .Values.metadata.logs.logLevel }}
+    metrics:
+      level: normal
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: ${env:MY_POD_IP}
+                port: 8888

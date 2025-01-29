@@ -202,4 +202,12 @@ service:
   telemetry:
     logs:
       level: {{ .Values.otelcolInstrumentation.logLevel }}
+    metrics:
+      level: normal
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: ${env:MY_POD_IP}
+                port: 8888
 {{- end }}
