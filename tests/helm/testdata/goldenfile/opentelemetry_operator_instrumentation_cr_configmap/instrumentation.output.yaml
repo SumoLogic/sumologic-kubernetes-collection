@@ -35,7 +35,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator1
       dotnet:
-        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:1.9.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:0.7.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -59,14 +59,14 @@ data:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       nodejs:
-        image: public.ecr.aws/sumologic/autoinstrumentation-nodejs:0.54.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-nodejs:0.40.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:
-        image: public.ecr.aws/sumologic/autoinstrumentation-java:2.10.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-java:1.26.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -99,7 +99,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator2
       dotnet:
-        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:1.9.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:0.7.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -123,14 +123,14 @@ data:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       nodejs:
-        image: public.ecr.aws/sumologic/autoinstrumentation-nodejs:0.54.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-nodejs:0.40.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:
-        image: public.ecr.aws/sumologic/autoinstrumentation-java:2.10.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-java:1.26.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
