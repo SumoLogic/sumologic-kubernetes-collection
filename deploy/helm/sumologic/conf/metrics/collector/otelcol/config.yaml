@@ -62,6 +62,38 @@ processors:
           - extract_count_metric(true) where (not IsMatch(name, {{ .Values.sumologic.metrics.allowHistogramRegex | quote }})) and (type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
 {{- end }}
 
+service:
+  telemetry:
+    logs:
+      level: {{ .Values.metadata.metrics.logLevel }}
+    metrics:
+      level: normal
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: ${env:MY_POD_IP}
+                port: 8888
+  extensions:
+    - health_check
+    - pprof
+    - file_storage
+  pipelines:
+    metrics:
+      exporters:
+{{- if eq .Values.debug.metrics.collector.print true }}
+        - debug
+{{- end }}
+        - otlphttp
+      processors:
+        - batch
+        - filter/drop_stale_datapoints
+{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
+        - transform/extract_sum_count_from_histograms
+{{- end }}
+        - transform/drop_unnecessary_attributes
+      receivers: [prometheus]
+
 receivers:
   prometheus:
     config:
@@ -194,30 +226,4 @@ receivers:
               target_label: instance
               action: replace
 {{- end }}
-
-service:
-  telemetry:
-    logs:
-      level: {{ .Values.metadata.metrics.logLevel }}
-    metrics:
-      address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
-  extensions:
-    - health_check
-    - pprof
-    - file_storage
-  pipelines:
-    metrics:
-      exporters:
-{{- if eq .Values.debug.metrics.collector.print true }}
-        - debug
-{{- end }}
-        - otlphttp
-      processors:
-        - batch
-        - filter/drop_stale_datapoints
-{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
-        - transform/extract_sum_count_from_histograms
-{{- end }}
-        - transform/drop_unnecessary_attributes
-      receivers: [prometheus]
 

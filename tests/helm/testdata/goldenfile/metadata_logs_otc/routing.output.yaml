@@ -381,3 +381,11 @@ data:
       telemetry:
         logs:
           level: info
+        metrics:
+          level: normal
+          readers:
+          - pull:
+              exporter:
+                prometheus:
+                  host: ${env:MY_POD_IP}
+                  port: 8888

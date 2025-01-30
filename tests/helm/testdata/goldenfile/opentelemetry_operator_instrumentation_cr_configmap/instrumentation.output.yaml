@@ -48,7 +48,7 @@ data:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       python:
-        image: public.ecr.aws/sumologic/autoinstrumentation-python:0.39b0
+        image: public.ecr.aws/sumologic/autoinstrumentation-python:0.48b0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -112,7 +112,7 @@ data:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       python:
-        image: public.ecr.aws/sumologic/autoinstrumentation-python:0.39b0
+        image: public.ecr.aws/sumologic/autoinstrumentation-python:0.48b0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp

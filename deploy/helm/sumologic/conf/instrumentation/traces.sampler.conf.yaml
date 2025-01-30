@@ -81,9 +81,6 @@ extensions:
       on_rebound: true
       directory: /tmp
 {{- end }}
-  memory_ballast:
-    ## Memory Ballast size should be max 1/3 to 1/2 of memory.
-    size_mib: 683
   pprof: {}
 service:
   extensions:
@@ -91,7 +88,6 @@ service:
 {{- if .Values.tracesSampler.persistence.enabled }}
     - file_storage
 {{- end }}
-    - memory_ballast
     - pprof
   pipelines:
     traces:
@@ -108,4 +104,12 @@ service:
   telemetry:
     logs:
       level: {{ .Values.tracesSampler.logLevel }}
+    metrics:
+      level: normal
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: ${env:MY_POD_IP}
+                port: 8888
 {{- end }}
