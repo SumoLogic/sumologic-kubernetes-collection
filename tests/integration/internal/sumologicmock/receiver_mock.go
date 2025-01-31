@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -184,9 +185,23 @@ func (client *SumologicMockClient) GetSpansCount(t *testing.T, metadataFilters M
 	}
 
 	url := client.baseUrl.ResolveReference(path)
+	fmt.Println("================Fetching traces================")
+	fmt.Println(t.Name())
+	fmt.Println(metadataFilters)
+	fmt.Println(url.String())
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return 0, fmt.Errorf("failed fetching %s, err: %w", url, err)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, fmt.Errorf("failed reading response body: %w", err)
+	}
+	bodyString := string(body)
+	fmt.Println(bodyString)
 	url.RawQuery = queryParams.Encode()
 
-	resp, err := http.Get(url.String())
+	resp, err = http.Get(url.String())
 	if err != nil {
 		return 0, fmt.Errorf("failed fetching %s, err: %w", url, err)
 	}
