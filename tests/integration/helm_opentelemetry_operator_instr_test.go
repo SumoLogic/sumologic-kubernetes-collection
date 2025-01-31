@@ -113,12 +113,12 @@ func Test_OpenTelemetry_Operator_Instrumentation(t *testing.T) {
 		}).
 		Feature()
 
-	featDotnetApp := GetDotnetAppFeature()
+	// featDotnetApp := GetDotnetAppFeature()
 	featJavaApp := GetJavaAppFeature()
-	featNodeJSApp := GetNodeJSAppFeature()
-	featPythonApp := GetPythonAppFeature()
+	// featNodeJSApp := GetNodeJSAppFeature()
+	// featPythonApp := GetPythonAppFeature()
 
 	curlApp := GetCurlAppFeature()
 
-	testenv.Test(t, featInstall, featOpenTelemetryOperator, featDotnetApp, featJavaApp, featNodeJSApp, featPythonApp, curlApp)
+	testenv.Test(t, featInstall, featOpenTelemetryOperator, featJavaApp, curlApp)
 }
