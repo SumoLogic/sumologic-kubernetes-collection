@@ -132,6 +132,7 @@ func WaitUntilExpectedTracesPresent(
 					log.InfoS(
 						"received enough traces, but less spans than expected",
 						"received numbers of spans in traces", tracesLengths,
+						"expected", expectedSpansPerTraceCount,
 					)
 					return false
 				}
