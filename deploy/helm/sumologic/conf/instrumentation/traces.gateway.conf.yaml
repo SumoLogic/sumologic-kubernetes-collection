@@ -74,7 +74,7 @@ service:
     logs:
       level: {{ .Values.tracesGateway.logLevel }}
     metrics:
-      level: normal
+      level: {{ .Values.tracesGateway.metricsLevel }}
       readers:
         - pull:
             exporter:

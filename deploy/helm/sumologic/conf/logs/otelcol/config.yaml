@@ -627,7 +627,7 @@ service:
     logs:
       level: {{ .Values.metadata.logs.logLevel }}
     metrics:
-      level: normal
+      level: {{ .Values.metadata.logs.metricsLevel }}
       readers:
         - pull:
             exporter:

@@ -105,7 +105,7 @@ service:
     logs:
       level: {{ .Values.tracesSampler.logLevel }}
     metrics:
-      level: normal
+      level: {{ .Values.tracesSampler.metricsLevel }}
       readers:
         - pull:
             exporter:
