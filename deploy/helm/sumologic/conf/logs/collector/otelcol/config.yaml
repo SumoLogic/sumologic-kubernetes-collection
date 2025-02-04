@@ -154,7 +154,7 @@ service:
     logs:
       level: {{ .Values.otellogs.logLevel | quote }}
     metrics:
-      level: normal
+      level: {{ .Values.otellogs.metricsLevel | quote }}
       readers:
         - pull:
             exporter:

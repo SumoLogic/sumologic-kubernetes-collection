@@ -203,7 +203,7 @@ service:
     logs:
       level: {{ .Values.otelcolInstrumentation.logLevel }}
     metrics:
-      level: normal
+      level: {{ .Values.otelcolInstrumentation.metricsLevel }}
       readers:
         - pull:
             exporter:

@@ -93,7 +93,7 @@ service:
     logs:
       level: {{ .Values.otelevents.logLevel }}
     metrics:
-      level: normal
+      level: {{ .Values.otelevents.metricsLevel }}
       readers:
         - pull:
             exporter:

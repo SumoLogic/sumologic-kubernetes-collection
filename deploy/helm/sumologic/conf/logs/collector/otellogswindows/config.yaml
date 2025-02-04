@@ -54,7 +54,7 @@ service:
     logs:
       level: {{ .Values.otellogswindows.logLevel | quote }}
     metrics:
-      level: normal
+      level: {{ .Values.otellogswindows.metricsLevel | quote }}
       readers:
         - pull:
             exporter:
