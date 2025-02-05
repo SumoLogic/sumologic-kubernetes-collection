@@ -16,6 +16,8 @@ spec:
       app: RELEASE-NAME-sumologic-otelcol-metrics
   serviceName: RELEASE-NAME-sumologic-otelcol-metrics-headless
   podManagementPolicy: "Parallel"
+  persistentVolumeClaimRetentionPolicy:
+    whenScaled: Retain
   template:
     metadata:
       annotations:
