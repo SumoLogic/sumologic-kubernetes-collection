@@ -1640,7 +1640,7 @@ metadata:
       ## Add custom annotations only to metrics sts pods
       podAnnotations: {}
       ## Persistent Volume Claim retention policy (onScale)
-      persistentVolumeClaimRetentionPolicy: Retain
+      persistentVolumeClaimRetentionPolicywhenScaled: Retain
 
       ## Set securityContext for containers running in pods in metrics statefulset.
       containers:
@@ -1744,7 +1744,7 @@ metadata:
       ## Add custom annotations only to logs sts pods
       podAnnotations: {}
       ## Persistent Volume Claim retention policy (onScale)
-      persistentVolumeClaimRetentionPolicy: Retain
+      persistentVolumeClaimRetentionPolicywhenScaled: Retain
 
       ## Set securityContext for containers running in pods in logs statefulset.
       containers:

@@ -17,7 +17,7 @@ spec:
   replicas: {{ .Values.metadata.metrics.statefulset.replicaCount }}
 {{- end }}
   persistentVolumeClaimRetentionPolicy:
-    whenScaled: {{ .Values.metadata.logs.statefulset.persistentVolumeClaimRetentionPolicy }}
+    whenScaled: {{ .Values.metadata.logs.statefulset.persistentVolumeClaimRetentionPolicywhenScaled }}
   template:
     metadata:
       annotations:
