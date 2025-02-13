@@ -7,6 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.12.0]
+
+### Released 2025-02-13
+
+### Added
+
+- feat: Make the metrics level in service telemetry configurable [#3884]
+- feat: Added persistentVolumeClaimRetentionPolicy to the spec for logs and metrics statefulsets [#3885]
+
+### Changed
+
+- feat: Upgrade the otel operator to 0.76.0 [#3877]
+- chore: Upgrade the otel collector version to v0.114.0-sumo-0 [#3881]
+- chore: Upgrade the autoinstrumentation libraries java(2.10.0), dotnet(1.9.0), nodejs(0.54.0) and python(0.48b0) [#3882]
+- chore: Update the k8s version support matrix [#3886]
+
+[#3884]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3884
+[#3885]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3885
+[#3877]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3877
+[#3881]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3881
+[#3882]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3882
+[#3886]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3886
+[v4.12.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.12.0
+
 ## [v4.11.1]
 
 ### Released 2024-12-19
