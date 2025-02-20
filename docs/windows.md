@@ -5,11 +5,28 @@ support for windows.
 
 ## Running collection on windows nodes
 
-In order to fully support windows nodes, the following issues should be addressed:
+- To setup a k8s cluster with windows nodes, here's a terraform registry for reference:
+  - https://registry.terraform.io/modules/aws-samples/windows-workloads-on-aws/aws/latest/submodules/eks-windows
 
-- Windows nodes do not support linux filesystems
-- We should use HostProcess Containers to support log collection
-- Lack of windows supported containers
+- It is a known limitation that windows nodes only support the containerd runtime:
+  - https://kubernetes.io/docs/concepts/windows/intro/#containerd
+
+- We need the Windows nodes to use containerd 1.7.1 or greater to keep linux mounts for Windows hosts
+  - https://kubernetes.io/docs/tasks/configure-pod-container/create-hostprocess-pod/#containerd-v1-7-and-greater
+  - PR: https://github.com/containerd/containerd/pull/8331
+
+- The logs collection container (and possibly others) must be HostProcess containers for privileged access on the Windows node
+  - https://kubernetes.io/docs/tasks/configure-pod-container/create-hostprocess-pod/#hostprocess-pod-configuration-requirements
+
+- The templates for the metadata enrichment should be very similar for both linux and windows nodes
+  - If possible we might want to continue running the metadata enrichment on linux nodes
+  - Only pods responsible for collecting the signals, run on both windows and linux nodes
+
+- The windows container base images we would use are mentioned below
+  - https://hub.docker.com/r/microsoft/windows-nanoserver
+
+- Hardware recommendations for Windows containers
+  - https://kubernetes.io/docs/concepts/windows/intro/#windows-hardware-recommendations
 
 ### Known Issues
 
