@@ -3,3 +3,7 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+    kubelet:
+      enabled: true
+    systemd:
+      enabled: true
