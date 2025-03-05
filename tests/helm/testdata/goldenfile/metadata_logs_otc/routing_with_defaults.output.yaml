@@ -150,40 +150,45 @@ data:
         - k8s.container.name
         - k8s.namespace.name
         - k8s.pod.name
+        - k8s.pod.uid
         - _collector
       groupbyattrs/systemd:
         keys:
         - _sourceName
         - _sourceHost
         - _collector
-      k8s_tagger:
+      k8sattributes:
+        auth_type: serviceAccount
         extract:
           annotations:
-          - key: '*'
-            tag_name: pod_annotations_%s
-          delimiter: _
+          - from: pod
+            key_regex: (.*)
+            tag_name: pod_annotations_$$1
+          - from: namespace
+            key_regex: (.*)
+            tag_name: namespace_annotations_$$1
           labels:
-          - key: '*'
-            tag_name: pod_labels_%s
+          - from: pod
+            key_regex: (.*)
+            tag_name: pod_labels_$$1
+          - from: namespace
+            key_regex: (.*)
+            tag_name: namespace_labels_$$1
           metadata:
-          - daemonSetName
-          - deploymentName
-          - hostName
-          - namespace
-          - nodeName
-          - podName
-          - serviceName
-          - statefulSetName
-          namespace_annotations:
-          - key: '*'
-            tag_name: namespace_annotations_%s
-          namespace_labels:
-          - key: '*'
-            tag_name: namespace_labels_%s
-        owner_lookup_enabled: true
+          - k8s.pod.name
+          - k8s.pod.uid
+          - k8s.deployment.name
+          - k8s.daemonset.name
+          - k8s.replicaset.name
+          - k8s.statefulset.name
+          - k8s.namespace.name
+          - k8s.service.name
+          - k8s.node.name
         passthrough: false
         pod_association:
-        - from: build_hostname
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.uid
       memory_limiter:
         check_interval: 5s
         limit_percentage: 90
@@ -319,7 +324,7 @@ data:
           - memory_limiter
           - filter/include_containers
           - groupbyattrs/containers
-          - k8s_tagger
+          - k8sattributes
           - resource/add_cluster
           - resource/set_empty_source_metadata
           - resource/containers_copy_node_to_host
