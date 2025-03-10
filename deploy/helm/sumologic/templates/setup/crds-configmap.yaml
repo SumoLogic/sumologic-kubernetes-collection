@@ -1,3 +1,4 @@
+{{- if .Values.sumologic.setupEnabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,6 +6,9 @@ metadata:
   namespace: {{ template "sumologic.namespace"  . }}
   annotations:
 {{ include "sumologic.annotations.app.setup.helmsh" "2" | indent 4 }}
+{{- if .Values.sumologic.setup.job.crdConfigMapAnnotations }}
+{{ toYaml .Values.sumologic.setup.job.crdConfigMapAnnotations | indent 4 }}
+{{- end }}
   labels:
     app: {{ template "sumologic.labels.app.setup.configmap.crds" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -13,3 +17,4 @@ data:
       {{ range $path, $bytes := .Files.Glob (printf "crds/*")}}
       {{- $.Files.Get $path | nindent 8 }}
       {{ end }}
+{{- end }}
