@@ -155,6 +155,8 @@ sumologic:
       podLabels: {}
       ## Add custom annotations only to setup job pod
       podAnnotations: {}
+      ## Add custom annotations only to the crd configmap
+      crdConfigMapAnnotations: {}
 
       ## Time in seconds after which the job result will be removed from the Kubernetes cluster
       ttlSecondsAfterFinished: 120
