@@ -17,8 +17,6 @@ spec:
   serviceName: RELEASE-NAME-sumologic-otelcol-logs-headless
   podManagementPolicy: "Parallel"
   replicas: 4
-  persistentVolumeClaimRetentionPolicy:
-    whenScaled: Retain
   template:
     metadata:
       annotations:

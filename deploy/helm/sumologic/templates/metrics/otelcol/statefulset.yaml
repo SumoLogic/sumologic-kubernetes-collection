@@ -16,8 +16,10 @@ spec:
 {{- if eq (include "metadata.metrics.autoscaling.enabled" .) "false" }}
   replicas: {{ .Values.metadata.metrics.statefulset.replicaCount }}
 {{- end }}
+{{- if .Values.sumologic.persistentVolumeClaimRetentionPolicyEnabled}}
   persistentVolumeClaimRetentionPolicy:
     whenScaled: {{ .Values.metadata.logs.statefulset.persistentVolumeClaimRetentionPolicywhenScaled }}
+{{- end }}
   template:
     metadata:
       annotations:
