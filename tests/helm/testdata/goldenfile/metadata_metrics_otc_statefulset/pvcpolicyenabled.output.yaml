@@ -3,34 +3,38 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: release-name-sumologic-otelcol-metrics
+  name: RELEASE-NAME-sumologic-otelcol-metrics
   namespace: sumologic
   labels:
-    app: release-name-sumologic-otelcol-metrics
-    chart: "sumologic-4.12.0"
-    release: "release-name"
+    app: RELEASE-NAME-sumologic-otelcol-metrics
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
     heritage: "Helm"
 spec:
   selector:
     matchLabels:
-      app: release-name-sumologic-otelcol-metrics
-  serviceName: release-name-sumologic-otelcol-metrics-headless
+      app: RELEASE-NAME-sumologic-otelcol-metrics
+  serviceName: RELEASE-NAME-sumologic-otelcol-metrics-headless
   podManagementPolicy: "Parallel"
-  persistentVolumeClaimRetentionPolicy:
-    whenScaled: Retain
   template:
     metadata:
       annotations:
-        checksum/config: caf2ec77d79d61ea6619b67597ff1b799b41b19f1cff5cc5837700990580265f
+        checksum/config: "%CONFIG_CHECKSUM%"
       labels:
-        app: release-name-sumologic-otelcol-metrics
-        chart: "sumologic-4.12.0"
-        release: "release-name"
+        app: RELEASE-NAME-sumologic-otelcol-metrics
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
-      serviceAccountName: release-name-sumologic
+      serviceAccountName: RELEASE-NAME-sumologic
       nodeSelector:
         kubernetes.io/os: linux
+        sumologic.com/kind: co-worker
+      tolerations:
+        - effect: TestFail
+          key: arbeiter
+          operator: NotEqual
+          value: arbeiter
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -41,10 +45,10 @@ spec:
                     - key: app
                       operator: In
                       values:
-                        - release-name-sumologic-otelcol-logs
-                        - release-name-sumologic-otelcol-metrics
-                        - release-name-sumologic-otelcol-events
-                        - release-name-sumologic-otelcol-instrumentation
+                        - RELEASE-NAME-sumologic-otelcol-logs
+                        - RELEASE-NAME-sumologic-otelcol-metrics
+                        - RELEASE-NAME-sumologic-otelcol-events
+                        - RELEASE-NAME-sumologic-otelcol-instrumentation
                     - key: app
                       operator: In
                       values:
@@ -53,14 +57,14 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: release-name-sumologic-otelcol-metrics
+            name: RELEASE-NAME-sumologic-otelcol-metrics
         - name: tmp
           emptyDir: {}
       securityContext:
         fsGroup: 999
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.114.0-sumo-0"
+          image: "my_repository:my_tag"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
