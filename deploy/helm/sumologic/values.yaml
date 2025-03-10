@@ -103,7 +103,7 @@ sumologic:
   affinity: {}
 
   ## Persistent Volume Claim retention policy
-  persistentVolumeClaimRetentionPolicyEnabled: false
+  persistentVolumeClaimRetentionPolicyEnabled: true
 
   ## Add custom annotations to sumologic serviceAccounts
   serviceAccount:
