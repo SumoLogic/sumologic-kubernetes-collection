@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.12.1]
+
+### Released 2025-03-11
+
+### Added
+
+- feat: Allow custom pod annotations in the CRD configMap (setup) [#3901]
+- feat: Add a configuration knob to disable PersistentVolumeClaim retention policy [#3902]
+
+[#3901]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3901
+[#3902]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3902
+[v4.12.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.12.1
+
 ## [v4.12.0]
 
 ### Released 2025-02-13
