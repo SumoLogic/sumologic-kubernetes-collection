@@ -18,6 +18,7 @@ spec:
   podManagementPolicy: "Parallel"
   replicas: 4
   persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
     whenScaled: Retain
   template:
     metadata:

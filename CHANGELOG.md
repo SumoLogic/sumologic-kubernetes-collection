@@ -15,9 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - feat: Allow custom pod annotations in the CRD configMap (setup) [#3901]
 - feat: Add a configuration knob to disable PersistentVolumeClaim retention policy [#3902]
+- feat: Add the whenDeleted option to the PersistentVolumeClaim retention policy [#3904]
 
 [#3901]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3901
 [#3902]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3902
+[#3904]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3904
 [v4.12.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.12.1
 
 ## [v4.12.0]
