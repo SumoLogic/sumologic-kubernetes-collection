@@ -284,6 +284,39 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
+{{ if .Values.sumologic.logs.useSumoK8sProcessor }}
+  k8s_tagger:
+    extract:
+      annotations:
+        - key: "*"
+          tag_name: "pod_annotations_%s"
+      namespace_annotations:
+        - key: "*"
+          tag_name: namespace_annotations_%s
+      delimiter: "_"
+      labels:
+        - key: "*"
+          tag_name: "pod_labels_%s"
+      metadata:
+        ## extract the following well-known metadata fields
+        - daemonSetName
+        - deploymentName
+        - hostName
+        - namespace
+        - nodeName
+        - podName
+        - serviceName
+        - statefulSetName
+      namespace_labels:
+        - key: "*"
+          tag_name: "namespace_labels_%s"
+    # To enable fetching additional metadata using `owner` relationship
+    owner_lookup_enabled: true
+    ## Has to be false to enrich metadata
+    passthrough: false
+    pod_association:
+      - from: build_hostname
+{{ else }}
   k8sattributes:
     auth_type: "serviceAccount"
     extract:
@@ -317,7 +350,7 @@ processors:
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
-      
+{{ end }}
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
@@ -534,7 +567,11 @@ service:
         - memory_limiter
         - filter/include_containers
         - groupbyattrs/containers
+{{ if .Values.sumologic.logs.useSumoK8sProcessor }}
+        - k8s_tagger
+{{ else }}
         - k8sattributes
+{{ end }}
         - resource/add_cluster
         - resource/set_empty_source_metadata
         - resource/containers_copy_node_to_host
