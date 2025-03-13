@@ -271,6 +271,7 @@ processors:
       - k8s.container.name
       - k8s.namespace.name
       - k8s.pod.name
+      - k8s.pod.uid
       - _collector
 {{ end }}
 
@@ -283,6 +284,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
+{{ if .Values.sumologic.logs.useSumoK8sProcessor }}
   k8s_tagger:
     extract:
       annotations:
@@ -314,6 +316,41 @@ processors:
     passthrough: false
     pod_association:
       - from: build_hostname
+{{ else }}
+  k8sattributes:
+    auth_type: "serviceAccount"
+    extract:
+      labels:
+        - key_regex: "(.*)"
+          tag_name: "pod_labels_$$1"
+          from: pod
+        - key_regex: "(.*)"
+          tag_name: "namespace_labels_$$1"
+          from: namespace
+      annotations:
+        - key_regex: "(.*)"
+          tag_name: "pod_annotations_$$1"
+          from: pod
+        - key_regex: "(.*)"
+          tag_name: "namespace_annotations_$$1"
+          from: namespace
+      metadata:
+        ## extract the following well-known metadata fields
+        - k8s.pod.name
+        - k8s.pod.uid
+        - k8s.deployment.name
+        - k8s.daemonset.name
+        - k8s.replicaset.name
+        - k8s.statefulset.name
+        - k8s.namespace.name
+        - k8s.node.name
+    ## Has to be false to enrich metadata
+    passthrough: false
+    pod_association:
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.uid
+{{ end }}
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
@@ -530,7 +567,11 @@ service:
         - memory_limiter
         - filter/include_containers
         - groupbyattrs/containers
+{{ if .Values.sumologic.logs.useSumoK8sProcessor }}
         - k8s_tagger
+{{ else }}
+        - k8sattributes
+{{ end }}
         - resource/add_cluster
         - resource/set_empty_source_metadata
         - resource/containers_copy_node_to_host

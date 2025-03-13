@@ -157,6 +157,7 @@ data:
         - k8s.container.name
         - k8s.namespace.name
         - k8s.pod.name
+        - k8s.pod.uid
         - _collector
       groupbyattrs/systemd:
         keys:

@@ -486,6 +486,8 @@ sumologic:
 
     sourceType: otlp
 
+    useSumoK8sProcessor: true
+
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
   metrics:

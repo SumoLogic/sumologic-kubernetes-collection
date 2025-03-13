@@ -138,12 +138,13 @@ data:
         - from: attributes.pod_name
           to: attributes["k8s.pod.name"]
           type: move
+        - from: attributes.uid
+          to: attributes["k8s.pod.uid"]
+          type: move
         - from: body.log
           to: body
           type: move
         - field: attributes.run_id
-          type: remove
-        - field: attributes.uid
           type: remove
         - default: merge-multiline-logs
           id: multiline
