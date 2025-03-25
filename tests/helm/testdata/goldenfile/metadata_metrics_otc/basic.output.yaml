@@ -58,23 +58,28 @@ data:
         keys:
         - __name__
         - job
-      k8s_tagger:
+      k8sattributes:
+        auth_type: serviceAccount
         extract:
-          delimiter: _
           labels:
-          - key: '*'
-            tag_name: pod_labels_%s
+          - from: pod
+            key_regex: (.*)
+            tag_name: pod_labels_$$1
           metadata:
-          - daemonSetName
-          - deploymentName
-          - nodeName
-          - replicaSetName
-          - serviceName
-          - statefulSetName
-        owner_lookup_enabled: true
+          - k8s.pod.name
+          - k8s.deployment.name
+          - k8s.daemonset.name
+          - k8s.replicaset.name
+          - k8s.statefulset.name
+          - k8s.namespace.name
+          - k8s.node.name
         passthrough: false
         pod_association:
-        - from: build_hostname
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.name
+          - from: resource_attribute
+            name: k8s.namespace.name
       memory_limiter:
         check_interval: 5s
         limit_percentage: 90
@@ -187,7 +192,7 @@ data:
           - metricstransform
           - groupbyattrs
           - resource
-          - k8s_tagger
+          - k8sattributes
           - source
           - sumologic
           - resource/remove_k8s_pod_pod_name

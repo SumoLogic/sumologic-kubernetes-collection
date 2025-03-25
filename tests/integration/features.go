@@ -107,7 +107,6 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod_labels_pod-template-hash": ".+",
 					"pod":                          podList.Items[0].Name,
 					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
-					"service":                      deployment,
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
@@ -168,7 +167,6 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod_labels_pod-template-hash":            ".+",
 					"pod":                                     fmt.Sprintf("%s-.+", deployment),
 					"replicaset":                              fmt.Sprintf("%s-.+", deployment),
-					"service":                                 deployment,
 					"service_discovery_pod":                   fmt.Sprintf("%s-.+", deployment),
 					"uid":                                     ".+",
 				}
@@ -211,7 +209,6 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 					"pod_labels_pod-template-hash": ".+",
 					"pod":                          "nginx-.+",
 					"replicaset":                   "nginx-.*",
-					"service":                      "nginx",
 					"app":                          "nginx",
 					"host":                         "nginx-.+",
 					"port":                         "80",

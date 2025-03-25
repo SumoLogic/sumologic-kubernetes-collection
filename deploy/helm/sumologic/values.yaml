@@ -486,6 +486,8 @@ sumologic:
 
     sourceType: otlp
 
+    ## Use the sumologic k8s processor to add metadata to the logs.
+    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
     useSumoK8sProcessor: true
 
   ### Metrics configuration
@@ -538,11 +540,11 @@ sumologic:
             cpu: 100m
 
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
-        ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
+        ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspecprometheuscr
         serviceMonitorSelector: {}
 
         ## Selector for PodMonitors used for target discovery. By default, this selects resources created by this Chart.
-        ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
+        ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspecprometheuscr
         podMonitorSelector: {}
 
         securityContext:
@@ -569,7 +571,7 @@ sumologic:
           enabled: true
 
         ## Allocation strategy for the scrape target allocator. Valid values are: least-weighted and consistent-hashing.
-        ## See: https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocator
+        ## See: https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspec
         # allocationStrategy: least-weighted
 
         config:
@@ -760,6 +762,10 @@ sumologic:
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
     sourceType: otlp
+
+    ## Use the sumologic k8s processor to add metadata to the metrics.
+    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
+    useSumoK8sProcessor: false
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces from instrumentation ingestion.
@@ -2511,7 +2517,6 @@ opentelemetry-operator:
 
     certManager:
       enabled: false
-
   manager:
     image:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
