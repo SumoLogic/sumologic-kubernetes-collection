@@ -59,6 +59,63 @@ const (
 	curlAppSleepInterval          uint = 5
 )
 
+func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
+	return features.New("metrics").
+		Assess("expected metrics are present",
+			stepfuncs.WaitUntilExpectedMetricsPresent(
+				expectedMetrics,
+				2*time.Minute, // take longer to account for recording rule metrics
+				tickDuration,
+			),
+		).
+		Assess("expected labels are present for container metrics",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				// Get the receiver mock pod as metrics source
+				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+				podList := corev1.PodList{}
+				releaseName := strings_internal.ReleaseNameFromT(t)
+				deployment := fmt.Sprintf("%s-sumologic-mock", releaseName)
+				require.NoError(t,
+					wait.For(
+						conditions.New(res).
+							ResourceListN(
+								&podList,
+								1,
+								resources.WithLabelSelector(fmt.Sprintf("app=%s", deployment)),
+							),
+						wait.WithTimeout(waitDuration),
+						wait.WithInterval(tickDuration),
+					),
+				)
+				metricFilters := sumologicmock.MetadataFilters{
+					"__name__": "container_memory_working_set_bytes",
+					"pod":      podList.Items[0].Name,
+				}
+				namespace := ctxopts.Namespace(ctx)
+				expectedLabels := sumologicmock.Labels{
+					"cluster":                      "kubernetes",
+					"_origin":                      "kubernetes",
+					"container":                    "sumologic-mock",
+					"deployment":                   deployment,
+					"endpoint":                     "https-metrics",
+					"image":                        "sumologic/sumologic-mock:.*",
+					"job":                          "kubelet",
+					"metrics_path":                 "/metrics/cadvisor",
+					"namespace":                    ctxopts.Namespace(ctx),
+					"node":                         internal.NodeNameRegex,
+					"pod_labels_app":               deployment,
+					"pod_labels_pod-template-hash": ".+",
+					"pod":                          podList.Items[0].Name,
+					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
+				}
+				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
+
+				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
+			},
+		).
+		Feature()
+}
+
 func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
 	return features.New("metrics").
 		Assess("expected metrics are present",
@@ -107,6 +164,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod_labels_pod-template-hash": ".+",
 					"pod":                          podList.Items[0].Name,
 					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
+					"service":                      deployment,
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
@@ -167,6 +225,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod_labels_pod-template-hash":            ".+",
 					"pod":                                     fmt.Sprintf("%s-.+", deployment),
 					"replicaset":                              fmt.Sprintf("%s-.+", deployment),
+					"service":                                 deployment,
 					"service_discovery_pod":                   fmt.Sprintf("%s-.+", deployment),
 					"uid":                                     ".+",
 				}
@@ -209,6 +268,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 					"pod_labels_pod-template-hash": ".+",
 					"pod":                          "nginx-.+",
 					"replicaset":                   "nginx-.*",
+					"service":                      "nginx",
 					"app":                          "nginx",
 					"host":                         "nginx-.+",
 					"port":                         "80",

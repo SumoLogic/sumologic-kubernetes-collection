@@ -124,7 +124,7 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"metricstransform",
 		"groupbyattrs",
 		"resource",
-		"k8sattributes",
+		"k8s_tagger",
 		"source",
 		"sumologic",
 		"filter/1",

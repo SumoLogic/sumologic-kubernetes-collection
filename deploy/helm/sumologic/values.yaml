@@ -765,7 +765,7 @@ sumologic:
 
     ## Use the sumologic k8s processor to add metadata to the metrics.
     ## This is enabled by default, but can be disabled if you want to use the upstream processor.
-    useSumoK8sProcessor: false
+    useSumoK8sProcessor: true
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces from instrumentation ingestion.
