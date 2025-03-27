@@ -33,7 +33,7 @@ groupbyattrs/group_by_name:
     - job
 
 ## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
-{{ if .Values.sumologic.metrics.useSumoK8sProcessor }}
+{{ if .Values.metadata.metrics.useSumoK8sProcessor }}
 k8s_tagger:
   extract:
     delimiter: "_"
@@ -55,6 +55,8 @@ k8s_tagger:
     - from: build_hostname  # Pods are identified by Pod name and namespace
 {{ else }}
 k8sattributes:
+  wait_for_metadata: {{ .Values.metadata.metrics.waitForMetadata }}
+  wait_for_metadata_timeout: {{ .Values.metadata.metrics.waitForMetadataTimeout | quote }}
   auth_type: "serviceAccount"
   extract:
     labels:

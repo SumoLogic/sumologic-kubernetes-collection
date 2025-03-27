@@ -1,6 +1,7 @@
 sumologic:
+  collector:
+    otelcol:
+      enabled: true
+metadata:
   logs:
     useSumoK8sProcessor: false
-    collector:
-      otelcol:
-        enabled: true

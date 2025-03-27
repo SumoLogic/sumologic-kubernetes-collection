@@ -486,10 +486,6 @@ sumologic:
 
     sourceType: otlp
 
-    ## Use the sumologic k8s processor to add metadata to the logs.
-    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
-    useSumoK8sProcessor: true
-
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
   metrics:
@@ -762,10 +758,6 @@ sumologic:
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
     sourceType: otlp
-
-    ## Use the sumologic k8s processor to add metadata to the metrics.
-    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
-    useSumoK8sProcessor: true
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces from instrumentation ingestion.
@@ -1606,6 +1598,15 @@ metadata:
     logLevel: info
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
+
+    ## Use the sumologic k8s processor to add metadata to the logs.
+    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
+    useSumoK8sProcessor: true
+
+    ## Only used if useSumoK8sProcessor is set to false
+    waitForMetadata: true
+    waitForMetadataTimeout: 10s
+
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
       ## be directly merged with the generated configuration, overriding existing values.
@@ -1714,6 +1715,15 @@ metadata:
     logLevel: info
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
+
+    ## Use the sumologic k8s processor to add metadata to the logs.
+    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
+    useSumoK8sProcessor: true
+
+    ## Only used if useSumoK8sProcessor is set to false
+    waitForMetadata: true
+    waitForMetadataTimeout: 10s
+
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
       ## be directly merged with the generated configuration, overriding existing values.

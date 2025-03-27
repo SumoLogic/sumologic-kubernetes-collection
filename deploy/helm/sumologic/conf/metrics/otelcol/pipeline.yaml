@@ -23,7 +23,7 @@ processors:
   - metricstransform
   - groupbyattrs
   - resource
-{{ if .Values.sumologic.metrics.useSumoK8sProcessor }}
+{{ if .Values.metadata.metrics.useSumoK8sProcessor }}
   - k8s_tagger
 {{ else }}
   - k8sattributes
