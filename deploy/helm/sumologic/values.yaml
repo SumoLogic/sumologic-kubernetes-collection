@@ -596,12 +596,8 @@ sumologic:
     ## Default metric filters for Sumo Apps
     enableDefaultFilters: false
 
-    ## By default, the Helm Chart collects some high-cardinality histogram metrics, as Sumo Apps make use of the sum and count components.
-    ## This setting causes the metrics collector to drop the actual histogram buckets, keeping only the sum and the count.
-    ## This affects the following metrics:
-    ## - apiserver_request_duration_seconds
-    ## - coredns_dns_request_duration_seconds
-    ## - kubelet_runtime_operations_duration_seconds
+    ## Drop Histogram buckets from metrics
+    ## This parameter is used to drop histogram buckets from histograms that are collected
     dropHistogramBuckets: true
 
     ## A regular expression to allow selected histogram metrics, including the buckets.
