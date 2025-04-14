@@ -7,6 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.13.0]
+
+### Released 2025-04-25
+
+### Added
+
+- feat(logs): Add upstream k8sattributes processor for container logs metadata enrichment [#3898]
+- feat(metrics): Add the upstream k8sattributes processor for metrics metadata enrichment [#3911]
+- feat(metadata): Add the option to wait for metadata enrichment before processing data [#3912]
+- chore: Upgraded otel collector version to 0.118.0 from 0.114.0 #3914 [#3914]
+- chore(deps): bump golang.org/x/crypto from 0.31.0 to 0.35.0 [#3919]
+
+### Changed
+
+- fix(TA): Allow the target allocator access to probes and scrapeconfigs in the coreos apiGroups [#3913]
+
+[#3911]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3911
+[#3912]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3912
+[#3914]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3914
+[#3898]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3898
+[#3913]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3913
+[#3919]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3919
+[v4.13.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.13.0
+
 ## [v4.12.1]
 
 ### Released 2025-03-11
