@@ -1,10 +1,10 @@
-# Deployment Guide for v4.12
+# Deployment Guide for v4.13
 
 This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level
 metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
-- [Deployment Guide for v4.12](#deployment-guide-for-v412)
+- [Deployment Guide for v4.13](#deployment-guide-for-v413)
   - [Solution overview](#solution-overview)
     - [Log Collection](#log-collection)
     - [Metrics Collection](#metrics-collection)
@@ -114,6 +114,15 @@ The following table displays the currently used software versions for our Helm c
 | Metrics Server                            | 6.11.2  |
 | Telegraf Operator                         | 1.4.0   |
 | Tailing Sidecar Operator                  | 0.16.0  |
+
+### Kubernetes Attributes Processor support
+
+The
+[k8sattributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md)
+is now supported for logs and metrics metadata enrichment. This processor is disabled by default. To enable this processor for logs, set
+`metadata.logs.useSumoK8sProcessor` to `false`. To enable this processor for metrics, set `metadata.metrics.useSumoK8sProcessor` to `false`.
+
+> [!NOTE] The Service name isn't part of the metadata enrichment with this new processor.
 
 ### ARM support
 
