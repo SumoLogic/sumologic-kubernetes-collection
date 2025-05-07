@@ -32,3 +32,6 @@ kube-prometheus-stack:
         value: "value"
         operator: Exists
         effect: "NoSchedule"
+opentelemetry-operator:
+  nodeSelector:
+    disktype: hdd
