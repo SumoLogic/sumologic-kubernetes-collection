@@ -537,10 +537,16 @@ sumologic:
 
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspecprometheuscr
+        ## Example
+        ## serviceMonitorSelector:
+        ##   release: sumologic
         serviceMonitorSelector: {}
 
         ## Selector for PodMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspecprometheuscr
+        ## Example
+        ## podMonitorSelector:
+        ##   release: sumologic
         podMonitorSelector: {}
 
         securityContext:
