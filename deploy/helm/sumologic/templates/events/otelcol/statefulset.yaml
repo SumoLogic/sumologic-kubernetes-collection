@@ -46,9 +46,6 @@ spec:
 {{- end }}
 {{- if or (not (empty (include "events.statefulset.affinity" .))) .Values.otelevents.statefulset.podAntiAffinity }}
       affinity:
-{{- if not (empty (include "otelcolInstrumentation.statefulset.affinity" .)) }}
-{{ include "otelcolInstrumentation.statefulset.affinity" . | indent 8 }}
-{{- end }}
 {{- if not (empty (include "events.statefulset.affinity" .)) }}
 {{ include "events.statefulset.affinity" . | indent 8 }}
 {{- end }}
