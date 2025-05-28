@@ -23,7 +23,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: "%CONFIG_CHECKSUM%"
+        checksum/config: '%CONFIG_CHECKSUM%'
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-logs
@@ -42,106 +42,109 @@ spec:
           operator: Equal
           value: worker
       volumes:
-        - name: config-volume
-          configMap:
-            name: RELEASE-NAME-sumologic-otelcol-logs
-        - name: tmp
-          emptyDir: {}
-        - name: es-certs
-          secret:
-            defaultMode: 420
-            secretName: es-certs
+      - name: config-volume
+        configMap:
+          name: RELEASE-NAME-sumologic-otelcol-logs
+      - name: tmp
+        emptyDir: {}
+      - name: es-certs
+        secret:
+          defaultMode: 420
+          secretName: es-certs
       securityContext:
         fsGroup: 999
       priorityClassName: "prio"
       containers:
-        - name: otelcol
-          image: "my_repository:my_tag"
-          imagePullPolicy: IfNotPresent
-          args:
-            - --config=/etc/otel/config.yaml
-            - --config=/etc/otel/test-config.yaml
-          resources:
-            limits:
-              cpu: 2000m
-              memory: 2Gi
-            requests:
-              cpu: 100m
-              memory: 777Mi
-          ports:
-            - name: metrics
-              containerPort: 8888
-              protocol: TCP
-            - name: otlphttp
-              containerPort: 4318
-              protocol: TCP
-            - name: pprof
-              containerPort: 1777
-              protocol: TCP
-            - containerPort: 4319
-              name: otlphttp2
-              protocol: TCP
-            - containerPort: 4320
-              name: otlphttp3
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 13133 # Health Check extension default port.
-            failureThreshold: 3
-            initialDelaySeconds: 15
-            periodSeconds: 15
-            timeoutSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 13133 # Health Check extension default port.
-            failureThreshold: 3
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 3
-          startupProbe:
-            httpGet:
-              path: /
-              port: 13133 # Health Check extension default port.
-            failureThreshold: 60
-            periodSeconds: 3
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/otel/config.yaml
-              subPath: config.yaml
-            - name: tmp
-              mountPath: /tmp
-            - name: file-storage
-              mountPath: /var/lib/storage/otc
-            - mountPath: /certs
-              name: es-certs
-              readOnly: true
-          env:
-            - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-logs
-
-            - name: NO_PROXY
-              value: kubernetes.default.svc
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: status.podIP
-            - name: VALUE_FROM_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: secret_key
-                  name: secret_name
-  volumeClaimTemplates:
-    - metadata:
-        name: file-storage
-      spec:
-        accessModes: [ReadWriteOnce]
-        storageClassName:
+      - name: otelcol
+        image: "my_repository:my_tag"
+        imagePullPolicy: IfNotPresent
+        args:
+          - --config=/etc/otel/config.yaml
+          - --config=/etc/otel/test-config.yaml
         resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
           requests:
-            storage: 10Gi
+            cpu: 100m
+            memory: 777Mi
+        ports:
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+        - name: otlphttp
+          containerPort: 4318
+          protocol: TCP
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
+        - containerPort: 4319
+          name: otlphttp2
+          protocol: TCP
+        - containerPort: 4320
+          name: otlphttp3
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          failureThreshold: 3
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+        startupProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          failureThreshold: 60
+          periodSeconds: 3
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/otel/config.yaml
+          subPath: config.yaml
+        - name: tmp
+          mountPath: /tmp
+        - name: file-storage
+          mountPath: /var/lib/storage/otc
+        - mountPath: /certs
+          name: es-certs
+          readOnly: true
+        env:
+        - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-logs
+        
+        
+        - name: NO_PROXY
+          value: kubernetes.default.svc
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: VALUE_FROM_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: secret_key
+              name: secret_name
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: file-storage
+    spec:
+      accessModes: [ReadWriteOnce]
+      storageClassName: 
+      resources:
+        requests:
+          storage: 10Gi
