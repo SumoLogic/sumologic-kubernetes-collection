@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: dotnetapp
-          image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-dotnet:main
+          image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-dotnet@sha256:fa7305f4cecd10bf67dc57c8a8bb65e912de950a1cce8877568735368b8b6729
           ports:
             - containerPort: 80
               protocol: TCP
