@@ -185,7 +185,7 @@ func (client *SumologicMockClient) GetSpansCount(t *testing.T, metadataFilters M
 	}
 
 	url := client.baseUrl.ResolveReference(path)
-	url.RawQuery = queryParams.Encode()
+	// url.RawQuery = queryParams.Encode()
 	resp, err := http.Get(url.String())
 	if err != nil {
 		return 0, fmt.Errorf("failed fetching %s, err: %w", url, err)
@@ -200,10 +200,12 @@ func (client *SumologicMockClient) GetSpansCount(t *testing.T, metadataFilters M
 			resp.StatusCode, url,
 		)
 	}
+	fmt.Printf("Received response body: %s\n", body)
 	var spans []Span
 	if err := json.Unmarshal(body, &spans); err != nil {
 		return 0, err
 	}
+	fmt.Printf("Parsed spans: %v\n", spans)
 	return uint(len(spans)), nil
 }
 
