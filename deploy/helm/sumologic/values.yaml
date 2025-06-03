@@ -2124,6 +2124,9 @@ otellogs:
     ## Add custom annotations to all otelcol daemonset pods
     podAnnotations: {}
 
+    ## Allow for hostNetwork to be used in the OTEL daemonsets
+    hostNetwork: false
+
     resources:
       limits:
         memory: 1Gi

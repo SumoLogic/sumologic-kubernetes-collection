@@ -84,6 +84,9 @@ spec:
       {{- else }}
       priorityClassName: {{ include "sumologic.metadata.name.priorityclass" $ctx | quote }}
       {{- end }}
+      {{- if $daemonset.hostNetwork }}
+      hostNetwork: {{ $daemonset.hostNetwork }}
+      {{- end }}
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
