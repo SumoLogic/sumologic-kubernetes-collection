@@ -200,7 +200,6 @@ func (client *SumologicMockClient) GetSpansCount(t *testing.T, metadataFilters M
 			resp.StatusCode, url,
 		)
 	}
-	fmt.Printf("Received response body: %s\n", body)
 	var spans []Span
 	if err := json.Unmarshal(body, &spans); err != nil {
 		return 0, err

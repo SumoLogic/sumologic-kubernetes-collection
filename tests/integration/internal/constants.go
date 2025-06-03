@@ -250,7 +250,6 @@ var (
 	LogsOtelcolMetrics = []string{
 		"otelcol_exporter_sent_log_records",
 		"otelcol_exporter_send_failed_log_records",
-		"otelcol_processor_filter_logs_filtered",
 		"otelcol_receiver_accepted_log_records",
 		"otelcol_processor_accepted_log_records",
 		"otelcol_receiver_refused_log_records",
@@ -315,6 +314,9 @@ var (
 		"otelcol_http_server_duration_count",
 		"otelcol_processor_batch_batch_size_trigger_send",
 		"otelcol_processor_filter_datapoints_filtered",
+		"otelcol_processor_filter_datapoints.filtered",
+		"otelcol_processor_filter_logs.filtered",
+		"otelcol_processor_filter_logs_filtered",
 		"otelcol_otelsvc_k8s_ip_lookup_miss",
 		"otelcol_otelsvc_k8s_other_deleted",
 		"otelcol_otelsvc_k8s_pod_added",
@@ -339,6 +341,7 @@ var (
 		"cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile",
 		"cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile",
 		"target_info",
+		"promhttp_metric_handler_errors_total",
 	}
 
 	NginxMetrics = []string{
