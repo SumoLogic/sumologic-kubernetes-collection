@@ -7,6 +7,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.14.0]
+
+### Released 2025-06-04
+
+### Changed
+
+- chore: Upgrade the opentelemetry operator to 0.86.4 [#3925]
+- chore: Upgrade otel collector to 0.124.1-sumo-0 [#3938]
+
+### Fixed
+
+- fix: Add the default release label for serviceMonitorSelectors and PodMonitorSelectors [#3927]
+- fix: don't adjust SUMOLOGIC_BASE_URL in cleanup.sh [#3930]
+
+[#3925]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3925
+[#3938]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3938
+[#3927]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3927
+[#3930]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3930
+[v4.14.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.14.0
+
 ## [v4.13.0]
 
 ### Released 2025-04-25
