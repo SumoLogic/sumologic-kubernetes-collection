@@ -74,6 +74,9 @@ service:
               prometheus:
                 host: ${env:MY_POD_IP}
                 port: 8888
+                without_type_suffix: true
+                without_units: true
+                without_scope_info: true
   extensions:
     - health_check
     - pprof

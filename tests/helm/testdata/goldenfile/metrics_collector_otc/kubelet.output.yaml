@@ -13,7 +13,7 @@ metadata:
     heritage: "Helm"
     sumologic.com/scrape: "true"
 spec:
-  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.118.0-sumo-0"
+  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.124.1-sumo-0"
   mode: statefulset
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
@@ -280,3 +280,6 @@ spec:
                   prometheus:
                     host: ${env:MY_POD_IP}
                     port: 8888
+                    without_scope_info: true
+                    without_type_suffix: true
+                    without_units: true
