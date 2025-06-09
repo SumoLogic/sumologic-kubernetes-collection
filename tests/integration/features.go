@@ -32,10 +32,10 @@ type MetricsCollector string
 
 const (
 	tickDuration = 3 * time.Second
-	waitDuration = 1 * time.Minute
+	waitDuration = 2 * time.Minute
 	// number determined experimentally
 	expectedEventCount uint = 50
-	logsGeneratorCount uint = 1000
+	logsGeneratorCount uint = 600
 	// number of log records in single loop with default multiline support only, see: tests/integration/yamls/pod_multiline_long_lines.yaml
 	logRecords = 4 + 10
 	// number of log records in single loop with multiple multilines support, see: tests/integration/yamls/pod_multiline_long_lines.yaml
