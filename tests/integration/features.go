@@ -343,9 +343,8 @@ func waitForDeploymentLogs(count uint, strict bool, waitFunction stepfuncs.WaitF
 	return waitFunction(
 		count,
 		map[string]string{
-			"namespace":      internal.LogsGeneratorName,
-			"pod_labels_app": internal.LogsGeneratorName,
-			"deployment":     internal.LogsGeneratorName,
+			"namespace":  internal.LogsGeneratorName,
+			"deployment": internal.LogsGeneratorName,
 		},
 		waitDuration,
 		tickDuration,
@@ -357,9 +356,8 @@ func waitForDaemonsetLogs(count uint, strict bool, waitFunction stepfuncs.WaitFo
 	return waitFunction(
 		count,
 		map[string]string{
-			"namespace":      internal.LogsGeneratorName,
-			"pod_labels_app": internal.LogsGeneratorName,
-			"daemonset":      internal.LogsGeneratorName,
+			"namespace": internal.LogsGeneratorName,
+			"daemonset": internal.LogsGeneratorName,
 		},
 		waitDuration,
 		tickDuration,
