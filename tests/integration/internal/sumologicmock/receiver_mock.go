@@ -147,7 +147,6 @@ func (client *SumologicMockClient) GetLogsCount(t *testing.T, metadataFilters Me
 
 	url := client.baseUrl.ResolveReference(path)
 	url.RawQuery = queryParams.Encode()
-
 	statusCode, body, err := http_helper.HttpGetE(
 		t,
 		url.String(),
@@ -162,6 +161,7 @@ func (client *SumologicMockClient) GetLogsCount(t *testing.T, metadataFilters Me
 
 	var response LogsCountResponse
 	err = json.Unmarshal([]byte(body), &response)
+	fmt.Println("Logs count response:", response)
 	if err != nil {
 		t.Fatal(err)
 	}

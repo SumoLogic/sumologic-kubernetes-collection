@@ -84,6 +84,7 @@ func GetLogsGeneratorDeployment(
 	generatorArgs := optionsToArgumentList(options)
 	logsGeneratorCommand := fmt.Sprintf("logs-generator %s", strings.Join(generatorArgs, " "))
 	logsGeneratorAndSleepCommand := fmt.Sprintf("%s; sleep %f", logsGeneratorCommand, deploymentSleepTime.Seconds())
+	fmt.Printf("Logs generator command: %s\n", logsGeneratorAndSleepCommand)
 
 	podTemplateSpec := corev1.PodTemplateSpec{
 		ObjectMeta: metadata,

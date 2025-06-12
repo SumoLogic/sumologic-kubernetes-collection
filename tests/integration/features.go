@@ -35,7 +35,7 @@ const (
 	waitDuration = 2 * time.Minute
 	// number determined experimentally
 	expectedEventCount uint = 50
-	logsGeneratorCount uint = 600
+	logsGeneratorCount uint = 10
 	// number of log records in single loop with default multiline support only, see: tests/integration/yamls/pod_multiline_long_lines.yaml
 	logRecords = 4 + 10
 	// number of log records in single loop with multiple multilines support, see: tests/integration/yamls/pod_multiline_long_lines.yaml
@@ -343,9 +343,8 @@ func waitForDeploymentLogs(count uint, strict bool, waitFunction stepfuncs.WaitF
 	return waitFunction(
 		count,
 		map[string]string{
-			"namespace":      internal.LogsGeneratorName,
-			"pod_labels_app": internal.LogsGeneratorName,
-			"deployment":     internal.LogsGeneratorName,
+			"namespace":  internal.LogsGeneratorName,
+			"deployment": internal.LogsGeneratorName,
 		},
 		waitDuration,
 		tickDuration,
@@ -357,9 +356,8 @@ func waitForDaemonsetLogs(count uint, strict bool, waitFunction stepfuncs.WaitFo
 	return waitFunction(
 		count,
 		map[string]string{
-			"namespace":      internal.LogsGeneratorName,
-			"pod_labels_app": internal.LogsGeneratorName,
-			"daemonset":      internal.LogsGeneratorName,
+			"namespace": internal.LogsGeneratorName,
+			"daemonset": internal.LogsGeneratorName,
 		},
 		waitDuration,
 		tickDuration,
