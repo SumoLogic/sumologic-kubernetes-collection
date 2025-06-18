@@ -46,7 +46,7 @@ receivers:
     protocols:
       http:
 {{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: [${env:MY_POD_IP}]:4318
+        endpoint: "[${env:MY_POD_IP}]:4318"
 {{- else }}
         endpoint: ${env:MY_POD_IP}:4318
 {{- end }}
