@@ -34,15 +34,15 @@ receivers:
     protocols:
       grpc:
 {{- if eq .Values.sumologic.ipv6mode true }}
-    endpoint: "[${env:MY_POD_IP}]:4317"
+        endpoint: "[${env:MY_POD_IP}]:4317"
 {{- else }}
-    endpoint: "${env:MY_POD_IP}:4317"
+        endpoint: "${env:MY_POD_IP}:4317"
 {{- end }}
       http:
 {{- if eq .Values.sumologic.ipv6mode true }}
-    endpoint: "[${env:MY_POD_IP}]:4318"
+        endpoint: "[${env:MY_POD_IP}]:4318"
 {{- else }}
-    endpoint: "${env:MY_POD_IP}:4318"
+        endpoint: "${env:MY_POD_IP}:4318"
 {{- end }}
 processors:
   ## The memory_limiter processor is used to prevent out of memory situations on the collector.
