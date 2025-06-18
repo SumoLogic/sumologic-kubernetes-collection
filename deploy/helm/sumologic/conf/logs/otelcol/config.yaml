@@ -96,7 +96,11 @@ exporters:
 
 extensions:
   health_check:
+{{- if eq .Values.sumologic.ipv6mode true }}
+    endpoint: "[${env:MY_POD_IP}]:13133"
+{{- else }}
     endpoint: ${env:MY_POD_IP}:13133
+{{- end }}
 {{ if .Values.metadata.persistence.enabled }}
   ## Configuration for File Storage extension
   file_storage:
