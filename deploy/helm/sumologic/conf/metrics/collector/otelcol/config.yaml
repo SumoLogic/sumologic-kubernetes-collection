@@ -16,7 +16,7 @@ exporters:
 
 extensions:
   health_check:
-    endpoint: ${env:MY_POD_IP}:13134
+    endpoint: "[${env:MY_POD_IP}]:13133"
   pprof: {}
   file_storage:
     directory: /var/lib/storage/otc
