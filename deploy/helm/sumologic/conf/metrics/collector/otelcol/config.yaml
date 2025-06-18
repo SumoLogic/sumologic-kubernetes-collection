@@ -15,8 +15,10 @@ exporters:
     disable_keep_alives: true
 
 extensions:
+{{- if eq .Values.debug.enableLocalMode true }}
   health_check:
-    endpoint: ${env:MY_POD_IP}:13133
+    endpoint: "[${env:MY_POD_IP}]:13133"
+{{- end }}
   pprof: {}
   file_storage:
     directory: /var/lib/storage/otc
