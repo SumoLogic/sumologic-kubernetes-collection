@@ -62,27 +62,63 @@ receivers:
   jaeger:
     protocols:
       thrift_compact:
+{{- if eq .Values.sumologic.ipv6mode true }}
+        endpoint: "[${env:MY_POD_IP}]:6831"
+{{- else }}
         endpoint: "${env:MY_POD_IP}:6831"
+{{- end }}
       thrift_binary:
+{{- if eq .Values.sumologic.ipv6mode true }}
+        endpoint: "[${env:MY_POD_IP}]:6832"
+{{- else }}
         endpoint: "${env:MY_POD_IP}:6832"
+{{- end }}
       grpc:
+{{- if eq .Values.sumologic.ipv6mode true }}
+        endpoint: "[${env:MY_POD_IP}]:14250"
+{{- else }}
         endpoint: "${env:MY_POD_IP}:14250"
+{{- end }}
       thrift_http:
+{{- if eq .Values.sumologic.ipv6mode true }}
+        endpoint: "[${env:MY_POD_IP}]:14268"
+{{- else }}
         endpoint: "${env:MY_POD_IP}:14268"
+{{- end }}
   opencensus:
+{{- if eq .Values.sumologic.ipv6mode true }}
+    endpoint: "[${env:MY_POD_IP}]:55678"
+{{- else }}
     endpoint: "${env:MY_POD_IP}:55678"
+{{- end }}
   otlp:
     protocols:
       grpc:
+{{- if eq .Values.sumologic.ipv6mode true }}
+        endpoint: "[${env:MY_POD_IP}]:4317"
+{{- else }}
         endpoint: "${env:MY_POD_IP}:4317"
+{{- end }}
       http:
+{{- if eq .Values.sumologic.ipv6mode true }}
+        endpoint: "[${env:MY_POD_IP}]:4318"
+{{- else }}
         endpoint: "${env:MY_POD_IP}:4318"
+{{- end }}
   otlp/deprecated:
     protocols:
       http:
+{{- if eq .Values.sumologic.ipv6mode true }}
+        endpoint: "[${env:MY_POD_IP}]:55681"
+{{- else }}
         endpoint: "${env:MY_POD_IP}:55681"
+{{- end }}
   zipkin:
+{{- if eq .Values.sumologic.ipv6mode true }}
+    endpoint: "[${env:MY_POD_IP}]:9411"
+{{- else }}
     endpoint: "${env:MY_POD_IP}:9411"
+{{- end }}
 
 processors:
   ## Source processor adds Sumo Logic related metadata
