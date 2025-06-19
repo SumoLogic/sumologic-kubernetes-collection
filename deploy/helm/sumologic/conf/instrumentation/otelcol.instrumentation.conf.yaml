@@ -209,8 +209,11 @@ processors:
     ## Time duration after which a batch will be sent regardless of size
     timeout: 5s
 extensions:
-  health_check:
+{{- if eq .Values.sumologic.ipv6mode true }}
+    endpoint: "[${env:MY_POD_IP}]:13133"
+{{- else }}
     endpoint: ${env:MY_POD_IP}:13133
+{{- end }}
   pprof: {}
 service:
   extensions: [health_check, pprof]
