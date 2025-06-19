@@ -113,7 +113,7 @@ receivers:
         ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
         ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
         ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-        - job_name: "pood-annotations"
+        - job_name: "pod-annotations"
           kubernetes_sd_configs:
             - role: pod
           relabel_configs:
