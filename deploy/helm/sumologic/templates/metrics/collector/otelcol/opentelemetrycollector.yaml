@@ -111,7 +111,7 @@ spec:
         fieldPath: status.podIP
   podAnnotations:
     ## The operator adds this annotation by default, but we use our own ServiceMonitor
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
 {{- if .Values.sumologic.podAnnotations -}}
     {{ toYaml .Values.sumologic.podAnnotations | nindent 4 }}
 {{- end }}
