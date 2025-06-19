@@ -151,7 +151,7 @@ receivers:
         ## These scrape configs are for kubelet metrics
         ## Prometheus operator does this by manually maintaining a Service with Endpoints for all Nodes
         ## We don't have that capability, so we need to use a static configuration
-        - job_name: kubelett
+        - job_name: kubelet
           scheme: https
           authorization:
             credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
