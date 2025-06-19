@@ -3,6 +3,7 @@ otelevents:
   metricsLevel: detailed
 
 sumologic:
+  ipv6mode: true
   clusterName: testCluster
   collectorName: testCollector
   events:
