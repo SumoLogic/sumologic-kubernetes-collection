@@ -30,7 +30,7 @@ data:
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check:
-        endpoint: ${env:MY_POD_IP}:13133
+        endpoint: "[${env:MY_POD_IP}]:13133"
       pprof: {}
     processors:
       attributes/extract_systemd_source_fields:
@@ -281,7 +281,7 @@ data:
       otlp:
         protocols:
           http:
-            endpoint: ${env:MY_POD_IP}:4318
+            endpoint: "[${env:MY_POD_IP}]:4318"
     service:
       extensions:
       - health_check
