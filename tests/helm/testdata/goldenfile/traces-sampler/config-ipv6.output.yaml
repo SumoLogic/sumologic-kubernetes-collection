@@ -22,7 +22,7 @@ data:
           queue_size: 10000
     extensions:
       health_check:
-        endpoint: [${env:MY_POD_IP}]:13133
+        endpoint: '[${env:MY_POD_IP}]:13133'
       pprof: {}
     processors:
       batch:
@@ -39,9 +39,9 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: [${env:MY_POD_IP}]:4317
+            endpoint: '[${env:MY_POD_IP}]:4317'
           http:
-            endpoint: [${env:MY_POD_IP}]:4318
+            endpoint: '[${env:MY_POD_IP}]:4318'
     service:
       extensions:
       - health_check
