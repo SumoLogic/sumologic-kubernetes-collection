@@ -110,7 +110,7 @@ receivers:
         ## scraping metrics basing on annotations:
         ##   - prometheus.io/scrape: true - to scrape metrics from the pod
         ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
-        ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
+        ##   - prometheus.io/port: 9133 - port which the metric should be scrape from
         ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
         - job_name: "pod-annotations"
           kubernetes_sd_configs:
@@ -125,7 +125,7 @@ receivers:
               regex: (.+)
             - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
               action: replace
-              regex: (\[.*?\]|[^:;\[]+)(?::\d+)?;(\d+)
+              regex: ([^:]+)(?::\d+)?;(\d+)
               replacement: $1:$2
               target_label: __address__
             - source_labels: [__metrics_path__]
