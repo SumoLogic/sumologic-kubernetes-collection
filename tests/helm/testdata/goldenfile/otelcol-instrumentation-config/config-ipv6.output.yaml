@@ -40,6 +40,7 @@ data:
       batch:
         send_batch_max_size: 512
         send_batch_size: 256
+        timeout: 5s
       k8s_tagger:
         extract:
           annotations:
