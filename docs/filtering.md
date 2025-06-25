@@ -303,8 +303,8 @@ sumologic:
     enableDefaultFilters: true
 ```
 
-Full list of metrics affected is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics listed in
-the comments are the metrics that will **not** be dropped.
+Full list of metrics affected is available in the [documentation](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The
+metrics listed in the comments are the metrics that will **not** be dropped.
 
 ### Custom filtering
 

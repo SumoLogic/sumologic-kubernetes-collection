@@ -17,7 +17,7 @@ include:
 - Multiline log parsing
 
   OpenTelemetry Collector handles multiline parsing the same way for all container runtimes. Multiline parsing is configured via the
-  `sumologic.logs.multiline` section. See [here][otel_multiline] for more details.
+  `sumologic.logs.multiline` section. See [documentation][otel_multiline] for more details.
 
 ### What if I've made changes beyond the above?
 
@@ -55,7 +55,7 @@ forwarding logs to various destinations: you need to pick the [right exporter][o
 
 The simplest way is to put it under the `otellogs.config.merge` key.
 
-See [here][otel_config] for details and caveats.
+See [configuration][otel_config] for details and caveats.
 
 [filelogreceiver]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/filelogreceiver
 [transformprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor
