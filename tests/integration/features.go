@@ -107,6 +107,8 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 					"pod_labels_pod-template-hash": ".+",
 					"pod":                          podList.Items[0].Name,
 					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
+					"service":                      deployment,
+					"service.namespace":            ctxopts.Namespace(ctx),
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 

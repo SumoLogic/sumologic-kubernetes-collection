@@ -347,6 +347,8 @@ processors:
         - k8s.statefulset.name
         - k8s.namespace.name
         - k8s.node.name
+        - service.name
+        - service.namespace
     ## Has to be false to enrich metadata
     passthrough: false
     pod_association:
