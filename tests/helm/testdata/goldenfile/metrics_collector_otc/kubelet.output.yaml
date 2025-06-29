@@ -149,7 +149,7 @@ spec:
                     - __meta_kubernetes_pod_annotation_prometheus_io_path
                   target_label: __metrics_path__
                 - action: replace
-                  regex: ([^:]+)(?::\d+)?;(\d+)
+                  regex: (\[.*?\]|[^:;\[]+)(?::\d+)?;(\d+)
                   replacement: $1:$2
                   source_labels:
                     - __address__

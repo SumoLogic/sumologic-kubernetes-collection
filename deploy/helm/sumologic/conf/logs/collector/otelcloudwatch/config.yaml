@@ -16,7 +16,11 @@ extensions:
     timeout: 10s
 {{ end }}
   health_check:
+{{- if eq .Values.sumologic.ipv6mode true }}
+    endpoint: "[${env:MY_POD_IP}]:13133"
+{{- else }}
     endpoint: ${env:MY_POD_IP}:13133
+{{- end }}
   pprof: {}
 
 processors:

@@ -16,7 +16,11 @@ exporters:
 
 extensions:
   health_check:
+{{- if eq .Values.sumologic.ipv6mode true }}
+    endpoint: "[${env:MY_POD_IP}]:13133"
+{{- else }}
     endpoint: ${env:MY_POD_IP}:13133
+{{- end }}
   pprof: {}
   file_storage:
     directory: /var/lib/storage/otc
@@ -125,7 +129,7 @@ receivers:
               regex: (.+)
             - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
               action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
+              regex: (\[.*?\]|[^:;\[]+)(?::\d+)?;(\d+)
               replacement: $1:$2
               target_label: __address__
             - source_labels: [__metrics_path__]
