@@ -172,3 +172,16 @@ func GetHelmValuesForT(t *testing.T) []byte {
 	require.NoError(t, err, "values file %s must exist", valuesFilePath)
 	return valuesFileBytes
 }
+
+// KubectlCreateSumologicSecretOpt returns a features.Func that will create a secret called "sumologic"
+// in the namespace where the chart is installed using the YAML file.
+func KubectlCreateSumologicSecretOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		namespace := ctxopts.Namespace(ctx)
+		kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
+		kubectlOptions.Namespace = namespace
+		t.Logf("Creating sumologic secret in namespace: %s", namespace)
+		k8s.RunKubectl(t, kubectlOptions, "apply", "-f", "yamls/sumologic-secret.yaml", "-n", namespace)
+		return ctx
+	}
+}

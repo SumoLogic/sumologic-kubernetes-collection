@@ -115,9 +115,7 @@ func HelmInstallOpt(path string, releaseName string) features.Func {
 func HelmInstallTestOpt(path string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		releaseName := strings.ReleaseNameFromT(t)
-		// create the namespace here so it can be propagated in the context
-		// only the final before test action gets to modify the context
-		ctx = KubectlCreateNamespaceTestOpt()(ctx, t, envConf)
+		// Namespace is already created and set in context
 		return HelmInstallOpt(path, releaseName)(ctx, t, envConf)
 	}
 }

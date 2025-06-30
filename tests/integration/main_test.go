@@ -87,10 +87,12 @@ func ConfigureTestEnv(testenv env.Environment) {
 	testenv.Setup(envfuncs.CreateNamespace(internal.LogsGeneratorNamespace))
 
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
+		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		stepfuncs.KubectlCreateOperatorNamespacesOpt(),
 		stepfuncs.KubectlCreateOverrideNamespaceOpt(),
 		stepfuncs.HelmVersionOpt(),
 		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
+		stepfuncs.KubectlCreateSumologicSecretOpt(),
 		// HelmInstallTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
 		// in `strings.ValueFileFromT()`.)

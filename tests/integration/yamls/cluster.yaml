@@ -1,5 +1,7 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  ipFamily: ipv6 # Enable IPv6-only cluster
 nodes:
   - role: control-plane
     kubeadmConfigPatches:
@@ -11,14 +13,14 @@ nodes:
         kind: ClusterConfiguration
         scheduler:
             extraArgs:
-              bind-address: 0.0.0.0
+              bind-address: "::"
         controllerManager:
             extraArgs:
-              bind-address: 0.0.0.0
+              bind-address: "::"
         etcd:
           local:
             dataDir: /tmp/etcd
             extraArgs:
-              listen-metrics-urls: http://0.0.0.0:2381
+              listen-metrics-urls: http://[::]:2381
         networking:
           dnsDomain: "my.cluster"

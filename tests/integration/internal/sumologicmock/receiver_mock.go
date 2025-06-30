@@ -38,24 +38,29 @@ func NewClient(t *testing.T, baseUrl url.URL) *SumologicMockClient {
 // It return the client itself and a tunnel teardown func which should be called
 // by the caller when they're done with it.
 func NewClientWithK8sTunnel(
-	ctx context.Context,
-	envConf *envconf.Config,
-	t *testing.T,
-	serviceName string,
+	   ctx context.Context,
+	   envConf *envconf.Config,
+	   t *testing.T,
+	   serviceName string,
 ) (*SumologicMockClient, func()) {
-	tunnel := k8s.TunnelForSumologicMock(ctx, envConf, t, serviceName)
-	baseUrl := url.URL{
-		Scheme: "http",
-		Host:   tunnel.Endpoint(),
-		Path:   "/",
-	}
+	   tunnel := k8s.TunnelForSumologicMock(ctx, envConf, t, serviceName)
+	   endpoint := tunnel.Endpoint()
+	   // If the endpoint is IPv4 localhost, switch to IPv6 loopback
+	   if strings.HasPrefix(endpoint, "127.0.0.1:") || strings.HasPrefix(endpoint, "localhost:") {
+			   endpoint = "[::1]:" + strings.Split(endpoint, ":")[1]
+	   }
+	   baseUrl := url.URL{
+			   Scheme: "http",
+			   Host:   endpoint,
+			   Path:   "/",
+	   }
 
-	return &SumologicMockClient{
-			baseUrl:   baseUrl,
-			tlsConfig: tls.Config{},
-		}, func() {
-			tunnel.Close()
-		}
+	   return &SumologicMockClient{
+			   baseUrl:   baseUrl,
+			   tlsConfig: tls.Config{},
+	   }, func() {
+			   tunnel.Close()
+	   }
 }
 
 // GetMetricCounts returns the number of times each metric was received by sumologic-mock
