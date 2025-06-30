@@ -32,7 +32,7 @@ type MetricsCollector string
 
 const (
 	tickDuration = 3 * time.Second
-	waitDuration = 1 * time.Minute
+	waitDuration = 2 * time.Minute
 	// number determined experimentally
 	expectedEventCount uint = 50
 	logsGeneratorCount uint = 1000
@@ -107,6 +107,8 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 					"pod_labels_pod-template-hash": ".+",
 					"pod":                          podList.Items[0].Name,
 					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
+					"service":                      deployment,
+					"service.namespace":            ctxopts.Namespace(ctx),
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
