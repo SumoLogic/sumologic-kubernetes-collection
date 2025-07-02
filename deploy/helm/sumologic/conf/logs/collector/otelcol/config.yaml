@@ -18,7 +18,7 @@ extensions:
     directory: /var/lib/storage/otc
     timeout: 10s
   health_check:
-    {{ template "sumologic.healthEndpoint" . }}
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 
 processors:
