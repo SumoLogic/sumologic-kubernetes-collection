@@ -30,7 +30,7 @@ extensions:
     timeout: 10s
 {{- end }}
   health_check:
-    {{ template "sumologic.healthEndpoint" . }}
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 
 processors:
