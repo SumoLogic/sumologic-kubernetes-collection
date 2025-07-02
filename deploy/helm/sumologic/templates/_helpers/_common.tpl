@@ -624,6 +624,14 @@ Example usage:
 {{- template "sumologic.fullname" . }}-mock
 {{- end -}}
 
+{{- define "sumologic.healthEndpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:13133"
+{{- else -}}
+${env:MY_POD_IP}:13133
+{{- end -}}
+{{- end }}
+
 {{- define "useDefaultConfig" }}
 {{/*
 This function checks if any keys other than 'merge' and 'override' exist in a given map.

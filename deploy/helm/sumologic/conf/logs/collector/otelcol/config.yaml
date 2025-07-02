@@ -18,11 +18,7 @@ extensions:
     directory: /var/lib/storage/otc
     timeout: 10s
   health_check:
-{{- if eq .Values.sumologic.ipv6mode true }}
-    endpoint: "[${env:MY_POD_IP}]:13133"
-{{- else }}
-    endpoint: ${env:MY_POD_IP}:13133
-{{- end }}
+    {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 
 processors:
