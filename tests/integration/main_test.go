@@ -12,9 +12,9 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
+	"sigs.k8s.io/e2e-framework/pkg/features"
 	"sigs.k8s.io/e2e-framework/support"
 	"sigs.k8s.io/e2e-framework/support/kind"
-	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
@@ -111,16 +111,16 @@ func ConfigureTestEnv(testenv env.Environment) {
 	if isIPv6Test {
 		beforeFuncs = append(beforeFuncs, stepfuncs.KubectlCreateSumologicSecretOpt())
 	}
-	
+
 	// HelmInstallTestOpt picks a values file from `values` directory
-		// based on the test name ( the details of name generation can be found
-		// in `strings.ValueFileFromT()`.)
-		// This values file will be used throughout the test to install the
-		// collection's chart.
-		//
-		// The reason for this is to limit the amount of boilerplate in tests
-		// themselves but we cannot attach/map the values.yaml to the test itself
-		// so we do this mapping instead.
+	// based on the test name ( the details of name generation can be found
+	// in `strings.ValueFileFromT()`.)
+	// This values file will be used throughout the test to install the
+	// collection's chart.
+	//
+	// The reason for this is to limit the amount of boilerplate in tests
+	// themselves but we cannot attach/map the values.yaml to the test itself
+	// so we do this mapping instead.
 	beforeFuncs = append(beforeFuncs, stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath))
 
 	for _, f := range stepfuncs.IntoTestEnvFuncs(beforeFuncs...) {

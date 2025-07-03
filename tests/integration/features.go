@@ -120,7 +120,7 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 // addKubeVersionSpecificMetrics - adds metrics that are specific to the Kubernetes version to expectedMetrics
 func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector, addKubeVersionSpecificMetrics bool) features.Feature {
 	return features.New("metrics").
-	   	Assess("expected metrics are present",
+		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
 				expectedMetrics,
 				2*time.Minute, // take longer to account for recording rule metrics
