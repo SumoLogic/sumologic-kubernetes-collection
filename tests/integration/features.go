@@ -66,6 +66,7 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 				expectedMetrics,
 				2*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
+				true,
 			),
 		).
 		Assess("expected labels are present for container metrics",
@@ -116,13 +117,15 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 		Feature()
 }
 
-func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
+// addKubeVersionSpecificMetrics - adds metrics that are specific to the Kubernetes version to expectedMetrics
+func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector, addKubeVersionSpecificMetrics bool) features.Feature {
 	return features.New("metrics").
-		Assess("expected metrics are present",
+	   	Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
 				expectedMetrics,
 				2*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
+				addKubeVersionSpecificMetrics,
 			),
 		).
 		Assess("expected labels are present for container metrics",

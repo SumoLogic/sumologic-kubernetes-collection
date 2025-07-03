@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"testing"
 
 	"sigs.k8s.io/e2e-framework/pkg/env"
@@ -13,6 +14,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
 	"sigs.k8s.io/e2e-framework/support"
 	"sigs.k8s.io/e2e-framework/support/kind"
+	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
@@ -25,9 +27,13 @@ const (
 	envNameImageArchive         = "IMAGE_ARCHIVE"
 	defaultImageArchiveFilename = "images.tar"
 	kindClusterConfigPath       = "yamls/cluster.yaml"
+	kindIpv6ClusterConfigPath   = "yamls/cluster-ipv6.yaml"
 )
 
-var testenv env.Environment
+var (
+	testenv    env.Environment
+	isIPv6Test bool
+)
 
 func TestMain(m *testing.M) {
 	cfg, err := envconf.NewFromFlags()
@@ -37,6 +43,15 @@ func TestMain(m *testing.M) {
 
 	testenv = env.NewWithConfig(cfg)
 	kindClusterName := envconf.RandomName("sumologic-test", 20)
+
+	testName := os.Getenv("TEST_NAME")
+	isIPv6Test = strings.Contains(strings.ToLower(testName), "ipv6")
+
+	// Select cluster config based on test name (for ipv6 support)
+	kindClusterConfigPathToUse := kindClusterConfigPath
+	if isIPv6Test {
+		kindClusterConfigPathToUse = kindIpv6ClusterConfigPath
+	}
 
 	if !cfg.DryRunMode() {
 
@@ -55,7 +70,7 @@ func TestMain(m *testing.M) {
 				log.Fatal(err)
 			}
 			clusterOpts := GetClusterOpts()
-			testenv.Setup(envfuncs.CreateClusterWithConfig(kindProvider, kindClusterName, kindClusterConfigPath, clusterOpts...))
+			testenv.Setup(envfuncs.CreateClusterWithConfig(kindProvider, kindClusterName, kindClusterConfigPathToUse, clusterOpts...))
 			ConfigureTestEnv(testenv)
 			testenv.Finish(envfuncs.DestroyCluster(kindClusterName))
 
@@ -86,12 +101,18 @@ func ConfigureTestEnv(testenv env.Environment) {
 	// Before
 	testenv.Setup(envfuncs.CreateNamespace(internal.LogsGeneratorNamespace))
 
-	for _, f := range stepfuncs.IntoTestEnvFuncs(
+	beforeFuncs := []features.Func{
+		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		stepfuncs.KubectlCreateOperatorNamespacesOpt(),
 		stepfuncs.KubectlCreateOverrideNamespaceOpt(),
 		stepfuncs.HelmVersionOpt(),
 		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
-		// HelmInstallTestOpt picks a values file from `values` directory
+	}
+	if isIPv6Test {
+		beforeFuncs = append(beforeFuncs, stepfuncs.KubectlCreateSumologicSecretOpt())
+	}
+	
+	// HelmInstallTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
 		// in `strings.ValueFileFromT()`.)
 		// This values file will be used throughout the test to install the
@@ -100,8 +121,9 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// The reason for this is to limit the amount of boilerplate in tests
 		// themselves but we cannot attach/map the values.yaml to the test itself
 		// so we do this mapping instead.
-		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
-	) {
+	beforeFuncs = append(beforeFuncs, stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath))
+
+	for _, f := range stepfuncs.IntoTestEnvFuncs(beforeFuncs...) {
 		testenv.BeforeEachTest(f)
 	}
 

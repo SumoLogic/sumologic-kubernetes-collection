@@ -31,7 +31,7 @@ func Test_Helm_OT_Histograms(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol, true)
 
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 

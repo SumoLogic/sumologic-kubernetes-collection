@@ -6,8 +6,6 @@
 ##   on CI runners' machines
 
 sumologic:
-  setupEnabled: true
-
   # This is set in yamls/cluster.yaml to check if we work correctly with a custom domain
   clusterDNSDomain: "my.cluster"
 
