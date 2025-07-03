@@ -632,6 +632,78 @@ ${env:MY_POD_IP}:13133
 {{- end -}}
 {{- end }}
 
+{{- define "sumologic.thrift_compact_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:6831"
+{{- else -}}
+"${env:MY_POD_IP}:6831"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.otlp_http_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:4318"
+{{- else -}}
+"${env:MY_POD_IP}:4318"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.otlp_grpc_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:4317"
+{{- else -}}
+"${env:MY_POD_IP}:4317"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.thrift_binary_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:6832"
+{{- else -}}
+"${env:MY_POD_IP}:6832"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.jaeger_grpc_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:14250"
+{{- else -}}
+"${env:MY_POD_IP}:14250"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.jaeger_http_thrift_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:14268"
+{{- else -}}
+"${env:MY_POD_IP}:14268"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.opencensus_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:55678"
+{{- else -}}
+"${env:MY_POD_IP}:55678"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.zipkin_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:9411"
+{{- else -}}
+"${env:MY_POD_IP}:9411"
+{{- end -}}
+{{- end }}
+
+{{- define "sumologic.otlphttp_deprecated_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:55681"
+{{- else -}}
+"${env:MY_POD_IP}:55681"
+{{- end -}}
+{{- end }}
+
 {{- define "useDefaultConfig" }}
 {{/*
 This function checks if any keys other than 'merge' and 'override' exist in a given map.

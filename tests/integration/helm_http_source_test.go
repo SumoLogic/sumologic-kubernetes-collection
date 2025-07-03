@@ -27,7 +27,7 @@ func Test_Helm_Http_Source(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol, true)
 
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 

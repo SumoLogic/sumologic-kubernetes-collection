@@ -16,11 +16,7 @@ exporters:
 
 extensions:
   health_check:
-{{- if eq .Values.sumologic.ipv6mode true }}
-    endpoint: "[${env:MY_POD_IP}]:13133"
-{{- else }}
-    endpoint: ${env:MY_POD_IP}:13133
-{{- end }}
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
   file_storage:
     directory: /var/lib/storage/otc

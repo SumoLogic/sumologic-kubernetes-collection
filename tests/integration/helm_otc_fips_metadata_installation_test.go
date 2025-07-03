@@ -28,7 +28,7 @@ func Test_Helm_Default_OT_FIPS(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol, true)
 
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 

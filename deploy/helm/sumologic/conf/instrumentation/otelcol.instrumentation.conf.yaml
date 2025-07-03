@@ -62,63 +62,27 @@ receivers:
   jaeger:
     protocols:
       thrift_compact:
-{{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: "[${env:MY_POD_IP}]:6831"
-{{- else }}
-        endpoint: "${env:MY_POD_IP}:6831"
-{{- end }}
+        endpoint: {{ template "sumologic.thrift_compact_endpoint" . }}
       thrift_binary:
-{{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: "[${env:MY_POD_IP}]:6832"
-{{- else }}
-        endpoint: "${env:MY_POD_IP}:6832"
-{{- end }}
+        endpoint: {{ template "sumologic.thrift_binary_endpoint" . }}
       grpc:
-{{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: "[${env:MY_POD_IP}]:14250"
-{{- else }}
-        endpoint: "${env:MY_POD_IP}:14250"
-{{- end }}
+        endpoint: {{ template "sumologic.jaeger_grpc_endpoint" . }}
       thrift_http:
-{{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: "[${env:MY_POD_IP}]:14268"
-{{- else }}
-        endpoint: "${env:MY_POD_IP}:14268"
-{{- end }}
+        endpoint: {{ template "sumologic.jaeger_http_thrift_endpoint" . }}
   opencensus:
-{{- if eq .Values.sumologic.ipv6mode true }}
-    endpoint: "[${env:MY_POD_IP}]:55678"
-{{- else }}
-    endpoint: "${env:MY_POD_IP}:55678"
-{{- end }}
+    endpoint: {{ template "sumologic.opencensus_endpoint" . }}
   otlp:
     protocols:
       grpc:
-{{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: "[${env:MY_POD_IP}]:4317"
-{{- else }}
-        endpoint: "${env:MY_POD_IP}:4317"
-{{- end }}
+        endpoint: {{ template "sumologic.otlp_grpc_endpoint" . }}
       http:
-{{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: "[${env:MY_POD_IP}]:4318"
-{{- else }}
-        endpoint: "${env:MY_POD_IP}:4318"
-{{- end }}
+        endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
   otlp/deprecated:
     protocols:
       http:
-{{- if eq .Values.sumologic.ipv6mode true }}
-        endpoint: "[${env:MY_POD_IP}]:55681"
-{{- else }}
-        endpoint: "${env:MY_POD_IP}:55681"
-{{- end }}
+        endpoint: {{ template "sumologic.otlphttp_deprecated_endpoint" . }}
   zipkin:
-{{- if eq .Values.sumologic.ipv6mode true }}
-    endpoint: "[${env:MY_POD_IP}]:9411"
-{{- else }}
-    endpoint: "${env:MY_POD_IP}:9411"
-{{- end }}
+    endpoint: {{ template "sumologic.zipkin_endpoint" . }}
 
 processors:
   ## Source processor adds Sumo Logic related metadata
@@ -210,11 +174,7 @@ processors:
     timeout: 5s
 extensions:
   health_check:
-{{- if eq .Values.sumologic.ipv6mode true }}
-    endpoint: "[${env:MY_POD_IP}]:13133"
-{{- else }}
-    endpoint: ${env:MY_POD_IP}:13133
-{{- end }}
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 service:
   extensions: [health_check, pprof]

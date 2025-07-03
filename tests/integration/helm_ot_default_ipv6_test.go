@@ -11,23 +11,32 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func FilterOutCoreDNSMetrics(metrics []string) []string {
-	var filtered []string
-	for _, m := range metrics {
-		if !strings.Contains(m, "coredns") {
-			filtered = append(filtered, m)
-		}
-	}
-	return filtered
+func FilterOutIPv6ExcludedMetrics(metrics []string) []string {
+    ipv6ExcludedMetrics := []string{ //Add metrics that are not relevant for IPv6
+        "coredns_cache_hits_total",
+    }
+    var filtered []string
+    for _, m := range metrics {
+        exclude := false
+        for _, excl := range ipv6ExcludedMetrics {
+            if strings.Contains(m, excl) {
+                exclude = true
+                break
+            }
+        }
+        if !exclude {
+            filtered = append(filtered, m)
+        }
+    }
+    return filtered
 }
 
 func Test_Helm_Default_OT_ipv6(t *testing.T) {
 
 	expectedMetrics := internal.DefaultExpectedMetrics
-	// Remove CoreDNS metrics for IPv6 test as core-dns can't resolve any ipv4 domains in ipv6 mode due to limitations, so it won't be generating expected metrics
-	expectedMetrics = FilterOutCoreDNSMetrics(expectedMetrics)
-	// we have tracing enabled, so check tracing-specific metrics
+	
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
+	expectedMetrics = FilterOutIPv6ExcludedMetrics(expectedMetrics)
 
 	installChecks := []featureCheck{
 		CheckSumologicSecret(15),
@@ -41,8 +50,8 @@ func Test_Helm_Default_OT_ipv6(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
-
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol, false)
+	
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 
 	featLogs := GetAllLogsFeature(stepfuncs.WaitUntilExpectedExactLogsPresent, true)

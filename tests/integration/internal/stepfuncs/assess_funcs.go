@@ -157,14 +157,17 @@ func WaitUntilExpectedMetricsPresent(
 	expectedMetrics []string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
+	addKubeVersionSpecificMetrics bool,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		sumoMockServiceName := GetSumoMockServiceName(ctx, t)
 		k8s_internal.WaitUntilSumologicMockAvailable(ctx, envConf, t, sumoMockServiceName, waitDuration, tickDuration)
 
-		// We can't do it earlier, because we run the tests for different k8s versions
-		// and we can't fetch current version earlier
-		expectedMetrics = append(expectedMetrics, internal.GetVersionDependentMetrics(t)...)
+		if addKubeVersionSpecificMetrics {
+			// We can't do it earlier, because we run the tests for different k8s versions
+			// and we can't fetch current version earlier
+			expectedMetrics = append(expectedMetrics, internal.GetVersionDependentMetrics(t)...)
+		}
 
 		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, envConf, t, sumoMockServiceName)
 		defer closeTunnelFunc()

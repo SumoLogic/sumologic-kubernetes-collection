@@ -3,7 +3,6 @@ package integration
 import (
 	"context"
 	"fmt"
-	"io"
 	"strings"
 	"testing"
 	"time"
@@ -11,7 +10,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	log "k8s.io/klog/v2"
-	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/klient/wait"
@@ -68,6 +66,7 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 				expectedMetrics,
 				2*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
+				true,
 			),
 		).
 		Assess("expected labels are present for container metrics",
@@ -118,66 +117,15 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 		Feature()
 }
 
-func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
-	time.Sleep(15 * time.Second)
+// addKubeVersionSpecificMetrics - adds metrics that are specific to the Kubernetes version to expectedMetrics
+func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector, addKubeVersionSpecificMetrics bool) features.Feature {
 	return features.New("metrics").
-	    Assess("print logs of sumologic-mock and otelcol-logs pods",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-				clientset, err := kubernetes.NewForConfig(envConf.Client().RESTConfig())
-				require.NoError(t, err)
-
-				namespace := ctxopts.Namespace(ctx)
-
-				// Print logs for sumologic-mock pod(s)
-				mockPods := &corev1.PodList{}
-				require.NoError(t, res.List(ctx, mockPods))
-				for _, pod := range mockPods.Items {
-					if strings.Contains(pod.Name, "sumologic-mock") {
-						t.Logf("=== Logs for pod: %s ===", pod.Name)
-						req := clientset.CoreV1().Pods(namespace).GetLogs(pod.Name, &corev1.PodLogOptions{})
-						podLogs, err := req.Stream(ctx)
-						if err != nil {
-							t.Logf("Error getting logs for pod %s: %v", pod.Name, err)
-							continue
-						}
-						defer podLogs.Close()
-						logs, err := io.ReadAll(podLogs)
-						if err != nil {
-							t.Logf("Error reading logs for pod %s: %v", pod.Name, err)
-						} else {
-							t.Logf("%s", logs)
-						}
-					}
-				}
-
-				// Print logs for otelcol-logs pod(s)
-				for _, pod := range mockPods.Items {
-					if strings.Contains(pod.Name, "otelcol-logs") {
-						t.Logf("=== Logs for pod: %s ===", pod.Name)
-						req := clientset.CoreV1().Pods(namespace).GetLogs(pod.Name, &corev1.PodLogOptions{})
-						podLogs, err := req.Stream(ctx)
-						if err != nil {
-							t.Logf("Error getting logs for pod %s: %v", pod.Name, err)
-							continue
-						}
-						defer podLogs.Close()
-						logs, err := io.ReadAll(podLogs)
-						if err != nil {
-							t.Logf("Error reading logs for pod %s: %v", pod.Name, err)
-						} else {
-							t.Logf("%s", logs)
-						}
-					}
-				}
-				return ctx
-			},
-		).
-		Assess("expected metrics are present",
+	   	Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
 				expectedMetrics,
-				4*time.Minute, // take longer to account for recording rule metrics
+				2*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
+				addKubeVersionSpecificMetrics,
 			),
 		).
 		Assess("expected labels are present for container metrics",
