@@ -24,9 +24,9 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: "${env:MY_POD_IP}:4317"
+        endpoint: {{ template "sumologic.otlp_grpc_endpoint" . }}
       http:
-        endpoint: "${env:MY_POD_IP}:4318"
+        endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
 processors:
   ## The memory_limiter processor is used to prevent out of memory situations on the collector.
   memory_limiter:
@@ -56,7 +56,7 @@ processors:
     # send_batch_max_size: 512
 extensions:
   health_check:
-    endpoint: ${env:MY_POD_IP}:13133
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 
 service:

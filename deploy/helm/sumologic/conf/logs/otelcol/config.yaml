@@ -96,7 +96,7 @@ exporters:
 
 extensions:
   health_check:
-    endpoint: ${env:MY_POD_IP}:13133
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
 {{ if .Values.metadata.persistence.enabled }}
   ## Configuration for File Storage extension
   file_storage:
@@ -552,7 +552,7 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: ${env:MY_POD_IP}:4318
+        endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
 {{ end }}
 
 service:
