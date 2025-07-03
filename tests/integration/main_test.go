@@ -32,7 +32,7 @@ const (
 
 var (
 	testenv    env.Environment
-	isIPv6Test bool // <-- add this global variable
+	isIPv6Test bool
 )
 
 func TestMain(m *testing.M) {
@@ -44,7 +44,6 @@ func TestMain(m *testing.M) {
 	testenv = env.NewWithConfig(cfg)
 	kindClusterName := envconf.RandomName("sumologic-test", 20)
 
-	// Set isIPv6Test once, use everywhere
 	testName := os.Getenv("TEST_NAME")
 	isIPv6Test = strings.Contains(strings.ToLower(testName), "ipv6")
 
@@ -112,9 +111,18 @@ func ConfigureTestEnv(testenv env.Environment) {
 	if isIPv6Test {
 		beforeFuncs = append(beforeFuncs, stepfuncs.KubectlCreateSumologicSecretOpt())
 	}
+	
+	// HelmInstallTestOpt picks a values file from `values` directory
+		// based on the test name ( the details of name generation can be found
+		// in `strings.ValueFileFromT()`.)
+		// This values file will be used throughout the test to install the
+		// collection's chart.
+		//
+		// The reason for this is to limit the amount of boilerplate in tests
+		// themselves but we cannot attach/map the values.yaml to the test itself
+		// so we do this mapping instead.
 	beforeFuncs = append(beforeFuncs, stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath))
 
-	// Convert []features.Func to []env.Func using IntoTestEnvFuncs
 	for _, f := range stepfuncs.IntoTestEnvFuncs(beforeFuncs...) {
 		testenv.BeforeEachTest(f)
 	}

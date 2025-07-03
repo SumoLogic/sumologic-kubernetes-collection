@@ -44,16 +44,11 @@ func NewClientWithK8sTunnel(
 	   serviceName string,
 ) (*SumologicMockClient, func()) {
 	   tunnel := k8s.TunnelForSumologicMock(ctx, envConf, t, serviceName)
-	   endpoint := tunnel.Endpoint()
-	   // If the endpoint is IPv4 localhost, switch to IPv6 loopback
-	   if strings.HasPrefix(endpoint, "127.0.0.1:") || strings.HasPrefix(endpoint, "localhost:") {
-			   endpoint = "[::1]:" + strings.Split(endpoint, ":")[1]
-	   }
-	   baseUrl := url.URL{
-			   Scheme: "http",
-			   Host:   endpoint,
-			   Path:   "/",
-	   }
+		baseUrl := url.URL{
+			Scheme: "http",
+			Host:   tunnel.Endpoint(),
+			Path:   "/",
+		}
 
 	   return &SumologicMockClient{
 			   baseUrl:   baseUrl,
