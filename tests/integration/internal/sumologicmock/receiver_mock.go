@@ -44,11 +44,11 @@ func NewClientWithK8sTunnel(
 	   serviceName string,
 ) (*SumologicMockClient, func()) {
 	   tunnel := k8s.TunnelForSumologicMock(ctx, envConf, t, serviceName)
-		baseUrl := url.URL{
-			Scheme: "http",
-			Host:   tunnel.Endpoint(),
-			Path:   "/",
-		}
+           baseUrl := url.URL{
+		Scheme: "http",
+		Host:   tunnel.Endpoint(),
+		Path:   "/",
+	   }
 
 	   return &SumologicMockClient{
 			   baseUrl:   baseUrl,
