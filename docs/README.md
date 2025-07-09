@@ -1,10 +1,10 @@
-# Deployment Guide for unreleased version
+# Deployment Guide for v4.15 version
 
 This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level
 metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
-- [Deployment Guide for unreleased version](#deployment-guide-for-unreleased-version)
+- [Deployment Guide for v4.15 version](#deployment-guide-for-v415-version)
   - [Solution overview](#solution-overview)
     - [Log Collection](#log-collection)
     - [Metrics Collection](#metrics-collection)
@@ -122,7 +122,9 @@ The
 is now supported for logs and metrics metadata enrichment. This processor is disabled by default. To enable this processor for logs, set
 `metadata.logs.useSumoK8sProcessor` to `false`. To enable this processor for metrics, set `metadata.metrics.useSumoK8sProcessor` to `false`.
 
-> [!NOTE] The Service name isn't part of the metadata enrichment with this new processor.
+> [!NOTE] The Service name is part of the metadata enrichment with this processor in v4.15.0. Refer to the
+> [OpenTelemetry service name calculation documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/k8s-attributes/#how-servicename-should-be-calculated)
+> to understand how the service name is calculated
 
 ### ARM support
 
