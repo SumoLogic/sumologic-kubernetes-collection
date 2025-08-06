@@ -2,11 +2,11 @@
  * Note: Configuration for https://github.com/igorshubovych/markdownlint-cli
  */
 {
-    "default": true,
-    "MD004": { "style": "dash" },
-    "MD013": { "line_length": 360, "code_blocks": false, "tables": false },
-    "MD024": false, // no-duplicate-heading/no-duplicate-header
-    "MD033": false, // no-inline-html
-    "MD034": false, // no-bare-urls
-    "MD040": false // fenced-code-language
+  "default": true,
+  "MD004": { "style": "dash" },
+  "MD013": { "line_length": 360, "code_blocks": false, "tables": false },
+  "MD024": false, // no-duplicate-heading/no-duplicate-header
+  "MD033": false, // no-inline-html
+  "MD034": false, // no-bare-urls
+  "MD040": false // fenced-code-language
 }

@@ -21,7 +21,7 @@ Below is a table with documentation for every supported minor release. EOL for t
 release.
 
 | version                                                                                                   | planned end of life date |
-| -------------------------------------------------------------------------------------------------------   | ------------------------ |
+| --------------------------------------------------------------------------------------------------------- | ------------------------ |
 | [v4.15.1](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.15/docs/README.md) | TBD                      |
 | [v4.15](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.15/docs/README.md)   | TBD                      |
 | [v4.14](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.14/docs/README.md)   | 2026-01-09               |
