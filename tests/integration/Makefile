@@ -14,6 +14,13 @@ create-cluster:
 		--image $(KIND_NODE_IMAGE) \
 		--kubeconfig $(KUBE_CONFIG)
 
+create-cluster-ipv6:
+	kind create cluster \
+		--config yamls/cluster-ipv6.yaml \
+		--name $(CLUSTER_NAME) \
+		--image $(KIND_NODE_IMAGE) \
+		--kubeconfig $(KUBE_CONFIG)
+
 .PHONY: delete-cluster
 delete-cluster:
 	kind delete cluster \

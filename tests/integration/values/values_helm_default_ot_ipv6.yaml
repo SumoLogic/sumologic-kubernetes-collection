@@ -1,0 +1,21 @@
+sumologic:
+  ipv6mode: true
+  setupEnabled: false
+debug:
+  logs:
+    metadata:
+      forwardToSumologicMock: true
+  metrics:
+    metadata:
+      forwardToSumologicMock: true
+  instrumentation:
+    tracesSampler:
+      forwardToSumologicMock: true
+  events:
+    forwardToSumologicMock: true
+metadata:
+  logs:
+    multiline:
+      additional:
+        - condition: attributes["k8s.container.name"] == "another-container-multiline-logs-long-lines"
+          first_line_regex: "^@@@"
