@@ -37,6 +37,43 @@ source ~/.zshrc
 sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.smbd.plist
 ```
 
+### Fedora with libvirt
+
+## Setting up
+
+1. Install prerequisites:
+
+```bash
+dnf install -y @virtualization @vagrant libvirt-devel
+systemctl enable --now virtqemud.service
+systemctl enable --now virtnetworkd.service
+```
+
+1. Add your user to libvirt group
+
+```bash
+usermod -aG libvirt $USER
+```
+
+1. Log out so that your user is recognized as a group member (alternatively, restart your computer)
+
+```bash
+loginctl terminate-user $USER
+```
+
+1. Install the libvirt provider in vagrant. This should be done by package management and may become unnecessary in the future:
+
+```bash
+vagrant plugin install vagrant-libvirt
+```
+
+1. Set your default provider to libvirt
+
+```bash
+echo 'export VAGRANT_DEFAULT_PROVIDER=libvirt' >> ~/.bashrc
+source ~/.bashrc
+```
+
 ### Other
 
 Please install Vagrant and a Vagrant-compatible provider such as VirtualBox:
