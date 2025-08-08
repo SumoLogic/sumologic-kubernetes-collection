@@ -9,13 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [v4.15.1]
 
-### Released 2025-08-06
-
-### Changed
-
-- chore: upgrade tailing-sidecar to v0.18.1 [#3966]
-
-[#3966]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3966
+No significant changes.
 
 [v4.15.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.15.1## [v4.15.0]
 
