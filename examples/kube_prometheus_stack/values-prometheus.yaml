@@ -278,7 +278,8 @@ prometheusOperator:
   ## Annotations to add to the operator pod
   podAnnotations: {}
   ## Resource limits for prometheus operator
-  resources: {}
+  resources:
+    {}
     # limits:
     #   cpu: 200m
     #   memory: 200Mi
@@ -295,7 +296,8 @@ kube-state-metrics:
   customLabels: {}
   ## Additional annotations for pods in the DaemonSet
   podAnnotations: {}
-  resources: {}
+  resources:
+    {}
     # limits:
     #   cpu: 100m
     #   memory: 64Mi
@@ -308,7 +310,8 @@ prometheus-node-exporter:
   podLabels: {}
   ## Additional annotations for pods in the DaemonSet
   podAnnotations: {}
-  resources: {}
+  resources:
+    {}
     # limits:
     #   cpu: 200m
     #   memory: 50Mi
