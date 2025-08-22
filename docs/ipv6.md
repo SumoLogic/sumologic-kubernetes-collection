@@ -4,7 +4,7 @@ Supports EKS IPv6 clusters and any other k8’s cluster type which has IPv6(Clus
 
 ## Pre-requisites for EKS Cluster
 
-### 1. Ensure Amazon VPC CNI plugin v1.10.1 or later is deployed in cluster.
+### 1. Ensure Amazon VPC CNI plugin v1.10.1 or later is deployed in cluster
 
 IP prefix delegation and ENABLE_IPv6 settings must be enabled. If you already deployed VPC-CNI Plugin while creating the cluster, these will
 be enabled automatically. If you adding the plugin to an existing cluster, please add the plugin and ensure these settings are enabled.
@@ -37,7 +37,7 @@ aws eks update-addon \
 For more information and different methods to update plugin settings, please refer
 https://docs.aws.amazon.com/eks/latest/userguide/updating-an-add-on.html
 
-### 2. Route table with ipv4 external route:
+### 2. Route table with ipv4 external route
 
 Make sure that VPC’s Route table has a route from IPv4(local) to Internet gateway. Ex. 0.0.0.0/0→igw-XXX (Internet Gateway)
 
@@ -53,7 +53,7 @@ https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc-route-table.html#Add
 
 ## Test ipv6->ipv4 Egress communication
 
-1. Deploy a test pod `ipv6-test-pod`
+**Deploy a test pod `ipv6-test-pod`**
 
 ```yaml
 apiVersion: v1
@@ -72,8 +72,7 @@ spec:
 ```bash
 kubectl apply -f ipv6-test-pod.yaml
 ```
-
-2. Connect to the test pod and try to connect to an ipv4 endpoint
+**Connect to the test pod and try to connect to an ipv4 endpoint**
 
 ```bash
 kubectl exec -it ipv6-test-pod -- sh
