@@ -1,6 +1,6 @@
 # IPV6 Support
 
-Supports EKS IPv6 clusters and any other k8’s cluster type which has IPv6(Cluster)->IPv4(Internet) Egress communication
+Supports EKS IPv6 clusters and any other k8’s cluster type which has IPv6(Cluster)->IPv4(Internet) Egress communication enabled
 
 ## Pre-requisites for EKS Cluster
 
