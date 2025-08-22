@@ -72,6 +72,7 @@ spec:
 ```bash
 kubectl apply -f ipv6-test-pod.yaml
 ```
+
 **Connect to the test pod and try to connect to an ipv4 endpoint**
 
 ```bash
