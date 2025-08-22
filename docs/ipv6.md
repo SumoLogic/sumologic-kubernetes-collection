@@ -53,7 +53,7 @@ https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc-route-table.html#Add
 
 ## Test ipv6->ipv4 Egress communication
 
-**Deploy a test pod `ipv6-test-pod`**
+### Deploy a test pod `ipv6-test-pod`
 
 ```yaml
 apiVersion: v1
@@ -73,7 +73,7 @@ spec:
 kubectl apply -f ipv6-test-pod.yaml
 ```
 
-**Connect to the test pod and try to connect to an ipv4 endpoint**
+### Connect to the test pod and try to connect to an ipv4 endpoint
 
 ```bash
 kubectl exec -it ipv6-test-pod -- sh
