@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.15.2]
+
+### Released TBD
+
+### Changed
+
+- chore: upgrade opentelemetry operator to 0.93.0
+
 ## [v4.15.1]
 
 ### Released 2025-08-08
