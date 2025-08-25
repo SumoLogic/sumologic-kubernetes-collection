@@ -27,6 +27,8 @@ jobs:
           echo "default_kind_image=$(jq -cM '.default' kind_images.json)" >> $GITHUB_OUTPUT
       - name: Setup Helm
         run: |
+          sudo rm -f /usr/local/bin/helm
+          sudo rm -rf ~/.cache/helm ~/.config/helm
           curl -fsSL https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz -o helm.tar.gz
           tar -zxvf helm.tar.gz
           sudo mv linux-amd64/helm /usr/local/bin/helm
@@ -85,6 +87,8 @@ jobs:
           sudo mv ./kind /usr/local/bin/kind
       - name: Setup Helm
         run: |
+          sudo rm -f /usr/local/bin/helm
+          sudo rm -rf ~/.cache/helm ~/.config/helm
           curl -fsSL https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz -o helm.tar.gz
           tar -zxvf helm.tar.gz
           sudo mv linux-amd64/helm /usr/local/bin/helm
@@ -116,6 +120,8 @@ jobs:
           sudo mv ./kind /usr/local/bin/kind
       - name: Setup Helm
         run: |
+          sudo rm -f /usr/local/bin/helm
+          sudo rm -rf ~/.cache/helm ~/.config/helm
           curl -fsSL https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz -o helm.tar.gz
           tar -zxvf helm.tar.gz
           sudo mv linux-amd64/helm /usr/local/bin/helm
