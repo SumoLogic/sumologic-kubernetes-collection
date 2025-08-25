@@ -185,6 +185,12 @@ jobs:
         with:
           go-version: "1.22"
           cache-dependency-path: "**/go.sum"
+      - name: Setup Helm
+        run: |
+          curl -fsSL https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz -o helm.tar.gz
+          tar -zxvf helm.tar.gz
+          sudo mv linux-amd64/helm /usr/local/bin/helm
+          helm version
       - name: test
         if: needs.chart-changed.outputs.any_changed == 'true'
         run: make test-templates
