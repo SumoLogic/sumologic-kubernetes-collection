@@ -180,6 +180,11 @@ data:
           - k8s.statefulset.name
           - k8s.namespace.name
           - k8s.node.name
+          - k8s.node.zone
+          - k8s.node.region
+          - k8s.node.os
+          - k8s.node.type
+          - k8s.node.arch
           - service.name
           - service.namespace
         passthrough: false
