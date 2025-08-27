@@ -329,6 +329,24 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_labels_$$1"
           from: namespace
+        - key: kubernetes.io/hostname
+          from: node
+          tag_name: k8s.node.name
+        - key: kubernetes.io/os
+          from: node
+          tag_name: k8s.node.os
+        - key: kubernetes.io/arch
+          from: node
+          tag_name: k8s.node.arch
+        - key: node.kubernetes.io/instance-type
+          from: node
+          tag_name: k8s.node.type
+        - key: topology.kubernetes.io/zone
+          from: node
+          tag_name: k8s.node.zone
+        - key: topology.kubernetes.io/region
+          from: node
+          tag_name: k8s.node.region
       annotations:
         - key_regex: "(.*)"
           tag_name: "pod_annotations_$$1"
