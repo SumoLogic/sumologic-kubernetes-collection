@@ -1,5 +1,8 @@
 extends: relaxed
 
+ignore: |
+  deploy/helm/sumologic/crds/
+
 rules:
   comments:
     min-spaces-from-content: 1
