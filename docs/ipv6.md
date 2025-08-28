@@ -1,10 +1,15 @@
 # IPV6 Support
 
-Supports EKS IPv6 clusters and any other k8’s cluster type which has IPv6(Cluster)->IPv4(Internet) Egress communication enabled
+Supports EKS IPv6 clusters and any other k8’s cluster type which has IPv6(Cluster)-to-IPv4(Internet) Egress communication enabled.
+
+When running an IPv6-only Kubernetes cluster, pods may still need to access external IPv4 endpoints (e.g., APIs, package repositories, Github which are ipv4 only). This requires configuring the CNI and VPC  to support IPv6-to-IPv4 egress. If your cluster already has this capability, please skip this and proceed with deploying sumologic helm chart.
 
 ## Pre-requisites for EKS Cluster
+Both VPC-CNI plugin and NAT gateways provide IPv6-to-IPv4 communication. Please choose accordinly based on your cluster setup/preference.
 
-### 1. Ensure Amazon VPC CNI plugin v1.10.1 or later is deployed in cluster
+### 1. If you are using EKS's inbuilt VPC-CNI as the CNI plugin, then please ensure below
+
+#### 1.1. Ensure Amazon VPC CNI plugin v1.10.1 or later is deployed in cluster
 
 IP prefix delegation and ENABLE_IPv6 settings must be enabled. If you already deployed VPC-CNI Plugin while creating the cluster, these will
 be enabled automatically. If you adding the plugin to an existing cluster, please add the plugin and ensure these settings are enabled.
@@ -37,7 +42,7 @@ aws eks update-addon \
 For more information and different methods to update plugin settings, please refer
 https://docs.aws.amazon.com/eks/latest/userguide/updating-an-add-on.html
 
-### 2. Route table with ipv4 external route
+#### 1.2. Route table with ipv4 external route
 
 Make sure that VPC’s Route table has a route from IPv4(local) to Internet gateway. Ex. 0.0.0.0/0→igw-XXX (Internet Gateway)
 
@@ -50,6 +55,40 @@ aws ec2 create-route \
 
 For more information and different methods to add route, please refer
 https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc-route-table.html#AddRoutes
+
+### 2. If you want to configure ipv6->ipv4 egress communication via NAT gateway for your ipv6 worker nodes, please ensure below configurations
+
+AWS provides DNS64 and NAT64 components to provide VPC level ipv6->ipv4 communication.
+
+If you have a subnet with IPv6-only workloads that needs to communicate with IPv4-only services outside the subnet, this example shows you how to enable these IPv6-only services to communicate with IPv4-only services on the internet.
+
+You should first configure a NAT gateway in a public subnet (separate from the subnet containing the IPv6-only workloads). For example, the subnet containing the NAT gateway should have a 0.0.0.0/0 route pointing to the internet gateway.
+
+Complete these steps to enable these IPv6-only services to connect with IPv4-only services on the internet:
+
+1. Add the following three routes to the route table of the subnet containing the IPv6-only workloads:
+
+- IPv4 route (if any) pointing to the NAT gateway.
+```bash
+aws ec2 create-route --route-table-id rtb-34056078 --destination-cidr-block
+0.0.0.0/0 --nat-gateway-id nat-05dba92075d71c408
+```
+- 64:ff9b::/96 route pointing to the NAT gateway. This will allow traffic from your IPv6-only workloads destined for IPv4-only services to be routed through the NAT gateway.
+```bash
+aws ec2 create-route --route-table-id rtb-34056078 --destination-ipv6-cidr-block
+64:ff9b::/96 --nat-gateway-id nat-05dba92075d71c408
+```
+- IPv6 ::/0 route pointing to the egress-only internet gateway (or the internet gateway)
+```bash
+aws ec2 create-route --route-table-id rtb-34056078 --destination-ipv6-cidr-block
+::/0 --egress-only-internet-gateway-id eigw-c0a643a9
+```
+
+2. Enable DNS64 capability in the subnet containing the IPv6-only workloads.
+```bash
+aws ec2 modify-subnet-attribute --subnet-id subnet-1a2b3c4d --enable-dns64
+```
+For more details on NAT64 and DNS64, please refer https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-nat64-dns64.html
 
 ## Test ipv6->ipv4 Egress communication
 
