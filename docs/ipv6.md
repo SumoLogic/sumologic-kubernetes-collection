@@ -1,6 +1,6 @@
 # IPV6 Support
 
-Supports EKS IPv6 clusters and any other k8’s cluster type which has IPv6(Cluster)-to-IPv4(Internet) Egress communication enabled.
+Supports EKS IPv6 clusters and any other k8s cluster type which has IPv6(Cluster)-to-IPv4(Internet) Egress communication enabled.
 
 When running an IPv6-only Kubernetes cluster, pods may still need to access external IPv4 endpoints (e.g., APIs, package repositories, Github which are ipv4 only). This requires configuring the CNI and VPC  to support IPv6-to-IPv4 egress. If your cluster already has this capability, please skip this and proceed with deploying sumologic helm chart.
 
