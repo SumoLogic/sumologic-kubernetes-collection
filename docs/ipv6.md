@@ -12,17 +12,7 @@ Both VPC-CNI plugin and NAT gateways provide IPv6-to-IPv4 communication. Please 
 #### 1.1. Ensure Amazon VPC CNI plugin v1.10.1 or later is deployed in cluster
 
 IP prefix delegation and ENABLE_IPv6 settings must be enabled. If you already deployed VPC-CNI Plugin while creating the cluster, these will
-be enabled automatically. If you adding the plugin to an existing cluster, please add the plugin and ensure these settings are enabled.
-
-Create VPC-CNI addon:
-
-```bash
-aws eks create-addon --cluster-name my-cluster --addon-name vpc-cni --addon-version v1.20.0-eksbuild.1 \
---service-account-role-arn arn:aws:iam::111122223333:role/AmazonEKSVPCCNIRole
-```
-
-For more information and different methods to create the plugin, please refer:
-https://docs.aws.amazon.com/eks/latest/userguide/vpc-add-on-create.html
+be enabled automatically. If you have added the plugin after the cluster is created, please ensure aforementioned settings are enabled.
 
 Adjust VPC-CNI configuration:
 
@@ -44,7 +34,8 @@ https://docs.aws.amazon.com/eks/latest/userguide/updating-an-add-on.html
 
 #### 1.2. Route table with ipv4 external route
 
-Make sure that VPC’s Route table has a route from IPv4(local) to Internet gateway. Ex. 0.0.0.0/0→igw-XXX (Internet Gateway)
+Make sure that VPC’s Route table has a route from IPv4(local) to Internet gateway. This is to ensure that ipv4 traffic from your cluster can reach internet.
+Ex. 0.0.0.0/0→igw-XXX (Internet Gateway)
 
 ```bash
 aws ec2 create-route \
