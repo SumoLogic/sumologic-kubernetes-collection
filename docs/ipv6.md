@@ -60,34 +60,23 @@ subnet containing the NAT gateway should have a 0.0.0.0/0 route pointing to the 
 Complete these steps to enable these IPv6-only services to connect with IPv4-only services on the internet:
 
 1. Add the following three routes to the route table of the subnet containing the IPv6-only workloads:
-
-- IPv4 route (if any) pointing to the NAT gateway.
-
-```bash
-aws ec2 create-route --route-table-id rtb-34056078 --destination-cidr-block
-0.0.0.0/0 --nat-gateway-id nat-05dba92075d71c408
-```
-
-- 64:ff9b::/96 route pointing to the NAT gateway. This will allow traffic from your IPv6-only workloads destined for IPv4-only services to
-  be routed through the NAT gateway.
-
-```bash
-aws ec2 create-route --route-table-id rtb-34056078 --destination-ipv6-cidr-block
-64:ff9b::/96 --nat-gateway-id nat-05dba92075d71c408
-```
-
-- IPv6 ::/0 route pointing to the egress-only internet gateway (or the internet gateway)
-
-```bash
-aws ec2 create-route --route-table-id rtb-34056078 --destination-ipv6-cidr-block
-::/0 --egress-only-internet-gateway-id eigw-c0a643a9
-```
+   - IPv4 route (if any) pointing to the NAT gateway.
+     ```bash
+     aws ec2 create-route --route-table-id rtb-34056078 --destination-cidr-block 0.0.0.0/0 --nat-gateway-id nat-05dba92075d71c408
+     ```
+   - 64:ff9b::/96 route pointing to the NAT gateway. This will allow traffic from your IPv6-only workloads destined for IPv4-only services to be routed through the NAT gateway.
+     ```bash
+     aws ec2 create-route --route-table-id rtb-34056078 --destination-ipv6-cidr-block 64:ff9b::/96 --nat-gateway-id nat-05dba92075d71c408
+     ```
+   - IPv6 ::/0 route pointing to the egress-only internet gateway (or the internet gateway)
+     ```bash
+     aws ec2 create-route --route-table-id rtb-34056078 --destination-ipv6-cidr-block ::/0 --egress-only-internet-gateway-id eigw-c0a643a9
+     ```
 
 2. Enable DNS64 capability in the subnet containing the IPv6-only workloads.
-
-```bash
-aws ec2 modify-subnet-attribute --subnet-id subnet-1a2b3c4d --enable-dns64
-```
+   ```bash
+   aws ec2 modify-subnet-attribute --subnet-id subnet-1a2b3c4d --enable-dns64
+   ```
 
 For more details on NAT64 and DNS64, please refer https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-nat64-dns64.html
 
