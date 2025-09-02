@@ -47,7 +47,7 @@ aws ec2 create-route \
 For more information and different methods to add route, please refer
 https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc-route-table.html#AddRoutes
 
-#### 2.2. If your worker nodes are in private subnet or you are not using AWS VPC-CNIusing custom CNI like celium, then please ensure you have provisioned a NAT gateway.
+#### 2.2. If your EKS worker nodes are in private subnet (recommended by AWS) or you are using a custom CNI like Cilium, then please ensure you have provisioned a NAT gateway.
 
 If you have a subnet with IPv6-only workloads that needs to communicate with IPv4-only services outside the subnet, this shows you how to enable these IPv6-only services to communicate with IPv4-only services on the internet.
 
