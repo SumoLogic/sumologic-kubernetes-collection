@@ -60,6 +60,7 @@ subnet containing the NAT gateway should have a 0.0.0.0/0 route pointing to the 
 Complete these steps to enable these IPv6-only services to connect with IPv4-only services on the internet:
 
 1. Add the following three routes to the route table of the subnet containing the IPv6-only workloads:
+
    - IPv4 route (if any) pointing to the NAT gateway.
 
      ```bash
