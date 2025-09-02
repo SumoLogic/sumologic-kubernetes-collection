@@ -7,6 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.15.1]
+
+### Released 2025-08-08
+
+### Changed
+
+- chore: upgrade tailing-sidecar to v0.18.1 [#3966]
+
+[#3966]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3966
+[v4.15.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.15.1
+
+## [v4.15.0]
+
+### Released 2025-07-09
+
+### Added
+
+- feat: Add service name and namespace to the k8sattributes processor [#3954]
+
+### Changed
+
+- chore: Upgrade otel collector to v0.127.0-sumo-0 [#3953]
+
+[#3954]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3954
+[#3953]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3953
+[v4.15.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.15.0
+
 ## [v4.14.0]
 
 ### Released 2025-06-04

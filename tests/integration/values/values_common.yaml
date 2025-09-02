@@ -122,6 +122,28 @@ otellogs:
         journald:
           directory: /run/log/journal
   daemonset:
+    containers:
+      otelcol:
+        livenessProbe:
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          periodSeconds: 3
+          failureThreshold: 60
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+      requests:
+        memory: 64Mi
+        cpu: 500m
     extraVolumeMounts:
       - mountPath: /run/log/journal
         name: run-log-journal
@@ -158,4 +180,8 @@ debug:
       resources:
         limits:
           memory: 5Gi # unlimited
+          cpu: 1000m
+        requests:
+          memory: 1000Mi
+          cpu: 500m
   enableLocalMode: true
