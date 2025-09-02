@@ -32,7 +32,7 @@ https://docs.aws.amazon.com/eks/latest/userguide/updating-an-add-on.html
 
 ### 2. Ensure that a NAT Gateway/Internet gateway is provisioned to reach public ipv4 endpoints
 
-##### 2.1. If your worker nodes are in public subnet and you are using AWS VPC-CNI, then please make sure ipv4 external route is added.
+#### 2.1. If your worker nodes are in public subnet and you are using AWS VPC-CNI, then please make sure ipv4 external route is added
 
 Make sure that the subnet’s Route table has a route from IPv4(local) to Internet gateway. This is to ensure that ipv4 traffic from your cluster can reach internet.
 Ex. 0.0.0.0/0→igw-XXX (Internet Gateway)
@@ -47,7 +47,7 @@ aws ec2 create-route \
 For more information and different methods to add route, please refer
 https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc-route-table.html#AddRoutes
 
-#### 2.2. If your EKS worker nodes are in private subnet (recommended by AWS) or you are using a custom CNI like Cilium, then please ensure you have provisioned a NAT gateway.
+#### 2.2. If your EKS worker nodes are in private subnet (recommended by AWS) or you are using a custom CNI like Cilium, then please ensure you have provisioned a NAT gateway
 
 If you have a subnet with IPv6-only workloads that needs to communicate with IPv4-only services outside the subnet, this shows you how to enable these IPv6-only services to communicate with IPv4-only services on the internet.
 
