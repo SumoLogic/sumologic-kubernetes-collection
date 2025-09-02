@@ -27,7 +27,6 @@ Documentation links:
 - [Installation](https://help.sumologic.com/docs/send-data/kubernetes/install-helm-chart/)
 
 - Configuration
-
   - [Examples](/docs/configuration-examples.md)
   - Logs
     - [Collecting container logs](https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/)
@@ -46,7 +45,6 @@ Documentation links:
     - [OTLP source](/docs/otlp-source.md)
 
 - Upgrades
-
   - [Upgrade from v3 to v4][migration-doc-v4]
   - [Upgrade from v2 to v3][migration-doc-v3]
   - [Upgrade from v2.17 to v2.18][migration-doc-v2.18]

@@ -227,18 +227,15 @@ Sumo Logic), you should merge our configuration with the configuration used in y
 are correctly added to your Kube Prometheus Stack configuration:
 
 - ServiceMonitors configuration:
-
   - `sumologic.metrics.ServiceMonitors` and `sumologic.metrics.additionalServiceMonitors` to `prometheus.additionalServiceMonitors`
 
 - RemoteWrite configuration:
-
   - `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` to `prometheus.prometheusSpec.remoteWrite` or
     `prometheus.prometheusSpec.additionalRemoteWrite`
 
   **Note:** `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` and
   `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite` are being use to generate list of endpoints in Metadata Pod, so
   ensure that:
-
   - they are always in sync with the current configuration and endpoints starts with.
   - url always starts with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`
 
@@ -254,12 +251,10 @@ are correctly added to your Kube Prometheus Stack configuration:
   ```
 
 - Env Variables configuration:
-
   - `kube-prometheus-stack.prometheus.prometheusSpec.initContainers` to `prometheus.prometheusSpec.initContainers`
   - `kube-prometheus-stack.prometheus.prometheusSpec.containers` to `prometheus.prometheusSpec.containers`
 
   with the following modification:
-
   - replace
 
     ```yaml

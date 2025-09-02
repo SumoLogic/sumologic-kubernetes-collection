@@ -36,7 +36,6 @@ issue, Sumo Logic needs to receive information mentioned in [Basic information](
 
 - If non helm installation is used then please provide all commands used to install Sumo Logic Kubernetes Collection along with all output
   files.
-
   - Example
 
     When commands below are used, please send these commands, `sumologic.yaml` and `values.yaml`
