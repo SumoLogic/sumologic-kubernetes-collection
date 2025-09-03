@@ -221,6 +221,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore(instrumentation): move instrumentation configuration from opentelemetry-operator values [#3733]
 
   **Moved:**
+
   - From `opentelemetry-operator.instrumentationJobImage` to `instrumentation.instrumentationJobImage`
   - From `opentelemetry-operator.createDefaultInstrumentation` to `instrumentation.createDefaultInstrumentation`
   - From `opentelemetry-operator.instrumentationNamespaces` to `instrumentation.instrumentationNamespaces`
@@ -236,6 +237,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - From `opentelemetry-operator.instrumentation.python.extraEnvVars` to `instrumentation.python.extraEnvVars`
 
   **Changed:**
+
   - From `opentelemetry-operator.instrumentation.dotnet.repository` to `opentelemetry-operator.autoInstrumentationImage.dotnet.repository`
   - From `opentelemetry-operator.instrumentation.dotnet.tag` to `opentelemetry-operator.autoInstrumentationImage.dotnet.tag`
   - From `opentelemetry-operator.instrumentation.java.repository` to `opentelemetry-operator.autoInstrumentationImage.java.repository`
@@ -246,6 +248,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - From `opentelemetry-operator.instrumentation.python.tag` to `opentelemetry-operator.autoInstrumentationImage.python.tag`
 
   **Deleted:**
+
   - `opentelemetry-operator.instrumentation.dotnet.image`
   - `opentelemetry-operator.instrumentation.java.image`
   - `opentelemetry-operator.instrumentation.nodejs.image`
@@ -1386,6 +1389,7 @@ See the [migration guide][v4_migration_guide] for details.
 
 - chore(otoperator): update opentelemetry operator, add instrumentation customization [#2894] Changed [#2894] OpenTelemetry-Operator was
   updated to [v0.24.0]. New configuration flags were added:
+
   - Flags to control metrics/traces export from specific instrumentation in `Instrumentation` resource.
     - `opentelemetry-operator.instrumentation.dotnet.metrics.enabled`
     - `opentelemetry-operator.instrumentation.dotnet.traces.enabled`
@@ -1401,6 +1405,7 @@ See the [migration guide][v4_migration_guide] for details.
 
   > **Warning** > This action is required only if you have enabled `opentelemetry-operator` with `opentelemetry-operator.enabled: true`.
   > Please delete the following resources before update of the chart:
+
   - `opentelemetry-operator-validating-webhook-configuration` (validatingwebhookconfiguration)
   - `opentelemetry-operator-mutating-webhook-configuration` (mutatingwebhookconfiguration)
   - `opentelemetry-operator-controller-manager-metrics-service` (service)
@@ -2577,6 +2582,7 @@ configuration][source_processor_old_config] and apply corresponding changes to y
   Logic Distro of OpenTelemetry Collector for logs metadata enrichment.
 
 - otelcol: add systemd logs pipeline [#1767][#1767]
+
   - This change introduces logs metadata enrichment with Sumo Open Telemetry distro for systemd logs (when
     `sumologic.logs.metadata.provider` is set to `otelcol`)
 
