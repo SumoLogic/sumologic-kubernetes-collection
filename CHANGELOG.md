@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v4.16.9]
+## [v4.16.0]
 
 ### Released 2025-09-04
 
@@ -28,7 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#3972]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3972
 [#3985]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3985
 
-[v4.16.9]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.16.9## [v4.15.1]
+[v4.16.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.16.0## [v4.15.1]
 
 ### Released 2025-08-08
 
