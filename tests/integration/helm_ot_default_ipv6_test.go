@@ -50,7 +50,7 @@ func Test_Helm_Default_OT_ipv6(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol, false)
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
 	
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 

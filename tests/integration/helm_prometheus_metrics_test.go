@@ -27,7 +27,7 @@ func Test_Helm_Prometheus_Metrics(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus, true)
+	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Prometheus, true)
 

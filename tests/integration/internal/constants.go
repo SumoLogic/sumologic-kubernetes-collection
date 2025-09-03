@@ -175,7 +175,6 @@ var (
 	}
 	CoreDNSMetrics = []string{
 		"coredns_cache_entries",                      // used by the Kubernetes App
-		"coredns_cache_hits_total",                   // not used by any App
 		"coredns_cache_misses_total",                 // not used by any App
 		"coredns_dns_request_duration_seconds_count", // used by the Kubernetes App
 		"coredns_dns_request_duration_seconds_sum",   // used by the Kubernetes App
@@ -342,6 +341,10 @@ var (
 		"cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile",
 		"target_info",
 		"promhttp_metric_handler_errors_total",
+		"coredns_cache_hits_total",
+		"coredns_forward_requests_total",
+		"coredns_proxy_request_duration_seconds_count",
+		"coredns_proxy_request_duration_seconds_sum",
 	}
 
 	NginxMetrics = []string{

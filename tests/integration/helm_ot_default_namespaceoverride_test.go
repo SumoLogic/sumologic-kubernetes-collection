@@ -43,7 +43,7 @@ func Test_Helm_Default_OT_NamespaceOverride(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus, true)
+	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
 	featLogs := GetAllLogsFeature(stepfuncs.WaitUntilExpectedExactLogsPresent, true)
 
