@@ -26,7 +26,7 @@ data:
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check:
-        endpoint: ${env:MY_POD_IP}:13133
+        endpoint: '[${env:MY_POD_IP}]:13133'
       pprof: {}
     processors:
       batch:

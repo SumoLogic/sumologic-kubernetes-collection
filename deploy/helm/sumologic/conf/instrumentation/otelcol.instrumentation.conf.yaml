@@ -62,27 +62,27 @@ receivers:
   jaeger:
     protocols:
       thrift_compact:
-        endpoint: "${env:MY_POD_IP}:6831"
+        endpoint: {{ template "sumologic.thrift_compact_endpoint" . }}
       thrift_binary:
-        endpoint: "${env:MY_POD_IP}:6832"
+        endpoint: {{ template "sumologic.thrift_binary_endpoint" . }}
       grpc:
-        endpoint: "${env:MY_POD_IP}:14250"
+        endpoint: {{ template "sumologic.jaeger_grpc_endpoint" . }}
       thrift_http:
-        endpoint: "${env:MY_POD_IP}:14268"
+        endpoint: {{ template "sumologic.jaeger_http_thrift_endpoint" . }}
   opencensus:
-    endpoint: "${env:MY_POD_IP}:55678"
+    endpoint: {{ template "sumologic.opencensus_endpoint" . }}
   otlp:
     protocols:
       grpc:
-        endpoint: "${env:MY_POD_IP}:4317"
+        endpoint: {{ template "sumologic.otlp_grpc_endpoint" . }}
       http:
-        endpoint: "${env:MY_POD_IP}:4318"
+        endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
   otlp/deprecated:
     protocols:
       http:
-        endpoint: "${env:MY_POD_IP}:55681"
+        endpoint: {{ template "sumologic.otlphttp_deprecated_endpoint" . }}
   zipkin:
-    endpoint: "${env:MY_POD_IP}:9411"
+    endpoint: {{ template "sumologic.zipkin_endpoint" . }}
 
 processors:
   ## Source processor adds Sumo Logic related metadata
@@ -174,7 +174,7 @@ processors:
     timeout: 5s
 extensions:
   health_check:
-    endpoint: ${env:MY_POD_IP}:13133
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 service:
   extensions: [health_check, pprof]

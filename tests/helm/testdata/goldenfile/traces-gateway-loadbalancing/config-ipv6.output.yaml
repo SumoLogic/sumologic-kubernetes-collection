@@ -1,0 +1,76 @@
+---
+# Source: sumologic/templates/instrumentation/traces-gateway/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-traces-gateway
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-traces-gateway
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  traces.gateway.conf.yaml: |
+    exporters:
+      loadbalancing:
+        protocol:
+          otlp:
+            sending_queue:
+              enabled: true
+              num_consumers: 10
+              queue_size: 10000
+            timeout: 10s
+            tls:
+              insecure: true
+        resolver:
+          dns:
+            hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
+            port: "4317"
+    extensions:
+      health_check:
+        endpoint: '[${env:MY_POD_IP}]:13133'
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 512
+        send_batch_size: 256
+        timeout: 5s
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 90
+        spike_limit_percentage: 20
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: '[${env:MY_POD_IP}]:4317'
+          http:
+            endpoint: '[${env:MY_POD_IP}]:4318'
+    service:
+      extensions:
+      - health_check
+      - pprof
+      pipelines:
+        traces:
+          exporters:
+          - loadbalancing
+          processors:
+          - memory_limiter
+          - batch
+          receivers:
+          - otlp
+      telemetry:
+        logs:
+          level: info
+        metrics:
+          level: normal
+          readers:
+          - pull:
+              exporter:
+                prometheus:
+                  host: ${env:MY_POD_IP}
+                  port: 8888
+                  without_scope_info: true
+                  without_type_suffix: true
+                  without_units: true

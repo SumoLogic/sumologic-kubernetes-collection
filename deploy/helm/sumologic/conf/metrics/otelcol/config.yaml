@@ -12,7 +12,7 @@ extensions:
     timeout: 10s
 {{ end }}
   health_check:
-    endpoint: ${env:MY_POD_IP}:13133
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 
 processors:
@@ -41,7 +41,7 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: ${env:MY_POD_IP}:4318
+        endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
 
 service:
   extensions:
