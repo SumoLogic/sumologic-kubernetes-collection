@@ -4,7 +4,6 @@
 package integration
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
