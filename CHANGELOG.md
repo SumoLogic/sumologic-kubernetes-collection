@@ -2505,7 +2505,6 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 - Remove support for EKS 1.17, GKE 1.18 and 1.19 [#1906][#1906]
 - fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
 - Update OpenTelemetry Collector version to v0.38.1-sumo [#1893][#1893]
-
   - Move insecure parameter to separate configuration variable
   - Fix OTLP/HTTP metadata tagging
   - Update [Cascading Filter processor][v0.38.1-cfp] to a new version which adds new features such filtering by number of errors and
