@@ -7,7 +7,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v4.15.1]
+## [v4.16.0]
+
+### Released 2025-09-04
+
+### Added
+
+- feat(config): ipv6 compatibiilty for otel collector pods [#3949]
+- chore: Upgraded otel collector version to 0.127.0 from 0.130.1 #3972 [#3972]
+
+### Changed
+
+- chore: upgrade sumologic-kubernetes-tools and sumologic-mock images to 2.26.0 [#3949]
+
+### Fixed
+
+- chore: upgrade opentelemetry-operator to v0.93.0, resolving breakage with helm >= 3.18.5 [#3985]
+
+[#3949]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3949
+[#3972]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3972
+[#3985]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3985
+
+[v4.16.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.16.0## [v4.15.1]
 
 ### Released 2025-08-08
 
