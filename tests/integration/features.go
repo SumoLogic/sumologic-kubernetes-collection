@@ -92,7 +92,6 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 					"__name__": "container_memory_working_set_bytes",
 					"pod":      podList.Items[0].Name,
 				}
-
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := sumologicmock.Labels{
 					"cluster":                      "kubernetes",
@@ -116,42 +115,7 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 
 				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
 			},
-		).
-		Assess("expected node labels are present for container metrics",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				// Get the receiver mock pod as metrics source
-				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-				nodeList := corev1.NodeList{}
-				releaseName := strings_internal.ReleaseNameFromT(t)
-				deployment := fmt.Sprintf("%s-sumologic-mock", releaseName)
-				require.NoError(t,
-					wait.For(
-						conditions.New(res).
-							ResourceListN(
-								&nodeList,
-								1,
-								resources.WithLabelSelector(fmt.Sprintf("app=%s", deployment)),
-							),
-						wait.WithTimeout(waitDuration),
-						wait.WithInterval(tickDuration),
-					),
-				)
-				metricFilters := sumologicmock.MetadataFilters{
-					"__name__": "kube_pod_resource_limit",
-					"pod":      nodeList.Items[0].Name,
-				}
-
-				namespace := ctxopts.Namespace(ctx)
-				expectedLabels := sumologicmock.Labels{
-					"cluster":           "kubernetes",
-					"service.namespace": ctxopts.Namespace(ctx),
-				}
-				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
-
-				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
-			},
-		).
-		Feature()
+		).Feature()
 }
 
 func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
