@@ -115,7 +115,8 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 
 				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
 			},
-		).Feature()
+		).
+		Feature()
 }
 
 func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
