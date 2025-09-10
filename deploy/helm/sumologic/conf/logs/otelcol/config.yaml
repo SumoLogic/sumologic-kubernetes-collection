@@ -330,7 +330,6 @@ processors:
           tag_name: "namespace_labels_$$1"
           from: namespace
         - key_regex: "(.*)"
-          tag_name: "node_labels_$$1"
           from: node
       annotations:
         - key_regex: "(.*)"
@@ -340,7 +339,6 @@ processors:
           tag_name: "namespace_annotations_$$1"
           from: namespace
         - key_regex: "(.*)"
-          tag_name: "node_annotations_$$1"
           from: node
       metadata:
         ## extract the following well-known metadata fields
@@ -353,10 +351,10 @@ processors:
         - k8s.statefulset.name
         - k8s.namespace.name
         - k8s.node.name
-        - k8s.node.type
-        - k8s.node.uid
-        - k8s.node.region
-        - k8s.node.zone
+        - k8s.node.labels.type
+        - k8s.node.labels.uid
+        - k8s.node.labels.region
+        - k8s.node.labels.zone
         - service.name
         - service.namespace
     ## Has to be false to enrich metadata
