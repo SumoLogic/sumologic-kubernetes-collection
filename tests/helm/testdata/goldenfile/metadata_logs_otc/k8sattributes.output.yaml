@@ -164,8 +164,11 @@ data:
             key_regex: (.*)
             tag_name: namespace_annotations_$$1
           - from: node
-            key_regex: (.*)
-            tag_name: node_annotations_$$1
+            key: kubernetes.io/hostname
+            tag_name: k8s.node.hostname
+          - from: node
+            key: topology.kubernetes.io/zone
+            tag_name: k8s.node.zone
           labels:
           - from: pod
             key_regex: (.*)
@@ -174,8 +177,11 @@ data:
             key_regex: (.*)
             tag_name: namespace_labels_$$1
           - from: node
-            key_regex: (.*)
-            tag_name: node_labels_$$1
+            key: kubernetes.io/hostname
+            tag_name: k8s.node.hostname
+          - from: node
+            key: topology.kubernetes.io/zone
+            tag_name: k8s.node.zone
           metadata:
           - k8s.pod.name
           - k8s.pod.uid
@@ -186,10 +192,6 @@ data:
           - k8s.statefulset.name
           - k8s.namespace.name
           - k8s.node.name
-          - k8s.node.type
-          - k8s.node.uid
-          - k8s.node.region
-          - k8s.node.zone
           - service.name
           - service.namespace
         passthrough: false
