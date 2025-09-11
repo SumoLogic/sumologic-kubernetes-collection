@@ -73,7 +73,6 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				// Get the receiver mock pod as metrics source
 				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-				nodeList := corev1.NodeList{}
 				podList := corev1.PodList{}
 				releaseName := strings_internal.ReleaseNameFromT(t)
 				deployment := fmt.Sprintf("%s-sumologic-mock", releaseName)
