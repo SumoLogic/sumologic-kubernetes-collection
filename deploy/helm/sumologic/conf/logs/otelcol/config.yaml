@@ -348,6 +348,9 @@ processors:
         - from: node
           key: topology.kubernetes.io/zone
           tag_name: k8s.node.zone
+        - from: node
+          key: kubernetes.io/arch
+          tag_name: k8s.node.arch
       metadata:
         ## extract the following well-known metadata fields
         - k8s.pod.name
@@ -369,6 +372,7 @@ processors:
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
+        - from: connection
 {{ end }}
 {{ end }}
 

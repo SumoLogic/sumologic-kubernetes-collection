@@ -169,6 +169,9 @@ data:
           - from: node
             key: topology.kubernetes.io/zone
             tag_name: k8s.node.zone
+          - from: node
+            key: kubernetes.io/arch
+            tag_name: k8s.node.arch
           labels:
           - from: pod
             key_regex: (.*)
@@ -201,6 +204,7 @@ data:
         - sources:
           - from: resource_attribute
             name: k8s.pod.uid
+          - from: connection
         wait_for_metadata: true
         wait_for_metadata_timeout: 10s
       memory_limiter:
