@@ -329,15 +329,6 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_labels_$$1"
           from: namespace
-        - from: node
-          key: kubernetes.io/hostname
-          tag_name: k8s.node.hostname
-        - from: node
-          key: topology.kubernetes.io/zone
-          tag_name: k8s.node.zone
-        - from: node
-          key: kubernetes.io/arch
-          tag_name: k8s.node.arch
       annotations:
         - key_regex: "(.*)"
           tag_name: "pod_annotations_$$1"
@@ -345,15 +336,6 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_annotations_$$1"
           from: namespace
-        - from: node
-          key: kubernetes.io/hostname
-          tag_name: k8s.node.hostname
-        - from: node
-          key: topology.kubernetes.io/zone
-          tag_name: k8s.node.zone
-        - from: node
-          key: kubernetes.io/arch
-          tag_name: k8s.node.arch
       metadata:
         ## extract the following well-known metadata fields
         - k8s.pod.name
@@ -365,9 +347,6 @@ processors:
         - k8s.statefulset.name
         - k8s.namespace.name
         - k8s.node.name
-        - k8s.node.zone
-        - k8s.node.arch
-        - k8s.node.hostname
         - service.name
         - service.namespace
     ## Has to be false to enrich metadata
@@ -376,7 +355,6 @@ processors:
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
-        - from: connection
 {{ end }}
 {{ end }}
 
