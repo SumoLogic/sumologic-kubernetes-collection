@@ -94,7 +94,6 @@ k8sattributes:
         name: k8s.pod.name
       - from: resource_attribute
         name: k8s.namespace.name
-      - from: connection
 {{ end }}
 
 ## Configuration for Memory Limiter Processor
