@@ -89,7 +89,6 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 						wait.WithInterval(tickDuration),
 					),
 				)
-				fmt.Println("%v", nodeList)
 				metricFilters := sumologicmock.MetadataFilters{
 					"__name__": "container_memory_working_set_bytes",
 					"pod":      podList.Items[0].Name,
