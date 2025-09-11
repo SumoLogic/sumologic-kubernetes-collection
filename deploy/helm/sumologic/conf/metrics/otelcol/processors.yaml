@@ -72,6 +72,9 @@ k8sattributes:
       - from: node
         key: kubernetes.io/arch
         tag_name: k8s.node.arch
+      - from: node
+        key: kubernetes.io/os
+        tag_name: k8s.node.os
     metadata:
       ## extract the following well-known metadata fields
       - k8s.pod.name
@@ -83,9 +86,6 @@ k8sattributes:
       - k8s.node.name
       - service.name
       - service.namespace
-      - k8s.node.hostname
-      - k8s.node.arch
-      - k8s.node.zone
   ## Has to be false to enrich metadata
   passthrough: false
   pod_association:
