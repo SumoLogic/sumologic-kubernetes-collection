@@ -27,7 +27,7 @@ processors:
     send_batch_size: 1000
     timeout: 1s
 
-{{- if .Values.sumologic.logs.systemd.enabled }}
+{{- if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
   ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
   ## so they can be used by metadata processors same way like for fluentd
   ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
@@ -59,12 +59,13 @@ receivers:
 {{ tpl (.Files.Get "conf/logs/collector/common/filelog_receiver.yaml") . | nindent 2 }}
 {{- end }}
 
-{{- if .Values.sumologic.logs.systemd.enabled }}
+{{- if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
   journald:
     directory: /var/log/journal
     ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
     ## Here is filtering by `UNIT`
     units:
+{{- if .Values.sumologic.logs.systemd.enabled }}
 {{- if .Values.sumologic.logs.systemd.units }}
 {{ toYaml .Values.sumologic.logs.systemd.units | nindent 6 }}
 {{- else }}
@@ -91,7 +92,6 @@ receivers:
       - flanneld.service
       - format-etcd2-volume.service
       - kube-node-taint-and-uncordon.service
-      - kubelet.service
       - ldconfig.service
       - locksmithd.service
       - logrotate.service
@@ -118,6 +118,10 @@ receivers:
       - var-lib-etcd2.service
 {{- end }}
 {{- end }}
+{{- if or .Values.sumologic.logs.kubelet.enabled }}
+      - kubelet.service
+{{- end }}
+{{- end }}
 
 service:
   extensions:
@@ -137,7 +141,7 @@ service:
       receivers:
         - filelog/containers
 {{- end }}
-{{- if .Values.sumologic.logs.systemd.enabled }}
+{{- if or .Values.sumologic.logs.systemd.enabled .Values.sumologic.logs.kubelet.enabled }}
     logs/systemd:
       exporters:
         - otlphttp
