@@ -185,6 +185,9 @@ data:
           - from: node
             key: topology.kubernetes.io/zone
             tag_name: k8s.node.zone
+          - from: node
+            key: kubernetes.io/arch
+            tag_name: k8s.node.arch
           metadata:
           - k8s.pod.name
           - k8s.pod.uid
@@ -196,6 +199,7 @@ data:
           - k8s.namespace.name
           - k8s.node.name
           - k8s.node.zone
+          - k8s.node.arch
           - k8s.node.hostname
           - service.name
           - service.namespace

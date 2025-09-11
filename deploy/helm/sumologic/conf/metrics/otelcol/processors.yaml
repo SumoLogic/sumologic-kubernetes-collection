@@ -63,6 +63,15 @@ k8sattributes:
       - key_regex: "(.*)"
         tag_name: "pod_labels_$$1"
         from: pod
+      - from: node
+        key: kubernetes.io/hostname
+        tag_name: k8s.node.hostname
+      - from: node
+        key: topology.kubernetes.io/zone
+        tag_name: k8s.node.zone
+      - from: node
+        key: kubernetes.io/arch
+        tag_name: k8s.node.arch
     metadata:
       ## extract the following well-known metadata fields
       - k8s.pod.name
@@ -74,6 +83,9 @@ k8sattributes:
       - k8s.node.name
       - service.name
       - service.namespace
+      - k8s.node.hostname
+      - k8s.node.arch
+      - k8s.node.zone
   ## Has to be false to enrich metadata
   passthrough: false
   pod_association:
@@ -82,6 +94,7 @@ k8sattributes:
         name: k8s.pod.name
       - from: resource_attribute
         name: k8s.namespace.name
+      - from: connection
 {{ end }}
 
 ## Configuration for Memory Limiter Processor
