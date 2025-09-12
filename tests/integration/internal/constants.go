@@ -78,8 +78,9 @@ const (
 	NodeNameRegex            = ".*-control-plane" // node name for KinD TODO: get this from the cluster directly instead
 	NotUndefinedRegex        = "(?!undefined$).*"
 	EmptyRegex               = "^$"
-	PodIdRegex               = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+	UIDRegex                 = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 	PodStartTimeRegex        = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z"
+	NodeLabelRegex           = "^[a-zA-Z0-9]([a-zA-Z0-9\\._-]{0,61}[a-zA-Z0-9])?$"
 )
 
 // metrics we expect the receiver to get
