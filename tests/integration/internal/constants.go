@@ -78,6 +78,8 @@ const (
 	NodeNameRegex            = ".*-control-plane" // node name for KinD TODO: get this from the cluster directly instead
 	NotUndefinedRegex        = "(?!undefined$).*"
 	EmptyRegex               = "^$"
+	UIDRegex                 = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+	NodeLabelRegex           = "^[a-zA-Z0-9]([a-zA-Z0-9\\._-]{0,61}[a-zA-Z0-9])?$"
 )
 
 // metrics we expect the receiver to get
@@ -258,6 +260,10 @@ var (
 		"otelcol_fileconsumer_reading_files",
 		"otelcol_fileconsumer_open_files",
 	}
+	NodeLabelsMetrics = []string{
+		"otelcol_otelsvc_k8s_node_updated",
+		"otelcol_otelsvc_k8s_node_added",
+	}
 	TracingOtelcolMetrics = []string{ // not used by any App
 		"otelcol_loadbalancer_num_backend_updates",
 		"otelcol_loadbalancer_num_backends",
@@ -433,7 +439,7 @@ func InitializeConstants() error {
 	}
 
 	DefaultExpectedMetrics = []string{}
-	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics, MetricsCollectorOtelcolMetrics)
+	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics, MetricsCollectorOtelcolMetrics, NodeLabelsMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
 	}
