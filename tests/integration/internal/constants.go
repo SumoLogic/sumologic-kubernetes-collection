@@ -79,7 +79,6 @@ const (
 	NotUndefinedRegex        = "(?!undefined$).*"
 	EmptyRegex               = "^$"
 	UIDRegex                 = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-	PodStartTimeRegex        = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z"
 	NodeLabelRegex           = "^[a-zA-Z0-9]([a-zA-Z0-9\\._-]{0,61}[a-zA-Z0-9])?$"
 )
 
