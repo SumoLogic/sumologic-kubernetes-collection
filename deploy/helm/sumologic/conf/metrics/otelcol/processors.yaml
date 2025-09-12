@@ -55,6 +55,7 @@ k8s_tagger:
     - from: build_hostname  # Pods are identified by Pod name and namespace
 {{ else }}
 k8sattributes:
+k8sattributes/2:
   wait_for_metadata: {{ .Values.metadata.metrics.waitForMetadata }}
   wait_for_metadata_timeout: {{ .Values.metadata.metrics.waitForMetadataTimeout | quote }}
   auth_type: "serviceAccount"
@@ -63,18 +64,9 @@ k8sattributes:
       - key_regex: "(.*)"
         tag_name: "pod_labels_$$1"
         from: pod
-      - from: node
-        key: kubernetes.io/hostname
-        tag_name: k8s.node.hostname
-      - from: node
-        key: topology.kubernetes.io/zone
-        tag_name: k8s.node.zone
-      - from: node
-        key: kubernetes.io/arch
-        tag_name: k8s.node.arch
-      - from: node
-        key: kubernetes.io/os
-        tag_name: k8s.node.os
+      - key_regex: "(.*)" 
+        tag_name: "nod_labels_$$1"
+        from: node
     metadata:
       ## extract the following well-known metadata fields
       - k8s.pod.name
