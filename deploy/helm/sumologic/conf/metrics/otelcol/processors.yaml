@@ -55,7 +55,6 @@ k8s_tagger:
     - from: build_hostname  # Pods are identified by Pod name and namespace
 {{ else }}
 k8sattributes:
-k8sattributes/2:
   wait_for_metadata: {{ .Values.metadata.metrics.waitForMetadata }}
   wait_for_metadata_timeout: {{ .Values.metadata.metrics.waitForMetadataTimeout | quote }}
   auth_type: "serviceAccount"
