@@ -405,6 +405,7 @@ var (
 		KubeControllerManagerMetrics,
 		CoreDNSMetrics,
 		CAdvisorMetrics,
+		NodeExporterMetrics,
 		OtherMetrics,
 		AdditionalNodeExporterMetrics,
 	}
