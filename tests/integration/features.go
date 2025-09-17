@@ -111,11 +111,11 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 					"service":                             deployment,
 					"service.namespace":                   ctxopts.Namespace(ctx),
 					"k8s.node.uid":                        internal.UIDRegex,
-					"node_labels_beta.kubernetes.io/os":   internal.NodeLabelRegex,
-					"node_labels_beta.kubernetes.io/arch": internal.NodeLabelRegex,
-					"node_labels_kubernetes.io/hostname":  internal.NodeLabelRegex,
-					"node_labels_kubernetes.io/os":        internal.NodeLabelRegex,
-					"node_labels_kubernetes.io/arch":      internal.NodeLabelRegex,
+					"node_labels_beta.kubernetes.io/os":   internal.NodeLabelOSRegex,
+					"node_labels_beta.kubernetes.io/arch": internal.NodeLabelArchRegex,
+					"node_labels_kubernetes.io/hostname":  internal.NodeLabelHostnameRegex,
+					"node_labels_kubernetes.io/os":        internal.NodeLabelOSRegex,
+					"node_labels_kubernetes.io/arch":      internal.NodeLabelArchRegex,
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 

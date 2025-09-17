@@ -79,7 +79,9 @@ const (
 	NotUndefinedRegex        = "(?!undefined$).*"
 	EmptyRegex               = "^$"
 	UIDRegex                 = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-	NodeLabelRegex           = "^[a-zA-Z0-9]([a-zA-Z0-9\\._-]{0,61}[a-zA-Z0-9])?$"
+	NodeLabelHostnameRegex   = "^[a-zA-Z0-9]([a-zA-Z0-9\\._-]{0,61}[a-zA-Z0-9])?$"
+	NodeLabelOSRegex         = "^(linux|windows|osx)$"
+	NodeLabelArchRegex       = "amd64|arm64"
 )
 
 // metrics we expect the receiver to get
