@@ -165,7 +165,7 @@ data:
             tag_name: namespace_annotations_$$1
           - from: node
             key_regex: (.*)
-            tag_name: node_labels_$$1
+            tag_name: node_annotations_$$1
           labels:
           - from: pod
             key_regex: (.*)
