@@ -340,7 +340,7 @@ processors:
           tag_name: "namespace_annotations_$$1"
           from: namespace
         - key_regex: "(.*)" 
-          tag_name: "node_labels_$$1"
+          tag_name: "node_annotations_$$1"
           from: node
       metadata:
         ## extract the following well-known metadata fields
