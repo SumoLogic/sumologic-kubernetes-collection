@@ -98,9 +98,18 @@ cd /terraform || exit 1
 FIELDS_STRING=$(jq -r '.fields[]' terraform.tfvars.json)
 mapfile -t FIELDS < <(echo "${FIELDS_STRING}")
 
-# Fall back to init -upgrade to prevent:
-# Error: Inconsistent dependency lock file
-terraform init -input=false -get=false || terraform init -input=false -upgrade
+# Remove lock file to prevent version conflicts on upgrades
+if [[ -f .terraform.lock.hcl ]]; then
+    echo "Removing existing Terraform lock file to prevent provider version conflicts"
+    rm -f .terraform.lock.hcl
+fi
+
+# Initialize Terraform with upgrade to handle provider version changes
+terraform init -input=false -upgrade || {
+    echo "Terraform init failed, attempting to clean .terraform directory"
+    rm -rf .terraform
+    terraform init -input=false -upgrade
+}
 
 # Sumo Logic fields
 if should_create_fields ; then
