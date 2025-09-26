@@ -77,6 +77,12 @@ spec:
       tolerations:
 {{ $tolerations | indent 8 }}
 {{- end }}
+{{- if $daemonset.hostNetwork }}
+      hostNetwork: {{ $daemonset.hostNetwork }}
+{{- end }}
+{{- if $daemonset.dnsPolicy }}
+      dnsPolicy: {{ $daemonset.dnsPolicy }}
+{{- end }}
       securityContext:
         {{- toYaml $daemonset.securityContext | nindent 8 }}
       {{- if $daemonset.priorityClassName }}
