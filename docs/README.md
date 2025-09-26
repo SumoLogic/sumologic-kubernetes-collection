@@ -27,7 +27,6 @@ Documentation links:
 - [Installation](https://help.sumologic.com/docs/send-data/kubernetes/install-helm-chart/)
 
 - Configuration
-
   - [Examples](/docs/configuration-examples.md)
   - Logs
     - [Collecting container logs](https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/)
@@ -46,7 +45,6 @@ Documentation links:
     - [OTLP source](/docs/otlp-source.md)
 
 - Upgrades
-
   - [Upgrade from v3 to v4][migration-doc-v4]
   - [Upgrade from v2 to v3][migration-doc-v3]
   - [Upgrade from v2.17 to v2.18][migration-doc-v2.18]
@@ -84,7 +82,7 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 ## Minimum Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | K8s  | 1.21+   |
 | Helm | 3.5+    |
 
@@ -93,7 +91,7 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 The following table displays the tested Kubernetes and Helm versions.
 
 | Name                   | Version                                                    |
-|------------------------|------------------------------------------------------------|
+| ---------------------- | ---------------------------------------------------------- |
 | K8s with EKS           | 1.28<br/>1.29<br/>1.30<br/>1.31<br/>1.32<br/>1.33          |
 | K8s with EKS (fargate) | 1.28<br/>1.29<br/>1.30<br/>1.31<br/>1.32<br/>1.33          |
 | K8s with Kops          | 1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30                   |
@@ -106,7 +104,7 @@ The following table displays the tested Kubernetes and Helm versions.
 The following table displays the currently used software versions for our Helm chart.
 
 | Name                                      | Version |
-|-------------------------------------------|---------|
+| ----------------------------------------- | ------- |
 | OpenTelemetry Collector                   | 0.130.1 |
 | OpenTelemetry Operator                    | 0.86.4  |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
