@@ -1,5 +1,7 @@
 sumologic:
   logs:
+    kubelet:
+      enabled: true
     multiline:
       enabled: true
       first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
