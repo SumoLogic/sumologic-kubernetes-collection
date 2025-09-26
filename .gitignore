@@ -6,6 +6,9 @@
 !.vscode/extensions.json
 !.vscode/snippets.code-snippets
 
+# Intellij ignores
+.idea/*
+
 # Helm chart dependencies
 deploy/helm/sumologic/charts
 deploy/helm/sumologic/tmpcharts
