@@ -270,7 +270,7 @@ func TestAffinities(t *testing.T) {
 			assert.True(
 				t,
 				reflect.DeepEqual(*aff.NodeAffinity, *affinity.NodeAffinity),
-				"%s should have node affinity set to %s, found %s instead",
+				"%s should have node affinity set to %s,\n found %s instead\n",
 				renderedObject.GetName(),
 				affinity,
 				aff,
