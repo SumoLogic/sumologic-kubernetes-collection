@@ -93,7 +93,7 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 The following table displays the tested Kubernetes and Helm versions.
 
 | Name                   | Version                                                             |
-| ---------------------- |---------------------------------------------------------------------|
+| ---------------------- | ------------------------------------------------------------------- |
 | K8s with EKS           | 1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30<br/>1.31<br/>1.32<br/>1.33 |
 | K8s with EKS (fargate) | 1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30<br/>1.31<br/>1.32<br/>1.33 |
 | K8s with Kops          | 1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30                            |
