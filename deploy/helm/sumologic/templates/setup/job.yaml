@@ -36,7 +36,7 @@ spec:
 {{ toYaml .Values.sumologic.setup.job.podLabels | indent 8 }}
 {{- end }}
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: {{ .Values.sumologic.setup.job.restartPolicy | default "OnFailure" }}
       serviceAccountName: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}
 {{- if not (empty (include "setup.job.nodeSelector" .)) }}
       nodeSelector:
