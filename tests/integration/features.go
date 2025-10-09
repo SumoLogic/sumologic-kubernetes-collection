@@ -33,7 +33,7 @@ type MetricsCollector string
 const (
 	tickDuration             = 3 * time.Second
 	waitDuration             = 2 * time.Minute
-	waitBeforeLogsGeneration = 5 * time.Second
+	waitBeforeLogsGeneration = 15 * time.Second
 	// number determined experimentally
 	expectedEventCount uint = 50
 	logsGeneratorCount uint = 1000
@@ -495,7 +495,7 @@ func GetAllLogsFeature(waitFunction stepfuncs.WaitForLogs, generate bool) featur
 		feature = feature.
 			Setup(func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 				// Wait before generating logs to help with flakiness
-				t.Log("Waiting 5 seconds before generating logs...")
+				t.Log("Waiting 15 seconds before generating logs...")
 				time.Sleep(waitBeforeLogsGeneration) // Adjust as needed
 				return ctx
 			}).
