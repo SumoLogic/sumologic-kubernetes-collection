@@ -94,3 +94,9 @@ otellogs:
       - name: es-certs
         mountPath: /certs
         readOnly: true
+
+    extraPorts:
+      - containerPort: 3000
+        hostPort: 3001
+      - containerPort: 3002
+        protocol: UDP
