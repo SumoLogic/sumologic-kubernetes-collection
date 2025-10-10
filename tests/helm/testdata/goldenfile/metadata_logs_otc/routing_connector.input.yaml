@@ -1,0 +1,22 @@
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+    otelcol:
+      extraExporters:
+        sumologic/test:
+          endpoint: https://test-endpoint
+        debug:
+          verbosity: detailed
+      useDefaultExporters: false
+      routing:
+        useRoutingConnectors: true
+        fallbackExporters:
+          - debug
+          - sumologic/test
+        table:
+          - exporters:
+              - sumologic/test
+              - debug
+            statement: route() where resource.attributes["exporter"] == "test"
