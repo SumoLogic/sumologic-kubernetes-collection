@@ -15,6 +15,11 @@ extensions:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 
+{{- if eq .Values.sumologic.metrics.sourceType "http" }}
+connectors:
+{{ tpl (.Files.Get "conf/metrics/otelcol/connectors.yaml") . | indent 2 }}
+{{- end}}
+
 processors:
 {{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
 {{ if .Values.sumologic.metrics.enableDefaultFilters -}}
@@ -53,6 +58,54 @@ service:
   pipelines:
     metrics:
 {{ tpl (.Files.Get "conf/metrics/otelcol/pipeline.yaml") . | indent 6 }}
+{{- if eq .Values.sumologic.metrics.sourceType "http" }}
+    metrics/default:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/default
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-default
+{{- end }}
+    metrics/apiserver:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/apiserver
+    metrics/control_plane:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/control_plane
+    metrics/controller:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/controller
+    metrics/kubelet:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/kubelet
+    metrics/node:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/node
+    metrics/scheduler:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/scheduler
+    metrics/state:
+      receivers:
+        - routing
+      exporters:
+        - sumologic/state
+{{- end }}
   telemetry:
     logs:
       level: {{ .Values.metadata.metrics.logLevel }}

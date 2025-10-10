@@ -137,6 +137,61 @@ data:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
+    connectors:
+      routing:
+        default_pipelines:
+        - metrics/default
+        - metrics/debug
+        - metrics/sumologic-mock-default
+        table:
+          - context: resource
+          condition: attributes["job"] == "apiserver"
+          pipelines:
+            - metrics/apiserver
+            - metrics/debug
+            - metrics/sumologic-mock-http
+          - context: resource
+          condition: attributes["job"] == "coredns"
+          pipelines:
+            - metrics/control_plane
+            - metrics/debug
+            - metrics/sumologic-mock-http
+          - context: resource
+          condition: attributes["job"] == "kube-etcd"
+          pipelines:
+            - metrics/control_plane
+            - metrics/debug
+            - metrics/sumologic-mock-http
+          - context: resource
+          condition: attributes["job"] == "kube-controller-manager"
+          pipelines:
+            - metrics/controller
+            - metrics/debug
+            - metrics/sumologic-mock-http
+          - context: resource
+          condition: attributes["job"] == "kubelet"
+          pipelines:
+            - metrics/kubelet
+            - metrics/debug
+            - metrics/sumologic-mock-http
+          - context: resource
+          condition: attributes["job"] == "node-exporter"
+          pipelines:
+            - metrics/node
+            - metrics/debug
+            - metrics/sumologic-mock-http
+          - context: resource
+          condition: attributes["job"] == "kube-scheduler"
+          pipelines:
+            - metrics/scheduler
+            - metrics/debug
+            - metrics/sumologic-mock-http
+          - context: resource
+          condition: attributes["job"] == "kube-state-metrics"
+          pipelines:
+            - metrics/state
+            - metrics/debug
+            - metrics/sumologic-mock-http
     processors:
       batch:
         send_batch_max_size: 2048
@@ -237,53 +292,6 @@ data:
         attributes:
         - action: delete
           key: k8s.pod.pod_name
-      routing:
-        default_exporters:
-        - sumologic/default
-        - debug
-        - sumologic/sumologic-mock-default
-        error_mode: ignore
-        table:
-        - exporters:
-          - sumologic/apiserver
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "apiserver"
-        - exporters:
-          - sumologic/control_plane
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "coredns"
-        - exporters:
-          - sumologic/control_plane
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "kube-etcd"
-        - exporters:
-          - sumologic/controller
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "kube-controller-manager"
-        - exporters:
-          - sumologic/kubelet
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "kubelet"
-        - exporters:
-          - sumologic/node
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "node-exporter"
-        - exporters:
-          - sumologic/scheduler
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "kube-scheduler"
-        - exporters:
-          - sumologic/state
-          - debug
-          - sumologic/sumologic-mock-http
-          statement: route() where resource.attributes["job"] == "kube-state-metrics"
       source:
         collector: kubernetes
         exclude:
@@ -328,19 +336,64 @@ data:
       - file_storage
       - pprof
       pipelines:
-        metrics:
+        metrics/default:
+          receivers:
+          - routing
           exporters:
           - sumologic/default
+        metrics/debug:
+          receivers:
+          - routing
+          exporters:
           - debug
+        metrics/sumologic-mock-default:
+          receivers:
+          - routing
+          exporters:
           - sumologic/sumologic-mock-default
-          - sumologic/apiserver
-          - sumologic/control_plane
-          - sumologic/controller
-          - sumologic/kubelet
-          - sumologic/node
-          - sumologic/scheduler
-          - sumologic/state
+        metrics/sumologic-mock-http:
+          receivers:
+          - routing
+          exporters:
           - sumologic/sumologic-mock-http
+        metrics/apiserver:
+          receivers:
+          - routing
+          exporters:
+          - sumologic/apiserver
+        metrics/control_plane:
+          receivers:
+          - routing
+          exporters:
+          - sumologic/control_plane
+        metrics/controller:
+          receivers:
+          - routing
+          exporters:
+          - sumologic/controller
+        metrics/kubelet:
+          receivers:
+          - routing
+          exporters:
+          - sumologic/kubelet
+        metrics/node:
+          receivers:
+          - routing
+          exporters:
+          - sumologic/node
+        metrics/scheduler:
+          receivers:
+          - routing
+          exporters:
+          - sumologic/scheduler
+        metrics/state:
+          receivers:
+          - routing
+          exporters:
+          - sumologic/state
+        metrics:
+          exporters:
+          - routing
           processors:
           - memory_limiter
           - metricstransform
@@ -356,7 +409,6 @@ data:
           - transform/remove_name
           - filter/drop_unnecessary_metrics
           - batch
-          - routing
           receivers:
           - telegraf
           - otlp

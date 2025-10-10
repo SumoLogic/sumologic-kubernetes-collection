@@ -36,6 +36,23 @@ data:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
+    connectors:
+      routing/containers:
+        default_pipelines:
+          - logs/otlp/containers/routing/default
+        table:
+          - context: resource
+            condition: attributes["exporter"] == "test"
+            pipelines:
+              - logs/otlp/containers/routing/sumologic/test
+      routing/systemd:
+        default_pipelines:
+          - logs/otlp/systemd/routing/default
+        table:
+          - context: resource
+            condition: attributes["exporter"] == "test"
+            pipelines:
+              - logs/otlp/systemd/routing/sumologic/test
     processors:
       attributes/extract_systemd_source_fields:
         actions:
@@ -220,22 +237,6 @@ data:
         - action: insert
           key: _sourceName
           value: ""
-      routing/containers:
-        default_exporters:
-        - debug
-        - sumologic/test
-        table:
-        - exporters:
-          - sumologic/test
-          statement: route() where resource.attributes["exporter"] == "test"
-      routing/systemd:
-        default_exporters:
-        - debug
-        - sumologic/test
-        table:
-        - exporters:
-          - sumologic/test
-          statement: route() where resource.attributes["exporter"] == "test"
       source/containers:
         annotation_prefix: pod_annotations_
         collector: kubernetes
@@ -310,8 +311,7 @@ data:
       pipelines:
         logs/otlp/containers:
           exporters:
-          - sumologic/test
-          - debug
+          - routing/containers
           processors:
           - memory_limiter
           - filter/include_containers
@@ -327,13 +327,11 @@ data:
           - resource/drop_annotations
           - transform/add_timestamp
           - batch
-          - routing/containers
           receivers:
           - otlp
         logs/otlp/kubelet:
           exporters:
-          - sumologic/test
-          - debug
+          - routing/systemd
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host
@@ -351,13 +349,11 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - batch
-          - routing/systemd
           receivers:
           - otlp
         logs/otlp/systemd:
           exporters:
-          - sumologic/test
-          - debug
+          - routing/systemd
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host
@@ -376,9 +372,30 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - batch
-          - routing/systemd
           receivers:
           - otlp
+        logs/otlp/containers/routing/default:
+          exporters:
+          - debug
+          - sumologic/test
+          receivers:
+          - routing/containers
+        logs/otlp/containers/routing/sumologic/test:
+          exporters:
+          - sumologic/test
+          receivers:
+          - routing/containers
+        logs/otlp/systemd/routing/default:
+          exporters:
+          - debug
+          - sumologic/test
+          receivers:
+          - routing/systemd
+        logs/otlp/systemd/routing/sumologic/test:
+          exporters:
+          - sumologic/test
+          receivers:
+          - routing/systemd
       telemetry:
         logs:
           level: info
