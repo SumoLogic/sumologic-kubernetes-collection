@@ -428,38 +428,6 @@ processors:
       value: ""
 {{ end }}
 
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-  routing/containers:
-    default_exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 6}}
-    table:
-{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
-      - statement: {{ $entry.statement }}
-        exporters:
-          - {{ $entry.exporter }}
-{{- end }}
-{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
-      - statement: route()
-        exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 12}}
-{{- end }}
-
-  routing/systemd:
-    default_exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 6 }}
-    table:
-{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
-      - statement: {{ $entry.statement }}
-        exporters:
-          - {{ $entry.exporter }}
-{{- end }}
-{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
-      - statement: route()
-        exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 12 }}
-{{- end }}
-{{- end }}
-
 {{ if .Values.sumologic.logs.container.enabled }}
   source/containers:
     annotation_prefix: "pod_annotations_"
@@ -561,6 +529,39 @@ receivers:
         endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
 {{ end }}
 
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+connectors:
+  routing/containers:
+    default_pipelines:
+      - logs/otlp/containers/routing/default
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: {{ $entry.statement }}
+        pipelines:
+{{- range $exp := $entry.exporters }}
+          - logs/otlp/containers/routing/{{ $exp }}
+{{- end }}
+{{- if $.Values.sumologic.logs.otelcol.useDefaultExporters }}
+          - logs/otlp/containers/routing/default
+{{- end}}
+{{- end}}
+
+  routing/systemd:
+    default_pipelines:
+      - logs/otlp/systemd/routing/default
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: {{ $entry.statement }}
+        pipelines:
+{{- range $exp := $entry.exporters }}
+          - logs/otlp/systemd/routing/{{ $exp }}
+{{- end }}
+{{- if $.Values.sumologic.logs.otelcol.useDefaultExporters }}
+          - logs/otlp/systemd/routing/default
+{{- end}}
+{{- end }}
+{{- end }}
+
 service:
   extensions:
     - health_check
@@ -573,7 +574,11 @@ service:
 {{ if .Values.sumologic.logs.container.enabled }}
     logs/otlp/containers:
       exporters:
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/containers
+{{- else }}
 {{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "containers") | nindent 8}}
+{{- end }}
       processors:
         - memory_limiter
         - filter/include_containers
@@ -603,9 +608,6 @@ service:
         - transform/flatten
 {{- end }}
         - batch
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-        - routing/containers
-{{- end }}
       receivers:
         - otlp
 {{ end }}
@@ -613,7 +615,11 @@ service:
 {{ if .Values.sumologic.logs.systemd.enabled }}
     logs/otlp/kubelet:
       exporters:
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/systemd
+{{- else }}
 {{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
+{{- end }}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -636,15 +642,16 @@ service:
 {{- end }}
 {{- end }}
         - batch
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-        - routing/systemd
-{{- end }}
       receivers:
         - otlp
 
     logs/otlp/systemd:
       exporters:
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+        - routing/systemd
+{{- else }}
 {{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
+{{- end }}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -668,12 +675,45 @@ service:
 {{- end }}
 {{- end }}
         - batch
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-        - routing/systemd
-{{- end }}
       receivers:
         - otlp
 {{ end }}
+
+{{- if .Values.sumologic.logs.otelcol.routing.table }}
+{{- if .Values.sumologic.logs.container.enabled }}
+    logs/otlp/containers/routing/default:
+      receivers:
+        - routing/containers
+      exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 8}}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+{{- range $exp := $entry.exporters }}
+    logs/otlp/containers/routing/{{ $exp }}:
+      receivers:
+        - routing/containers
+      exporters:
+        - {{ $exp }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.sumologic.logs.systemd.enabled }}
+    logs/otlp/systemd/routing/default:
+      receivers:
+        - routing/systemd
+      exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+{{- range $exp := $entry.exporters }}
+    logs/otlp/systemd/routing/{{ $exp }}:
+      receivers:
+        - routing/systemd
+      exporters:
+        - {{ $exp }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{ end }}
   telemetry:
     logs:
