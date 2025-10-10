@@ -155,6 +155,7 @@ func TestMetadataSourceTypeOTLP(t *testing.T) {
 			Rest map[string]interface{} `yaml:",inline"`
 		}
 		Processors map[string]interface{}
+		Connectors map[string]interface{}
 		Service    struct {
 			Pipelines struct {
 				Metrics struct {
@@ -179,6 +180,7 @@ sumologic:
 	assert.Equal(t, otelConfig.Exporters.Default.Endpoint, "${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}")
 	assert.Len(t, otelConfig.Exporters.Rest, 0)
 	assert.NotContains(t, otelConfig.Processors, "routing")
+	assert.NotContains(t, otelConfig.Connectors, "routing")
 	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
 	assert.Equal(t, otelConfig.Service.Pipelines.Metrics.Exporters, []string{"sumologic/default"})
 }
@@ -193,6 +195,7 @@ func TestMetadataSourceTypeHTTP(t *testing.T) {
 			Endpoint     string
 		} `yaml:"exporters"`
 		Processors map[string]interface{}
+		Connectors map[string]interface{}
 		Service    struct {
 			Pipelines struct {
 				Metrics struct {
@@ -217,22 +220,9 @@ sumologic:
 	defaultExporter := otelConfig.Exporters["sumologic/default"]
 	assert.Equal(t, "prometheus", defaultExporter.MetricFormat)
 	assert.Equal(t, "${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}", defaultExporter.Endpoint)
-	assert.Contains(t, otelConfig.Processors, "routing")
-	assert.Contains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
-	assert.Equal(
-		t,
-		[]string{
-			"sumologic/default",
-			"sumologic/apiserver",
-			"sumologic/control_plane",
-			"sumologic/controller",
-			"sumologic/kubelet",
-			"sumologic/node",
-			"sumologic/scheduler",
-			"sumologic/state",
-		},
-		otelConfig.Service.Pipelines.Metrics.Exporters,
-	)
+	assert.Contains(t, otelConfig.Connectors, "routing/default")
+	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
+	assert.Equal(t, otelConfig.Service.Pipelines.Metrics.Exporters, []string{"routing/default"})
 }
 
 func TestNoPrometheusServiceMonitors(t *testing.T) {
