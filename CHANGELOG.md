@@ -30,7 +30,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4002]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4002
 [#4010]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4010
 [#3994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3994
-
 [v4.17.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.17.0
 
 ## [v4.16.0]
@@ -53,7 +52,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#3949]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3949
 [#3972]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3972
 [#3985]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3985
-
 [v4.16.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.16.0
 
 ## [v4.15.1]
