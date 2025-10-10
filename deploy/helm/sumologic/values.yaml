@@ -462,11 +462,14 @@ sumologic:
         fallbackExporters: []
         table: []
         ## -
-        ##  ## exporter is name of the exporter
-        ##  exporter: sumologic/otlp
-        ##  ## statement is an OTTL condition which defines what data should be send to the exporter
-        ##  ## see routing processor documentation for more details:
-        ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/processor/routingprocessor/README.md#tech-preview-opentelemetry-transformation-language-statements-as-routing-conditions
+        ##  ## exporters is an array of the exporter
+        ##  exporters:
+        ##    - sumologic/otlp
+        ##  ## statement is an OTTL condition which defines what data should be sent to the exporters
+        ##  ## see routing connector documentation for more details:
+        ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/connector/routingconnector
+        ## routing connector expects you to define a pipeline, but here the user can just mention the exporter.
+        ## The helm deployment would convert exporters into correct pipelines and configure the connectors.
         ##  statement: ""
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
@@ -764,6 +767,8 @@ sumologic:
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
     sourceType: otlp
+    ## In order to use routing connectors, please enable this flag.
+    # useRoutingConnectors: true
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces from instrumentation ingestion.
