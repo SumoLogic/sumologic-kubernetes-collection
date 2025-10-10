@@ -140,6 +140,9 @@ spec:
         - name: metrics
           containerPort: 8888
           protocol: TCP
+        {{- if $daemonset.extraPorts }}
+        {{ toYaml $daemonset.extraPorts | nindent 8 }}
+        {{- end }}
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         # yamllint disable-line rule:line-length

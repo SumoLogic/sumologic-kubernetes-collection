@@ -114,6 +114,11 @@ spec:
             - name: metrics
               containerPort: 8888
               protocol: TCP
+
+            - containerPort: 3000
+              hostPort: 3001
+            - containerPort: 3002
+              protocol: UDP
       initContainers: # ensure the host path is owned by the otel user group
         - name: changeowner
           # yamllint disable-line rule:line-length
