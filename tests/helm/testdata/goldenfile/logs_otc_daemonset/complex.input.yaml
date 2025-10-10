@@ -96,7 +96,11 @@ otellogs:
         readOnly: true
 
     extraPorts:
-      - containerPort: 3000
-        hostPort: 3001
-      - containerPort: 3002
+      - name: otlp-http
+        containerPort: 4318
+        protocol: TCP
+        hostPort: 4318
+      - name: statsd
+        containerPort: 8125
+        hostPort: 8125
         protocol: UDP
