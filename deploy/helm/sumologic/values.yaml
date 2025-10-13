@@ -2192,6 +2192,17 @@ otellogs:
     #     maxUnavailable: 1
     #   type: RollingUpdate
 
+    ## Extra Ports - Allows you to open additional ports on the Daemonset
+    # extraPorts:
+    #   - name: otlp-http
+    #     containerPort: 4318
+    #     protocol: TCP
+    #     hostPort: 4318
+    #   - name: statsd
+    #     containerPort: 8125
+    #     hostPort: 8125
+    #     protocol: UDP
+    
   ## additionalDaemonSets allows to set daemonsets with affinity, nodeSelector and resources
   ## different than the main DaemonSet
   ## Be careful and set nodeAffinity for the main DaemonSet,
