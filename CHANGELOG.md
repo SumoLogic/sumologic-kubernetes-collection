@@ -7,6 +7,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.17.0]
+
+### Released 2025-10-10
+
+### Added
+
+- feat: added node labels to the upstream K8sattribute processor's config [#3976]
+
+### Changed
+
+- chore: Update the k8s version support matrix [#3997]
+- chore: Upgrade the java instrumentation library to v2.20.1 [#4002]
+- feat: Make restartPolicy configurable via values.yaml (default: OnFailure) [#4010]
+
+### Fixed
+
+- fix(setup): Remove terraform lock file to prevent version conflict messages on upgrades [#3994]
+
+[#3976]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3976
+[#3997]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3997
+[#4002]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4002
+[#4010]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4010
+[#3994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3994
+[v4.17.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.17.0
+
 ## [v4.16.0]
 
 ### Released 2025-09-04
@@ -27,8 +52,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#3949]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3949
 [#3972]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3972
 [#3985]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3985
+[v4.16.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.16.0
 
-[v4.16.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.16.0## [v4.15.1]
+## [v4.15.1]
 
 ### Released 2025-08-08
 
