@@ -191,9 +191,9 @@ spec:
           type: DirectoryOrCreate
         name: file-storage
       - hostPath:
-          path: {{ include "sumologic.logs.systemd.journaldDirectory" $ctx }}
+          path: {{ $.Values.sumologic.logs.systemd.journaldDirectory }}/
           type: ""
-        name: {{ include "sumologic.logs.systemd.journaldDirectory" $ctx | replace "/" "" }}
+        name: {{ $.Values.sumologic.logs.systemd.journaldDirectory | replace "/" "" }}
 {{- if $daemonset.extraVolumes }}
 {{ toYaml $daemonset.extraVolumes | indent 6 }}
 {{- end }}

@@ -178,7 +178,7 @@ spec:
           type: DirectoryOrCreate
         name: file-storage
       - hostPath:
-          path: {{ $.Values.sumologic.logs.systemd.journaldDirectory }}
+          path: {{ $.Values.sumologic.logs.systemd.journaldDirectory }}/
           type: ""
         name: {{ $.Values.sumologic.logs.systemd.journaldDirectory | replace "/" "" }}
 {{- if $daemonset.extraVolumes }}
