@@ -116,8 +116,8 @@ spec:
           readOnly: true
         - mountPath: /var/lib/storage/otc
           name: file-storage
-        - mountPath: {{ include "sumologic.logs.systemd.journaldDirectory" $ctx }}
-          name: {{ include "sumologic.logs.systemd.journaldDirectory" $ctx | replace "/" "" }}
+        - mountPath: {{  $.Values.sumologic.logs.systemd.journaldDirectory }}
+          name: {{ $.Values.sumologic.logs.systemd.journaldDirectory | replace "/" "" }}
           readOnly: true
 {{- if $daemonset.extraVolumeMounts }}
 {{ toYaml $daemonset.extraVolumeMounts | indent 8 }}
