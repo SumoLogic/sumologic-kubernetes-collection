@@ -120,8 +120,6 @@ data:
             endpoint: ${env:MY_POD_IP}:6831
           thrift_http:
             endpoint: ${env:MY_POD_IP}:14268
-      opencensus:
-        endpoint: ${env:MY_POD_IP}:55678
       otlp:
         protocols:
           grpc:
@@ -162,7 +160,6 @@ data:
           - batch
           receivers:
           - jaeger
-          - opencensus
           - otlp
           - otlp/deprecated
           - zipkin
