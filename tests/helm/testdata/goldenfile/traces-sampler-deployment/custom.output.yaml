@@ -73,7 +73,6 @@ spec:
             - containerPort: 14250 # Default endpoint for Jaeger gRPC receiver.
             - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
             - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
-            - containerPort: 55678 # Default endpoint for Opencensus receiver.
             - containerPort: 4317 # Default endpoint for OTLP gRPC receiver.
             - containerPort: 4318 # Default endpoint for OTLP HTTP receiver.
             - containerPort: 55680 # Old endpoint for OTLP gRPC receiver.

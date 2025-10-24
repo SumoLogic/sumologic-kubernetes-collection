@@ -680,14 +680,6 @@ ${env:MY_POD_IP}:13133
 {{- end -}}
 {{- end }}
 
-{{- define "sumologic.opencensus_endpoint" -}}
-{{- if .Values.sumologic.ipv6mode -}}
-"[${env:MY_POD_IP}]:55678"
-{{- else -}}
-"${env:MY_POD_IP}:55678"
-{{- end -}}
-{{- end }}
-
 {{- define "sumologic.zipkin_endpoint" -}}
 {{- if .Values.sumologic.ipv6mode -}}
 "[${env:MY_POD_IP}]:9411"
