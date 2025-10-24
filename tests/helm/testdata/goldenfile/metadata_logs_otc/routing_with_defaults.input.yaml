@@ -13,4 +13,5 @@ sumologic:
       routing:
         table:
           - exporter: sumologic/test
-            statement: route() where resource.attributes["exporter"] == "test"
+            context: resource
+            condition: attributes["exporter"] == "test"

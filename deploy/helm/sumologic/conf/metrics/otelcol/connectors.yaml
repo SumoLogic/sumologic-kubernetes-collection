@@ -1,0 +1,36 @@
+routing:
+  default_pipelines:
+    - metrics/default
+  table:
+    - context: resource
+      condition: attributes["job"] == "apiserver"
+      pipelines:
+        - metrics/apiserver
+    - context: resource
+      condition: attributes["job"] == "coredns"
+      pipelines:
+        - metrics/control_plane
+    - context: resource
+      condition: attributes["job"] == "kube-etcd"
+      pipelines:
+        - metrics/control_plane
+    - context: resource
+      condition: attributes["job"] == "kube-controller-manager"
+      pipelines:
+        - metrics/controller
+    - context: resource
+      condition: attributes["job"] == "kubelet"
+      pipelines:
+        - metrics/kubelet
+    - context: resource
+      condition: attributes["job"] == "node-exporter"
+      pipelines:
+        - metrics/node
+    - context: resource
+      condition: attributes["job"] == "kube-scheduler"
+      pipelines:
+        - metrics/scheduler
+    - context: resource
+      condition: attributes["job"] == "kube-state-metrics"
+      pipelines:
+        - metrics/state
