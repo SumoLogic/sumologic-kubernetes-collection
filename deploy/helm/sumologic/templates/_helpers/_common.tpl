@@ -480,6 +480,15 @@ Example:
 {{- end -}}
 
 {{/*
+GODEBUG environment variable, currently set to force netdns=go
+so that the cgo DNS resolver is not used.
+*/}}
+{{- define "godebug-env-variable" -}}
+- name: GODEBUG
+  value: "netdns=go"
+{{- end -}}
+
+{{/*
 Environment variables used to configure the HTTP proxy for programs using
 Go's net/http. See: https://pkg.go.dev/net/http#RoundTripper
 
