@@ -68,7 +68,7 @@ spec:
             value: "{{ .Chart.Version }}"
           - name: SUMOLOGIC_SECRET_NAME
             value: "{{ template "terraform.secret.name" }}"
-          {{- include "go-debug-variable" . | nindent 10 }}
+          {{- include "godebug-env-variable" . | nindent 10 }}
           {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 1000
