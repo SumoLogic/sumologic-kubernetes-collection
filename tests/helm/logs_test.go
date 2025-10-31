@@ -587,3 +587,65 @@ otellogs:
 
 	require.Equal(t, "50%", logsCollectorDaemonset.Spec.UpdateStrategy.RollingUpdate.MaxUnavailable)
 }
+
+func TestCollectorDaemonsetHostNetwork(t *testing.T) {
+	t.Parallel()
+
+	valuesYaml := `
+otellogs:
+  daemonset:
+    hostNetwork: true
+    dnsPolicy: ClusterFirstWithHostNet
+`
+	templatePath := "templates/logs/collector/otelcol/daemonset.yaml"
+
+	renderedTemplate, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	require.NoError(t, err)
+
+	var logsCollectorDaemonset struct {
+		Spec struct {
+			Template struct {
+				Spec struct {
+					HostNetwork bool   `yaml:"hostNetwork"`
+					DnsPolicy   string `yaml:"dnsPolicy"`
+				}
+			}
+		}
+	}
+	err = yaml.Unmarshal([]byte(renderedTemplate), &logsCollectorDaemonset)
+	require.NoError(t, err)
+
+	require.Equal(t, true, logsCollectorDaemonset.Spec.Template.Spec.HostNetwork)
+	require.Equal(t, "ClusterFirstWithHostNet", logsCollectorDaemonset.Spec.Template.Spec.DnsPolicy)
+}
+
+func TestCollectorDaemonsetHostNetworkDefault(t *testing.T) {
+	t.Parallel()
+
+	valuesYaml := `
+otellogs:
+  daemonset: {}
+`
+	templatePath := "templates/logs/collector/otelcol/daemonset.yaml"
+
+	renderedTemplate, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	require.NoError(t, err)
+
+	var logsCollectorDaemonset struct {
+		Spec struct {
+			Template struct {
+				Spec struct {
+					HostNetwork bool   `yaml:"hostNetwork"`
+					DnsPolicy   string `yaml:"dnsPolicy"`
+				}
+			}
+		}
+	}
+	err = yaml.Unmarshal([]byte(renderedTemplate), &logsCollectorDaemonset)
+	require.NoError(t, err)
+
+	// With default values (hostNetwork: false), the hostNetwork field should not be present
+	// and dnsPolicy should default to ClusterFirst
+	require.Equal(t, false, logsCollectorDaemonset.Spec.Template.Spec.HostNetwork)
+	require.Equal(t, "ClusterFirst", logsCollectorDaemonset.Spec.Template.Spec.DnsPolicy)
+}
