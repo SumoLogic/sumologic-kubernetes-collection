@@ -12,5 +12,6 @@ sumologic:
           endpoint: http://additional-sumologic-mock:3000/receiver
       routing:
         table:
-          - exporter: sumologic/additional-sumologic-mock
-            statement: route() where resource.attributes["deployment"] == "logs-generator"
+          - statement: route() where resource.attributes["deployment"] == "logs-generator"
+            exporters:
+              - sumologic/additional-sumologic-mock
