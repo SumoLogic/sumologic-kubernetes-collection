@@ -130,7 +130,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
 				expectedMetrics,
-				2*time.Minute, // take longer to account for recording rule metrics
+				5*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
 			),
 		).
