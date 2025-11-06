@@ -518,6 +518,7 @@ sumologic:
           maxReplicas: 10
           targetCPUUtilizationPercentage: 70
           targetMemoryUtilizationPercentage: 70
+          behavior: {}
 
         nodeSelector: {}
 
@@ -1388,6 +1389,7 @@ otelcolInstrumentation:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
     # targetMemoryUtilizationPercentage: 50
+    behavior: {}
 
   statefulset:
     nodeSelector: {}
@@ -1706,6 +1708,7 @@ metadata:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 50
+      behavior: {}
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -1824,6 +1827,7 @@ metadata:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 50
+      behavior: {}
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -1845,6 +1849,7 @@ tracesGateway:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
     # targetMemoryUtilizationPercentage: 50
+    behavior: {}
 
   deployment:
     replicas: 1

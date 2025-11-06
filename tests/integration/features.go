@@ -683,6 +683,31 @@ func GetMultipleMultilineLogsFeature() features.Feature {
 		Feature()
 }
 
+func GetHPAFeature(releaseName string) features.Feature {
+	expectedHPA := []string{
+		fmt.Sprintf("%s-sumologic-metrics-collector", releaseName),
+		fmt.Sprintf("%s-sumologic-otelcol-instrumentation", releaseName),
+		fmt.Sprintf("%s-sumologic-otelcol-logs", releaseName),
+		fmt.Sprintf("%s-sumologic-otelcol-metrics", releaseName),
+		fmt.Sprintf("%s-sumologic-traces-gateway", releaseName),
+	}
+	expectedMetrics := map[string]map[string]int{}
+	for _, hpa := range expectedHPA {
+		expectedMetrics[hpa] = map[string]int{
+			"cpu":    75,
+			"memory": 75,
+		}
+	}
+	return features.New("HPA").
+		Assess("HPA configured", stepfuncs.WaitUntilHPAConfigured(
+			expectedHPA,
+			expectedMetrics,
+			waitDuration,
+			tickDuration,
+		)).
+		Feature()
+}
+
 func GetEventsFeature() features.Feature {
 	return features.New("events").
 		Assess("events present", stepfuncs.WaitUntilExpectedLogsPresent(

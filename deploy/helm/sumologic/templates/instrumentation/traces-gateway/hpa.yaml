@@ -16,6 +16,10 @@ spec:
     name: {{ template "sumologic.metadata.name.tracesgateway.deployment" . }}
   minReplicas: {{ $tracesGateway.autoscaling.minReplicas }}
   maxReplicas: {{ $tracesGateway.autoscaling.maxReplicas }}
+{{- if $tracesGateway.autoscaling.behavior }}
+  behavior:
+    {{- toYaml $tracesGateway.autoscaling.behavior | nindent 4 }}
+{{- end }}
   metrics:
 {{- if $tracesGateway.autoscaling.targetMemoryUtilizationPercentage }}
   - type: Resource

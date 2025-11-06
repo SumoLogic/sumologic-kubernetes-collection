@@ -14,6 +14,10 @@ spec:
     name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
   minReplicas: {{ .Values.metadata.logs.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.metadata.logs.autoscaling.maxReplicas }}
+{{- if .Values.metadata.logs.autoscaling.behavior }}
+  behavior:
+    {{- toYaml .Values.metadata.logs.autoscaling.behavior | nindent 4 }}
+{{- end }}
   metrics:
 {{- if .Values.metadata.logs.autoscaling.targetMemoryUtilizationPercentage }}
   - type: Resource
