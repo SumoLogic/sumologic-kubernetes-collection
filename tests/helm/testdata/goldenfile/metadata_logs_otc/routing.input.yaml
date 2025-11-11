@@ -15,5 +15,7 @@ sumologic:
           - debug
           - sumologic/test
         table:
-          - exporter: sumologic/test
+          - exporters:
+              - sumologic/test
+              - debug
             statement: route() where resource.attributes["exporter"] == "test"
