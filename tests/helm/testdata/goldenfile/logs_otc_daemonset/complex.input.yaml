@@ -94,3 +94,13 @@ otellogs:
       - name: es-certs
         mountPath: /certs
         readOnly: true
+
+    extraPorts:
+      - name: otlp-http
+        containerPort: 4318
+        protocol: TCP
+        hostPort: 4318
+      - name: statsd
+        containerPort: 8125
+        hostPort: 8125
+        protocol: UDP
