@@ -1,0 +1,52 @@
+{
+  "extends": ["config:base"],
+  "regexManagers": [
+    {
+      "description": "Update Sumo Logic container images in values.yaml (repository/tag pattern)",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*\"?(?<depName>public\\.ecr\\.aws/sumologic/[^\"\\s]+)\"?\\s*\\n[\\s\\S]*?tag:\\s*\"?(?<currentValue>[^\"\\s]+)\"?"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose"
+    },
+    {
+      "description": "Update Sumo Logic container images in test files",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*\"?(?<depName>public\\.ecr\\.aws/sumologic/sumologic-otel-collector):(?<currentValue>[a-zA-Z0-9._-]+)\"?"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose"
+    },
+    {
+      "description": "Update version references in documentation tables",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`(sumologic\\.otelcolImage\\.tag|opentelemetry-operator\\.manager\\.collectorImage\\.tag)`\\s*\\|.*?\\|\\s*`(?<currentValue>[0-9.]+(?:-[a-z0-9-]+)?)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/sumologic-otel-collector",
+      "versioningTemplate": "loose"
+    },
+    {
+      "description": "Update OpenTelemetry Collector version in docs README table",
+      "fileMatch": ["^docs/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*OpenTelemetry Collector\\s*\\|\\s*(?<currentValue>[0-9.]+(?:-[a-z0-9-]+)?)\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/sumologic-otel-collector",
+      "versioningTemplate": "loose"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Group OpenTelemetry Collector updates together",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["^public\\.ecr\\.aws/sumologic/sumologic-otel-collector$"],
+      "groupName": "sumologic-otel-collector",
+      "separateMinorPatch": false
+    }
+  ]
+}
