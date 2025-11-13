@@ -1,5 +1,6 @@
 {
-  "extends": ["config:recommended"],
+  "enabled": false,
+  "enabledManagers": ["regex"],
   "customManagers": [
     {
       "customType": "regex",
