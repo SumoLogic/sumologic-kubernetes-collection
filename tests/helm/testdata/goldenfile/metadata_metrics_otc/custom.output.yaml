@@ -12,7 +12,47 @@ metadata:
     heritage: "Helm"
 data:
   config.yaml: |
+    connectors:
+      routing/default:
+        default_pipelines:
+        - metrics/sumologic/default
+        - metrics/debug
+        table:
+        - pipelines:
+          - metrics/apiserver
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "apiserver"
+        - pipelines:
+          - metrics/control_plane
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "coredns"
+        - pipelines:
+          - metrics/control_plane
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "kube-etcd"
+        - pipelines:
+          - metrics/controller
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "kube-controller-manager"
+        - pipelines:
+          - metrics/kubelet
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "kubelet"
+        - pipelines:
+          - metrics/node
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "node-exporter"
+        - pipelines:
+          - metrics/scheduler
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "kube-scheduler"
+        - pipelines:
+          - metrics/state
+          - metrics/debug
+          statement: route() where resource.attributes["job"] == "kube-state-metrics"
     exporters:
+      debug:
+        verbosity: detailed
       sumologic/apiserver:
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
@@ -212,35 +252,6 @@ data:
         attributes:
         - action: delete
           key: k8s.pod.pod_name
-      routing:
-        default_exporters:
-        - sumologic/default
-        error_mode: ignore
-        table:
-        - exporters:
-          - sumologic/apiserver
-          statement: route() where resource.attributes["job"] == "apiserver"
-        - exporters:
-          - sumologic/control_plane
-          statement: route() where resource.attributes["job"] == "coredns"
-        - exporters:
-          - sumologic/control_plane
-          statement: route() where resource.attributes["job"] == "kube-etcd"
-        - exporters:
-          - sumologic/controller
-          statement: route() where resource.attributes["job"] == "kube-controller-manager"
-        - exporters:
-          - sumologic/kubelet
-          statement: route() where resource.attributes["job"] == "kubelet"
-        - exporters:
-          - sumologic/node
-          statement: route() where resource.attributes["job"] == "node-exporter"
-        - exporters:
-          - sumologic/scheduler
-          statement: route() where resource.attributes["job"] == "kube-scheduler"
-        - exporters:
-          - sumologic/state
-          statement: route() where resource.attributes["job"] == "kube-state-metrics"
       source:
         collector: kubernetes
         exclude:
@@ -287,14 +298,7 @@ data:
       pipelines:
         metrics:
           exporters:
-          - sumologic/default
-          - sumologic/apiserver
-          - sumologic/control_plane
-          - sumologic/controller
-          - sumologic/kubelet
-          - sumologic/node
-          - sumologic/scheduler
-          - sumologic/state
+          - routing/default
           processors:
           - memory_limiter
           - metricstransform
@@ -310,10 +314,54 @@ data:
           - transform/remove_name
           - filter/drop_unnecessary_metrics
           - batch
-          - routing
           receivers:
           - telegraf
           - otlp
+        metrics/apiserver:
+          exporters:
+          - sumologic/apiserver
+          receivers:
+          - routing/default
+        metrics/control_plane:
+          exporters:
+          - sumologic/control_plane
+          receivers:
+          - routing/default
+        metrics/controller:
+          exporters:
+          - sumologic/controller
+          receivers:
+          - routing/default
+        metrics/debug:
+          exporters:
+          - debug
+          receivers:
+          - routing/default
+        metrics/kubelet:
+          exporters:
+          - sumologic/kubelet
+          receivers:
+          - routing/default
+        metrics/node:
+          exporters:
+          - sumologic/node
+          receivers:
+          - routing/default
+        metrics/scheduler:
+          exporters:
+          - sumologic/scheduler
+          receivers:
+          - routing/default
+        metrics/state:
+          exporters:
+          - sumologic/state
+          receivers:
+          - routing/default
+        metrics/sumologic/default:
+          exporters:
+          - sumologic/default
+          receivers:
+          - routing/default
       telemetry:
         logs:
           level: info
