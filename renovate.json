@@ -37,11 +37,12 @@
       "description": "Update OpenTelemetry Collector version in docs README table",
       "fileMatch": ["^docs/README\\.md$"],
       "matchStrings": [
-        "\\|\\s*OpenTelemetry Collector\\s*\\|\\s*(?<currentValue>[0-9.]+(?:-[a-z0-9-]+)?)\\s*\\|"
+        "\\|\\s*OpenTelemetry Collector\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
       ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "public.ecr.aws/sumologic/sumologic-otel-collector",
-      "versioningTemplate": "regex:^(?<major>0)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-sumo-(?<build>[0-9]+)$"
+      "versioningTemplate": "regex:^(?<major>0)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-sumo-(?<build>[0-9]+)$",
+      "extractVersionTemplate": "^(?<version>0\\.[0-9]+\\.[0-9]+)"
     }
   ],
   "packageRules": [
