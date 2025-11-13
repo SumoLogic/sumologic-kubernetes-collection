@@ -513,11 +513,12 @@ sumologic:
         ## Option to turn autoscaling on for otelcol and specify params for HPA.
         ## Autoscaling needs metrics-server to access cpu metrics.
         autoscaling:
-          # enabled: false
+          enabled: true
           minReplicas: 1
           maxReplicas: 10
           targetCPUUtilizationPercentage: 70
           targetMemoryUtilizationPercentage: 70
+
 
         nodeSelector: {}
 
@@ -788,7 +789,7 @@ metrics-server:
 
   ## Set the enabled flag to true for enabling metrics-server.
   ## This is required before enabling autoscaling unless you have an existing metrics-server in the cluster.
-  enabled: false
+  enabled: true
   ## Put here the new name if you want to override the full name used for metrics-server components.
   # fullnameOverride: ""
 
@@ -1819,11 +1820,24 @@ metadata:
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
-      # enabled: false
+      enabled: true
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 80
-      # targetMemoryUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 2
+      targetMemoryUtilizationPercentage: 5
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
