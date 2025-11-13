@@ -41,8 +41,7 @@
       ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "public.ecr.aws/sumologic/sumologic-otel-collector",
-      "versioningTemplate": "regex:^(?<major>0)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-sumo-(?<build>[0-9]+)$",
-      "extractVersionTemplate": "^(?<version>0\\.[0-9]+\\.[0-9]+)"
+      "versioningTemplate": "loose"
     }
   ],
   "packageRules": [
@@ -52,8 +51,7 @@
       "matchPackageNames": ["public.ecr.aws/sumologic/sumologic-otel-collector"],
       "groupName": "sumologic-otel-collector",
       "separateMinorPatch": false,
-      "allowedVersions": "/^0\\.[0-9]+\\.[0-9]+-sumo-[0-9]+$/",
-      "versioning": "regex:^(?<major>0)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-sumo-(?<build>[0-9]+)$"
+      "allowedVersions": "/^0\\.[0-9]+\\.[0-9]+(\\-sumo\\-[0-9]+)?$/"
     }
   ]
 }
