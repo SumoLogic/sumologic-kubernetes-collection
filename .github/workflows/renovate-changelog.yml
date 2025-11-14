@@ -8,73 +8,115 @@ on:
 
 jobs:
   add-changelog:
-    if: startsWith(github.head_ref, 'renovate/') && github.actor == 'renovate[bot]'
+    if: startsWith(github.head_ref, 'renovate/')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.head_ref }}
-          fetch-depth: 0
+          fetch-depth: 2
 
-      - name: Extract version information from PR
-        id: extract-info
+      - name: Check if this is OpenTelemetry Collector update
+        id: check-update
         run: |
-          # Extract old and new versions from the PR title or body
           PR_TITLE="${{ github.event.pull_request.title }}"
-          echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
+          echo "PR Title: $PR_TITLE"
           
           # Check if this is an OpenTelemetry Collector update
-          if echo "$PR_TITLE" | grep -q "sumologic-otel-collector"; then
+          if echo "$PR_TITLE" | grep -i "sumologic-otel-collector\|opentelemetry.*collector"; then
             echo "is_otel_update=true" >> $GITHUB_OUTPUT
+            echo "This is an OpenTelemetry Collector update"
           else
             echo "is_otel_update=false" >> $GITHUB_OUTPUT
+            echo "This is not an OpenTelemetry Collector update"
           fi
 
-      - name: Create changelog entry for OpenTelemetry Collector
-        if: steps.extract-info.outputs.is_otel_update == 'true'
+      - name: Create changelog entry
+        if: steps.check-update.outputs.is_otel_update == 'true'
         run: |
+          set -e
+          
+          echo "Creating changelog entry..."
+          
           # Create timestamp-based filename
           TIMESTAMP=$(date +%s)
           CHANGELOG_FILE=".changelog/${TIMESTAMP}.changed.txt"
           
-          # Extract version info from changed files
+          # Ensure .changelog directory exists
+          mkdir -p .changelog
+          
+          # Extract version info from git diff
+          echo "Analyzing version changes..."
+          
           OLD_VERSION=""
           NEW_VERSION=""
           
-          # Look for version changes in values.yaml
-          if git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1; then
-            NEW_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1 | sed 's/.*tag: *["'"'"']\?\([^"'"'"']*\)["'"'"']\?.*/\1/')
-            OLD_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\-.*tag:" | head -1 | sed 's/.*tag: *["'"'"']\?\([^"'"'"']*\)["'"'"']\?.*/\1/')
+          # Try to extract from values.yaml changes
+          if git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml 2>/dev/null | grep -E "tag:"; then
+            echo "Found changes in values.yaml:"
+            git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "tag:" || true
+            
+            NEW_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' || echo "")
+            OLD_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\-.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' || echo "")
           fi
           
-          # Fallback to extract from docs/README.md
-          if [[ -z "$NEW_VERSION" ]] && git diff HEAD~1 HEAD -- docs/README.md | grep -E "OpenTelemetry Collector"; then
-            NEW_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\+.*OpenTelemetry Collector" | sed 's/.*| \([0-9.]*\) |.*/\1/')
-            OLD_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\-.*OpenTelemetry Collector" | sed 's/.*| \([0-9.]*\) |.*/\1/')
+          # Try to extract from docs/README.md changes
+          if [[ -z "$NEW_VERSION" ]] && git diff HEAD~1 HEAD -- docs/README.md 2>/dev/null | grep -E "OpenTelemetry Collector"; then
+            echo "Found changes in docs/README.md:"
+            git diff HEAD~1 HEAD -- docs/README.md | grep -E "OpenTelemetry Collector" || true
+            
+            NEW_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\+.*OpenTelemetry Collector.*\|.*\|" | head -1 | sed 's/.*| \([0-9.]*\) |.*/\1/' || echo "")
+            OLD_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\-.*OpenTelemetry Collector.*\|.*\|" | head -1 | sed 's/.*| \([0-9.]*\) |.*/\1/' || echo "")
           fi
+          
+          echo "Extracted versions: OLD=$OLD_VERSION, NEW=$NEW_VERSION"
           
           # Create the changelog entry
           if [[ -n "$NEW_VERSION" && -n "$OLD_VERSION" ]]; then
-            echo "chore(deps): Update OpenTelemetry Collector from $OLD_VERSION to $NEW_VERSION" > "$CHANGELOG_FILE"
-            echo "Created changelog entry: $CHANGELOG_FILE"
+            CHANGELOG_TEXT="chore(deps): Update OpenTelemetry Collector from $OLD_VERSION to $NEW_VERSION"
+          else
+            CHANGELOG_TEXT="chore(deps): Update sumologic-otel-collector dependencies"
+          fi
+          
+          echo "$CHANGELOG_TEXT" > "$CHANGELOG_FILE"
+          echo "Created changelog entry in: $CHANGELOG_FILE"
+          echo "Content: $CHANGELOG_TEXT"
+          
+          # Verify file was created
+          if [[ -f "$CHANGELOG_FILE" ]]; then
+            echo "✅ Changelog file created successfully"
+            ls -la .changelog/
             cat "$CHANGELOG_FILE"
           else
-            echo "chore(deps): Update sumologic-otel-collector dependencies" > "$CHANGELOG_FILE"
-            echo "Created generic changelog entry: $CHANGELOG_FILE"
+            echo "❌ Failed to create changelog file"
+            exit 1
           fi
 
-      - name: Commit changelog
-        if: steps.extract-info.outputs.is_otel_update == 'true'
+      - name: Commit and push changelog
+        if: steps.check-update.outputs.is_otel_update == 'true'
         run: |
+          set -e
+          
+          # Configure git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          if git diff --quiet; then
-            echo "No changes to commit"
+          # Check if there are changes to commit
+          git add .changelog/
+          
+          if git diff --cached --quiet; then
+            echo "No changelog changes to commit"
           else
-            git add .changelog/*.txt
-            git commit -m "chore: Add changelog entry for dependency update"
+            echo "Committing changelog changes..."
+            git commit -m "chore: Add changelog entry for dependency update [skip ci]"
+            
+            echo "Pushing changes to branch..."
             git push origin ${{ github.head_ref }}
+            
+            echo "✅ Changelog committed and pushed successfully"
           fi
