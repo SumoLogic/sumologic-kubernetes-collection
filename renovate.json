@@ -1,6 +1,8 @@
 {
   "enabledManagers": ["custom.regex"],
   "postUpdateOptions": ["npmDedupe", "yarnDedupe"],
+  "allowPostUpgradeCommandTemplating": true,
+  "allowedPostUpgradeCommands": ["^echo.*", "^date.*", "^timestamp.*"],
   "commitMessagePrefix": "chore(deps):",
   "commitMessageAction": "update",
   "commitMessageTopic": "{{depName}}",
@@ -60,9 +62,10 @@
       "allowedVersions": "/^0\\.[0-9]+\\.[0-9]+(\\-sumo\\-[0-9]+)?$/",
       "postUpgradeTasks": {
         "commands": [
-          "timestamp=$(date +%s); echo 'chore(deps): Update OpenTelemetry Collector from {{{currentVersion}}} to {{{newVersion}}}' > .changelog/${timestamp}.changed.txt"
+          "echo 'chore(deps): Update OpenTelemetry Collector from {{currentVersion}} to {{newVersion}}' > .changelog/$(date +%s).changed.txt"
         ],
-        "fileFilters": [".changelog/**"]
+        "fileFilters": [".changelog/**"],
+        "executionMode": "branch"
       }
     }
   ]
