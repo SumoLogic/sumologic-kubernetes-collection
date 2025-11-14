@@ -1,0 +1,80 @@
+name: Add Changelog Entry for Renovate PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+
+jobs:
+  add-changelog:
+    if: startsWith(github.head_ref, 'renovate/') && github.actor == 'renovate[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Extract version information from PR
+        id: extract-info
+        run: |
+          # Extract old and new versions from the PR title or body
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
+          
+          # Check if this is an OpenTelemetry Collector update
+          if echo "$PR_TITLE" | grep -q "sumologic-otel-collector"; then
+            echo "is_otel_update=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_otel_update=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create changelog entry for OpenTelemetry Collector
+        if: steps.extract-info.outputs.is_otel_update == 'true'
+        run: |
+          # Create timestamp-based filename
+          TIMESTAMP=$(date +%s)
+          CHANGELOG_FILE=".changelog/${TIMESTAMP}.changed.txt"
+          
+          # Extract version info from changed files
+          OLD_VERSION=""
+          NEW_VERSION=""
+          
+          # Look for version changes in values.yaml
+          if git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1; then
+            NEW_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1 | sed 's/.*tag: *["'"'"']\?\([^"'"'"']*\)["'"'"']\?.*/\1/')
+            OLD_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\-.*tag:" | head -1 | sed 's/.*tag: *["'"'"']\?\([^"'"'"']*\)["'"'"']\?.*/\1/')
+          fi
+          
+          # Fallback to extract from docs/README.md
+          if [[ -z "$NEW_VERSION" ]] && git diff HEAD~1 HEAD -- docs/README.md | grep -E "OpenTelemetry Collector"; then
+            NEW_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\+.*OpenTelemetry Collector" | sed 's/.*| \([0-9.]*\) |.*/\1/')
+            OLD_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\-.*OpenTelemetry Collector" | sed 's/.*| \([0-9.]*\) |.*/\1/')
+          fi
+          
+          # Create the changelog entry
+          if [[ -n "$NEW_VERSION" && -n "$OLD_VERSION" ]]; then
+            echo "chore(deps): Update OpenTelemetry Collector from $OLD_VERSION to $NEW_VERSION" > "$CHANGELOG_FILE"
+            echo "Created changelog entry: $CHANGELOG_FILE"
+            cat "$CHANGELOG_FILE"
+          else
+            echo "chore(deps): Update sumologic-otel-collector dependencies" > "$CHANGELOG_FILE"
+            echo "Created generic changelog entry: $CHANGELOG_FILE"
+          fi
+
+      - name: Commit changelog
+        if: steps.extract-info.outputs.is_otel_update == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add .changelog/*.txt
+            git commit -m "chore: Add changelog entry for dependency update"
+            git push origin ${{ github.head_ref }}
+          fi
