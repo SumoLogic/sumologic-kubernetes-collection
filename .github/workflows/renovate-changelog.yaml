@@ -25,27 +25,27 @@ jobs:
           # Create PR-based filename
           PR_NUMBER="${{ github.event.pull_request.number }}"
           CHANGELOG_FILE=".changelog/${PR_NUMBER}.changed.txt"
-          
+
           # Ensure .changelog directory exists
           mkdir -p .changelog
-          
+
           # Extract version information from git diff
           OLD_VERSION=""
           NEW_VERSION=""
-          
+
           # Check for version changes in values.yaml
           if git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "tag.*sumo-"; then
             OLD_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\-.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' | grep "sumo-" || echo "")
             NEW_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' | grep "sumo-" || echo "")
           fi
-          
+
           # Create changelog message
           if [[ -n "$OLD_VERSION" && -n "$NEW_VERSION" ]]; then
             CHANGELOG_TEXT="Upgraded otel collector version from $OLD_VERSION to $NEW_VERSION"
           else
             CHANGELOG_TEXT="chore(deps): Update dependencies"
           fi
-          
+
           echo "$CHANGELOG_TEXT" > "$CHANGELOG_FILE"
           echo "Created changelog file: $CHANGELOG_FILE with content: $CHANGELOG_TEXT"
 
@@ -54,7 +54,7 @@ jobs:
           # Configure git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
+
           # Add and commit changelog
           git add .changelog/
           git commit -m "chore: Add changelog entry for dependency update"
