@@ -50,7 +50,7 @@
       "description": "Group OpenTelemetry Collector updates together",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["public.ecr.aws/sumologic/sumologic-otel-collector"],
-      "groupName": "sumologic-otel-collector",
+      "groupName": "sumologic-kubernetes-collection",
       "separateMinorPatch": false,
       "allowedVersions": "/^0\\.[0-9]+\\.[0-9]+(\\-sumo\\-[0-9]+)?$/"
     }
