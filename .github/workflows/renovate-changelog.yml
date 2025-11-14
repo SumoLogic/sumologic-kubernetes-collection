@@ -19,104 +19,43 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.head_ref }}
-          fetch-depth: 2
-
-      - name: Check if this is OpenTelemetry Collector update
-        id: check-update
-        run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          echo "PR Title: $PR_TITLE"
-          
-          # Check if this is an OpenTelemetry Collector update
-          if echo "$PR_TITLE" | grep -i "sumologic-otel-collector\|opentelemetry.*collector"; then
-            echo "is_otel_update=true" >> $GITHUB_OUTPUT
-            echo "This is an OpenTelemetry Collector update"
-          else
-            echo "is_otel_update=false" >> $GITHUB_OUTPUT
-            echo "This is not an OpenTelemetry Collector update"
-          fi
 
       - name: Create changelog entry
-        if: steps.check-update.outputs.is_otel_update == 'true'
         run: |
-          set -e
-          
-          echo "Creating changelog entry..."
-          
-          # Create timestamp-based filename
-          TIMESTAMP=$(date +%s)
-          CHANGELOG_FILE=".changelog/${TIMESTAMP}.changed.txt"
+          # Create PR-based filename
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          CHANGELOG_FILE=".changelog/${PR_NUMBER}.changed.txt"
           
           # Ensure .changelog directory exists
           mkdir -p .changelog
           
-          # Extract version info from git diff
-          echo "Analyzing version changes..."
-          
+          # Extract version information from git diff
           OLD_VERSION=""
           NEW_VERSION=""
           
-          # Try to extract from values.yaml changes
-          if git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml 2>/dev/null | grep -E "tag:"; then
-            echo "Found changes in values.yaml:"
-            git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "tag:" || true
-            
-            NEW_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' || echo "")
-            OLD_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\-.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' || echo "")
+          # Check for version changes in values.yaml
+          if git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "tag.*sumo-"; then
+            OLD_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\-.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' | grep "sumo-" || echo "")
+            NEW_VERSION=$(git diff HEAD~1 HEAD -- deploy/helm/sumologic/values.yaml | grep -E "^\+.*tag:" | head -1 | sed 's/.*tag: *["'"'"']*\([^"'"'"' ]*\)["'"'"']*.*/\1/' | grep "sumo-" || echo "")
           fi
           
-          # Try to extract from docs/README.md changes
-          if [[ -z "$NEW_VERSION" ]] && git diff HEAD~1 HEAD -- docs/README.md 2>/dev/null | grep -E "OpenTelemetry Collector"; then
-            echo "Found changes in docs/README.md:"
-            git diff HEAD~1 HEAD -- docs/README.md | grep -E "OpenTelemetry Collector" || true
-            
-            NEW_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\+.*OpenTelemetry Collector.*\|.*\|" | head -1 | sed 's/.*| \([0-9.]*\) |.*/\1/' || echo "")
-            OLD_VERSION=$(git diff HEAD~1 HEAD -- docs/README.md | grep -E "^\-.*OpenTelemetry Collector.*\|.*\|" | head -1 | sed 's/.*| \([0-9.]*\) |.*/\1/' || echo "")
-          fi
-          
-          echo "Extracted versions: OLD=$OLD_VERSION, NEW=$NEW_VERSION"
-          
-          # Create the changelog entry
-          if [[ -n "$NEW_VERSION" && -n "$OLD_VERSION" ]]; then
-            CHANGELOG_TEXT="chore(deps): Update OpenTelemetry Collector from $OLD_VERSION to $NEW_VERSION"
+          # Create changelog message
+          if [[ -n "$OLD_VERSION" && -n "$NEW_VERSION" ]]; then
+            CHANGELOG_TEXT="Upgraded otel collector version from $OLD_VERSION to $NEW_VERSION"
           else
-            CHANGELOG_TEXT="chore(deps): Update sumologic-otel-collector dependencies"
+            CHANGELOG_TEXT="chore(deps): Update dependencies"
           fi
           
           echo "$CHANGELOG_TEXT" > "$CHANGELOG_FILE"
-          echo "Created changelog entry in: $CHANGELOG_FILE"
-          echo "Content: $CHANGELOG_TEXT"
-          
-          # Verify file was created
-          if [[ -f "$CHANGELOG_FILE" ]]; then
-            echo "✅ Changelog file created successfully"
-            ls -la .changelog/
-            cat "$CHANGELOG_FILE"
-          else
-            echo "❌ Failed to create changelog file"
-            exit 1
-          fi
+          echo "Created changelog file: $CHANGELOG_FILE with content: $CHANGELOG_TEXT"
 
-      - name: Commit and push changelog
-        if: steps.check-update.outputs.is_otel_update == 'true'
+      - name: Commit changelog
         run: |
-          set -e
-          
           # Configure git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Check if there are changes to commit
+          # Add and commit changelog
           git add .changelog/
-          
-          if git diff --cached --quiet; then
-            echo "No changelog changes to commit"
-          else
-            echo "Committing changelog changes..."
-            git commit -m "chore: Add changelog entry for dependency update [skip ci]"
-            
-            echo "Pushing changes to branch..."
-            git push origin ${{ github.head_ref }}
-            
-            echo "✅ Changelog committed and pushed successfully"
-          fi
+          git commit -m "chore: Add changelog entry for dependency update"
+          git push origin ${{ github.head_ref }}
