@@ -233,6 +233,8 @@ var (
 		"otelcol_process_uptime",
 		"otelcol_exporter_queue_capacity",
 		"otelcol_exporter_queue_size",
+		"otelcol_exporter_queue_batch_send_size_count",
+		"otelcol_exporter_queue_batch_send_size_sum",
 		"otelcol_exporter_requests_bytes",
 		"otelcol_exporter_requests_duration",
 		"otelcol_exporter_requests_records",
@@ -254,6 +256,7 @@ var (
 		"otelcol_exporter_sent_log_records",
 		"otelcol_exporter_send_failed_log_records",
 		"otelcol_receiver_accepted_log_records",
+		"otelcol_receiver_failed_log_records",
 		"otelcol_processor_accepted_log_records",
 		"otelcol_receiver_refused_log_records",
 		"otelcol_processor_groupbyattrs_num_grouped_logs",
@@ -273,6 +276,7 @@ var (
 	}
 	MetricsCollectorOtelcolMetrics = []string{
 		"otelcol_receiver_refused_metric_points",
+		"otelcol_receiver_failed_metric_points",
 		"otelcol_processor_groupbyattrs_num_grouped_metrics",
 		"otelcol_receiver_accepted_metric_points",
 	}
