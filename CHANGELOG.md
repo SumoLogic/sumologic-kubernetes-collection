@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.17.1]
+
+### Released 2025-11-19
+
+### Fixed
+
+- chore(otel operator): Update opentelemetry-operator to 0.99.1 to fix metrics collection issues in openshift clusters [#4034]
+
+[#4034]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4034
+[v4.17.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.17.1
+
 ## [v4.17.0]
 
 ### Released 2025-10-10
