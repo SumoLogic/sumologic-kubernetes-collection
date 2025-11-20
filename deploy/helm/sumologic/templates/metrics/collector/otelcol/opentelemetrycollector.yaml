@@ -97,7 +97,7 @@ spec:
 {{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.behavior }}
     behavior:
-{{ toYaml .Values.sumologic.metrics.collector.otelcol.autoscaling.behavior | indent 6 }}
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.autoscaling.behavior | nindent 6 }}
 {{- end }}
 {{- end }}
   env:
