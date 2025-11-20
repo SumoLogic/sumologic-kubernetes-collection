@@ -420,7 +420,7 @@ func WaitUntilHPAPresent(expectedHPAMetadata []string,
 						return false
 					}
 					log.Infof("HPA %s is configured and active.", expectedHPA)
-					currCount += 1
+					currCount++
 				}
 			}
 			log.Infof("Total HPA count: %d, Current HPA count: %d, expectedHPA: %v",
