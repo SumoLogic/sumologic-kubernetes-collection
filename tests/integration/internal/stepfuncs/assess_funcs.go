@@ -409,7 +409,7 @@ func WaitUntilHPAPresent(expectedHPAMetadata []string,
 					val1 := hpa.Spec.Metrics[0].Resource.Target.AverageUtilization
 					expectedVal1 := expectedMetrics[expectedHPA][string(resourceName1)]
 
-					resourceName2 := hpa.Spec.Metrics[0].Resource.Name
+					resourceName2 := hpa.Spec.Metrics[1].Resource.Name
 					val2 := hpa.Spec.Metrics[1].Resource.Target.AverageUtilization
 					expectedVal2 := expectedMetrics[expectedHPA][string(resourceName2)]
 
