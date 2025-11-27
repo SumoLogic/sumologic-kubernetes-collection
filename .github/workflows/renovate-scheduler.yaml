@@ -1,0 +1,20 @@
+name: Renovate-scheduler
+on:
+  #   schedule:
+  #     - cron: '30 9 * * *'   # every day at 3 PM IST (9:30 AM UTC)
+  workflow_dispatch: # allow manual runs
+
+jobs:
+  renovate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Renovate run
+        uses: renovatebot/github-action@v43.0.14
+        env:
+          LOG_LEVEL: debug
+          RENOVATE_REPOSITORIES: SumoLogic/sumologic-kubernetes-collection
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          configurationFile: renovate.json
