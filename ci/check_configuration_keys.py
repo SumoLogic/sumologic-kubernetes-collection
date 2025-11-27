@@ -47,6 +47,7 @@ SKIP_DEFAULTS = {
     'sumologic.setup.debug',
     'metrics-server.image.pullSecrets',
     'sumologic.events.sourceCategory',
+    'sumologic.metrics.useRoutingConnectors',
 }
 
 def main(values_path: str, readme_path: str, full_diff=False) -> None:

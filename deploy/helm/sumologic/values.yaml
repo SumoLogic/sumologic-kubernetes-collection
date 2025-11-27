@@ -779,6 +779,8 @@ sumologic:
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
     sourceType: otlp
+    ## In order to use routing connectors, please enable this flag.
+    # useRoutingConnectors: true
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces from instrumentation ingestion.
