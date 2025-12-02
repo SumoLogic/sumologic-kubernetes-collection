@@ -1078,8 +1078,7 @@ kube-prometheus-stack:
     ## Annotations to add to the operator pod
     podAnnotations: {}
     ## Resource limits for prometheus operator
-    resources:
-      {}
+    resources: {}
       # limits:
       #   cpu: 200m
       #   memory: 200Mi
@@ -1112,8 +1111,7 @@ kube-prometheus-stack:
     customLabels: {}
     ## Additional annotations for pods in the DaemonSet
     podAnnotations: {}
-    resources:
-      {}
+    resources: {}
       # limits:
       #   cpu: 100m
       #   memory: 64Mi
@@ -1202,8 +1200,7 @@ kube-prometheus-stack:
     podLabels: {}
     ## Additional annotations for pods in the DaemonSet
     podAnnotations: {}
-    resources:
-      {}
+    resources: {}
       # limits:
       #   cpu: 200m
       #   memory: 50Mi
@@ -2213,6 +2210,17 @@ otellogs:
     #     maxUnavailable: 1
     #   type: RollingUpdate
 
+    ## Extra Ports - Allows you to open additional ports on the DaemonSet
+    # extraPorts:
+    #   - name: otlp-http
+    #     containerPort: 4318
+    #     protocol: TCP
+    #     hostPort: 4318
+    #   - name: statsd
+    #     containerPort: 8125
+    #     hostPort: 8125
+    #     protocol: UDP
+
   ## additionalDaemonSets allows to set daemonsets with affinity, nodeSelector and resources
   ## different than the main DaemonSet
   ## Be careful and set nodeAffinity for the main DaemonSet,
@@ -2573,8 +2581,7 @@ opentelemetry-operator:
       nodejs:
         repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
         tag: 0.54.0
-    env:
-      {}
+    env: {}
       # ENABLE_WEBHOOKS: "true"
     resources:
       limits:
