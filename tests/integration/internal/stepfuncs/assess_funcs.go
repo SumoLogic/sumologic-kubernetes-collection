@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -12,6 +13,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 	log "k8s.io/klog/v2"
 	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
@@ -346,6 +348,84 @@ func WaitUntilExpectedMetricLabelsPresent(
 			log.V(0).InfoS("extra labels", "labels", extra)
 			log.V(0).InfoS("missing labels", "labels", missing)
 			return labels.MatchAll(expectedLabels) && len(extra) == 0 && len(missing) == 0
+		}, waitDuration, tickDuration)
+		return ctx
+	}
+}
+
+// WaitUntilHPAConfigured returns a features.Func that can be used in `Assess` calls.
+// It will wait until all the provided HPA are configured and active.
+func WaitUntilHPAConfigured(
+	expectedHPAMetadata []string,
+	expectedMetrics map[string]map[string]int,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return WaitUntilHPAPresent(
+		expectedHPAMetadata,
+		expectedMetrics,
+		waitDuration,
+		tickDuration,
+	)
+}
+
+// WaitUntilHPAPresent returns a features.Func that can be used in `Assess` calls.
+// It will wait until all the provided HPA are configured and active. It will not verify the
+// functionality of the HPA.
+func WaitUntilHPAPresent(expectedHPAMetadata []string,
+	expectedMetrics map[string]map[string]int,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		namespace := ctxopts.Namespace(ctx)
+		if namespace == "" {
+			log.Fatalf("Namespace not found in test context")
+		}
+
+		cfg := envconf.New().WithKubeconfigFile(os.Getenv("KUBECONFIG"))
+		c, err := kubernetes.NewForConfig(cfg.Client().RESTConfig())
+		require.NoError(t, err)
+
+		assert.Eventually(t, func() bool {
+			totalCount := len(expectedHPAMetadata)
+			currCount := 0
+			for _, expectedHPA := range expectedHPAMetadata {
+				hpa, err := c.AutoscalingV2().HorizontalPodAutoscalers(namespace).
+					Get(ctx, expectedHPA, metav1.GetOptions{})
+				if err != nil {
+					log.Errorf("failed to list HPAs: %v", err)
+					return false
+				}
+
+				if hpa == nil || hpa.Spec.Metrics == nil || len(hpa.Spec.Metrics) == 0 || hpa.Spec.Behavior == nil {
+					log.Infof("HPA %s is not configured. HPA: %v", expectedHPA, hpa)
+					return false
+				}
+
+				if len(hpa.Spec.Metrics) >= 2 && hpa.Spec.Behavior.ScaleUp != nil && hpa.Spec.Behavior.ScaleDown != nil {
+
+					resourceName1 := hpa.Spec.Metrics[0].Resource.Name
+					val1 := hpa.Spec.Metrics[0].Resource.Target.AverageUtilization
+					expectedVal1 := expectedMetrics[expectedHPA][string(resourceName1)]
+
+					resourceName2 := hpa.Spec.Metrics[1].Resource.Name
+					val2 := hpa.Spec.Metrics[1].Resource.Target.AverageUtilization
+					expectedVal2 := expectedMetrics[expectedHPA][string(resourceName2)]
+
+					if int(*val1) != expectedVal1 || int(*val2) != expectedVal2 {
+						log.Infof("HPA %s is configured and active but expectedValue: [%d, %d] "+
+							"did not match current value [%d, %d].",
+							expectedHPA, expectedVal1, expectedVal2, int(*val1), int(*val2))
+						return false
+					}
+					log.Infof("HPA %s is configured and active.", expectedHPA)
+					currCount++
+				}
+			}
+			log.Infof("Total HPA count: %d, Current HPA count: %d, expectedHPA: %v",
+				totalCount, currCount, expectedHPAMetadata)
+			return currCount == totalCount
 		}, waitDuration, tickDuration)
 		return ctx
 	}

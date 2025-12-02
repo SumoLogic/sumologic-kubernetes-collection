@@ -42,6 +42,20 @@ spec:
     minReplicas: 1
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60
+
   env:
     - name: METADATA_METRICS_SVC
       valueFrom:

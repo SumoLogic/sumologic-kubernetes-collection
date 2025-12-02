@@ -165,7 +165,7 @@ resource/remove_k8s_pod_pod_name:
     - action: delete
       key: k8s.pod.pod_name
 
-{{- if eq .Values.sumologic.metrics.sourceType "http" }}
+{{- if and (not (.Values.sumologic.metrics.useRoutingConnectors | default false)) (eq .Values.sumologic.metrics.sourceType "http") }}
 routing:
   default_exporters:
     - sumologic/default

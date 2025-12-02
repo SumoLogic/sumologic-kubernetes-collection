@@ -1,0 +1,13 @@
+sumologic:
+  ipv6mode: true
+  metrics:
+    sourceType: http
+    useRoutingConnectors: true
+metadata:
+  metrics:
+    autoscaling:
+      enabled: false
+debug:
+  metrics:
+    metadata:
+      print: true
