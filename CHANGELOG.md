@@ -7,6 +7,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.18.0]
+
+### Released 2025-12-03
+
+### Breaking Changes
+
+- chore(deps): Remove opencensus receiver to upgrade otel to 0.136.1 version [#4021]
+
+### Added
+
+- feat(routing): Adds support for routing connector for logs collection [#4012]
+- fix: backfill cri-o time layout from otel helm charts [#4018]
+- chore(deps): Migrate routing processor to routing connector for metrics collection [#4025]
+- feat(HPA): Adds autoscaling config [#4026]
+- chore: add support for zurich deployment [#4030]
+
+### Changed
+
+- Updated otel-collector version from 0.130 to 0.140 [#4024]
+
+### Fixed
+
+- fix(opentelemetry-operator): Allow runtime/default profile for opentelemetry-operator deployment [#4027]
+- chore(otel operator): Update opentelemetry-operator to 0.99.1 to fix metrics collection issues in openshift clusters [#4032]
+
+[#4021]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4021
+[#4012]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4012
+[#4018]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4018
+[#4025]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4025
+[#4026]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4026
+[#4030]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4030
+[#4024]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4024
+[#4027]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4027
+[#4032]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4032
+[v4.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.18.0
+
 ## [v4.17.0]
 
 ### Released 2025-10-10
