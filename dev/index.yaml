@@ -3,7 +3,7 @@ entries:
   sumologic:
   - apiVersion: v2
     appVersion: 4.18.0-0-gcd5442df90
-    created: "2025-12-03T04:32:51.214766899Z"
+    created: "2025-12-03T04:34:39.691273932Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -35,7 +35,7 @@ entries:
       version: 0.3.1
     description: A Helm chart for collecting Kubernetes logs, metrics, traces and
       events into Sumo Logic.
-    digest: 4a906ef2f0352539cf4a8c1db1a9ff5ec68fe64b6c864e178368f5796c1ff345
+    digest: fbb3b49e79acb0ea258363c3f46cb7444b2dc0cd82b45eaf7b62f5572d8bfef5
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
     keywords:
@@ -41771,4 +41771,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.19.1-10-g1857f34416.tgz
     version: 2.19.1-10-g1857f34416
-generated: "2025-12-03T04:32:27.190997809Z"
+generated: "2025-12-03T04:34:39.649235977Z"
