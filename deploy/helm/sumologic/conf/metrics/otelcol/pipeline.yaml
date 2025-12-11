@@ -1,4 +1,7 @@
 exporters:
+{{- if and (.Values.sumologic.metrics.useRoutingConnectors) (eq .Values.sumologic.metrics.sourceType "http") }}
+  - routing/default
+{{- else }}
   - sumologic/default
 {{- if eq .Values.debug.metrics.metadata.print true }}
   - debug
@@ -18,6 +21,8 @@ exporters:
   - sumologic/sumologic-mock-http
 {{- end }}
 {{- end }}
+{{- end }}
+
 processors:
   - memory_limiter
   - metricstransform
@@ -45,7 +50,7 @@ processors:
   - filter/app_metrics
 {{- end }}
   - batch
-{{- if eq .Values.sumologic.metrics.sourceType "http" }}
+{{- if and (not (.Values.sumologic.metrics.useRoutingConnectors | default false)) (eq .Values.sumologic.metrics.sourceType "http") }}
   - routing
 {{- end }}
 receivers:

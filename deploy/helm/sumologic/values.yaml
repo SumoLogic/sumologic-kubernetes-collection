@@ -273,7 +273,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.130.1-sumo-0"
+    tag: "0.140.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -458,15 +458,29 @@ sumologic:
       useDefaultExporters: true
       ## routing defines how to route data
       routing:
+        ## To use routing connectors, set this flag to true. And define exporters (array of exporter) below rather than exporter.
+        # useRoutingConnectors: false
         ## fallbackExporters is a list of exporters to be used when data do not match any of the table's statement
         fallbackExporters: []
         table: []
         ## -
+        ##  ## DEPRECATED. Use exporters (example below) instead and set useRoutingConnectors: true.
         ##  ## exporter is name of the exporter
         ##  exporter: sumologic/otlp
         ##  ## statement is an OTTL condition which defines what data should be send to the exporter
         ##  ## see routing processor documentation for more details:
         ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/processor/routingprocessor/README.md#tech-preview-opentelemetry-transformation-language-statements-as-routing-conditions
+        ##  statement: ""
+
+        ##  ## exporters is an array of the exporter. Please use `useRoutingConnectors: true` to use this field.
+        ##  exporters:
+        ##    - sumologic/otlp
+        ##    - debug
+        ##  ## statement is an OTTL condition which defines what data should be sent to the exporters
+        ##  ## see routing connector documentation for more details:
+        ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/connector/routingconnector
+        ## routing connector expects you to define a pipeline, but here the user can just mention the exporter.
+        ## The helm deployment would convert exporters into correct pipelines and configure the connectors.
         ##  statement: ""
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
@@ -518,6 +532,7 @@ sumologic:
           maxReplicas: 10
           targetCPUUtilizationPercentage: 70
           targetMemoryUtilizationPercentage: 70
+          behavior: {}
 
         nodeSelector: {}
 
@@ -764,6 +779,8 @@ sumologic:
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
     sourceType: otlp
+    ## In order to use routing connectors, please enable this flag.
+    # useRoutingConnectors: true
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces from instrumentation ingestion.
@@ -1388,6 +1405,7 @@ otelcolInstrumentation:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
     # targetMemoryUtilizationPercentage: 50
+    behavior: {}
 
   statefulset:
     nodeSelector: {}
@@ -1706,6 +1724,7 @@ metadata:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 50
+      behavior: {}
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -1824,6 +1843,7 @@ metadata:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 50
+      behavior: {}
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -1845,6 +1865,7 @@ tracesGateway:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
     # targetMemoryUtilizationPercentage: 50
+    behavior: {}
 
   deployment:
     replicas: 1
@@ -2538,7 +2559,7 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.130.1-sumo-0"
+      tag: "0.140.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java

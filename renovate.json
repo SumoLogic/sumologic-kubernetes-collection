@@ -1,10 +1,5 @@
 {
   "enabledManagers": ["custom.regex"],
-  "postUpdateOptions": ["npmDedupe", "yarnDedupe"],
-  "commitMessagePrefix": "chore(deps):",
-  "commitMessageAction": "update",
-  "commitMessageTopic": "{{depName}}",
-  "commitMessageExtra": "to {{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{prettyNewMajor}}{{else}}{{#if isSingleVersion}}{{prettyNewVersion}}{{else}}{{#if newValue}}{{{newValue}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}",
   "customManagers": [
     {
       "customType": "regex",
@@ -55,7 +50,8 @@
       "description": "Group OpenTelemetry Collector updates together",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["public.ecr.aws/sumologic/sumologic-otel-collector"],
-      "groupName": "sumologic-otel-collector",
+      "groupName": "sumologic-kubernetes-collection",
+      "commitMessage": "chore(deps): update sumologic-otel-collector version",
       "separateMinorPatch": false,
       "allowedVersions": "/^0\\.[0-9]+\\.[0-9]+(\\-sumo\\-[0-9]+)?$/"
     }

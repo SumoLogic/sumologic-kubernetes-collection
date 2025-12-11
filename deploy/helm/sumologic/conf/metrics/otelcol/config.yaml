@@ -1,3 +1,8 @@
+{{- if and (.Values.sumologic.metrics.useRoutingConnectors) (eq .Values.sumologic.metrics.sourceType "http") }}
+connectors:
+{{ tpl (.Files.Get "conf/metrics/otelcol/connectors.yaml") . | indent 2 }}
+{{- end}}
+
 exporters:
 {{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
 
@@ -53,6 +58,67 @@ service:
   pipelines:
     metrics:
 {{ tpl (.Files.Get "conf/metrics/otelcol/pipeline.yaml") . | indent 6 }}
+{{- if and (.Values.sumologic.metrics.useRoutingConnectors) (eq .Values.sumologic.metrics.sourceType "http") }}
+    metrics/sumologic/default:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/default
+{{- if eq .Values.debug.metrics.metadata.print true }}
+    metrics/debug:
+      receivers:
+        - routing/default
+      exporters:
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+    metrics/sumologic/sumologic-mock-default:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/sumologic-mock-default
+    metrics/sumologic/sumologic-mock-http:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/sumologic-mock-http
+{{- end }}
+    metrics/apiserver:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/apiserver
+    metrics/control_plane:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/control_plane
+    metrics/controller:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/controller
+    metrics/kubelet:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/kubelet
+    metrics/node:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/node
+    metrics/scheduler:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/scheduler
+    metrics/state:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/state
+{{- end }}
   telemetry:
     logs:
       level: {{ .Values.metadata.metrics.logLevel }}

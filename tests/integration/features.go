@@ -130,7 +130,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
 				expectedMetrics,
-				2*time.Minute, // take longer to account for recording rule metrics
+				5*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
 			),
 		).
@@ -680,6 +680,31 @@ func GetMultipleMultilineLogsFeature() features.Feature {
 			tickDuration,
 		)).
 		Teardown(stepfuncs.KubectlDeleteFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).
+		Feature()
+}
+
+func GetHPAFeature(releaseName string) features.Feature {
+	expectedHPA := []string{
+		fmt.Sprintf("%s-sumologic-metrics-collector", releaseName),
+		fmt.Sprintf("%s-sumologic-otelcol-instrumentation", releaseName),
+		fmt.Sprintf("%s-sumologic-otelcol-logs", releaseName),
+		fmt.Sprintf("%s-sumologic-otelcol-metrics", releaseName),
+		fmt.Sprintf("%s-sumologic-traces-gateway", releaseName),
+	}
+	expectedMetrics := map[string]map[string]int{}
+	for _, hpa := range expectedHPA {
+		expectedMetrics[hpa] = map[string]int{
+			"cpu":    75,
+			"memory": 75,
+		}
+	}
+	return features.New("HPA").
+		Assess("HPA configured", stepfuncs.WaitUntilHPAConfigured(
+			expectedHPA,
+			expectedMetrics,
+			waitDuration,
+			tickDuration,
+		)).
 		Feature()
 }
 
