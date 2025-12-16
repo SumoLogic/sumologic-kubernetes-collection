@@ -98,7 +98,7 @@ The following table displays the tested Kubernetes and Helm versions.
 | K8s with EKS (fargate) | 1.28<br/>1.29<br/>1.30<br/>1.31<br/>1.32<br/>1.33          |
 | K8s with Kops          | 1.26<br/>1.27<br/>1.28<br/>1.29<br/>1.30                   |
 | K8s with GKE           | 1.28<br/>1.29<br/>1.30<br/>1.31<br/>1.32<br/>1.33          |
-| K8s with AKS           | 1.27<br/>1.28<br/>1.29<br/>1.30<br/>1.31<br/>1.32<br/>1.33 |
+| K8s with AKS           | 1.32<br/>1.33<br/>1.34                                     |
 | OpenShift              | 4.12<br/>4.13<br/>4.14<br/>4.15<br/>4.16                   |
 | Helm                   | 3.18.5 (Linux)                                             |
 | kubectl                | 1.29.3                                                     |
