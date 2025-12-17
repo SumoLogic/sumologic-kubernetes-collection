@@ -7,7 +7,7 @@ on:
         type: choice
         description: Repository and suffix
         options:
-          - '["docker.io/bitnami/metrics-server", "METRICS_SERVER"]'
+          - '["docker.io/bitnamilegacy/metrics-server", "METRICS_SERVER"]'
           - '["docker.io/busybox", "BUSYBOX"]'
           - '["docker.io/nginxinc/nginx-unprivileged", "NGINX_UNPRIVILEGED"]'
           - '["docker.io/telegraf", "TELEGRAF"]'
