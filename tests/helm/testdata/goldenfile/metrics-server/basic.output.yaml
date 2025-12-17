@@ -47,7 +47,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: metrics-server
-          image: public.ecr.aws/sumologic/metrics-server:0.8.0-debian-12-r8
+          image: public.ecr.aws/sumologic/metrics-server:0.8.0-debian-12-r4
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
