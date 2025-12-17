@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
     app.kubernetes.io/version: 0.7.0
-    helm.sh/chart: metrics-server-6.13.1
+    helm.sh/chart: metrics-server-7.4.12
 spec:
   replicas: 1
   selector:
@@ -26,7 +26,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: metrics-server
         app.kubernetes.io/version: 0.7.0
-        helm.sh/chart: metrics-server-6.13.1
+        helm.sh/chart: metrics-server-7.4.12
     spec:
       serviceAccountName: RELEASE-NAME-metrics-server
       affinity:
@@ -47,7 +47,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: metrics-server
-          image: public.ecr.aws/sumologic/metrics-server:0.7.0-debian-12-r8
+          image: public.ecr.aws/sumologic/metrics-server:0.8.0-debian-12-r8
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
