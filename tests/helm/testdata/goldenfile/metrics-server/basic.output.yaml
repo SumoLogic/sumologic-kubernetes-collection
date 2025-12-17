@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.0
+    app.kubernetes.io/version: 0.8.0
     helm.sh/chart: metrics-server-7.4.12
 spec:
   replicas: 1
@@ -25,7 +25,7 @@ spec:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: metrics-server
-        app.kubernetes.io/version: 0.7.0
+        app.kubernetes.io/version: 0.8.0
         helm.sh/chart: metrics-server-7.4.12
     spec:
       serviceAccountName: RELEASE-NAME-metrics-server
