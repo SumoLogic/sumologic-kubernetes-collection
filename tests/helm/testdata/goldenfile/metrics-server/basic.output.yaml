@@ -45,6 +45,11 @@ spec:
 
       automountServiceAccountToken: true
       dnsPolicy: ClusterFirst
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
       containers:
         - name: metrics-server
           image: public.ecr.aws/sumologic/metrics-server:0.8.0-debian-12-r4
@@ -55,10 +60,11 @@ spec:
               drop:
                 - ALL
             privileged: false
-            readOnlyRootFilesystem: false
-            runAsGroup: 0
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
             runAsNonRoot: true
             runAsUser: 1001
+            seLinuxOptions: {}
             seccompProfile:
               type: RuntimeDefault
           command:
@@ -92,6 +98,15 @@ spec:
               path: /readyz
               port: https
               scheme: HTTPS
+          resources:
+            limits:
+              cpu: 150m
+              ephemeral-storage: 2Gi
+              memory: 192Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
           volumeMounts:
             - name: empty-dir
               mountPath: /tmp
