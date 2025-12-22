@@ -106,11 +106,11 @@ The following table displays the tested Kubernetes and Helm versions.
 The following table displays the currently used software versions for our Helm chart.
 
 | Name                                      | Version |
-| ----------------------------------------- | ------- |
+| ----------------------------------------- |---------|
 | OpenTelemetry Collector                   | 0.140.0 |
 | OpenTelemetry Operator                    | 0.99.1  |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
-| Falco                                     | 3.8.7   |
+| Falco                                     | 7.0.2   |
 | Metrics Server                            | 6.11.2  |
 | Telegraf Operator                         | 1.4.0   |
 | Tailing Sidecar Operator                  | 0.18.1  |
