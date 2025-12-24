@@ -9,8 +9,8 @@ metadata:
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.7.0
-    helm.sh/chart: metrics-server-6.13.1
+    app.kubernetes.io/version: 0.8.0
+    helm.sh/chart: metrics-server-7.4.12
 spec:
   replicas: 1
   selector:
@@ -25,8 +25,8 @@ spec:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: metrics-server
-        app.kubernetes.io/version: 0.7.0
-        helm.sh/chart: metrics-server-6.13.1
+        app.kubernetes.io/version: 0.8.0
+        helm.sh/chart: metrics-server-7.4.12
     spec:
       serviceAccountName: RELEASE-NAME-metrics-server
       affinity:
@@ -45,9 +45,14 @@ spec:
 
       automountServiceAccountToken: true
       dnsPolicy: ClusterFirst
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
       containers:
         - name: metrics-server
-          image: public.ecr.aws/sumologic/metrics-server:0.7.0-debian-12-r8
+          image: public.ecr.aws/sumologic/metrics-server:0.8.0-debian-12-r4
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -55,10 +60,11 @@ spec:
               drop:
                 - ALL
             privileged: false
-            readOnlyRootFilesystem: false
-            runAsGroup: 0
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
             runAsNonRoot: true
             runAsUser: 1001
+            seLinuxOptions: {}
             seccompProfile:
               type: RuntimeDefault
           command:
@@ -92,6 +98,15 @@ spec:
               path: /readyz
               port: https
               scheme: HTTPS
+          resources:
+            limits:
+              cpu: 150m
+              ephemeral-storage: 2Gi
+              memory: 192Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
           volumeMounts:
             - name: empty-dir
               mountPath: /tmp
