@@ -13,7 +13,6 @@ trap 'err_report $LINENO' ERR
 function helm() {
   PWD="$(pwd)"
   docker run --rm \
-    -e HELM_EXPERIMENTAL_OCI=1 \
     -v "${PWD}:/chart" \
     -w /chart \
     sumologic/kubernetes-tools:2.22.0 \
@@ -33,6 +32,7 @@ function push_helm_chart() {
   local retry_count=10
 
   echo "Pushing new Helm Chart release ${version}"
+
   set -ex
   # this loop is to allow for concurent builds: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1853 
   for i in $(seq 0 $((retry_count-1)))
