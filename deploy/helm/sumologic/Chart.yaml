@@ -22,7 +22,7 @@ dependencies:
     condition: falco.enabled
   - name: metrics-server
     version: 7.4.12
-    repository: oci://registry-1.docker.io/bitnamicharts/metrics-server
+    repository: https://charts.bitnami.com/bitnami
     condition: metrics-server.enabled
   - name: telegraf-operator
     version: 1.4.0
