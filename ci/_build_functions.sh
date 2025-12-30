@@ -40,7 +40,10 @@ function push_helm_chart() {
     # due to helm repo index issue: https://github.com/helm/helm/issues/7363
     # we need to create new package in a different dir, merge the index and move the package back
     mkdir -p "${sync_dir}"
-    helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
+    # Split dependency update and package to avoid OCI registry segfault in Helm v3.7.2
+    # See: https://github.com/helm/helm/issues/9267
+    helm dependency update deploy/helm/sumologic
+    helm package deploy/helm/sumologic --version="${version}" --app-version="${version}" --destination "${sync_dir}"
 
     git fetch "${remote}" gh-pages
     git stash push
