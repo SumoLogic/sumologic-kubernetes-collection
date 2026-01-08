@@ -2525,7 +2525,7 @@ falco:
 tailing-sidecar-operator:
   enabled: false
   fluentbitEnabled: false
-  usefluentbitDisabled: true
+  fluentbitDisabled: true
 
   ## Put here the new name if you want to override the full name used for tailing-sidecar-operator components.
   # fullnameOverride: ""
