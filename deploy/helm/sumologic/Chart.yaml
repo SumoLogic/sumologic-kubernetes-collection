@@ -29,15 +29,9 @@ dependencies:
     repository: https://helm.influxdata.com/
     condition: telegraf-operator.enabled
   - name: tailing-sidecar-operator
-    alias: fluentbit-collector
-    version: 0.18.1
+    version: tailing-sidecar-operator.version
     repository: https://sumologic.github.io/tailing-sidecar
-    condition: tailing-sidecar-operator.enabled,tailing-sidecar-operator.useFluentbit
-  - name: tailing-sidecar-operator
-    alias: sumo-otel-collector
-    version: 0.19.0
-    repository: https://sumologic.github.io/tailing-sidecar
-    condition: tailing-sidecar-operator.enabled,tailing-sidecar-operator.useOtelCollector
+    condition: tailing-sidecar-operator.enabled
   - name: opentelemetry-operator
     version: 0.99.1
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
