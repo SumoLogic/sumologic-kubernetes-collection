@@ -344,8 +344,9 @@ sumologic:
                 ## Exclude all metrics from "sumologic" namespace
                 - 'resource.attributes["namespace"] == "sumologic"'
 ```
-Above config shows filtering of metrics using resource attribute context. There are two types of context on which we can filter, the other one is dataPoint attribute context.
-To filter using dataPoint attribute context, refer below config
+
+Above config shows filtering of metrics using resource attribute context. There are two types of context on which we can filter, the other
+one is dataPoint attribute context. To filter using dataPoint attribute context, refer below config
 
 ```yaml
 sumologic:
@@ -359,9 +360,9 @@ sumologic:
                 - 'attributes["namespace"] == "sumologic"'
 ```
 
-To see available datapoint attributes and resource attributes on the source level to configure filtering, set debug.metrics.metadata.print=true is values.yaml and
-then you'll be able to see the metrics with all the available attributes in stdout of **-otelcol-metrics-* pods. Now identify which attribute you want to use for filtering and relevent context.
-
+To see available datapoint attributes and resource attributes on the source level to configure filtering, set
+debug.metrics.metadata.print=true is values.yaml and then you'll be able to see the metrics with all the available attributes in stdout
+of \*_-otelcol-metrics-_ pods. Now identify which attribute you want to use for filtering and relevent context.
 
 #### Drop metric datapoints with unspecified type
 
