@@ -1,4 +1,4 @@
-{{- if and (.Values.sumologic.metrics.useRoutingConnectors) (eq .Values.sumologic.metrics.sourceType "http") }}
+{{- if (eq .Values.sumologic.metrics.sourceType "http") }}
 connectors:
 {{ tpl (.Files.Get "conf/metrics/otelcol/connectors.yaml") . | indent 2 }}
 {{- end}}
@@ -58,7 +58,7 @@ service:
   pipelines:
     metrics:
 {{ tpl (.Files.Get "conf/metrics/otelcol/pipeline.yaml") . | indent 6 }}
-{{- if and (.Values.sumologic.metrics.useRoutingConnectors) (eq .Values.sumologic.metrics.sourceType "http") }}
+{{- if (eq .Values.sumologic.metrics.sourceType "http") }}
     metrics/sumologic/default:
       receivers:
         - routing/default
