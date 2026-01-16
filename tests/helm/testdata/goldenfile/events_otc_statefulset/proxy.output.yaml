@@ -118,6 +118,8 @@ spec:
                   name: sumologic
                   key: endpoint-events-otlp
 
+            - name: GODEBUG
+              value: "netdns=go"
             - name: HTTP_PROXY
               value: http://proxy.internal
             - name: HTTPS_PROXY
