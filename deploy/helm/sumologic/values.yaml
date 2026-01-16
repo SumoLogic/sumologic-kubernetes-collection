@@ -2134,6 +2134,11 @@ otellogs:
     override: {}
 
   daemonset:
+    ## Enable host network for the daemonset pods
+    hostNetwork: false
+    ## DNS policy for the daemonset pods
+    dnsPolicy: ClusterFirst
+
     ## Set securityContext for containers running in pods in log collector daemonset
     securityContext:
       ## In order to reliably read logs from mounted node logging paths, we need to run as root
