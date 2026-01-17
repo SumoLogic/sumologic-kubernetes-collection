@@ -7,6 +7,7 @@ exporters:
 {{- end }}
   otlphttp:
     endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
+    compression: {{ .Values.compression }}
     sending_queue:
       queue_size: 10000
       num_consumers: 10
