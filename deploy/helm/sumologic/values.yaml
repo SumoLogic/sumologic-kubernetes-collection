@@ -458,21 +458,11 @@ sumologic:
       useDefaultExporters: true
       ## routing defines how to route data
       routing:
-        ## To use routing connectors, set this flag to true. And define exporters (array of exporter) below rather than exporter.
-        # useRoutingConnectors: false
         ## fallbackExporters is a list of exporters to be used when data do not match any of the table's statement
         fallbackExporters: []
         table: []
         ## -
-        ##  ## DEPRECATED. Use exporters (example below) instead and set useRoutingConnectors: true.
-        ##  ## exporter is name of the exporter
-        ##  exporter: sumologic/otlp
-        ##  ## statement is an OTTL condition which defines what data should be send to the exporter
-        ##  ## see routing processor documentation for more details:
-        ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/processor/routingprocessor/README.md#tech-preview-opentelemetry-transformation-language-statements-as-routing-conditions
-        ##  statement: ""
-
-        ##  ## exporters is an array of the exporter. Please use `useRoutingConnectors: true` to use this field.
+        ##  ## exporters is an array of the exporter.
         ##  exporters:
         ##    - sumologic/otlp
         ##    - debug
@@ -779,8 +769,6 @@ sumologic:
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
     sourceType: otlp
-    ## In order to use routing connectors, please enable this flag.
-    # useRoutingConnectors: true
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces from instrumentation ingestion.

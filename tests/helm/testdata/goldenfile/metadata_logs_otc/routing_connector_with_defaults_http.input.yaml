@@ -12,7 +12,6 @@ sumologic:
           verbosity: detailed
       useDefaultExporters: true
       routing:
-        useRoutingConnectors: true
         table:
           - exporters:
               - sumologic/test

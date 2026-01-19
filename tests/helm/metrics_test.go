@@ -224,7 +224,6 @@ func TestMetadataSourceTypeHTTP(t *testing.T) {
 sumologic:
   metrics:
     sourceType: http
-    useRoutingConnectors: true
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
@@ -254,61 +253,6 @@ sumologic:
 	assert.Equal(t, otelConfig.Service.Pipelines.MetricsScheduler.Exporters, []string{"sumologic/scheduler"})
 	assert.Equal(t, otelConfig.Service.Pipelines.MetricsState.Exporters, []string{"sumologic/state"})
 	assert.Equal(t, otelConfig.Service.Pipelines.MetricsSumologicDefault.Exporters, []string{"sumologic/default"})
-
-	// useRoutingConnectors: false which means routing processor should be used.
-	valuesYaml = `
-sumologic:
-  metrics:
-    sourceType: http
-    useRoutingConnectors: false
-`
-	otelConfigYaml = GetOtelConfigYaml(t, valuesYaml, templatePath)
-	err = yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
-	require.NoError(t, err)
-
-	assert.Contains(t, otelConfig.Processors, "routing")
-	assert.Contains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
-	assert.Equal(
-		t,
-		[]string{
-			"sumologic/default",
-			"sumologic/apiserver",
-			"sumologic/control_plane",
-			"sumologic/controller",
-			"sumologic/kubelet",
-			"sumologic/node",
-			"sumologic/scheduler",
-			"sumologic/state",
-		},
-		otelConfig.Service.Pipelines.Metrics.Exporters,
-	)
-
-	// useRoutingConnectors flag not present, which means routing processor should be used.
-	valuesYaml = `
-sumologic:
-  metrics:
-    sourceType: http
-`
-	otelConfigYaml = GetOtelConfigYaml(t, valuesYaml, templatePath)
-	err = yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
-	require.NoError(t, err)
-
-	assert.Contains(t, otelConfig.Processors, "routing")
-	assert.Contains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
-	assert.Equal(
-		t,
-		[]string{
-			"sumologic/default",
-			"sumologic/apiserver",
-			"sumologic/control_plane",
-			"sumologic/controller",
-			"sumologic/kubelet",
-			"sumologic/node",
-			"sumologic/scheduler",
-			"sumologic/state",
-		},
-		otelConfig.Service.Pipelines.Metrics.Exporters,
-	)
 }
 
 func TestNoPrometheusServiceMonitors(t *testing.T) {
