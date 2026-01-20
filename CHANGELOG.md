@@ -13,86 +13,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Breaking Changes
 
-- chore: remove useRoutingConnectors and use routing connectors by default [#4056]. See below guide to migrate routing processor to routing
-  connector
+- chore: remove useRoutingConnectors and use routing connectors by default [#4056]. See below guide to migrate routing processor to
+  routingconnector
 
-##### Upstream Context
+#### How to migrate?
 
-- The `routingprocessor` was **deprecated upstream** in OpenTelemetry Collector Contrib in
-  [v0.116.0](https://github.com/open-telemetry/opentelemetry-collector-contrib/releases/tag/v0.116.0).
-- Upstream recommends migrating to
-  [**`routingConnector`**](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/connector/routingconnector), which
-  provides a clearer and more scalable routing model.
-- Tracking issue:
-  [https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/36616](https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/36616)
+Routing configurations are defined under sumologic.logs.otelcol.routing.table config key. If you're using custom routing configuration using
+the routing key, you need to migrate. Earlier, routing configurations were defined as the following keys:
 
----
+1. sumologic.logs.otelcol.routing.table.exporter
+2. sumologic.logs.otelcol.routing.table.statement
 
-##### Migration
+```shell
+Older Config:
+sumologic:
+  logs:
+    otelcol:
+      routing:
+        table:
+          - exporter: <exporter1-name>
+            statement: <routing-statement>
+          - exporter: <exporter2-name>
+            statement: <routing-statement>
 
-The routing connector supports all features of the routing processor and more. However, the configuration is different. The general idea is
-the same, but there are a few key differences:
-
-- Rather than routing directly to exporters, the routing connector routes to pipelines. This allows for processors to be included after
-  routing decisions.
-- The connector is configured within the `connectors` section, rather than the `processors` section of the configuration.
-- Usage of the connector in pipelines is different. You must use it as an exporter AND as a receiver in each pipeline to which it can route.
-- Configuration is primarily based on
-  [OTTL](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/pkg/ottl#opentelemetry-transformation-language).
-- Each route can be evaluated in a different
-  [OTTL Context](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/ottl/contexts/README.md#opentelemetry-transformation-language-contexts).
-
-##### Example
-
-Starting from the example configuration below, we can achieve the same result with the routing connector:
-
-```yaml
-processors:
-  routing:
-    from_attribute: X-Tenant
-    default_exporters: [jaeger]
-    table:
-      - value: acme
-        exporters: [jaeger/acme]
-exporters:
-  jaeger:
-    endpoint: localhost:14250
-  jaeger/acme:
-    endpoint: localhost:24250
-service:
-  pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [routing]
-      exporters: [jaeger, jaeger/acme]
+New Config:
+sumologic:
+  logs:
+    otelcol:
+     routing:
+       table:
+         - exporters: [<exporter1-name>, <exporter2-name>]
+           statement: <routing-statement>
 ```
 
-```yaml
-connectors:
-  routing:
-    match_once: true
-    default_pipelines: [traces/jaeger]
-    table:
-      - context: request
-        condition: request["X-Tenant"] == "acme"
-        pipelines: [traces/jaeger/acme]
-exporters:
-  jaeger:
-    endpoint: localhost:14250
-  jaeger/acme:
-    endpoint: localhost:24250
-service:
-  pipelines:
-    traces:
-      receivers: [otlp]
-      exporters: [routing]
-    traces/jaeger:
-      receivers: [routing]
-      exporters: [jaeger]
-    traces/jaeger/acme:
-      receivers: [routing]
-      exporters: [jaeger/acme]
-```
+Please notice the older configuration used `exporter` in table entry whereas the new configuration uses `exporters`.
+
+With the new configuration, all the exporters with similar statements can be grouped under the same table entry. Internally, sumologic helm
+chart will convert this configuration into Routing connector configurations.
 
 ---
 
