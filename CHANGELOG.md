@@ -7,6 +7,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.19.0]
+
+### Released 2026-01-19
+
+### Breaking Changes
+
+- chore: remove useRoutingConnectors and use routing connectors by default [#4056]. See below guide to migrate routing processor to
+  routingconnector
+
+#### How to migrate?
+
+Routing configurations are defined under sumologic.logs.otelcol.routing.table config key. If you're using custom routing configuration using
+the routing key, you need to migrate. Earlier, routing configurations were defined as the following keys:
+
+1. sumologic.logs.otelcol.routing.table.exporter
+2. sumologic.logs.otelcol.routing.table.statement
+
+```shell
+Older Config:
+sumologic:
+  logs:
+    otelcol:
+      routing:
+        table:
+          - exporter: <exporter1-name>
+            statement: <routing-statement>
+          - exporter: <exporter2-name>
+            statement: <routing-statement>
+
+New Config:
+sumologic:
+  logs:
+    otelcol:
+     routing:
+       table:
+         - exporters: [<exporter1-name>, <exporter2-name>]
+           statement: <routing-statement>
+```
+
+Please notice the older configuration used `exporter` in table entry whereas the new configuration uses `exporters`.
+
+With the new configuration, all the exporters with similar statements can be grouped under the same table entry. Internally, sumologic helm
+chart will convert this configuration into Routing connector configurations.
+
+---
+
+### Changed
+
+- chore(deps): bump metrics server to 7.4.12 [#4050]
+- chore(deps): bump falco to 7.0.2 [#4051]
+- chore: updates otelcol image from 140 to 143 [#4059]
+
+[#4056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4056
+[#4050]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4050
+[#4051]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4051
+[#4059]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4059
+[v4.19.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.19.0
+
 ## [v4.18.0]
 
 ### Released 2025-12-03
