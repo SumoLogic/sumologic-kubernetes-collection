@@ -18,10 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Known issue
 
-- Using multiple exporters under sumologic.logs.otelcol.routing.table.exporters in routing configuration will not work. Also if any exporter
-  is specified here and useDefaultExporters is used, if custom condition matches, then data will be forwarded to custom exporter only and
-  not default exporter, earlier with routingprocessor, it used to route to custom exporter + default exporters. We are addressing this issue
-  in upcoming release, if you're need to use custom routing configuration, please use v4.18.0
+- Using multiple exporters and route statements under sumologic.logs.otelcol.routing.table will route only to the first matching route and won't check subsequent route conditions. Please remember this limitation while migrating and adding multiple additional routing tables
 
 #### How to migrate?
 
