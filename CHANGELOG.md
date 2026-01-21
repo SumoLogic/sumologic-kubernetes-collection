@@ -16,6 +16,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: remove useRoutingConnectors and use routing connectors by default [#4056]. See below guide to migrate routing processor to
   routingconnector
 
+#### Known issue
+
+- Using multiple exporters and route statements under sumologic.logs.otelcol.routing.table will route only to the first matching route and
+  won't check subsequent route conditions. Please remember this limitation while migrating and adding multiple additional routing tables
+
+For example:
+
+```shell
+routing:
+  table:
+    - statement: route() where resource.attributes["k8s.name"] == "test"
+      exporters:
+        - test
+    - statement: route() where resource.attributes["k8s.host"] == "alpha"
+      exporters:
+        - debug
+```
+
+A record where resource.attributes is {"k8s.host": "alpha", "k8s.name":"test"}, will only be routed to test exporter as it was evaluated
+first. The data will not be forwarded to debug exporter.
+
 #### How to migrate?
 
 Routing configurations are defined under sumologic.logs.otelcol.routing.table config key. If you're using custom routing configuration using
@@ -31,9 +52,7 @@ sumologic:
     otelcol:
       routing:
         table:
-          - exporter: <exporter1-name>
-            statement: <routing-statement>
-          - exporter: <exporter2-name>
+          - exporter: <exporter-name>
             statement: <routing-statement>
 
 New Config:
@@ -42,7 +61,7 @@ sumologic:
     otelcol:
      routing:
        table:
-         - exporters: [<exporter1-name>, <exporter2-name>]
+         - exporters: [<exporter-name>]
            statement: <routing-statement>
 ```
 
