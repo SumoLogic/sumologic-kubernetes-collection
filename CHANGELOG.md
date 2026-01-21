@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: remove useRoutingConnectors and use routing connectors by default [#4056]. See below guide to migrate routing processor to
   routingconnector
 
+#### Known issue
+
+- Using multiple exporters under sumologic.logs.otelcol.routing.table.exporters in routing configuration will not work. Also if any exporter is specified here and useDefaultExporters is used, if custom condition matches, then data will be forwarded to custom exporter only and not default exporter, earlier with routingprocessor, it used to route to custom exporter + default exporters. We are addressing this issue in upcoming release, if you're need to use custom routing configuration, please use v4.18.0
+
 #### How to migrate?
 
 Routing configurations are defined under sumologic.logs.otelcol.routing.table config key. If you're using custom routing configuration using
@@ -31,9 +35,7 @@ sumologic:
     otelcol:
       routing:
         table:
-          - exporter: <exporter1-name>
-            statement: <routing-statement>
-          - exporter: <exporter2-name>
+          - exporter: <exporter-name>
             statement: <routing-statement>
 
 New Config:
@@ -42,7 +44,7 @@ sumologic:
     otelcol:
      routing:
        table:
-         - exporters: [<exporter1-name>, <exporter2-name>]
+         - exporters: [<exporter-name>]
            statement: <routing-statement>
 ```
 
