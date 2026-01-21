@@ -18,7 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 #### Known issue
 
-- Using multiple exporters and route statements under sumologic.logs.otelcol.routing.table will route only to the first matching route and won't check subsequent route conditions. Please remember this limitation while migrating and adding multiple additional routing tables
+- Using multiple exporters and route statements under sumologic.logs.otelcol.routing.table will route only to the first matching route and
+  won't check subsequent route conditions. Please remember this limitation while migrating and adding multiple additional routing tables
 
 #### How to migrate?
 
