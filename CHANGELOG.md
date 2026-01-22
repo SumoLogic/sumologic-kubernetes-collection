@@ -7,6 +7,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.20.0]
+
+### Released 2026-01-22
+
+### Changed
+
+- chore: upgrade tailing side to v0.19.1 [#4057]
+- chore:tailing sidecar version upgrade and documentation [#4063]
+- adding tailing-sidecar-operator.sidecar.image.tag in values.yaml [#4067]
+
+[#4057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4057
+[#4063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4063
+[#4067]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4067
+[v4.20.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.20.0
+
 ## [v4.19.0]
 
 ### Released 2026-01-19
