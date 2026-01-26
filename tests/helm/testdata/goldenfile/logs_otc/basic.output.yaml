@@ -189,7 +189,6 @@ data:
         - flanneld.service
         - format-etcd2-volume.service
         - kube-node-taint-and-uncordon.service
-        - kubelet.service
         - ldconfig.service
         - locksmithd.service
         - logrotate.service
@@ -214,6 +213,7 @@ data:
         - update-ca-certificates.service
         - user-cloudinit.service
         - var-lib-etcd2.service
+        - kubelet.service
     service:
       extensions:
       - health_check

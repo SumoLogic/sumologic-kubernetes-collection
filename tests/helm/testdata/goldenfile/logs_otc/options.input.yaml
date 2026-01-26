@@ -8,6 +8,8 @@ sumologic:
       enabled: false
     systemd:
       enabled: true
+    kubelet:
+      enabled: false
     container:
       enabled: false
 
