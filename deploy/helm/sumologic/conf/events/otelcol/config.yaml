@@ -61,6 +61,15 @@ processors:
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
 
 receivers:
+  k8sobjects/configmaps:
+    auth_type: serviceAccount
+    objects:
+      - name: configmaps
+        # Only pull sumologic configmaps every day
+        namespaces:
+          - {{ .Release.Namespace | quote }}
+        mode: pull
+        interval: 24h
   raw_k8s_events: {}
 
 service:
@@ -71,6 +80,23 @@ service:
 {{- end }}
     - pprof
   pipelines:
+    logs/configmaps:
+      exporters:
+        - sumologic
+{{- if eq .Values.debug.events.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-events" .) "true" }}
+        - sumologic/sumologic-mock
+{{- end }}
+      processors:
+        - resource/add_cluster
+        - source
+        - sumologic
+        - transform/add_timestamp
+        - batch
+      receivers:
+        - k8sobjects/configmaps
     logs/events:
       exporters:
         - sumologic
@@ -88,6 +114,7 @@ service:
         - batch
       receivers:
         - raw_k8s_events
+
 
   telemetry:
     logs:
