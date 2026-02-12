@@ -111,8 +111,8 @@ spec:
           readOnly: true
         - mountPath: /var/lib/storage/otc
           name: file-storage
-        - mountPath: /var/log/journal
-          name: varlogjournal
+        - mountPath: {{ $.Values.sumologic.logs.systemd.journaldDirectory }}
+          name: {{ $.Values.sumologic.logs.systemd.journaldDirectory | replace "/" "" }}
           readOnly: true
 {{- if $daemonset.extraVolumeMounts }}
 {{ toYaml $daemonset.extraVolumeMounts | indent 8 }}
@@ -178,9 +178,9 @@ spec:
           type: DirectoryOrCreate
         name: file-storage
       - hostPath:
-          path: /var/log/journal/
+          path: {{ $.Values.sumologic.logs.systemd.journaldDirectory }}/
           type: ""
-        name: varlogjournal
+        name: {{ $.Values.sumologic.logs.systemd.journaldDirectory | replace "/" "" }}
 {{- if $daemonset.extraVolumes }}
 {{ toYaml $daemonset.extraVolumes | indent 6 }}
 {{- end }}

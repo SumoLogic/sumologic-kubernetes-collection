@@ -61,7 +61,7 @@ receivers:
 
 {{- if .Values.sumologic.logs.systemd.enabled }}
   journald:
-    directory: /var/log/journal
+    directory: {{ .Values.sumologic.logs.systemd.journaldDirectory }}
     ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
     ## Here is filtering by `UNIT`
     units:
