@@ -7,6 +7,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.21.0]
+
+### Released 2026-02-13
+
+### Added
+
+- feat: Adds sumologic collection configmap pull every 24 hrs [#4073]
+
+### Changed
+
+- chore: bumps otel version from 0.143 to 0.145 [#4075]
+
+[#4073]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4073
+[#4075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4075
+[v4.21.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.21.0
+
 ## [v4.20.0]
 
 ### Released 2026-01-22
