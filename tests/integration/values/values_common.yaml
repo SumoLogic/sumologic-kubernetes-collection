@@ -47,6 +47,8 @@ metadata:
     size: 128Mi
 
   logs:
+    # Few metrics are only collected in detailed log level
+    metricsLevel: detailed
     statefulset:
       resources:
         requests:
@@ -67,6 +69,8 @@ metadata:
 
 # Request less resources so that this fits on Github actions runners environment
 otelevents:
+  # Few metrics are only collected in detailed log level
+  metricsLevel: detailed
   config:
     merge:
       receivers:
@@ -118,6 +122,8 @@ otelcolInstrumentation:
     minReplicas: 1
 
 otellogs:
+  # Few metrics are only collected in detailed log level
+  metricsLevel: detailed
   config:
     merge:
       receivers:
