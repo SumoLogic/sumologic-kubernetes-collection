@@ -55,6 +55,8 @@ metadata:
     autoscaling:
       minReplicas: 1
   metrics:
+    # Few metrics are only collected in detailed log level
+    metricsLevel: detailed
     statefulset:
       resources:
         requests:
