@@ -233,8 +233,6 @@ var (
 		"otelcol_process_uptime",
 		"otelcol_exporter_queue_capacity",
 		"otelcol_exporter_queue_size",
-		"otelcol_exporter_queue_batch_send_size_count",
-		"otelcol_exporter_queue_batch_send_size_sum",
 		"otelcol_exporter_requests_bytes",
 		"otelcol_exporter_requests_duration",
 		"otelcol_exporter_requests_records",
@@ -329,6 +327,8 @@ var (
 		"otelcol_processor_filter_logs.filtered",
 		"otelcol_processor_filter_logs_filtered",
 		"otelcol_otelsvc_k8s_ip_lookup_miss",
+		// https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/45940
+		"otelcol_otelcol.k8s.pod.association",
 		"otelcol_otelsvc_k8s_other_deleted",
 		"otelcol_otelsvc_k8s_pod_added",
 		"otelcol_otelsvc_k8s_replicaset_added",
