@@ -48,12 +48,31 @@ data:
           - set(time, Now()) where time_unix_nano == 0
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
     receivers:
+      k8sobjects/configmaps:
+        auth_type: serviceAccount
+        objects:
+        - interval: 24h
+          mode: pull
+          name: configmaps
+          namespaces:
+          - sumologic
       raw_k8s_events: {}
     service:
       extensions:
       - health_check
       - pprof
       pipelines:
+        logs/configmaps:
+          exporters:
+          - sumologic
+          processors:
+          - resource/add_cluster
+          - source
+          - sumologic
+          - transform/add_timestamp
+          - batch
+          receivers:
+          - k8sobjects/configmaps
         logs/events:
           exporters:
           - sumologic

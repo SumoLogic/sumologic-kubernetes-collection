@@ -1,5 +1,5 @@
 exporters:
-{{- if and (.Values.sumologic.metrics.useRoutingConnectors) (eq .Values.sumologic.metrics.sourceType "http") }}
+{{- if (eq .Values.sumologic.metrics.sourceType "http") }}
   - routing/default
 {{- else }}
   - sumologic/default
@@ -50,9 +50,6 @@ processors:
   - filter/app_metrics
 {{- end }}
   - batch
-{{- if and (not (.Values.sumologic.metrics.useRoutingConnectors | default false)) (eq .Values.sumologic.metrics.sourceType "http") }}
-  - routing
-{{- end }}
 receivers:
   - telegraf
   - otlp

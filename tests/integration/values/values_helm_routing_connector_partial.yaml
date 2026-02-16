@@ -12,7 +12,6 @@ sumologic:
         sumologic/additional-sumologic-mock:
           endpoint: http://additional-sumologic-mock:3000/receiver
       routing:
-        useRoutingConnectors: true
         fallbackExporters:
           - sumologic
         table:

@@ -10,6 +10,7 @@ sumologic/sumologic-mock-default:
   endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
   ## Sumo doesn't yet natively support OTLP Histograms
   decompose_otlp_histograms: true
+  decompose_otlp_summaries: true
   ## Configuration for sending queue
   ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
   sending_queue:
@@ -49,6 +50,7 @@ sumologic/default:
   endpoint: {{ include "metrics.otelcol.exporter.endpoint" . }}
   ## Sumo doesn't yet natively support OTLP Histograms
   decompose_otlp_histograms: true
+  decompose_otlp_summaries: true
   ## Configuration for sending queue
   ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
   sending_queue:
