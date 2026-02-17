@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Renovate run
-        uses: renovatebot/github-action@v44.2.5
+        uses: renovatebot/github-action@v44.2.6
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: SumoLogic/sumologic-kubernetes-collection
