@@ -1,7 +1,7 @@
 # Deployment Guide for unreleased version
 
 This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level
-metadata; and sending them to Sumo Logic. See our [documentation guide](https://https://www.sumologic.com/help/docs/observability/kubernetes/) for
+metadata; and sending them to Sumo Logic. See our [documentation guide](https://www.sumologic.com/help/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
 - [Deployment Guide for unreleased version](#deployment-guide-for-unreleased-version)
@@ -24,25 +24,25 @@ Documentation for other versions can be found in the
 
 Documentation links:
 
-- [Installation](https://https://www.sumologic.com/help/docs/send-data/kubernetes/install-helm-chart/)
+- [Installation](https://www.sumologic.com/help/docs/send-data/kubernetes/install-helm-chart/)
 
 - Configuration
 
   - [Examples](/docs/configuration-examples.md)
   - Logs
-    - [Collecting container logs](https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/)
-    - [Collecting Systemd logs](https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/)
+    - [Collecting container logs](https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/)
+    - [Collecting Systemd logs](https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/)
   - Metrics
-    - [Collecting Kubernetes metrics](https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics)
-    - [Collecting application metrics](https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics#filtering-metrics)
-  - [Advanced Configuration/Best Practices](https://https://www.sumologic.com/help/docs/send-data/kubernetes/best-practices/)
-  - [Advanced Configuration/Security best practices](https://https://www.sumologic.com/help/docs/send-data/kubernetes/security-best-practices/)
+    - [Collecting Kubernetes metrics](https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics)
+    - [Collecting application metrics](https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics#filtering-metrics)
+  - [Advanced Configuration/Best Practices](https://www.sumologic.com/help/docs/send-data/kubernetes/best-practices/)
+  - [Advanced Configuration/Security best practices](https://www.sumologic.com/help/docs/send-data/kubernetes/security-best-practices/)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
     - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](/docs/working-with-container-registries.md#authenticating-with-container-registry)
-  - [Collecting Kubernetes events](https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-events/)
+  - [Collecting Kubernetes events](https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-events/)
   - Open Telemetry
     - [Open Telemetry with `sumologic-kubernetes-collection`](/docs/opentelemetry-collector/README.md)
-    - [Traces - auto-instrumentation in Kubernetes](https://https://www.sumologic.com/help/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
+    - [Traces - auto-instrumentation in Kubernetes](https://www.sumologic.com/help/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
     - [OTLP source](/docs/otlp-source.md)
 
 - Upgrades
@@ -54,12 +54,12 @@ Documentation links:
   - [Upgrade from v0.17 to v1.0][migration-doc-v1]
   - [Migrate from `SumoLogic/fluentd-kubernetes-sumologic`][migration-steps]
 
-- [Troubleshooting Collection](https://https://www.sumologic.com/help/docs/send-data/kubernetes/troubleshoot-collection/)
+- [Troubleshooting Collection](https://www.sumologic.com/help/docs/send-data/kubernetes/troubleshoot-collection/)
 - [Monitoring the Monitoring](/docs/monitoring-lag.md)
 - [Dev Releases](/docs/dev.md)
 
-[migration-doc-v4]: https://https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
-[migration-doc-v3]: https://https://www.sumologic.com/help/docs/send-data/kubernetes/v3/important-changes/
+[migration-doc-v4]: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
+[migration-doc-v3]: https://www.sumologic.com/help/docs/send-data/kubernetes/v3/important-changes/
 [migration-doc-v2.18]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2-18-migration.md
 [migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
 [migration-doc-v1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v1_migration_doc.md

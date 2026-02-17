@@ -9,7 +9,7 @@ following diagram provides an overview of the collection process.
 
 ## Installation
 
-Detailed instructions are available in our [Installation Guides](https://https://www.sumologic.com/help/docs/send-data/kubernetes/install-helm-chart/).
+Detailed instructions are available in our [Installation Guides](https://www.sumologic.com/help/docs/send-data/kubernetes/install-helm-chart/).
 
 ## Documentation
 

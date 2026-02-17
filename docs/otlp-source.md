@@ -69,8 +69,8 @@ sumologic:
 **Note:** The source is automatically created during Chart installation. This setting simply makes the Chart start sending data to it. If
 you normally have setup disabled, you need to either enable it after enabling the otlp source, or create the source manually.
 
-[http_source]: https://https://www.sumologic.com/help/docs/send-data/hosted-collectors/http-source/logs-metrics/
-[otlp_source]: https://https://www.sumologic.com/help/docs/send-data/hosted-collectors/http-source/otlp/
+[http_source]: https://www.sumologic.com/help/docs/send-data/hosted-collectors/http-source/logs-metrics/
+[otlp_source]: https://www.sumologic.com/help/docs/send-data/hosted-collectors/http-source/otlp/
 [v3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v3.0.0
 [otel]: ./opentelemetry-collector/README.md
 [otlp]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/otlp.md
