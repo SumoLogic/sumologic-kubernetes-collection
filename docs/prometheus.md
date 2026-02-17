@@ -29,8 +29,8 @@ installed.
 
 If you don't have Prometheus or Kube Prometheus Stack installed in your cluster there is not much you need to worry about. There is no
 special configuration required, unless you want to have
-[Custom Application Metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#filtering-metrics) or
-[Custom Kubernetes Metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics), but these steps
+[Custom Application Metrics](https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics#filtering-metrics) or
+[Custom Kubernetes Metrics](https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics), but these steps
 can be performed after initial installation.
 
 ## Prometheus Operator in the cluster

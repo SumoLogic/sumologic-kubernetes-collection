@@ -135,7 +135,7 @@ else
     readonly CREATE_FIELDS=0
     echo "Couldn't automatically create fields"
     echo "You do not have enough field capacity to create the required fields automatically."
-    echo "Please refer to https://help.sumologic.com/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
+    echo "Please refer to https://https://www.sumologic.com/help/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
 # Sumo Logic Collector and HTTP sources
@@ -170,7 +170,7 @@ if [[ "${SUMOLOGIC_DASHBOARDS_ENABLED:?}" = "true" ]]; then
 else
     echo "Installation of the Sumo Logic dashboards is disabled."
     echo "You can install them manually later with:"
-    echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
+    echo "https://https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
 fi
 
 # Cleanup env variables

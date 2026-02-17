@@ -19,7 +19,7 @@ We recommend turning this property on for production environments by setting met
 
 {{- if .Values.sumologic.traces.enabled }}
 
-Please see https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing to find out
+Please see https://https://www.sumologic.com/help/docs/apm/traces/get-started-transaction-tracing to find out
 how to instrument your application and send traces.
 The list of endpoints in your Kubernetes cluster to which traces can be sent:
 - OTLP/http: http://{{ template "sumologic.metadata.name.instrumentation.otelagent.service" . }}.{{ template "sumologic.namespace" . }}:4318
@@ -45,5 +45,5 @@ https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/mo
 {{- if not (.Values.sumologic.setup.dashboards.enabled) }}
 Installation of the Sumo Logic dashboards is disabled.
 You can install them manually later with:
-https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
+https://https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
 {{- end }}

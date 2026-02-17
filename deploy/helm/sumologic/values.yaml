@@ -30,7 +30,7 @@ sumologic:
   # accessKey: ""
 
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
-  ## ref: https://help.sumologic.com/docs/api/getting-started#sumo-logic-endpoints-by-deployment-and-firewall-security
+  ## ref: https://https://www.sumologic.com/help/docs/api/getting-started#sumo-logic-endpoints-by-deployment-and-firewall-security
   endpoint: ""
 
   ## proxy urls
@@ -187,7 +187,7 @@ sumologic:
 
   collector:
     ## Configuration of additional collector fields
-    ## https://help.sumologic.com/docs/manage/fields/#http-source-fields
+    ## https://https://www.sumologic.com/help/docs/manage/fields/#http-source-fields
     fields: {}
 
     ## Configuration of http sources
@@ -345,7 +345,7 @@ sumologic:
       ##   condition: 'attributes["k8s.container.name"] matches "^bar-.*'
       ##
       ## NOTE: See below link for full reference:
-      ## https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/#conditional-multiline-log-parsing
+      ## https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/#conditional-multiline-log-parsing
       additional: []
 
     container:
@@ -353,14 +353,14 @@ sumologic:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: json is an alias for fields
       ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/#text-log-format
+      ## https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/#text-log-format
       format: fields
 
       ## When set to `true`, preserves the `time` attribute, which is a string representation of the `timestamp` attribute.
       keep_time_attribute: false
 
       otelcol:
-        ## Extra processors for container logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
+        ## Extra processors for container logs. See https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceHost metadata field in Sumo Logic.
@@ -399,7 +399,7 @@ sumologic:
       #   - docker.service
 
       otelcol:
-        ## Extra processors for systemd logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
+        ## Extra processors for systemd logs. See https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceName metadata field in Sumo Logic.
@@ -426,7 +426,7 @@ sumologic:
 
     kubelet:
       otelcol:
-        ## Extra processors for kubelet logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
+        ## Extra processors for kubelet logs. See https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceName metadata field in Sumo Logic.
@@ -475,7 +475,7 @@ sumologic:
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
-    ## https://help.sumologic.com/docs/manage/fields/#manage-fields
+    ## https://https://www.sumologic.com/help/docs/manage/fields/#manage-fields
     fields:
       - cluster
       - container
@@ -489,7 +489,7 @@ sumologic:
       - statefulset
 
     ## Additional fields to be created in Sumo Logic.
-    ## https://help.sumologic.com/docs/manage/fields/#manage-fields
+    ## https://https://www.sumologic.com/help/docs/manage/fields/#manage-fields
     additionalFields: []
 
     sourceType: otlp
@@ -577,7 +577,7 @@ sumologic:
           metricRegex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
 
         ## Enable collection of metrics from Pods annotated with prometheus.io/* keys.
-        ## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#application-metrics-are-exposed-one-endpoint-scenario for more information.
+        ## See https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics#application-metrics-are-exposed-one-endpoint-scenario for more information.
         annotatedPods:
           enabled: true
 
@@ -813,7 +813,7 @@ kube-prometheus-stack:
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
   ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
-  ## see https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#using-newer-kube-prometheus-stack.
+  ## see https://https://www.sumologic.com/help/docs/send-data/kubernetes/best-practices/#using-newer-kube-prometheus-stack.
   ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
   ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
   ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
@@ -1942,7 +1942,7 @@ tracesGateway:
     override: {}
 
 ## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
-## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-events/.
+## See https://https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-events/.
 otelevents:
   ## Configure image for Opentelemetry Collector
   image:
@@ -2453,7 +2453,7 @@ falco:
 
   driver:
     ## Set to epbf to enable eBPF support for Falco instead of falco-probe kernel module.
-    ## https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection#falco-and-google-kubernetes-engine-gke
+    ## https://https://www.sumologic.com/help/docs/send-data/kubernetes/troubleshoot-collection#falco-and-google-kubernetes-engine-gke
     kind: module
     loader:
       initContainer:
