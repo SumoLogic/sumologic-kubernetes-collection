@@ -905,7 +905,7 @@ See the [migration guide][v4_migration_guide] for details.
 [#3332]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3332
 [#3340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3340
 [v4.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0
-[v4_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v4/important-changes/
+[v4_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
 
 ## [v3.19.3]
 
@@ -1748,7 +1748,7 @@ See the [migration guide][v3_migration_guide] for details.
 [#2794]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2794
 [#2807]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2807
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
-[v3_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v3/important-changes/
+[v3_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v3/important-changes/
 [v3.0.0-rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...v3.0.0-rc.0
 
 ## [v3.0.0-beta.1]
@@ -2709,7 +2709,7 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [v0.38.1-cfp]:
   https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
-[v0.38.1-cfp-help]: https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
+[v0.38.1-cfp-help]: https://www.sumologic.com/help/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
 [#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895

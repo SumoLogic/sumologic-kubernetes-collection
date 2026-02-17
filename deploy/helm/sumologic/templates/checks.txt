@@ -7,29 +7,29 @@
 
 {{/* Check if metrics metadata provider is set to unsupported Fluentd */}}
 {{- if eq (dig "sumologic" "metrics" "metadata" "provider" "otelcol" .Values.AsMap) "fluentd" -}}
-{{- fail "\nFluentd for metrics metadata has been removed. Please follow migration document to use Open Telemetry Collector instead: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
+{{- fail "\nFluentd for metrics metadata has been removed. Please follow migration document to use Open Telemetry Collector instead: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
 {{- end -}}
 
 {{/* Check if logs metadata provider is set to unsupported Fluentd */}}
 {{- if eq (dig "sumologic" "logs" "metadata" "provider" "otelcol" .Values.AsMap) "fluentd" -}}
-{{- fail "\nFluentd for logs metadata has been removed. Please follow migration document to use Open Telemetry Collector instead: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
+{{- fail "\nFluentd for logs metadata has been removed. Please follow migration document to use Open Telemetry Collector instead: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
 {{- end -}}
 
 {{/* Check if events metadata provider is set to unsupported Fluentd */}}
 {{- if eq (dig "sumologic" "events" "provider" "otelcol" .Values.AsMap) "fluentd" -}}
-{{- fail "\nFluentd for events has been removed. Please follow migration document to use Open Telemetry Collector instead: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
+{{- fail "\nFluentd for events has been removed. Please follow migration document to use Open Telemetry Collector instead: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
 {{- end -}}
 
 {{/* Check if Fluent Bit is enabled */}}
 {{- if eq (dig "fluent-bit" "enabled" false .Values.AsMap) true -}}
-{{- fail "\nFluent Bit has been removed. Please follow migration document to use Open Telemetry Collector instead: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
+{{- fail "\nFluent Bit has been removed. Please follow migration document to use Open Telemetry Collector instead: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/how-to-upgrade/#remove-remaining-fluent-bit-and-fluentd-configuration" -}}
 {{- end -}}
 
 {{/* Check if remote writes are defined when Prometheus is not enabled */}}
 {{- if .Values.sumologic.metrics.enabled -}}
 {{- if not (index .Values "kube-prometheus-stack").prometheus.enabled -}}
 {{- if ne (dig "kube-prometheus-stack" "prometheus" "prometheusSpec" "additionalRemoteWrites" nil .Values.AsMap) nil -}}
-{{- fail "\nRemote write definitions are not supported by Otel. Please follow the migration guide: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#convert-prometheus-remote-writes-to-otel-metrics-filters" }}
+{{- fail "\nRemote write definitions are not supported by Otel. Please follow the migration guide: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/how-to-upgrade/#convert-prometheus-remote-writes-to-otel-metrics-filters" }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -42,11 +42,11 @@
 
 {{/* Check if routing has been configured properly */}}
 {{- if and .Values.sumologic.logs.otelcol.useDefaultExporters .Values.sumologic.logs.otelcol.routing.fallbackExporters -}}
-{{- fail "\nCannot use `sumologic.logs.otelcol.routing.fallbackExporters` when `sumologic.logs.otelcol.useDefaultExporters` is set to `true`: https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
+{{- fail "\nCannot use `sumologic.logs.otelcol.routing.fallbackExporters` when `sumologic.logs.otelcol.useDefaultExporters` is set to `true`: https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/" }}
 {{- end -}}
 {{- if and (not .Values.sumologic.logs.otelcol.useDefaultExporters) (not .Values.sumologic.logs.otelcol.routing.fallbackExporters) .Values.sumologic.logs.otelcol.routing.table -}}
-{{- fail "\nYou have to specify `sumologic.logs.otelcol.routing.fallbackExporters` or set `sumologic.logs.otelcol.useDefaultExporters` to `true` when using `.Values.sumologic.logs.otelcol.routing.table`: https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
+{{- fail "\nYou have to specify `sumologic.logs.otelcol.routing.fallbackExporters` or set `sumologic.logs.otelcol.useDefaultExporters` to `true` when using `.Values.sumologic.logs.otelcol.routing.table`: https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/" }}
 {{- end -}}
 {{- if and (not .Values.sumologic.logs.otelcol.useDefaultExporters) (not .Values.sumologic.logs.otelcol.extraExporters) -}}
-{{- fail "\nPlease set `sumologic.logs.otelcol.extraExporters` if you set `sumologic.logs.otelcol.useDefaultExporters` to false : https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
+{{- fail "\nPlease set `sumologic.logs.otelcol.extraExporters` if you set `sumologic.logs.otelcol.useDefaultExporters` to false : https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/" }}
 {{- end -}}

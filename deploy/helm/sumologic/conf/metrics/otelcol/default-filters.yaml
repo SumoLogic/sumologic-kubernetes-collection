@@ -253,7 +253,7 @@ filter/app_metrics:
       - IsMatch(name, "java_.*") and not IsMatch(name, "(?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))")
     ## Kafka Metrics
     ## List of Metrics are on following dochub page:
-    ## https://help.sumologic.com/docs/integrations/containers-orchestration/kafka/#kafka-metrics
+    ## https://www.sumologic.com/help/docs/integrations/containers-orchestration/kafka/#kafka-metrics
     ## Metrics follow following format:
     ## kafka_broker_*
     ## kafka_controller_*
@@ -304,7 +304,7 @@ filter/app_metrics:
       - IsMatch(name, "mysql_.*") and not IsMatch(name, "(?:mysql_((uptime|connection_errors_.*|queries|slow_queries|questions|table_open_cache_.*|table_locks_.*|commands_.*|select_.*|sort_.*|mysqlx_connections_.*|mysqlx_worker_.*|connections|aborted_.*|locked_connects|bytes_.*|qcache_.*|threads_.*|opened_.*|created_tmp_.*)|innodb_(buffer_pool_.*|data_.*|rows_.*|row_lock_.*|log_waits)|perf_schema_(events_statements_.*|table_io_waits_.*|index_io_waits_.*|read.*|write.*)))")
     ## PostgreSQL Telegraf Metrics
     ## List of Metrics are on following dochub page:
-    ## https://help.sumologic.com/docs/integrations/databases/postgresql/#postgresql-metrics
+    ## https://www.sumologic.com/help/docs/integrations/databases/postgresql/#postgresql-metrics
     ## Metrics follow following format:
     ## postgresql_blks_hit
     ## postgresql_blks_read

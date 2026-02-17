@@ -18,7 +18,7 @@ will fail if the Sumologic API TLS certificate cannot be verified.
 The recommended way is to inject the custom root CA into the setup image: [see here][rebuilding]
 
 [rebuilding]:
-  https://help.sumologic.com/docs/send-data/kubernetes/security-best-practices/#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
+  https://www.sumologic.com/help/docs/send-data/kubernetes/security-best-practices/#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
 
 ## Troubleshooting
 
