@@ -693,76 +693,6 @@ sumologic:
       ## Add custom annotations only to metrics sts pods
       podAnnotations: {}
 
-    ## Prometheus serviceMonitors related to Sumo Logic services
-    ## They are applied only if kube-prometheus-stack is enabled
-    serviceMonitors:
-      - name: collection-sumologic-otelcol-logs
-        additionalLabels:
-          sumologic.com/app: otelcol-logs
-        endpoints:
-          - port: otelcol-metrics
-        selector:
-          matchLabels:
-            sumologic.com/app: otelcol-logs
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-metrics
-        additionalLabels:
-          sumologic.com/app: otelcol-metrics
-        endpoints:
-          - port: otelcol-metrics
-        selector:
-          matchLabels:
-            sumologic.com/app: otelcol-metrics
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-metrics-collector
-        additionalLabels:
-          sumologic.com/app: otelcol-metrics
-        endpoints:
-          - port: monitoring
-        selector:
-          matchLabels:
-            sumologic.com/app: otelcol
-            sumologic.com/component: metrics
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-logs-collector
-        additionalLabels:
-          sumologic.com/app: otelcol-logs-collector
-        endpoints:
-          - port: metrics
-        selector:
-          matchLabels:
-            sumologic.com/app: otelcol-logs-collector
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-events
-        additionalLabels:
-          sumologic.com/app: otelcol-events
-        endpoints:
-          - port: otelcol-metrics
-        selector:
-          matchLabels:
-            sumologic.com/app: otelcol-events
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-traces
-        additionalLabels:
-          sumologic.com/app: otelcol
-        endpoints:
-          - port: metrics
-        selector:
-          matchLabels:
-            sumologic.com/component: instrumentation
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-prometheus
-        endpoints:
-          - port: http-web
-            path: /metrics
-            metricRelabelings:
-              - action: keep
-                regex: prometheus_remote_storage_.*
-                sourceLabels: [__name__]
-        selector:
-          matchLabels:
-            app: kube-prometheus-stack-prometheus
-
     ## User-defined ServiceMonitors go here
     additionalServiceMonitors: []
 
@@ -1061,36 +991,6 @@ kube-prometheus-stack:
   grafana:
     enabled: false
     defaultDashboardsEnabled: false
-  prometheusOperator:
-    enabled: false
-    image:
-      repository: public.ecr.aws/sumologic/prometheus-operator
-    ## Labels to add to the operator pod
-    podLabels: {}
-    ## Annotations to add to the operator pod
-    podAnnotations: {}
-    ## Resource limits for prometheus operator
-    resources:
-      {}
-      # limits:
-      #   cpu: 200m
-      #   memory: 200Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 100Mi
-    ## ServiceMonitor for the Prometheus operator
-    serviceMonitor:
-      selfMonitor: false
-    admissionWebhooks:
-      enabled: false
-    tls:
-      enabled: false
-    prometheusConfigReloader:
-      image:
-        repository: public.ecr.aws/sumologic/prometheus-config-reloader
-
-    thanosImage:
-      repository: public.ecr.aws/sumologic/thanos
 
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
@@ -1286,52 +1186,6 @@ kube-prometheus-stack:
 
       ## Enable WAL compression to reduce Prometheus memory consumption
       walCompression: true
-
-      ## prometheus scrape config
-      ## rel: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
-      additionalScrapeConfigs:
-        ## scraping metrics basing on annotations:
-        ##   - prometheus.io/scrape: true - to scrape metrics from the pod
-        ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
-        ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
-        ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-        - job_name: "pod-annotations"
-          kubernetes_sd_configs:
-            - role: pod
-          relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-              action: keep
-              regex: true
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-              action: replace
-              target_label: __metrics_path__
-              regex: (.+)
-            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-              action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              target_label: __address__
-            - source_labels: [__metrics_path__]
-              separator: ;
-              regex: (.*)
-              target_label: endpoint
-              replacement: $1
-              action: replace
-            - source_labels: [__meta_kubernetes_namespace]
-              action: replace
-              target_label: namespace
-            - action: labelmap
-              regex: __meta_kubernetes_pod_label_(.+)
-            - source_labels: [__meta_kubernetes_pod_name]
-              separator: ;
-              regex: (.*)
-              target_label: pod
-              replacement: $1
-              action: replace
-      remoteWrite:
-        ## infrastructure metrics
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888/prometheus.metrics
-          remoteTimeout: 5s
 
     serviceMonitor:
       selfMonitor: false

@@ -73,19 +73,6 @@ func GetOtelConfigFromTemplate(t *testing.T, templateContent string) string {
 	return otelConfigYaml
 }
 
-// GetServiceMonitors returns serviceMonitors list from the given templatePath
-// In case of error it returns empty list
-func GetServiceMonitors(t *testing.T, valuesYaml string, templatePath string) []*monitoringv1.ServiceMonitor {
-	renderedYamlString, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
-	if err != nil {
-		return []*monitoringv1.ServiceMonitor{}
-	}
-
-	var list monitoringv1.ServiceMonitorList
-	helm.UnmarshalK8SYaml(t, renderedYamlString, &list)
-	return list.Items
-}
-
 // UnmarshalMultipleFromYaml can unmarshal multiple objects of the same type from a yaml string
 // containing multiple documents, separated by ---
 func UnmarshalMultipleFromYaml[T any](t *testing.T, yamlDocs string) []T {
