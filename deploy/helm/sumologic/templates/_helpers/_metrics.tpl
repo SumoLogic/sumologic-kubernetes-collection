@@ -28,28 +28,6 @@ Example Usage:
 {{- end -}}
 
 {{/*
-Generate list of remoteWrite endpoints for telegraf configuration
-
-'{{ include "metric.endpoints" . }}'
-*/}}
-{{- define "metric.endpoints" -}}
-{{- $endpoints := list -}}
-{{- $kps := get .Values "kube-prometheus-stack" -}}
-{{- range $remoteWrite := $kps.prometheus.prometheusSpec.remoteWrite }}
-{{- $endpoints = append $endpoints ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888" | quote) -}}
-{{- end }}
-{{- range $remoteWrite := $kps.prometheus.prometheusSpec.additionalRemoteWrite }}
-{{- $endpoints = append $endpoints ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888" | quote) -}}
-{{- end -}}
-{{- range $endpoint := .Values.metadata.metrics.config.additionalEndpoints }}
-{{- $endpoints = append $endpoints ($endpoint | quote) -}}
-{{- end -}}
-{{- $endpoints := uniq $endpoints -}}
-{{- $endpoints := sortAlpha $endpoints -}}
-{{ $endpoints | join ",\n" }}
-{{- end -}}
-
-{{/*
 Check if remote write proxy is enabled.
 Example Usage:
 {{- if eq (include "metrics.remoteWriteProxy.enabled" .) "true" }}

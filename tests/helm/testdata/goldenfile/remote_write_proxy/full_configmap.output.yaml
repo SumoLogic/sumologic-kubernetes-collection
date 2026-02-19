@@ -11,27 +11,15 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
-  remote-write-proxy.conf: |
-    upstream remote_prometheus {
-        server RELEASE-NAME-sumologic-metadata-metrics:9888;
-    }
-
-    upstream remote_otel {
-        server RELEASE-NAME-sumologic-metadata-metrics:4318;
-    }
-
-    server {
-        listen 80 default_server;
-        location / {
-            client_body_buffer_size 32k;
-            proxy_pass http://remote_prometheus;
-        }
-    }
-
-    server {
-        listen 4318 default_server;
-        location / {
-            client_body_buffer_size 32k;
-            proxy_pass http://remote_otel;
-        }
-    }
+    remote-write-proxy.conf: |
+      upstream remote_otel {
+          server RELEASE-NAME-sumologic-metadata-metrics:4318;
+      }
+    
+      server {
+          listen 4318 default_server;
+          location / {
+              client_body_buffer_size 32k;
+              proxy_pass http://remote_otel;
+          }
+      }
