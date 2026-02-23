@@ -1,4 +1,7 @@
-# Prometheus
+# Important update from Helm chart v5
+Prometheus support has been removed and Opentelemetry operator has been made as a single source for metrics collection.
+
+# Prometheus (Till helm chart v4)
 
 Prometheus is crucial part of the metrics pipeline. It is also a complicated and powerful tool. In Kubernetes specifically, it's also often
 managed by Prometheus Operator and a set of custom resources. It's possible that you already have some part of the K8s Prometheus stack
