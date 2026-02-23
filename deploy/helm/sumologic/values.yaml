@@ -692,6 +692,75 @@ sumologic:
       podLabels: {}
       ## Add custom annotations only to metrics sts pods
       podAnnotations: {}
+    ## Prometheus serviceMonitors related to Sumo Logic services
+    ## They are applied only if kube-prometheus-stack is enabled
+    serviceMonitors:
+      - name: collection-sumologic-otelcol-logs
+        additionalLabels:
+          sumologic.com/app: otelcol-logs
+        endpoints:
+          - port: otelcol-metrics
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-logs
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-metrics
+        additionalLabels:
+          sumologic.com/app: otelcol-metrics
+        endpoints:
+          - port: otelcol-metrics
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-metrics-collector
+        additionalLabels:
+          sumologic.com/app: otelcol-metrics
+        endpoints:
+          - port: monitoring
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol
+            sumologic.com/component: metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-logs-collector
+        additionalLabels:
+          sumologic.com/app: otelcol-logs-collector
+        endpoints:
+          - port: metrics
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-logs-collector
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-events
+        additionalLabels:
+          sumologic.com/app: otelcol-events
+        endpoints:
+          - port: otelcol-metrics
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-events
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-traces
+        additionalLabels:
+          sumologic.com/app: otelcol
+        endpoints:
+          - port: metrics
+        selector:
+          matchLabels:
+            sumologic.com/component: instrumentation
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-prometheus
+        endpoints:
+          - port: http-web
+            path: /metrics
+            metricRelabelings:
+              - action: keep
+                regex: prometheus_remote_storage_.*
+                sourceLabels: [__name__]
+        selector:
+          matchLabels:
+            app: kube-prometheus-stack-prometheus
 
     ## User-defined ServiceMonitors go here
     additionalServiceMonitors: []
