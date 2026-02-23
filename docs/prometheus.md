@@ -1,5 +1,6 @@
 # Important update from Helm chart v5
 Prometheus support has been removed and Opentelemetry operator has been made as a single source for metrics collection.
+Opentelemetry operator is made as default for metrics collection in Helm chart v4 and removed completely in Helm chart v5.
 
 # Prometheus (Till helm chart v4)
 
