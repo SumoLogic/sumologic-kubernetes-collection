@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.21.1]
+
+### Released 2026-02-19
+
+### Added
+
+- chore: update opentelemetry-operator chart version to 0.105.1 [#4078]
+
+[#4078]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4078
+[v4.21.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.21.1
+
 ## [v4.21.0]
 
 ### Released 2026-02-13
