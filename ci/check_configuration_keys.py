@@ -14,6 +14,8 @@ DESCRIPTION = 'This program verifies if all configuration from values.yaml has b
 SKIP_DEFAULTS = {
     'kube-prometheus-stack.enabled',
     'kube-prometheus-stack.global.imagePullSecrets',
+    'kube-prometheus-stack.prometheus.enabled',
+    'kube-prometheus-stack.prometheusOperator.enabled',
     'metadata.logs.autoscaling.targetMemoryUtilizationPercentage',
     'metadata.logs.podDisruptionBudget',
     'metadata.logs.statefulset.extraEnvVars',
