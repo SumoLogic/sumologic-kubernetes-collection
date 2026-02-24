@@ -1,8 +1,9 @@
 # Important update from Helm chart v5
-Prometheus support has been removed and Opentelemetry operator has been made as a single source for metrics collection.
-Opentelemetry operator is made as default for metrics collection in Helm chart v4 and removed completely in Helm chart v5.
 
-# kube-prometheus Mixin (Till helm chart v4)
+Prometheus support has been removed and Opentelemetry operator has been made as a single source for metrics collection. Opentelemetry
+operator is made as default for metrics collection in Helm chart v4 and removed completely in Helm chart v5.
+
+## kube-prometheus Mixin (Till helm chart v4)
 
 If you are already using kube-prometheus, you can use the Prometheus installation from there and send metrics to Sumo Logic using a mixin to
 add the correct remote_write configs and add the `cluster` external_label. You can generate mixin configuration using `kubectl` or `docker`:
