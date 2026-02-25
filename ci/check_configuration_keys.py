@@ -67,7 +67,8 @@ def main(values_path: str, readme_path: str, full_diff=False) -> None:
     # Filter out keys that are in SKIP_DEFAULTS
     values_keys = [key for key in values_keys if key not in SKIP_DEFAULTS]
     readme = extract_keys_from_readme(readme_path)
-
+    # Filter out keys that are in SKIP_DEFAULTS from readme as well
+    readme_keys = [key for key in readme.keys() if key not in SKIP_DEFAULTS]
 
     values_distinct = compare_list_of_keys(values_keys, readme_keys)
     readme_distinct = compare_list_of_keys(readme_keys, values_keys)
