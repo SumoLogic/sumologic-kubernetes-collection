@@ -1,6 +1,7 @@
 # Important update from Helm chart v5
 
-Prometheus support has been removed from the Helm chart as of v5. Starting with Helm chart v4, the Opentelemetry Operator is the default and single source for metrics collection, and in v5 the built-in Prometheus components are removed in favor of using the Opentelemetry Operator.
+Prometheus support has been removed from the Helm chart as of v5. Starting with Helm chart v4, the Opentelemetry Operator is the default and
+single source for metrics collection, and in v5 the built-in Prometheus components are removed in favor of using the Opentelemetry Operator.
 
 ## kube-prometheus Mixin (Till helm chart v4)
 
