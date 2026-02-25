@@ -51,5 +51,4 @@ processors:
 {{- end }}
   - batch
 receivers:
-  - telegraf
   - otlp
