@@ -18,11 +18,15 @@ SKIP_DEFAULTS = {
     'kube-prometheus-stack.prometheusOperator.enabled',
     'metadata.logs.autoscaling.targetMemoryUtilizationPercentage',
     'metadata.logs.podDisruptionBudget',
+    'metadata.logs.podDisruptionBudget.maxUnavailable',
+    'metadata.logs.podDisruptionBudget.minAvailable',
     'metadata.logs.statefulset.extraEnvVars',
     'metadata.logs.statefulset.extraVolumeMounts',
     'metadata.logs.statefulset.extraVolumes',
     'metadata.logs.statefulset.extraPorts',
     'metadata.metrics.podDisruptionBudget',
+    'metadata.metrics.podDisruptionBudget.maxUnavailable',
+    'metadata.metrics.podDisruptionBudget.minAvailable',
     'metadata.metrics.autoscaling.targetMemoryUtilizationPercentage',
     'metadata.metrics.statefulset.extraEnvVars',
     'metadata.metrics.statefulset.extraVolumeMounts',
@@ -60,10 +64,13 @@ def main(values_path: str, readme_path: str, full_diff=False) -> None:
     """
     values = values_to_dictionary(values_path)
     values_keys = extract_keys(values)
+    # Filter out keys that are in SKIP_DEFAULTS
+    values_keys = [key for key in values_keys if key not in SKIP_DEFAULTS]
     readme = extract_keys_from_readme(readme_path)
 
-    values_distinct = compare_list_of_keys(values_keys, readme.keys())
-    readme_distinct = compare_list_of_keys(readme.keys(), values_keys)
+
+    values_distinct = compare_list_of_keys(values_keys, readme_keys)
+    readme_distinct = compare_list_of_keys(readme_keys, values_keys)
     diff_defaults = compare_values(readme, values_keys, values)
 
     if values_distinct:
