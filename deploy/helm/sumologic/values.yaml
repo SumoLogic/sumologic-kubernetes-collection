@@ -815,7 +815,6 @@ kube-prometheus-stack:
   ## see https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#using-newer-kube-prometheus-stack.
   ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
   ## Do not enable prometheusOperator from this chart, as this will make Prometheus try to write to an non-existent remote write endpoint.
-  ## We use only prometheus-node-exporter and kube-state-metrics from this sub-chart. Other's are not supported.
   # enabled: false
 
   # global:
