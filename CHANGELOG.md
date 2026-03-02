@@ -15,9 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - chore: bumping otel version from 145 to 146 [#4085]
 - chore: bump tailing sidecar to 0.20.0 [#4086]
+- chore: bump opentelemetry-operator from 0.105.1 to 0.106.0 [#4088]
 
 [#4085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4085
 [#4086]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4086
+[#4088]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4088
 [v4.22.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.22.0
 
 ## [v4.21.1]
