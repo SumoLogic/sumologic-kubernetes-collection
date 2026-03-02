@@ -3,7 +3,7 @@ entries:
   sumologic:
   - apiVersion: v2
     appVersion: 4.22.0
-    created: "2026-03-02T09:11:37.697910966Z"
+    created: "2026-03-02T11:14:01.596404678Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -28,14 +28,14 @@ entries:
     - condition: opentelemetry-operator.enabled,sumologic.metrics.collector.otelcol.enabled
       name: opentelemetry-operator
       repository: https://open-telemetry.github.io/opentelemetry-helm-charts
-      version: 0.105.1
+      version: 0.106.0
     - condition: prometheus-windows-exporter.enabled,sumologic.metrics.collector.otelcol.enabled
       name: prometheus-windows-exporter
       repository: https://prometheus-community.github.io/helm-charts
       version: 0.3.1
     description: A Helm chart for collecting Kubernetes logs, metrics, traces and
       events into Sumo Logic.
-    digest: d86ffd3d8e02a835ce75c9613b91a18cc6c0933fb038838e96687003052b9993
+    digest: 1c3178a8150875f79a4a35fc8d640c8ead69983b2dc6fc72895caf5609f5a405
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
     keywords:
@@ -8940,4 +8940,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.6.0.tgz
     version: 0.6.0
-generated: "2026-03-02T09:11:37.64904048Z"
+generated: "2026-03-02T11:14:01.545227836Z"
