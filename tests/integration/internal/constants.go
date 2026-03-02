@@ -248,11 +248,9 @@ var (
 		"otelcol_processor_outgoing_items",
 		"otelcol_processor_incoming_items",
 		"otelcol_processor_batch_metadata_cardinality",
-		"otelcol_exporter_send_failed_metric_points",
 	}
 	LogsOtelcolMetrics = []string{
 		"otelcol_exporter_sent_log_records",
-		"otelcol_exporter_send_failed_log_records",
 		"otelcol_receiver_accepted_log_records",
 		"otelcol_receiver_failed_log_records",
 		"otelcol_processor_accepted_log_records",
