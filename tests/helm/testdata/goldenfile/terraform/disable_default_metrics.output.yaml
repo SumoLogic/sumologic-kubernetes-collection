@@ -52,6 +52,13 @@ data:
     declare -a dirs
     ls -1 /customer-scripts 2>/dev/null | grep _ | grep -oE '^.*?_' | sed 's/_//g' | sort | uniq | read -ar dirs || true
     for dir in "${dirs[@]}"; do
+      # Skip 'terraform' directory as it's handled earlier in setup.sh
+      # (pre-init.sh and terraformrc are processed before terraform init)
+      if [[ "${dir}" == "terraform" ]]; then
+        echo "Skipping 'terraform' directory (already processed by setup.sh)"
+        continue
+      fi
+
       target="/scripts/${dir}"
       mkdir "${target}"
       # Get files for given directory and take only filename part (after first _)
@@ -61,7 +68,7 @@ data:
         cp "/customer-scripts/${dir}_${file}" "${target}/${file}"
       done
 
-      if [[ ! -f setup.sh ]]; then
+      if [[ ! -f "${target}/setup.sh" ]]; then
         echo "You're missing setup.sh script in custom scripts directory: '${dir}'"
         continue
       fi
@@ -462,6 +469,28 @@ data:
     if [[ -f .terraform.lock.hcl ]]; then
         echo "Removing existing Terraform lock file to prevent provider version conflicts"
         rm -f .terraform.lock.hcl
+    fi
+
+    # Run pre-init script if provided (for downloading providers, etc.)
+    if [[ -f /customer-scripts/terraform_pre-init.sh ]]; then
+        echo "===================================================================="
+        echo "Running pre-init script: /customer-scripts/terraform_pre-init.sh"
+        echo "===================================================================="
+        if ! bash /customer-scripts/terraform_pre-init.sh; then
+            echo "ERROR: Pre-init script failed with exit code $?"
+            echo "Cannot proceed with Terraform setup due to pre-initialization failure."
+            exit 1
+        fi
+        echo "Pre-init script completed successfully"
+    fi
+
+    # Check for custom Terraform CLI config file (for internal registry support)
+    if [[ -f /customer-scripts/terraform_terraformrc ]]; then
+        export TF_CLI_CONFIG_FILE=/customer-scripts/terraform_terraformrc
+        echo "===================================================================="
+        echo "Using custom Terraform CLI config: ${TF_CLI_CONFIG_FILE}"
+        echo "Providers will be downloaded from internal registry as configured."
+        echo "===================================================================="
     fi
 
     # Initialize Terraform with upgrade to handle provider version changes

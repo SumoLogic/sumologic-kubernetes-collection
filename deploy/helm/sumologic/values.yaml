@@ -171,6 +171,37 @@ sumologic:
     ## uncomment for the debug mode (disables the automatic run of the setup.sh script)
     # debug: true
 
+    ## Add custom files to override terraform configuration
+    ##
+    ## Example: Pre-download Terraform providers from internal file server (Nexus, Artifactory, etc.)
+    ##
+    ## additionalFiles:
+    ##   terraform:
+    ##     pre-init.sh: |
+    ##       #!/bin/bash
+    ##       set -e
+    ##       PROVIDER_DIR="/terraform/terraform-plugins/registry.terraform.io/sumologic/sumologic/3.0.0/linux_amd64"
+    ##       mkdir -p "$PROVIDER_DIR"
+    ##       wget -O /tmp/terraform-provider-sumologic.zip \
+    ##         "https://your-nexus.com/repository/files/terraform-provider-sumologic_3.0.0_linux_amd64.zip"
+    ##       unzip -o /tmp/terraform-provider-sumologic.zip -d "$PROVIDER_DIR"
+    ##       chmod +x "$PROVIDER_DIR"/terraform-provider-sumologic_v*
+    ##       rm /tmp/terraform-provider-sumologic.zip
+    ##     terraformrc: |
+    ##       provider_installation {
+    ##         filesystem_mirror {
+    ##           path = "/terraform/terraform-plugins"
+    ##           include = ["registry.terraform.io/sumologic/*"]
+    ##         }
+    ##         direct {
+    ##           exclude = ["registry.terraform.io/sumologic/*"]
+    ##         }
+    ##       }
+    ##
+    ## For more details, see: docs/terraform.md
+    ##
+    additionalFiles: {}
+
     monitors:
       ## If enabled, a pre-install hook will create k8s monitors in Sumo Logic
       enabled: true
