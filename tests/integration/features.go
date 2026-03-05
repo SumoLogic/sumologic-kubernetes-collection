@@ -110,7 +110,6 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
 					"service":                      deployment,
 					"service.namespace":            ctxopts.Namespace(ctx),
-					"k8s.node.uid":                 internal.UIDRegex,
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
