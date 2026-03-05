@@ -115,6 +115,7 @@ processors:
     timeout: 10s
 
   ## Tags spans with K8S metadata, basing on the context IP
+{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
   k8s_tagger:
     ## When true, only IP is assigned and passed (so it could be tagged on another collector)
     passthrough: false
@@ -145,6 +146,43 @@ processors:
       labels:
         - tag_name: "k8s.pod.label.%s"
           key: "*"
+{{ else }}
+  k8sattributes:
+    wait_for_metadata: {{ .Values.otelcolInstrumentation.waitForMetadata }}
+    wait_for_metadata_timeout: {{ .Values.otelcolInstrumentation.waitForMetadataTimeout | quote }}
+    auth_type: "serviceAccount"
+    extract:
+      labels:
+        - key_regex: "(.*)"
+          tag_name: "k8s.pod.label.$$1"
+          from: pod
+        - key_regex: "(.*)"
+          tag_name: "k8s.namespace.label.$$1"
+          from: namespace
+      annotations:
+        - key_regex: "(.*)"
+          tag_name: "k8s.pod.annotation.$$1"
+          from: pod
+      metadata:
+        ## extract the following well-known metadata fields
+        - k8s.pod.name
+        - k8s.pod.uid
+        - k8s.deployment.name
+        - k8s.daemonset.name
+        - k8s.replicaset.name
+        - k8s.statefulset.name
+        - k8s.namespace.name
+        - k8s.node.name
+        - k8s.container.name
+        - service.name
+        - service.namespace
+    ## Has to be false to enrich metadata
+    passthrough: false
+    pod_association:
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.uid
+{{ end }}
 
   ## The memory_limiter processor is used to prevent out of memory situations on the collector.
   memory_limiter:
@@ -179,7 +217,11 @@ service:
   pipelines:
     traces:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]
+{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
       processors: [memory_limiter, k8s_tagger, source, resource, batch]
+{{ else }}
+      processors: [memory_limiter, k8sattributes, source, resource, batch]
+{{ end }}
       exporters:
 {{- if eq .Values.tracesGateway.enabled true }}
         - otlphttp/traces
@@ -191,7 +233,11 @@ service:
 {{- end }}
     metrics:
       receivers: [otlp, otlp/deprecated]
+{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
       processors: [memory_limiter, k8s_tagger, source, resource, batch]
+{{ else }}
+      processors: [memory_limiter, k8sattributes, source, resource, batch]
+{{ end }}
       exporters:
         - sumologic/metrics
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}

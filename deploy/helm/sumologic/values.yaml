@@ -1389,6 +1389,14 @@ otelcolInstrumentation:
     ## Matching pods will be excluded from Sumo. The logs will still be sent to otelcol.
     excludePodRegex: ""
 
+  ## Use the sumologic k8s processor to add metadata to traces/metrics.
+  ## This is enabled by default, but can be disabled if you want to use the upstream processor.
+  useSumoK8sProcessor: false
+
+  ## Only used if useSumoK8sProcessor is set to false
+  waitForMetadata: true
+  waitForMetadataTimeout: 10s
+
   ## Option to turn autoscaling on for otelcol and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
@@ -1617,11 +1625,23 @@ metadata:
 
     ## Use the sumologic k8s processor to add metadata to the logs.
     ## This is enabled by default, but can be disabled if you want to use the upstream processor.
-    useSumoK8sProcessor: true
+    useSumoK8sProcessor: false
 
     ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true
     waitForMetadataTimeout: 10s
+
+    ## Extract pod labels as resource attributes
+    ## Pod labels include: app, version, tier, component, etc.
+    ## Default: true
+    extractPodLabels: true
+
+    ## Extract node labels as resource attributes
+    ## WARNING: Node labels significantly increase metric cardinality
+    ## Cloud providers add 50-100 labels per node (instance-type, zone, etc.)
+    ## Example impact: 100 nodes × 50 labels = 5,000+ additional label combinations
+    ## Default: false
+    extractNodeLabels: false
 
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
@@ -1735,7 +1755,7 @@ metadata:
 
     ## Use the sumologic k8s processor to add metadata to the logs.
     ## This is enabled by default, but can be disabled if you want to use the upstream processor.
-    useSumoK8sProcessor: true
+    useSumoK8sProcessor: false
 
     ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true

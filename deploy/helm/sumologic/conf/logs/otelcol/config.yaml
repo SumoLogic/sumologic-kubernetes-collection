@@ -527,6 +527,9 @@ receivers:
     protocols:
       http:
         endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
+        # Increase max request body size to handle large log batches from DaemonSet collectors
+        # Default is 4MB (4194304 bytes), setting to 32MB (33554432 bytes)
+        max_request_body_size: 33554432
 {{ end }}
 
 {{- if (.Values.sumologic.logs.otelcol.routing.table) }}

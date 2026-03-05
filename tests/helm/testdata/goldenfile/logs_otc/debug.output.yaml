@@ -32,8 +32,8 @@ data:
       pprof: {}
     processors:
       batch:
-        send_batch_max_size: 2000
-        send_batch_size: 1000
+        send_batch_max_size: 500
+        send_batch_size: 250
         timeout: 1s
       logstransform/systemd:
         operators:
@@ -162,7 +162,7 @@ data:
           type: router
         - combine_field: body
           combine_with: |2+
-
+    
           id: merge-multiline-logs
           is_first_entry: body matches "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
           max_unmatched_batch_size: 1

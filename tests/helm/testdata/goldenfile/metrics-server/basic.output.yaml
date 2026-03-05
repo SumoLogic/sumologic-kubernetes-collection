@@ -9,8 +9,8 @@ metadata:
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.8.0
-    helm.sh/chart: metrics-server-7.4.12
+    app.kubernetes.io/version: 0.7.0
+    helm.sh/chart: metrics-server-6.13.1
 spec:
   replicas: 1
   selector:
@@ -25,13 +25,14 @@ spec:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: metrics-server
-        app.kubernetes.io/version: 0.8.0
-        helm.sh/chart: metrics-server-7.4.12
+        app.kubernetes.io/version: 0.7.0
+        helm.sh/chart: metrics-server-6.13.1
     spec:
+      
       serviceAccountName: RELEASE-NAME-metrics-server
       affinity:
         podAffinity:
-
+          
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -42,29 +43,23 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-
+          
       automountServiceAccountToken: true
       dnsPolicy: ClusterFirst
-      securityContext:
-        fsGroup: 1001
-        fsGroupChangePolicy: Always
-        supplementalGroups: []
-        sysctls: []
       containers:
         - name: metrics-server
-          image: public.ecr.aws/sumologic/metrics-server:0.8.0-debian-12-r4
+          image: public.ecr.aws/sumologic/metrics-server:0.7.0-debian-12-r8
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - ALL
+              - ALL
             privileged: false
-            readOnlyRootFilesystem: true
-            runAsGroup: 1001
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
             runAsNonRoot: true
             runAsUser: 1001
-            seLinuxOptions: {}
             seccompProfile:
               type: RuntimeDefault
           command:
@@ -98,15 +93,6 @@ spec:
               path: /readyz
               port: https
               scheme: HTTPS
-          resources:
-            limits:
-              cpu: 150m
-              ephemeral-storage: 2Gi
-              memory: 192Mi
-            requests:
-              cpu: 100m
-              ephemeral-storage: 50Mi
-              memory: 128Mi
           volumeMounts:
             - name: empty-dir
               mountPath: /tmp
