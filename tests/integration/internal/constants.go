@@ -412,7 +412,6 @@ var (
 		NodeExporterMetrics,
 		OtherMetrics,
 		AdditionalNodeExporterMetrics,
-		NodeLabelsMetrics, // k8sattributes is now default, so expect telemetry metrics
 	}
 	DefaultExpectedNginxAnnotatedMetricsGroups = [][]string{
 		NginxMetrics,
@@ -444,7 +443,7 @@ func InitializeConstants() error {
 	}
 
 	DefaultExpectedMetrics = []string{}
-	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics, MetricsCollectorOtelcolMetrics)
+	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics, MetricsCollectorOtelcolMetrics, NodeLabelsMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
 	}

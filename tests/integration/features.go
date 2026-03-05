@@ -222,6 +222,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"endpoint":                               "http",
 					"job":                                    "kube-state-metrics",
 					"namespace":                              namespace,
+					"service.namespace":                      namespace,
 					"node":                                   internal.NodeNameRegex,
 					"phase":                                  "Running",
 					"pod_labels_app.kubernetes.io/component": "metrics",
@@ -237,6 +238,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"replicaset":                              fmt.Sprintf("%s-.+", deployment),
 					"service":                                 deployment,
 					"service_discovery_pod":                   fmt.Sprintf("%s-.+", deployment),
+					"service.namespace":                       namespace,
 					"uid":                                     ".+",
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
