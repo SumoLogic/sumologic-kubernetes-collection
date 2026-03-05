@@ -261,12 +261,7 @@ var (
 		"otelcol_fileconsumer_reading_files",
 		"otelcol_fileconsumer_open_files",
 	}
-	NodeLabelsMetrics = []string{
-		"otelcol_otelsvc_k8s_node_updated",
-		"otelcol_otelsvc_k8s_node_added",
-		"otelcol_otelsvc_k8s_namespace_added",
-		"otelcol_otelcol_k8s_pod_association",
-	}
+
 	TracingOtelcolMetrics = []string{ // not used by any App
 		"otelcol_loadbalancer_num_backend_updates",
 		"otelcol_loadbalancer_num_backends",
@@ -331,10 +326,14 @@ var (
 		"otelcol_otelcol.k8s.pod.association",
 		"otelcol_otelsvc_k8s_other_deleted",
 		"otelcol_otelsvc_k8s_pod_added",
-		"otelcol_otelsvc_k8s_replicaset_added",
 		"otelcol_otelsvc_k8s_pod_updated",
+		"otelcol_otelcol_k8s_pod_association",
 		"otelcol_otelsvc_k8s_replicaset_updated",
 		"otelcol_otelsvc_k8s_pod_table_size",
+		"otelcol_otelsvc_k8s_node_updated",
+		"otelcol_otelsvc_k8s_node_added",
+		"otelcol_otelsvc_k8s_namespace_added",
+		"otelcol_otelsvc_k8s_replicaset_added",
 		"otelcol_exporter_enqueue_failed_metric_points",
 		"otelcol_exporter_enqueue_failed_spans",
 		"otelcol_exporter_enqueue_failed_log_records",
