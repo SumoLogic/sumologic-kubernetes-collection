@@ -265,6 +265,7 @@ var (
 		"otelcol_otelsvc_k8s_node_updated",
 		"otelcol_otelsvc_k8s_node_added",
 		"otelcol_otelsvc_k8s_namespace_added",
+		"otelcol_otelcol_k8s_pod_association",
 	}
 	TracingOtelcolMetrics = []string{ // not used by any App
 		"otelcol_loadbalancer_num_backend_updates",
