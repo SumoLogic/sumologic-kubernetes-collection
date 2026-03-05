@@ -264,6 +264,8 @@ var (
 	NodeLabelsMetrics = []string{
 		"otelcol_otelsvc_k8s_node_updated",
 		"otelcol_otelsvc_k8s_node_added",
+		"otelcol_otelsvc_k8s_namespace_added",
+		"otelcol_otelsvc_k8s_namespace_updated",
 	}
 	TracingOtelcolMetrics = []string{ // not used by any App
 		"otelcol_loadbalancer_num_backend_updates",
@@ -330,7 +332,6 @@ var (
 		"otelcol_otelsvc_k8s_other_deleted",
 		"otelcol_otelsvc_k8s_pod_added",
 		"otelcol_otelsvc_k8s_replicaset_added",
-		"otelcol_otelsvc_k8s_namespace_added",
 		"otelcol_otelsvc_k8s_pod_updated",
 		"otelcol_otelsvc_k8s_replicaset_updated",
 		"otelcol_otelsvc_k8s_pod_table_size",
@@ -412,6 +413,7 @@ var (
 		NodeExporterMetrics,
 		OtherMetrics,
 		AdditionalNodeExporterMetrics,
+		NodeLabelsMetrics, // k8sattributes is now default, so expect telemetry metrics
 	}
 	DefaultExpectedNginxAnnotatedMetricsGroups = [][]string{
 		NginxMetrics,
