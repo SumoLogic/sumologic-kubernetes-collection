@@ -84,6 +84,8 @@ data:
         passthrough: false
         pod_association:
         - sources:
+          - from: connection
+        - sources:
           - from: resource_attribute
             name: k8s.pod.uid
         wait_for_metadata: true

@@ -179,6 +179,12 @@ processors:
     ## Has to be false to enrich metadata
     passthrough: false
     pod_association:
+    ## The instrumentation k8s_tagger associated pods by connection IP (default behavior).
+    ## The k8sattributes replacement only uses k8s.pod.uid as association source, 
+    ## but spans from traced pods don't carry k8s.pod.uid — they need IP-based connection association. 
+    ##Need to add from: connection as primary pod association. Keep pod uid as fallback
+      - sources:
+        - from: connection
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
