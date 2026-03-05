@@ -13,7 +13,7 @@ import (
 func Test_Helm_Default_OT_ipv6(t *testing.T) {
 
 	expectedMetrics := internal.DefaultExpectedMetrics
-	
+
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
 
 	installChecks := []featureCheck{
@@ -29,7 +29,7 @@ func Test_Helm_Default_OT_ipv6(t *testing.T) {
 	featInstall := GetInstallFeature(installChecks)
 
 	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
-	
+
 	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 
 	featLogs := GetAllLogsFeature(stepfuncs.WaitUntilExpectedExactLogsPresent, true)
