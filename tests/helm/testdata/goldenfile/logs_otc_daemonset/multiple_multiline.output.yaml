@@ -30,8 +30,8 @@ data:
       pprof: {}
     processors:
       batch:
-        send_batch_max_size: 500
-        send_batch_size: 250
+        send_batch_max_size: 2000
+        send_batch_size: 1000
         timeout: 1s
       logstransform/systemd:
         operators:

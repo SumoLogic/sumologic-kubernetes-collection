@@ -23,10 +23,8 @@ extensions:
 
 processors:
   batch:
-    # Reduced from 2000 to 500 to prevent "request body too large" errors
-    # Smaller batches are more reliable but may increase network overhead
-    send_batch_max_size: 500
-    send_batch_size: 250
+    send_batch_max_size: 2000
+    send_batch_size: 1000
     timeout: 1s
 
 {{- if .Values.sumologic.logs.systemd.enabled }}

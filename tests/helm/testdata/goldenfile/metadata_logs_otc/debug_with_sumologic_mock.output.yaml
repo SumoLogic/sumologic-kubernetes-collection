@@ -307,7 +307,6 @@ data:
         protocols:
           http:
             endpoint: ${env:MY_POD_IP}:4318
-            max_request_body_size: 33554432
     service:
       extensions:
       - health_check

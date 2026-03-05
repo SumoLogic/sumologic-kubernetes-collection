@@ -217,11 +217,7 @@ service:
   pipelines:
     traces:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-      processors: [memory_limiter, k8s_tagger, source, resource, batch]
-{{ else }}
-      processors: [memory_limiter, k8sattributes, source, resource, batch]
-{{ end }}
+      processors: [memory_limiter, {{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}k8s_tagger{{ else }}k8sattributes{{ end }}, source, resource, batch]
       exporters:
 {{- if eq .Values.tracesGateway.enabled true }}
         - otlphttp/traces
@@ -233,11 +229,7 @@ service:
 {{- end }}
     metrics:
       receivers: [otlp, otlp/deprecated]
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-      processors: [memory_limiter, k8s_tagger, source, resource, batch]
-{{ else }}
-      processors: [memory_limiter, k8sattributes, source, resource, batch]
-{{ end }}
+      processors: [memory_limiter, {{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}k8s_tagger{{ else }}k8sattributes{{ end }}, source, resource, batch]
       exporters:
         - sumologic/metrics
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
