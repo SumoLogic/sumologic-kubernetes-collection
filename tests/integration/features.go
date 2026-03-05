@@ -231,7 +231,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod_labels_pod-template-hash":            ".+",
 					"pod":                                     fmt.Sprintf("%s-.+", deployment),
 					"replicaset":                              fmt.Sprintf("%s-.+", deployment),
-					"service":                                 deployment,
+					"service":                                 fmt.Sprintf("%s.*", releaseName),
 					"service_discovery_pod":                   fmt.Sprintf("%s-.+", deployment),
 					"service.namespace":                       namespace,
 					"uid":                                     ".+",
