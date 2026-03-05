@@ -361,6 +361,11 @@ processors:
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
+      - sources:
+        - from: resource_attribute
+          name: k8s.namespace.name
+        - from: resource_attribute
+          name: k8s.pod.name
 {{ end }}
 {{ end }}
 

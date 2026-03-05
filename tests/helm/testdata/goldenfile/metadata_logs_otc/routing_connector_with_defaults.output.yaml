@@ -214,6 +214,11 @@ data:
         - sources:
           - from: resource_attribute
             name: k8s.pod.uid
+        - sources:
+          - from: resource_attribute
+            name: k8s.namespace.name
+          - from: resource_attribute
+            name: k8s.pod.name
         wait_for_metadata: true
         wait_for_metadata_timeout: 10s
       memory_limiter:
