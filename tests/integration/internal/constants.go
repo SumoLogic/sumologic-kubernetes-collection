@@ -443,7 +443,7 @@ func InitializeConstants() error {
 	}
 
 	DefaultExpectedMetrics = []string{}
-	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics, MetricsCollectorOtelcolMetrics, NodeLabelsMetrics)
+	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics, MetricsCollectorOtelcolMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
 	}
