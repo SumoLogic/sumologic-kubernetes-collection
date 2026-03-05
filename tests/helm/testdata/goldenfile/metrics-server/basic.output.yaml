@@ -28,11 +28,10 @@ spec:
         app.kubernetes.io/version: 0.7.0
         helm.sh/chart: metrics-server-6.13.1
     spec:
-      
       serviceAccountName: RELEASE-NAME-metrics-server
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -43,7 +42,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       automountServiceAccountToken: true
       dnsPolicy: ClusterFirst
       containers:
@@ -54,7 +53,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-              - ALL
+                - ALL
             privileged: false
             readOnlyRootFilesystem: false
             runAsGroup: 0
