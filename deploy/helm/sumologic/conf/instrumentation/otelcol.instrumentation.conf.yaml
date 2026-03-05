@@ -179,15 +179,23 @@ processors:
     ## Has to be false to enrich metadata
     passthrough: false
     pod_association:
-    ## The instrumentation k8s_tagger associated pods by connection IP (default behavior).
-    ## The k8sattributes replacement only uses k8s.pod.uid as association source, 
-    ## but spans from traced pods don't carry k8s.pod.uid — they need IP-based connection association. 
-    ##Need to add from: connection as primary pod association. Keep pod uid as fallback
-      - sources:
-        - from: connection
+    ## Mirrors the k8s_tagger default association order (pod_association.go)
+    ## https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/processor/k8sprocessor/pod_association.go#L44
+    ## k8sIPLabelName (k8s.pod.ip) → clientIPLabelName (ip) → connection → host.name (if IP)
+    ## We prepend k8s.pod.uid as the most explicit match, then follow k8s_tagger's order.
+    ## k8s.pod.ip and ip survive gateway hops (forwarded as resource attributes);
+    ## connection uses the TCP source IP and only works for direct pod→collector connections.
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.ip
+      - sources:
+        - from: resource_attribute
+          name: ip
+      - sources:
+        - from: connection
 {{ end }}
 
   ## The memory_limiter processor is used to prevent out of memory situations on the collector.
