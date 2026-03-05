@@ -186,12 +186,13 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				}
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := sumologicmock.Labels{
-					"cluster":    "kubernetes",
-					"_origin":    "kubernetes",
-					"deployment": deployment,
-					"endpoint":   "http",
-					"job":        "kube-state-metrics",
-					"namespace":  ctxopts.Namespace(ctx),
+					"cluster":           "kubernetes",
+					"_origin":           "kubernetes",
+					"deployment":        deployment,
+					"endpoint":          "http",
+					"job":               "kube-state-metrics",
+					"namespace":         ctxopts.Namespace(ctx),
+					"service.namespace": ctxopts.Namespace(ctx),
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 				// drop some unnecessary labels
