@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.23.0]
+
+### Released 2026-03-06
+
+### Added
+
+- feat: Added support for internal terraform provider registries [#4091]
+
+[#4091]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4091
+[v4.23.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.23.0
+
 ## [v4.22.0]
 
 ### Released 2026-03-02
