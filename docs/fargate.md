@@ -47,7 +47,8 @@ Let's consider the following variables:
 - `METRIC_PODS` - Maximum number of metric pods for the cluster. This value is needed to manually create Volumes
 - `LOG_PODS` - Maximum number of log pods for the cluster. This value is needed to manually create Volumes
 - `EVENT_PODS` - Maximum number of event pods for the cluster. This value is needed to manually create Volumes
-- `partition` - AWS partition (use `aws` for standard AWS, `aws-us-gov` for AWS GovCloud, `aws-cn` for AWS China, or `aws-eusc` for AWS EUSC)
+- `partition` - AWS partition (use `aws` for standard AWS, `aws-us-gov` for AWS GovCloud, `aws-cn` for AWS China, or `aws-eusc` for AWS
+  EUSC)
 
 Let's consider the following example values:
 
