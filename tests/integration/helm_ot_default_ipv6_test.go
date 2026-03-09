@@ -13,7 +13,7 @@ import (
 func Test_Helm_Default_OT_ipv6(t *testing.T) {
 
 	expectedMetrics := internal.DefaultExpectedMetrics
-
+	
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
 
 	installChecks := []featureCheck{
