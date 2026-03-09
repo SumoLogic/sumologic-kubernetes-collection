@@ -1421,7 +1421,7 @@ otelcolInstrumentation:
     excludePodRegex: ""
 
   ## Use the sumologic k8s processor to add metadata to traces.
-  ## This is disabled by default, but can be disabled if you want to use the upstream processor.
+  ## This is disabled by default, but can be enabled if you want to use the sumologic k8s_tagger processor.
   useSumoK8sProcessor: false
 
   ## Only used if useSumoK8sProcessor is set to false
@@ -1655,7 +1655,7 @@ metadata:
     metricsLevel: normal
 
     ## Use the sumologic k8s processor to add metadata to the logs.
-    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
+    ## This is disabled by default, but can be enabled if you want to use the sumologic k8s_tagger processor.
     useSumoK8sProcessor: false
 
     ## Only used if useSumoK8sProcessor is set to false
@@ -1786,8 +1786,8 @@ metadata:
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
 
-    ## Use the sumologic k8s processor to add metadata to the logs.
-    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
+    ## Use the k8sattributes processor to add metadata to the logs.
+    ## This is disabled by default, but can be disabled if you want to use the sumologic k8s_tagger processor.
     useSumoK8sProcessor: false
 
     ## Only used if useSumoK8sProcessor is set to false
