@@ -817,14 +817,14 @@ global:
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/metrics-server/values.yaml
 metrics-server:
   image:
-    registry: public.ecr.aws
-    repository: sumologic/metrics-server
+    repository: public.ecr.aws/sumologic/metrics-server
+
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
-  #   pullSecrets:
-  #     - imagepullsecret
+  # imagePullSecrets:
+  #   - name: myRegistryKeySecretName
 
   ## Set the enabled flag to true for enabling metrics-server.
   ## This is required before enabling autoscaling unless you have an existing metrics-server in the cluster.
@@ -834,7 +834,7 @@ metrics-server:
 
   apiService:
     create: true
-  extraArgs:
+  args:
     - --kubelet-insecure-tls=true
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
 
