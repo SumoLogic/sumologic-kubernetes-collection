@@ -34,6 +34,13 @@ trap 'err_report $LINENO' ERR
 declare -a dirs
 ls -1 /customer-scripts 2>/dev/null | grep _ | grep -oE '^.*?_' | sed 's/_//g' | sort | uniq | read -ar dirs || true
 for dir in "${dirs[@]}"; do
+  # Skip 'terraform' directory as it's handled earlier in setup.sh
+  # (pre-init.sh and terraformrc are processed before terraform init)
+  if [[ "${dir}" == "terraform" ]]; then
+    echo "Skipping 'terraform' directory (already processed by setup.sh)"
+    continue
+  fi
+
   target="/scripts/${dir}"
   mkdir "${target}"
   # Get files for given directory and take only filename part (after first _)
@@ -43,7 +50,7 @@ for dir in "${dirs[@]}"; do
     cp "/customer-scripts/${dir}_${file}" "${target}/${file}"
   done
 
-  if [[ ! -f setup.sh ]]; then
+  if [[ ! -f "${target}/setup.sh" ]]; then
     echo "You're missing setup.sh script in custom scripts directory: '${dir}'"
     continue
   fi
