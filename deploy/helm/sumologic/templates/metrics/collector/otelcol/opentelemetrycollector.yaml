@@ -95,6 +95,10 @@ spec:
 {{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.targetMemoryUtilizationPercentage }}
     targetMemoryUtilization: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.targetMemoryUtilizationPercentage }}
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.behavior }}
+    behavior:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.autoscaling.behavior | nindent 6 }}
+{{- end }}
 {{- end }}
   env:
   - name: METADATA_METRICS_SVC

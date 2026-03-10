@@ -13,5 +13,6 @@ sumologic:
       useDefaultExporters: true
       routing:
         table:
-          - exporter: sumologic/test
+          - exporters:
+              - sumologic/test
             statement: route() where resource.attributes["exporter"] == "test"

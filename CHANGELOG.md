@@ -7,6 +7,187 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.23.0]
+
+### Released 2026-03-06
+
+### Added
+
+- feat: Added support for internal terraform provider registries [#4091]
+
+[#4091]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4091
+[v4.23.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.23.0
+
+## [v4.22.0]
+
+### Released 2026-03-02
+
+### Changed
+
+- chore: bumping otel version from 145 to 146 [#4085]
+- chore: bump tailing sidecar to 0.20.0 [#4086]
+- chore: bump opentelemetry-operator from 0.105.1 to 0.106.0 [#4088]
+
+[#4085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4085
+[#4086]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4086
+[#4088]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4088
+[v4.22.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.22.0
+
+## [v4.21.1]
+
+### Released 2026-02-19
+
+### Added
+
+- chore: update opentelemetry-operator chart version to 0.105.1 [#4078]
+
+[#4078]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4078
+[v4.21.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.21.1
+
+## [v4.21.0]
+
+### Released 2026-02-13
+
+### Added
+
+- feat: Adds sumologic collection configmap pull every 24 hrs [#4073]
+
+### Changed
+
+- chore: bumps otel version from 0.143 to 0.145 [#4075]
+
+[#4073]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4073
+[#4075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4075
+[v4.21.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.21.0
+
+## [v4.20.0]
+
+### Released 2026-01-22
+
+### Changed
+
+- chore: upgrade tailing side to v0.19.1 [#4057]
+- chore:tailing sidecar version upgrade and documentation [#4063]
+- adding tailing-sidecar-operator.sidecar.image.tag in values.yaml [#4067]
+
+[#4057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4057
+[#4063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4063
+[#4067]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4067
+[v4.20.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.20.0
+
+## [v4.19.0]
+
+### Released 2026-01-19
+
+### Breaking Changes
+
+- chore: remove useRoutingConnectors and use routing connectors by default [#4056]. See below guide to migrate routing processor to
+  routingconnector
+
+#### Known issue
+
+- Using multiple exporters and route statements under sumologic.logs.otelcol.routing.table will route only to the first matching route and
+  won't check subsequent route conditions. Please remember this limitation while migrating and adding multiple additional routing tables
+
+For example:
+
+```shell
+routing:
+  table:
+    - statement: route() where resource.attributes["k8s.name"] == "test"
+      exporters:
+        - test
+    - statement: route() where resource.attributes["k8s.host"] == "alpha"
+      exporters:
+        - debug
+```
+
+A record where resource.attributes is {"k8s.host": "alpha", "k8s.name":"test"}, will only be routed to test exporter as it was evaluated
+first. The data will not be forwarded to debug exporter.
+
+#### How to migrate?
+
+Routing configurations are defined under sumologic.logs.otelcol.routing.table config key. If you're using custom routing configuration using
+the routing key, you need to migrate. Earlier, routing configurations were defined as the following keys:
+
+1. sumologic.logs.otelcol.routing.table.exporter
+2. sumologic.logs.otelcol.routing.table.statement
+
+```shell
+Older Config:
+sumologic:
+  logs:
+    otelcol:
+      routing:
+        table:
+          - exporter: <exporter-name>
+            statement: <routing-statement>
+
+New Config:
+sumologic:
+  logs:
+    otelcol:
+     routing:
+       table:
+         - exporters: [<exporter-name>]
+           statement: <routing-statement>
+```
+
+Please notice the older configuration used `exporter` in table entry whereas the new configuration uses `exporters`.
+
+With the new configuration, all the exporters with similar statements can be grouped under the same table entry. Internally, sumologic helm
+chart will convert this configuration into Routing connector configurations.
+
+---
+
+### Changed
+
+- chore(deps): bump metrics server to 7.4.12 [#4050]
+- chore(deps): bump falco to 7.0.2 [#4051]
+- chore: updates otelcol image from 140 to 143 [#4059]
+
+[#4056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4056
+[#4050]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4050
+[#4051]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4051
+[#4059]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4059
+[v4.19.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.19.0
+
+## [v4.18.0]
+
+### Released 2025-12-03
+
+### Breaking Changes
+
+- chore(deps): Remove opencensus receiver to upgrade otel to 0.136.1 version [#4021]
+
+### Added
+
+- feat(routing): Adds support for routing connector for logs collection [#4012]
+- fix: backfill cri-o time layout from otel helm charts [#4018]
+- chore(deps): Migrate routing processor to routing connector for metrics collection [#4025]
+- feat(HPA): Adds autoscaling config [#4026]
+- chore: add support for zurich deployment [#4030]
+
+### Changed
+
+- Updated otel-collector version from 0.130 to 0.140 [#4024]
+
+### Fixed
+
+- fix(opentelemetry-operator): Allow runtime/default profile for opentelemetry-operator deployment [#4027]
+- chore(otel operator): Update opentelemetry-operator to 0.99.1 to fix metrics collection issues in openshift clusters [#4032]
+
+[#4021]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4021
+[#4012]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4012
+[#4018]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4018
+[#4025]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4025
+[#4026]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4026
+[#4030]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4030
+[#4024]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4024
+[#4027]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4027
+[#4032]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4032
+[v4.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.18.0
+
 ## [v4.17.0]
 
 ### Released 2025-10-10

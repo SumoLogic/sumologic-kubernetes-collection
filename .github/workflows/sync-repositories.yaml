@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - src_repository: docker.io/bitnami/metrics-server
+          - src_repository: docker.io/bitnamilegacy/metrics-server
             suffix: METRICS_SERVER
           - src_repository: docker.io/busybox
             suffix: BUSYBOX

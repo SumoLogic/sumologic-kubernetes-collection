@@ -12,20 +12,30 @@ metadata:
     heritage: "Helm"
 data:
   config.yaml: |
+    connectors:
+      routing/containers:
+        default_pipelines:
+        - logs/otlp/containers/routing/default
+        table:
+        - pipelines:
+          - logs/otlp/containers/routing/sumologic/test
+          - logs/otlp/containers/routing/debug
+          statement: route() where resource.attributes["exporter"] == "test"
+      routing/systemd:
+        default_pipelines:
+        - logs/otlp/systemd/routing/default
+        table:
+        - pipelines:
+          - logs/otlp/systemd/routing/sumologic/test
+          - logs/otlp/systemd/routing/debug
+          statement: route() where resource.attributes["exporter"] == "test"
     exporters:
       debug:
         verbosity: detailed
-      sumologic/containers:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        log_format: json
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-      sumologic/systemd:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        log_format: json
+      sumologic:
+        client: k8s_%CURRENT_CHART_VERSION%
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+        log_format: otlp
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -227,26 +237,6 @@ data:
         - action: insert
           key: _sourceName
           value: ""
-      routing/containers:
-        default_exporters:
-        - sumologic/containers
-        table:
-        - exporters:
-          - sumologic/test
-          statement: route() where resource.attributes["exporter"] == "test"
-        - exporters:
-          - sumologic/containers
-          statement: route()
-      routing/systemd:
-        default_exporters:
-        - sumologic/systemd
-        table:
-        - exporters:
-          - sumologic/test
-          statement: route() where resource.attributes["exporter"] == "test"
-        - exporters:
-          - sumologic/systemd
-          statement: route()
       source/containers:
         annotation_prefix: pod_annotations_
         collector: kubernetes
@@ -321,8 +311,7 @@ data:
       pipelines:
         logs/otlp/containers:
           exporters:
-          - sumologic/containers
-          - sumologic/test
+          - routing/containers
           processors:
           - memory_limiter
           - filter/include_containers
@@ -338,13 +327,27 @@ data:
           - resource/drop_annotations
           - transform/add_timestamp
           - batch
-          - routing/containers
           receivers:
           - otlp
+        logs/otlp/containers/routing/debug:
+          exporters:
+          - debug
+          receivers:
+          - routing/containers
+        logs/otlp/containers/routing/default:
+          exporters:
+          - debug
+          - sumologic/test
+          receivers:
+          - routing/containers
+        logs/otlp/containers/routing/sumologic/test:
+          exporters:
+          - sumologic/test
+          receivers:
+          - routing/containers
         logs/otlp/kubelet:
           exporters:
-          - sumologic/systemd
-          - sumologic/test
+          - routing/systemd
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host
@@ -362,13 +365,11 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - batch
-          - routing/systemd
           receivers:
           - otlp
         logs/otlp/systemd:
           exporters:
-          - sumologic/systemd
-          - sumologic/test
+          - routing/systemd
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host
@@ -387,9 +388,24 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - batch
-          - routing/systemd
           receivers:
           - otlp
+        logs/otlp/systemd/routing/debug:
+          exporters:
+          - debug
+          receivers:
+          - routing/systemd
+        logs/otlp/systemd/routing/default:
+          exporters:
+          - debug
+          - sumologic/test
+          receivers:
+          - routing/systemd
+        logs/otlp/systemd/routing/sumologic/test:
+          exporters:
+          - sumologic/test
+          receivers:
+          - routing/systemd
       telemetry:
         logs:
           level: info

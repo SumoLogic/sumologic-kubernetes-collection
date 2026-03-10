@@ -1,0 +1,138 @@
+metadata:
+  logs:
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 75
+      targetMemoryUtilizationPercentage: 75
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+  metrics:
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 75
+      targetMemoryUtilizationPercentage: 75
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+
+sumologic:
+  autoscaling:
+    enabled: true
+  events:
+    enabled: true
+  logs:
+    enabled: true
+  metrics:
+    enabled: true
+    collector:
+      otelcol:
+        autoscaling:
+          enabled: true
+          minReplicas: 1
+          maxReplicas: 10
+          targetCPUUtilizationPercentage: 75
+          targetMemoryUtilizationPercentage: 75
+          behavior:
+            scaleUp:
+              stabilizationWindowSeconds: 60
+              policies:
+                - type: Percent
+                  value: 100
+                  periodSeconds: 60
+            scaleDown:
+              stabilizationWindowSeconds: 60
+              policies:
+                - type: Percent
+                  value: 100
+                  periodSeconds: 60
+
+metrics-server:
+  enabled: true
+
+opentelemetry-operator:
+  enabled: true
+
+  manager:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+
+  kubeRBACProxy:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 64Mi
+
+instrumentation:
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator-instr-1"
+
+otelcolInstrumentation:
+  enabled: true
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+    targetMemoryUtilizationPercentage: 75
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60
+
+tracesGateway:
+  enabled: true
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+    targetMemoryUtilizationPercentage: 75
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60

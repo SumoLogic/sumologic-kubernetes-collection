@@ -248,12 +248,11 @@ var (
 		"otelcol_processor_outgoing_items",
 		"otelcol_processor_incoming_items",
 		"otelcol_processor_batch_metadata_cardinality",
-		"otelcol_exporter_send_failed_metric_points",
 	}
 	LogsOtelcolMetrics = []string{
 		"otelcol_exporter_sent_log_records",
-		"otelcol_exporter_send_failed_log_records",
 		"otelcol_receiver_accepted_log_records",
+		"otelcol_receiver_failed_log_records",
 		"otelcol_processor_accepted_log_records",
 		"otelcol_receiver_refused_log_records",
 		"otelcol_processor_groupbyattrs_num_grouped_logs",
@@ -273,6 +272,7 @@ var (
 	}
 	MetricsCollectorOtelcolMetrics = []string{
 		"otelcol_receiver_refused_metric_points",
+		"otelcol_receiver_failed_metric_points",
 		"otelcol_processor_groupbyattrs_num_grouped_metrics",
 		"otelcol_receiver_accepted_metric_points",
 	}
@@ -325,6 +325,8 @@ var (
 		"otelcol_processor_filter_logs.filtered",
 		"otelcol_processor_filter_logs_filtered",
 		"otelcol_otelsvc_k8s_ip_lookup_miss",
+		// https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/45940
+		"otelcol_otelcol.k8s.pod.association",
 		"otelcol_otelsvc_k8s_other_deleted",
 		"otelcol_otelsvc_k8s_pod_added",
 		"otelcol_otelsvc_k8s_replicaset_added",

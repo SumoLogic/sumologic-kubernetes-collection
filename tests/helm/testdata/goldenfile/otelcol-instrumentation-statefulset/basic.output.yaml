@@ -57,7 +57,7 @@ spec:
         fsGroup: 999
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.130.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.146.0-sumo-0"
           imagePullPolicy: IfNotPresent
           args:
             - "--config=/conf/otelcol.instrumentation.conf.yaml"
@@ -82,7 +82,6 @@ spec:
             - containerPort: 14250 # Default endpoint for Jaeger gRPC receiver.
             - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
             - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
-            - containerPort: 55678 # Default endpoint for Opencensus receiver.
             - containerPort: 4317 # Default endpoint for OTLP receiver.
             - containerPort: 4318 # Default endpoint for OTLP HTTP receiver.
             - containerPort: 55681 # Default endpoint for OTLP HTTP receiver. (deprecated)

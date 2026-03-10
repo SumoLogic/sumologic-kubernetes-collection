@@ -9,7 +9,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func Test_Helm_Routing_Additional_Partially(t *testing.T) {
+func Test_Helm_Routing_Connector_Additional_Partially(t *testing.T) {
 
 	installChecks := []featureCheck{
 		CheckOtelcolMetadataLogsInstall,

@@ -18,6 +18,7 @@ data:
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
         decompose_otlp_histograms: true
+        decompose_otlp_summaries: true
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: otlp
@@ -30,6 +31,7 @@ data:
       sumologic/sumologic-mock-default:
         client: k8s_%CURRENT_CHART_VERSION%
         decompose_otlp_histograms: true
+        decompose_otlp_summaries: true
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         max_request_body_size: 16777216
         metric_format: otlp

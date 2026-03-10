@@ -40,7 +40,8 @@ pvcCleaner:
         cpu: 12m
     nodeSelector:
       my: node
-      # clean up kubernetes.io/os selector
+      # Setting key to null after helm v3.20 means the key gets deleted.
+      # Current override logic is to set it to linux.
       kubernetes.io/os: null
     ## Add custom labels only to setup job pod
 

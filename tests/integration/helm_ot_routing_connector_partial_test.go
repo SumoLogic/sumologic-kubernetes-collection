@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_Helm_Routing_Partial(t *testing.T) {
+func Test_Helm_Routing_Connector_Partial(t *testing.T) {
 
 	installChecks := []featureCheck{
 		CheckOtelcolMetadataLogsInstall,

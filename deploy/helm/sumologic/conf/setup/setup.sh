@@ -40,7 +40,7 @@ function fix_sumo_base_url() {
           | grep -Fi location )"
 
   if [[ ! ${OPTIONAL_REDIRECTION} =~ ^\s*$ ]]; then
-    BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|us2)?\.sumologic\.com\/api\/).*/\1/' )
+    BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|ch|us2)?\.sumologic\.com\/api\/).*/\1/' )
   fi
 
   BASE_URL=${BASE_URL%v1*}
@@ -102,6 +102,28 @@ mapfile -t FIELDS < <(echo "${FIELDS_STRING}")
 if [[ -f .terraform.lock.hcl ]]; then
     echo "Removing existing Terraform lock file to prevent provider version conflicts"
     rm -f .terraform.lock.hcl
+fi
+
+# Run pre-init script if provided (for downloading providers, etc.)
+if [[ -f /customer-scripts/terraform_pre-init.sh ]]; then
+    echo "===================================================================="
+    echo "Running pre-init script: /customer-scripts/terraform_pre-init.sh"
+    echo "===================================================================="
+    if ! bash /customer-scripts/terraform_pre-init.sh; then
+        echo "ERROR: Pre-init script failed with exit code $?"
+        echo "Cannot proceed with Terraform setup due to pre-initialization failure."
+        exit 1
+    fi
+    echo "Pre-init script completed successfully"
+fi
+
+# Check for custom Terraform CLI config file (for internal registry support)
+if [[ -f /customer-scripts/terraform_terraformrc ]]; then
+    export TF_CLI_CONFIG_FILE=/customer-scripts/terraform_terraformrc
+    echo "===================================================================="
+    echo "Using custom Terraform CLI config: ${TF_CLI_CONFIG_FILE}"
+    echo "Providers will be downloaded from internal registry as configured."
+    echo "===================================================================="
 fi
 
 # Initialize Terraform with upgrade to handle provider version changes

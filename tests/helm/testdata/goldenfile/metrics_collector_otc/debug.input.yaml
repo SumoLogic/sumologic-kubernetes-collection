@@ -3,3 +3,24 @@ debug:
     collector:
       print: true
       stopLogsIngestion: true
+
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        enabled: true
+        autoscaling:
+          enabled: true
+          behavior:
+            scaleUp:
+              stabilizationWindowSeconds: 60
+              policies:
+                - type: Percent
+                  value: 100
+                  periodSeconds: 60
+            scaleDown:
+              stabilizationWindowSeconds: 60
+              policies:
+                - type: Percent
+                  value: 100
+                  periodSeconds: 60
