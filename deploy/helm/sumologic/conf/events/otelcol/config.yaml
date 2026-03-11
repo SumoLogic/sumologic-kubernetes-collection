@@ -60,7 +60,27 @@ processors:
           - set(time, Now()) where time_unix_nano == 0
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
 
+{{- if .Values.otelevents.reportConfigMaps }}
+  ## Extract configmap name and chart label from body
+  transform/extract_configmap_name:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["configmap_name"], body["metadata"]["name"]) where body["metadata"]["name"] != nil
+          - set(attributes["chart"], body["metadata"]["labels"]["chart"]) where body["metadata"]["labels"]["chart"] != nil
+
+  ## Filter to only include configmaps with chart label starting with "sumologic"
+  filter/sumologic_configmaps:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: chart
+            value: ^sumologic.*
+{{- end }}
+
 receivers:
+{{- if .Values.otelevents.reportConfigMaps }}
   k8sobjects/configmaps:
     auth_type: serviceAccount
     objects:
@@ -70,6 +90,7 @@ receivers:
           - {{ .Release.Namespace | quote }}
         mode: pull
         interval: 24h
+{{- end }}
   raw_k8s_events: {}
 
 service:
@@ -80,6 +101,7 @@ service:
 {{- end }}
     - pprof
   pipelines:
+{{- if .Values.otelevents.reportConfigMaps }}
     logs/configmaps:
       exporters:
         - sumologic
@@ -90,6 +112,8 @@ service:
         - sumologic/sumologic-mock
 {{- end }}
       processors:
+        - transform/extract_configmap_name
+        - filter/sumologic_configmaps
         - resource/add_cluster
         - source
         - sumologic
@@ -97,6 +121,7 @@ service:
         - batch
       receivers:
         - k8sobjects/configmaps
+{{- end }}
     logs/events:
       exporters:
         - sumologic

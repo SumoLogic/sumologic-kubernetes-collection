@@ -1985,6 +1985,9 @@ otelevents:
   ## Metrics Level (basic, normal, detailed)
   metricsLevel: normal
 
+  ## Enable reporting of ConfigMaps. Only Sumologic collection configmaps are reported for now.
+  reportConfigMaps: true
+
   ## Customize the Opentelemetry Collector configuration beyond the exposed options
   config:
     ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
