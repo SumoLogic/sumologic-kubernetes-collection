@@ -2,6 +2,53 @@ apiVersion: v1
 entries:
   sumologic:
   - apiVersion: v2
+    appVersion: 4.23.0-6-g6d48936eee
+    created: "2026-03-11T04:50:18.758054022Z"
+    dependencies:
+    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 40.5.0
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 7.0.2
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 7.4.12
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://helm.influxdata.com/
+      version: 1.4.0
+    - condition: tailing-sidecar-operator.enabled
+      name: tailing-sidecar-operator
+      repository: https://sumologic.github.io/tailing-sidecar
+      version: 0.20.0
+    - condition: opentelemetry-operator.enabled,sumologic.metrics.collector.otelcol.enabled
+      name: opentelemetry-operator
+      repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+      version: 0.106.0
+    - condition: prometheus-windows-exporter.enabled,sumologic.metrics.collector.otelcol.enabled
+      name: prometheus-windows-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 0.3.1
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: 41f92a4e8b770eaede10cc15437b5d00c7a84e2d2ef96742ee2b59afad1f5aba
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    type: application
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-4.23.0-6-g6d48936eee.tgz
+    version: 4.23.0-6-g6d48936eee
+  - apiVersion: v2
     appVersion: 4.23.0-5-g46b22520c7
     created: "2026-03-10T08:43:30.278421364Z"
     dependencies:
@@ -44309,4 +44356,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.19.1-10-g1857f34416.tgz
     version: 2.19.1-10-g1857f34416
-generated: "2026-03-10T08:43:00.43976501Z"
+generated: "2026-03-11T04:50:18.706390081Z"
