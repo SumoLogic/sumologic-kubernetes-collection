@@ -29,4 +29,4 @@ tracesGateway:
 Refs:
 
 - [Trace ID aware load balancing](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/loadbalancingexporter/README.md)
-- [Using cascading_filter](https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data)
+- [Using cascading_filter](https://www.sumologic.com/help/docs/apm/traces/advanced-configuration/filter-shape-tracing-data)
