@@ -109,8 +109,8 @@ sumologic:
 
 #### Fields
 
-The configuration snippet below configures two [fields](https://www.sumologic.com/help/docs/manage/fields/), (`node` and `deployment`) for the
-default logs source:
+The configuration snippet below configures two [fields](https://www.sumologic.com/help/docs/manage/fields/), (`node` and `deployment`) for
+the default logs source:
 
 ```yaml
 sumologic:
