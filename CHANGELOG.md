@@ -25,8 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4106]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4106
 [#4107]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4107
 [#4110]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4110
+[v4.24.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.0
 
-[v4.24.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.0## [v4.23.0]
+## [v4.23.0]
 
 ### Released 2026-03-06
 
