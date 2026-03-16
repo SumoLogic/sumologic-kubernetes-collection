@@ -7,6 +7,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.24.0]
+
+### Released 2026-03-16
+
+### Added
+
+- feat: Feature flags configMap pull and prevents pulling non-sumo configmaps. [#4103]
+- chore: add support for ESC deployment [#4106]
+
+### Changed
+
+- chore(SUMO-278717): fix the uninstall by upgrading the upstream operator [#4107]
+- chore(SUMO-280239): Bump otel version to 0.147.0 [#4110]
+
+[#4103]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4103
+[#4106]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4106
+[#4107]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4107
+[#4110]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4110
+[v4.24.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.0
+
 ## [v4.23.0]
 
 ### Released 2026-03-06
