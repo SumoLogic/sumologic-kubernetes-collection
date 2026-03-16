@@ -324,7 +324,9 @@ var (
 		"otelcol_processor_filter_datapoints.filtered",
 		"otelcol_processor_filter_logs.filtered",
 		"otelcol_processor_filter_logs_filtered",
-		"otelcol_otelsvc_k8s_ip_lookup_miss",
+		// Deprecated: "otelcol_otelsvc_k8s_ip_lookup_miss"
+		// https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/45940
+		"otelcol.k8s.pod.association",
 		// https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/45940
 		"otelcol_otelcol.k8s.pod.association",
 		"otelcol_otelsvc_k8s_other_deleted",
