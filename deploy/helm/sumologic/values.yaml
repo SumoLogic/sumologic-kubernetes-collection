@@ -1629,6 +1629,14 @@ metadata:
   ## Add custom labels to all otelcol svc (logs and metrics)
   serviceLabels: {}
 
+  ## Add custom annotations to all otelcol svc (logs and metrics)
+  ## Useful for topology-aware routing, e.g.: service.kubernetes.io/topology-mode: "Auto"
+  serviceAnnotations: {}
+
+  ## Set trafficDistribution on all otelcol svc (logs and metrics)
+  ## Use "PreferClose" with topology-mode annotation to reduce cross-zone traffic
+  trafficDistribution: ""
+
   ## Configure persistence for Opentelemetry Collector
   persistence:
     enabled: true
@@ -2125,6 +2133,14 @@ otellogs:
 
   ## Add custom labels to otelcol svc
   serviceLabels: {}
+
+  ## Add custom annotations to otelcol logs collector svc
+  ## Useful for topology-aware routing, e.g.: service.kubernetes.io/topology-mode: "Auto"
+  serviceAnnotations: {}
+
+  ## Set trafficDistribution on otelcol logs collector svc
+  ## Use "PreferClose" with topology-mode annotation to reduce cross-zone traffic
+  trafficDistribution: ""
 
   ## Configure image for Opentelemetry Collector
   image:
