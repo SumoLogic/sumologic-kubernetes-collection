@@ -723,7 +723,6 @@ sumologic:
       podLabels: {}
       ## Add custom annotations only to metrics sts pods
       podAnnotations: {}
-
     ## Prometheus serviceMonitors related to Sumo Logic services
     ## They are applied only if kube-prometheus-stack is enabled
     serviceMonitors:
@@ -846,8 +845,7 @@ kube-prometheus-stack:
   ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
   ## see https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#using-newer-kube-prometheus-stack.
   ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
-  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
-  ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
+  ## Do not enable prometheusOperator from this chart, as this will make Prometheus try to write to an non-existent remote write endpoint.
   # enabled: false
 
   # global:
@@ -1092,36 +1090,9 @@ kube-prometheus-stack:
   grafana:
     enabled: false
     defaultDashboardsEnabled: false
+  ## Don't enable this, prometheus not supported. Use Otel operator instead
   prometheusOperator:
     enabled: false
-    image:
-      repository: public.ecr.aws/sumologic/prometheus-operator
-    ## Labels to add to the operator pod
-    podLabels: {}
-    ## Annotations to add to the operator pod
-    podAnnotations: {}
-    ## Resource limits for prometheus operator
-    resources:
-      {}
-      # limits:
-      #   cpu: 200m
-      #   memory: 200Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 100Mi
-    ## ServiceMonitor for the Prometheus operator
-    serviceMonitor:
-      selfMonitor: false
-    admissionWebhooks:
-      enabled: false
-    tls:
-      enabled: false
-    prometheusConfigReloader:
-      image:
-        repository: public.ecr.aws/sumologic/prometheus-config-reloader
-
-    thanosImage:
-      repository: public.ecr.aws/sumologic/thanos
 
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
@@ -1264,109 +1235,6 @@ kube-prometheus-stack:
             sourceLabels: [__name__]
   prometheus:
     enabled: false
-    additionalServiceMonitors: []
-    prometheusSpec:
-      image:
-        repository: public.ecr.aws/sumologic/prometheus
-      ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
-      ## NOTE changing the scrape interval to be >1m can result in metrics
-      ## from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
-      scrapeInterval: "30s"
-      ## Prometheus data retention period
-      retention: "1d"
-      ## Add custom pod annotations and labels to prometheus pods
-      podMetadata:
-        labels: {}
-        annotations: {}
-      nodeSelector:
-        kubernetes.io/os: linux
-      ## Define resources requests and limits for single Pods.
-      resources:
-        limits:
-          cpu: 2000m
-          memory: 8Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      initContainers:
-        - name: "init-config-reloader"
-          env:
-            - name: METADATA_METRICS_SVC
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataMetrics
-            - name: NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataNamespace
-      containers:
-        - name: "config-reloader"
-          env:
-            - name: METADATA_METRICS_SVC
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataMetrics
-            - name: NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataNamespace
-
-      ## Enable WAL compression to reduce Prometheus memory consumption
-      walCompression: true
-
-      ## prometheus scrape config
-      ## rel: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
-      additionalScrapeConfigs:
-        ## scraping metrics basing on annotations:
-        ##   - prometheus.io/scrape: true - to scrape metrics from the pod
-        ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
-        ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
-        ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-        - job_name: "pod-annotations"
-          kubernetes_sd_configs:
-            - role: pod
-          relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-              action: keep
-              regex: true
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-              action: replace
-              target_label: __metrics_path__
-              regex: (.+)
-            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-              action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              target_label: __address__
-            - source_labels: [__metrics_path__]
-              separator: ;
-              regex: (.*)
-              target_label: endpoint
-              replacement: $1
-              action: replace
-            - source_labels: [__meta_kubernetes_namespace]
-              action: replace
-              target_label: namespace
-            - action: labelmap
-              regex: __meta_kubernetes_pod_label_(.+)
-            - source_labels: [__meta_kubernetes_pod_name]
-              separator: ;
-              regex: (.*)
-              target_label: pod
-              replacement: $1
-              action: replace
-      remoteWrite:
-        ## infrastructure metrics
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888/prometheus.metrics
-          remoteTimeout: 5s
-
-    serviceMonitor:
-      selfMonitor: false
-
 ## Configuration for prometheus-windows-exporter
 ## ref: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-windows-exporter
 ## This is an experimental feature
@@ -1694,9 +1562,6 @@ metadata:
       ## The value of this key should be a dictionary, that will replace the normal configuration.
       ## This is an advanced feature, use with caution, and review the generated configuration first.
       override: {}
-
-      ## List of additional endpoints to be handled by Metrics Metadata Pods
-      additionalEndpoints: []
 
     statefulset:
       nodeSelector: {}

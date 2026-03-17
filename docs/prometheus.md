@@ -1,4 +1,9 @@
-# Prometheus
+# Important update from Helm chart v5
+
+Prometheus support (including Prometheus Operator and remote write integration) has been removed in Helm chart v5. The Opentelemetry
+operator was made the default for metrics collection in Helm chart v4 and remains the single source for metrics collection in Helm chart v5.
+
+## Prometheus (Till helm chart v4)
 
 Prometheus is crucial part of the metrics pipeline. It is also a complicated and powerful tool. In Kubernetes specifically, it's also often
 managed by Prometheus Operator and a set of custom resources. It's possible that you already have some part of the K8s Prometheus stack
@@ -9,7 +14,7 @@ installed.
 
 <!-- TOC -->
 
-- [Prometheus](#prometheus)
+- [Prometheus (Till helm chart v4)](#prometheus-till-helm-chart-v4)
   - [No Prometheus in the cluster](#no-prometheus-in-the-cluster)
   - [Prometheus Operator in the cluster](#prometheus-operator-in-the-cluster)
     - [Custom Resource Definition compatibility](#custom-resource-definition-compatibility)
