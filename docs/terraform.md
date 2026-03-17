@@ -83,7 +83,7 @@ You can set all of the source
 
 #### Processing Rules
 
-You can add [Processing Rules](https://help.sumologic.com/docs/send-data/collection/processing-rules) to an HTTP source via
+You can add [Processing Rules](https://www.sumologic.com/help/docs/send-data/collection/processing-rules) to an HTTP source via
 `user-values.yaml`. Below is an example of an exclude rule to filter `DEBUG` log messages. All logs from Kubernetes (Systemd, container, and
 custom logs) will have this filter applied.
 
@@ -109,8 +109,8 @@ sumologic:
 
 #### Fields
 
-The configuration snippet below configures two [fields](https://help.sumologic.com/docs/manage/fields/), (`node` and `deployment`) for the
-default logs source:
+The configuration snippet below configures two [fields](https://www.sumologic.com/help/docs/manage/fields/), (`node` and `deployment`) for
+the default logs source:
 
 ```yaml
 sumologic:
@@ -150,3 +150,113 @@ List of available variables:
 - `var.collector_name`
 
 **Note** You have to manually activate fields using the Sumo Logic service.
+
+## Using Internal/Private Terraform Provider Registry
+
+For air-gapped environments or organizations that require providers to be downloaded from internal registries, you can configure the Helm
+chart to download Terraform providers from internal file servers (Nexus, Artifactory, S3, etc.) instead of the public Terraform Registry.
+
+### Configuration
+
+The setup job automatically detects and uses custom provider configuration if provided via `additionalFiles`. This approach downloads
+provider binaries from direct file URLs before `terraform init` runs.
+
+Add the following to your `values.yaml` or a custom values file:
+
+```yaml
+sumologic:
+  setup:
+    additionalFiles:
+      terraform:
+        # Pre-init script downloads providers before terraform init
+        pre-init.sh: |
+          #!/bin/bash
+          set -e
+
+          echo "Downloading Terraform providers..."
+
+          # Create provider directory structure
+          PROVIDER_DIR="/terraform/terraform-plugins/registry.terraform.io/sumologic/sumologic/3.0.0/linux_amd64"
+          mkdir -p "$PROVIDER_DIR"
+
+          # Download provider zip from your file server
+          # Replace with your actual URL (Nexus raw repo, S3, etc.)
+          wget -O /tmp/terraform-provider-sumologic.zip \
+            "https://nexus.company.com/repository/terraform-files/terraform-provider-sumologic_3.0.0_linux_amd64.zip"
+
+          # Extract the provider binary from the zip
+          unzip -o /tmp/terraform-provider-sumologic.zip -d "$PROVIDER_DIR"
+
+          # Make it executable
+          chmod +x "$PROVIDER_DIR"/terraform-provider-sumologic_v*
+
+          echo "✅ Provider downloaded successfully"
+
+          # Cleanup
+          rm /tmp/terraform-provider-sumologic.zip
+
+        # Configure Terraform to use filesystem mirror
+        terraformrc: |
+          provider_installation {
+            filesystem_mirror {
+              path = "/terraform/terraform-plugins"
+              include = ["registry.terraform.io/sumologic/*"]
+            }
+            direct {
+              exclude = ["registry.terraform.io/sumologic/*"]
+            }
+          }
+```
+
+**How it works:**
+
+- The `pre-init.sh` script downloads provider binaries from your file server before `terraform init` runs
+- Terraform uses the `terraformrc` configuration to load providers from the local filesystem instead of the public registry
+- Suitable for Nexus raw repositories, Artifactory, S3, or any HTTP file server
+- The pre-init script runs automatically before Terraform initialization
+- If the pre-init script fails (non-zero exit code), the setup job will fail immediately with a clear error message
+
+**Important Notes:**
+
+- Always include `set -e` at the start of your pre-init script to ensure any command failure causes the script to exit
+- If provider download fails, the setup job will stop before running `terraform init`, preventing confusing error messages
+- The example above downloads a `.zip` file and extracts it. Make sure your provider URL matches the actual file format
+- The `terraform` directory under `additionalFiles` is **reserved** for Terraform provider configuration (pre-init.sh, terraformrc). It is
+  processed early in the setup flow and skipped by the post-installation custom script runner. Use other directory names for custom
+  post-installation scripts.
+
+### Authentication
+
+If your internal file server requires authentication, add credentials to the wget command in the pre-init script:
+
+```bash
+# Basic authentication
+wget --user=username --password=password -O /tmp/terraform-provider-sumologic.zip \
+  "https://nexus.company.com/repository/files/terraform-provider-sumologic_3.0.0_linux_amd64.zip"
+
+# Or use token/header authentication
+wget --header="Authorization: Bearer YOUR_TOKEN" -O /tmp/terraform-provider-sumologic.zip \
+  "https://nexus.company.com/repository/files/terraform-provider-sumologic_3.0.0_linux_amd64.zip"
+```
+
+### Verification
+
+When the setup job runs, you'll see the following in the logs if the custom configuration is detected:
+
+```
+====================================================================
+Using custom Terraform CLI config: /customer-scripts/terraform_terraformrc
+Providers will be downloaded from internal registry as configured.
+====================================================================
+Initializing provider plugins...
+- Finding sumologic/sumologic versions matching ">= 3.0.0, < 3.1.5"...
+- Installing sumologic/sumologic v3.0.0...
+```
+
+Monitor the logs to ensure providers are being downloaded from your internal registry.
+
+### Additional Resources
+
+- [Terraform CLI Configuration](https://developer.hashicorp.com/terraform/cli/config/config-file)
+- [Filesystem Mirror Configuration](https://developer.hashicorp.com/terraform/cli/config/config-file#filesystem_mirror)
+- [Sumo Logic Provider Releases](https://github.com/SumoLogic/terraform-provider-sumologic/releases)

@@ -9,7 +9,8 @@ following diagram provides an overview of the collection process.
 
 ## Installation
 
-Detailed instructions are available in our [Installation Guides](https://help.sumologic.com/docs/send-data/kubernetes/install-helm-chart/).
+Detailed instructions are available in our
+[Installation Guides](https://www.sumologic.com/help/docs/send-data/kubernetes/install-helm-chart/).
 
 ## Documentation
 
@@ -22,7 +23,9 @@ release.
 
 | version                                                                                                 | planned end of life date |
 | ------------------------------------------------------------------------------------------------------- | ------------------------ |
-| [v4.22](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.22/docs/README.md) | TBD                      |
+| [v4.24](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.24/docs/README.md) | TBD                      |
+| [v4.23](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.23/docs/README.md) | 2026-09-16               |
+| [v4.22](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.22/docs/README.md) | 2026-09-06               |
 | [v4.21](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.21/docs/README.md) | 2026-08-02               |
 | [v4.20](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.20/docs/README.md) | 2026-07-13               |
 | [v4.19](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v4.19/docs/README.md) | 2026-06-22               |

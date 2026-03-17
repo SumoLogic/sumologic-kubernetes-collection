@@ -40,7 +40,7 @@ function fix_sumo_base_url() {
           | grep -Fi location )"
 
   if [[ ! ${OPTIONAL_REDIRECTION} =~ ^\s*$ ]]; then
-    BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|ch|us2)?\.sumologic\.com\/api\/).*/\1/' )
+    BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|ch|esc|us2)?\.sumologic\.com\/api\/).*/\1/' )
   fi
 
   BASE_URL=${BASE_URL%v1*}
@@ -104,6 +104,28 @@ if [[ -f .terraform.lock.hcl ]]; then
     rm -f .terraform.lock.hcl
 fi
 
+# Run pre-init script if provided (for downloading providers, etc.)
+if [[ -f /customer-scripts/terraform_pre-init.sh ]]; then
+    echo "===================================================================="
+    echo "Running pre-init script: /customer-scripts/terraform_pre-init.sh"
+    echo "===================================================================="
+    if ! bash /customer-scripts/terraform_pre-init.sh; then
+        echo "ERROR: Pre-init script failed with exit code $?"
+        echo "Cannot proceed with Terraform setup due to pre-initialization failure."
+        exit 1
+    fi
+    echo "Pre-init script completed successfully"
+fi
+
+# Check for custom Terraform CLI config file (for internal registry support)
+if [[ -f /customer-scripts/terraform_terraformrc ]]; then
+    export TF_CLI_CONFIG_FILE=/customer-scripts/terraform_terraformrc
+    echo "===================================================================="
+    echo "Using custom Terraform CLI config: ${TF_CLI_CONFIG_FILE}"
+    echo "Providers will be downloaded from internal registry as configured."
+    echo "===================================================================="
+fi
+
 # Initialize Terraform with upgrade to handle provider version changes
 terraform init -input=false -upgrade || {
     echo "Terraform init failed, attempting to clean .terraform directory"
@@ -135,7 +157,7 @@ else
     readonly CREATE_FIELDS=0
     echo "Couldn't automatically create fields"
     echo "You do not have enough field capacity to create the required fields automatically."
-    echo "Please refer to https://help.sumologic.com/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
+    echo "Please refer to https://www.sumologic.com/help/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
 # Sumo Logic Collector and HTTP sources
@@ -170,7 +192,7 @@ if [[ "${SUMOLOGIC_DASHBOARDS_ENABLED:?}" = "true" ]]; then
 else
     echo "Installation of the Sumo Logic dashboards is disabled."
     echo "You can install them manually later with:"
-    echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
+    echo "https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
 fi
 
 # Cleanup env variables

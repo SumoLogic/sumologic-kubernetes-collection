@@ -7,6 +7,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.24.0]
+
+### Released 2026-03-16
+
+### Added
+
+- feat: Feature flags configMap pull and prevents pulling non-sumo configmaps. [#4103]
+- chore: add support for ESC deployment [#4106]
+
+### Changed
+
+- chore(SUMO-278717): fix the uninstall by upgrading the upstream operator [#4107]
+- chore(SUMO-280239): Bump otel version to 0.147.0 [#4110]
+
+[#4103]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4103
+[#4106]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4106
+[#4107]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4107
+[#4110]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4110
+[v4.24.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.0
+
+## [v4.23.0]
+
+### Released 2026-03-06
+
+### Added
+
+- feat: Added support for internal terraform provider registries [#4091]
+
+[#4091]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4091
+[v4.23.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.23.0
+
 ## [v4.22.0]
 
 ### Released 2026-03-02
@@ -931,7 +962,7 @@ See the [migration guide][v4_migration_guide] for details.
 [#3332]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3332
 [#3340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3340
 [v4.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0
-[v4_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v4/important-changes/
+[v4_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
 
 ## [v3.19.3]
 
@@ -1774,7 +1805,7 @@ See the [migration guide][v3_migration_guide] for details.
 [#2794]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2794
 [#2807]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2807
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
-[v3_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v3/important-changes/
+[v3_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v3/important-changes/
 [v3.0.0-rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...v3.0.0-rc.0
 
 ## [v3.0.0-beta.1]
@@ -2735,7 +2766,7 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [v0.38.1-cfp]:
   https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
-[v0.38.1-cfp-help]: https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
+[v0.38.1-cfp-help]: https://www.sumologic.com/help/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
 [#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895

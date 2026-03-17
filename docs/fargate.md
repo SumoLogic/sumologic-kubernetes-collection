@@ -47,6 +47,8 @@ Let's consider the following variables:
 - `METRIC_PODS` - Maximum number of metric pods for the cluster. This value is needed to manually create Volumes
 - `LOG_PODS` - Maximum number of log pods for the cluster. This value is needed to manually create Volumes
 - `EVENT_PODS` - Maximum number of event pods for the cluster. This value is needed to manually create Volumes
+- `partition` - AWS partition (use `aws` for standard AWS, `aws-us-gov` for AWS GovCloud, `aws-cn` for AWS China, or `aws-eusc` for AWS
+  EUSC)
 
 Let's consider the following example values:
 
@@ -60,6 +62,7 @@ export SG_NAME=sumologic-collection
 export METRIC_PODS=10
 export LOG_PODS=3
 export EVENT_PODS=1
+export partition=aws
 ```
 
 ## Common operations
@@ -573,7 +576,7 @@ cat >eks-logging-policy.json <<EOF
 EOF
 
 aws iam create-policy --policy-name eks-logging-policy --policy-document file://eks-logging-policy.json
-aws iam attach-role-policy --role-name <eks-fargate-pod-execution-role> --policy-arn=arn:aws:iam::$account_id:policy/eks-logging-policy
+aws iam attach-role-policy --role-name <eks-fargate-pod-execution-role> --policy-arn=arn:${partition}:iam::$account_id:policy/eks-logging-policy
 ```
 
 #### Configuration
@@ -677,8 +680,8 @@ cat >cloudwatch-policy.json <<EOF
                 "logs:ListTagsForResource"
             ],
             "Resource": [
-                "arn:aws:logs:*:*:log-group:*:log-stream:*",
-                "arn:aws:logs:*:*:destination:*"
+                "arn:${partition}:logs:*:*:log-group:*:log-stream:*",
+                "arn:${partition}:logs:*:*:destination:*"
             ]
         },
         {
@@ -728,7 +731,7 @@ cat >trust-relationship.json <<EOF
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::$account_id:oidc-provider/$oidc_provider"
+        "Federated": "arn:${partition}:iam::$account_id:oidc-provider/$oidc_provider"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
@@ -748,7 +751,7 @@ aws iam create-role --role-name cloudwatch-role --assume-role-policy-document fi
 Attach the cloudwatch-role to the cloudwatch policy
 
 ```bash
-aws iam attach-role-policy --role-name cloudwatch-role --policy-arn=arn:aws:iam::$account_id:policy/cloudwatch-policy
+aws iam attach-role-policy --role-name cloudwatch-role --policy-arn=arn:${partition}:iam::$account_id:policy/cloudwatch-policy
 ```
 
 The above policy must have permissions to list, read and describe cloudwatch log groups and streams. For more on this please refer to
@@ -766,7 +769,7 @@ sumologic:
       ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
       otelcloudwatch:
         enabled: false
-        roleArn: arn:aws:iam::${account_id}:role/cloudwatch-role
+        roleArn: arn:${partition}:iam::${account_id}:role/cloudwatch-role
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
@@ -807,7 +810,7 @@ sumologic:
     collector:
       otelcloudwatch:
         enabled: true
-        roleArn: arn:aws:iam::${account_id}:role/cloudwatch-role
+        roleArn: arn:${partition}:iam::${account_id}:role/cloudwatch-role
         region: <region>
         logGroups:
           fluent-bit-cloudwatch:
