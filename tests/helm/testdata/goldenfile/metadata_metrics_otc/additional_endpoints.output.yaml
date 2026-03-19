@@ -49,6 +49,7 @@ data:
           - (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type
             == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY
             or IsMatch(name, ".*_bucket"))
+          - IsMatch(name, "^otelcol[._](k8s[._]pod[._]association|otelsvc_k8s_(pod_added|pod_updated|pod_table_size|pod_deleted|ip_lookup_miss))$")
       groupbyattrs:
         keys:
         - container
