@@ -18,7 +18,9 @@ filter/drop_unnecessary_metrics:
       # drop histograms we've extracted sums and counts from, but don't want the full thing
       - (not IsMatch(name, {{ .Values.sumologic.metrics.allowHistogramRegex | quote }})) and (type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY or IsMatch(name, ".*_bucket"))
 {{- end }}
-
+      # Exclude k8sattributes pod related metrics which could cause unwanted noise
+      # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/documentation.md#internal-telemetry
+      - IsMatch(name, "^otelcol[._](k8s[._]pod[._]association|otelsvc_k8s_(pod_added|pod_updated|pod_table_size|pod_deleted|ip_lookup_miss))$")
 # Prometheus receiver puts all labels in record-level attributes, and we need them in resource
 groupbyattrs:
   keys:
