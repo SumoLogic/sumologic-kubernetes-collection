@@ -768,7 +768,7 @@ sumologic:
     collector:
       ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
       otelcloudwatch:
-        enabled: false
+        enabled: true
         roleArn: arn:${partition}:iam::${account_id}:role/cloudwatch-role
         ## Configure persistence for the cloudwatch collector
         persistence:
