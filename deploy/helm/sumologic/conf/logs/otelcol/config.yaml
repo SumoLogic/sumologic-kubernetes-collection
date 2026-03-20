@@ -358,9 +358,21 @@ processors:
     ## Has to be false to enrich metadata
     passthrough: false
     pod_association:
+    ## Mirrors k8s_tagger's `build_hostname` association (pod_association.go):
+    ## build_hostname combined k8s.pod.name + k8s.namespace.name into a single
+    ## compound key "{podName}.{namespace}" for pod cache lookup.
+    ## k8sattributes two-source match achieves the same uniqueness guarantee:
+    ## both sources must match simultaneously, equivalent to the compound key.
+    ## k8s.pod.uid is prepended as a more precise fallback when set (e.g. via
+    ## the filelog receiver which parses the UID from the log file path).
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
+      - sources:
+        - from: resource_attribute
+          name: k8s.namespace.name
+        - from: resource_attribute
+          name: k8s.pod.name
 {{ end }}
 {{ end }}
 
