@@ -14,21 +14,29 @@ data:
   config.yaml: |
     connectors:
       routing/containers:
-        default_pipelines:
-        - logs/otlp/containers/routing/default
         table:
-        - pipelines:
+        - action: copy
+          pipelines:
           - logs/otlp/containers/routing/sumologic/test
           - logs/otlp/containers/routing/debug
-          statement: route() where resource.attributes["exporter"] == "test"
-      routing/systemd:
-        default_pipelines:
-        - logs/otlp/systemd/routing/default
-        table:
+          statement: delete_key(resource.attributes, "router.default_pipeline_route")
+            where resource.attributes["exporter"] == "test"
         - pipelines:
+          - logs/otlp/containers/routing/default
+          statement: route() where resource.attributes["router.default_pipeline_route"]
+            != nil
+      routing/systemd:
+        table:
+        - action: copy
+          pipelines:
           - logs/otlp/systemd/routing/sumologic/test
           - logs/otlp/systemd/routing/debug
-          statement: route() where resource.attributes["exporter"] == "test"
+          statement: delete_key(resource.attributes, "router.default_pipeline_route")
+            where resource.attributes["exporter"] == "test"
+        - pipelines:
+          - logs/otlp/systemd/routing/default
+          statement: route() where resource.attributes["router.default_pipeline_route"]
+            != nil
     exporters:
       debug:
         verbosity: detailed
@@ -317,6 +325,9 @@ data:
         - context: log
           statements:
           - limit(attributes, 0, [])
+      transform/route:
+        log_statements:
+        - set(resource.attributes["router.default_pipeline_route"], true)
     receivers:
       otlp:
         protocols:
@@ -345,6 +356,7 @@ data:
           - resource/remove_pod_name
           - resource/drop_annotations
           - transform/add_timestamp
+          - transform/route
           - batch
           receivers:
           - otlp
@@ -383,6 +395,7 @@ data:
           - transform/remove_attributes
           - transform/flatten
           - transform/add_timestamp
+          - transform/route
           - batch
           receivers:
           - otlp
@@ -406,6 +419,7 @@ data:
           - transform/remove_attributes
           - transform/flatten
           - transform/add_timestamp
+          - transform/route
           - batch
           receivers:
           - otlp
