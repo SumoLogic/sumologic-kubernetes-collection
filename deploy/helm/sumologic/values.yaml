@@ -821,7 +821,6 @@ metrics-server:
     tag: v0.8.1
   updateStrategy:
     type: RollingUpdate
-  containerPort: 8443
 
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
