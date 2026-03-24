@@ -21,6 +21,8 @@ filter/drop_unnecessary_metrics:
       # Exclude k8sattributes pod related metrics which could cause unwanted noise
       # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/documentation.md#internal-telemetry
       - IsMatch(name, "^otelcol[._](k8s[._]pod[._]association|otelsvc_k8s_(pod_added|pod_updated|pod_table_size|pod_deleted|ip_lookup_miss))$")
+      # Exclude all otelcol internal k8s metrics (broad catch-all)
+      - IsMatch(name, "^otelcol[._].*k8s.*")
 # Prometheus receiver puts all labels in record-level attributes, and we need them in resource
 groupbyattrs:
   keys:
