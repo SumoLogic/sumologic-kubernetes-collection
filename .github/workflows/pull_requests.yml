@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [chart-changed]
     env:
-      PRETTIER_VERSION: 2.8.8
+      PRETTIER_VERSION: 3.2.5
     steps:
       - uses: actions/checkout@v6
       - name: install yamllint
