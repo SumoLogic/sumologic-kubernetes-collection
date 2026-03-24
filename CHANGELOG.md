@@ -15,9 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - feat(k8sattributesprocessor): Make k8sattributes processor as default and deprecate k8s_tagger for k8s metadata enrichment [#4093]
 
-For the k8sattributes processor, collection of node labels for metrics is disabled by default. 
+For the k8sattributes processor, collection of node labels for metrics is disabled by default.
 
-This change primarily affects users who were already using the k8sattributes processor via the flag metadata.metrics.useSumoK8sProcessor and relying on node labels in their metrics queries.
+This change primarily affects users who were already using the k8sattributes processor via the flag metadata.metrics.useSumoK8sProcessor and
+relying on node labels in their metrics queries.
 
 You can re-enable node label enrichment for metrics by setting: metadata.metrics.extractNodeLabels=true
 
