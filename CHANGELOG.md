@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.25.0]
+
+### Released 2026-03-24
+
+### Changed
+
+- feat(k8sattributesprocessor): Make k8sattributes processor as default and deprecate k8s_tagger for k8s metadata enrichment [#4093]
+- feat: Drops k8s_attributes metrics [#4118]
+
+[#4093]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4093
+[#4118]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4118
+[v4.25.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.25.0
+
 ## [v4.24.1]
 
 ### Released 2026-03-19
