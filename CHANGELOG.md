@@ -15,8 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - feat(k8sattributesprocessor): Make k8sattributes processor as default and deprecate k8s_tagger for k8s metadata enrichment [#4093]
 
-For the k8sattributes processor, collection of node labels for metrics is disabled by default. This could break metrics queries if you have set up specifically using node labels
-Nodelabels enrichment for metrics can be enabled by setting the flag: metadata.metrics.extractNodeLabels=true
+For the k8sattributes processor, collection of node labels for metrics is disabled by default. 
+
+This change primarily affects users who were already using the k8sattributes processor via the flag metadata.metrics.useSumoK8sProcessor and relying on node labels in their metrics queries.
+
+You can re-enable node label enrichment for metrics by setting: metadata.metrics.extractNodeLabels=true
+
+Enable node labels only if required for your use case, as they can significantly increase metrics cardinality.
 
 [#4093]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4093
 
