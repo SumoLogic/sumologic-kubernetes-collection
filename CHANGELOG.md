@@ -7,6 +7,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.25.0]
+
+### Released 2026-03-24
+
+### Breaking Changes
+
+- feat(k8sattributesprocessor): Make k8sattributes processor as default and deprecate k8s_tagger for k8s metadata enrichment [#4093]
+
+For the k8sattributes processor, collection of node labels for metrics is disabled by default.
+
+This change primarily affects users who were already using the k8sattributes processor via the flag
+`metadata.metrics.useSumoK8sProcessor=false` and relying on node labels in their metrics search queries or dashboards.
+
+You can re-enable node label enrichment for metrics by setting:
+
+`metadata.metrics.extractNodeLabels=true`
+
+Enable node labels only if required for your use case, as they can significantly increase metrics cardinality.
+
+[#4093]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4093
+
+### Changed
+
+- feat: Drops k8s_attributes metrics [#4118]
+
+[#4118]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4118
+[v4.25.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.25.0
+
 ## [v4.24.1]
 
 ### Released 2026-03-19
