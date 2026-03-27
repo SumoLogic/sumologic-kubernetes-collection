@@ -64,6 +64,8 @@ spec:
             - name: SUMOLOGIC_SECRET_NAME
               value: "sumologic"
 
+            - name: GODEBUG
+              value: "netdns=go"
             - name: NO_PROXY
               value: kubernetes.default.svc
       securityContext:
