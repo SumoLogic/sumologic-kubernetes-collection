@@ -50,3 +50,11 @@
 {{- if and (not .Values.sumologic.logs.otelcol.useDefaultExporters) (not .Values.sumologic.logs.otelcol.extraExporters) -}}
 {{- fail "\nPlease set `sumologic.logs.otelcol.extraExporters` if you set `sumologic.logs.otelcol.useDefaultExporters` to false : https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
 {{- end -}}
+
+{{/* Check if metrics server has been configured properly */}}
+{{- if (index .Values "metrics-server").image.registry -}}
+{{- fail "\nCannot use `metrics-server.image.registry`. Please refer to the open source metrics server configuration https://artifacthub.io/packages/helm/metrics-server/metrics-server" }}
+{{- end -}}
+{{- if (index .Values "metrics-server").extraArgs -}}
+{{- fail "\nCannot use `metrics-server.extraArgs`. Please refer to the open source metrics server configuration https://artifacthub.io/packages/helm/metrics-server/metrics-server" }}
+{{- end -}}
