@@ -52,8 +52,10 @@
 {{- end -}}
 
 {{/* Check if metrics server has been configured properly */}}
-{{- if not (semverCompare ">0.8.0" (index .Values "metrics-server").image.tag) -}}
+{{- if eq (index .Values "metrics-server" "image" "repository") "public.ecr.aws/sumologic/metrics-server" -}}
+{{- if and (ne (index .Values "metrics-server" "image" "tag") "") (not (semverCompare ">0.8.0" (index .Values "metrics-server" "image" "tag")) ) -}}
 {{- fail "\nImage tag must be a supported release version greater than or equal to 0.8.1" }}
+{{- end -}}
 {{- end -}}
 {{- if (index .Values "metrics-server").image.registry -}}
 {{- fail "\nCannot use `metrics-server.image.registry`. Please refer to the open source metrics server configuration https://artifacthub.io/packages/helm/metrics-server/metrics-server" }}
