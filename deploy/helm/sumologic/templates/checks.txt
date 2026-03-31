@@ -57,9 +57,12 @@
 {{- fail "\nImage tag must be a supported release version greater than or equal to 0.8.1" }}
 {{- end -}}
 {{- end -}}
+{{- if (index .Values "metrics-server").image.pullSecrets -}}
+{{- fail "\nCannot use `metrics-server.image.pullSecrets`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/" }}
+{{- end -}}
 {{- if (index .Values "metrics-server").image.registry -}}
-{{- fail "\nCannot use `metrics-server.image.registry`. Please refer to the open source metrics server configuration https://artifacthub.io/packages/helm/metrics-server/metrics-server" }}
+{{- fail "\nCannot use `metrics-server.image.registry`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/" }}
 {{- end -}}
 {{- if (index .Values "metrics-server").extraArgs -}}
-{{- fail "\nCannot use `metrics-server.extraArgs`. Please refer to the open source metrics server configuration https://artifacthub.io/packages/helm/metrics-server/metrics-server" }}
+{{- fail "\nCannot use `metrics-server.extraArgs`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/" }}
 {{- end -}}
