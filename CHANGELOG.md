@@ -7,7 +7,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v4.25.0]
+## [v4.26.0]
+
+### Released 2026-04-01
+
+### Breaking Changes
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+
+Starting from version 4.26.0, We have changed our Bitnami based metrics server to the open source Metrics Server.
+
+Refer: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
+
+### Changed
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+- feat: Updates routing connector config to use action:copy [#4116]
+
+[#4100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4100
+[#4116]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4116
+
+[v4.26.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.26.0## [v4.25.0]
 
 ### Released 2026-03-24
 
