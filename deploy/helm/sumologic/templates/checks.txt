@@ -58,11 +58,11 @@
 {{- end -}}
 {{- end -}}
 {{- if (index .Values "metrics-server").image.pullSecrets -}}
-{{- fail "\nCannot use `metrics-server.image.pullSecrets`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/" }}
+{{- fail "\nCannot use `metrics-server.image.pullSecrets`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/#metrics-server-source-chart-changed" }}
 {{- end -}}
 {{- if (index .Values "metrics-server").image.registry -}}
-{{- fail "\nCannot use `metrics-server.image.registry`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/" }}
+{{- fail "\nCannot use `metrics-server.image.registry`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/#metrics-server-source-chart-changed" }}
 {{- end -}}
 {{- if (index .Values "metrics-server").extraArgs -}}
-{{- fail "\nCannot use `metrics-server.extraArgs`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/" }}
+{{- fail "\nCannot use `metrics-server.extraArgs`. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/#metrics-server-source-chart-changed" }}
 {{- end -}}
