@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 Starting from version 4.26.0, We have changed our Bitnami based metrics server to the open source Metrics Server.
 
-Refer: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
+Refer: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/#metrics-server-source-chart-changed
 
 ### Changed
 
