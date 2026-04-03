@@ -50,8 +50,8 @@ processors:
           - set(attributes["k8s.pod.name"], resource.attributes["cloudwatch.log.stream"])
           - set(attributes["k8s.namespace.name"], resource.attributes["cloudwatch.log.stream"])
           - replace_pattern(attributes["k8s.pod.name"], "^.*kube\\.var\\.log\\.containers\\.([0-9a-zA-Z\\-]+)\\_.*", "$$1")
-          - replace_pattern(attributes["k8s.container.name"], "^.*kube\\.var\\.log\\.containers\\.[0-9a-zA-Z\\-]+\\_[a-zA-Z\\-]*\\_([a-zA-Z]*).*", "$$1")
-          - replace_pattern(attributes["k8s.namespace.name"], "^.*kube\\.var\\.log\\.containers\\.[0-9a-zA-Z\\-]+\\_([a-zA-Z\\-]*)_.*", "$$1")
+          - replace_pattern(attributes["k8s.container.name"], "^.*kube\\.var\\.log\\.containers\\.[0-9a-zA-Z\\-]+\\_[0-9a-zA-Z\\-]*\\_([0-9a-zA-Z\\-]+)-[0-9a-f]{64}\\.log", "$$1")
+          - replace_pattern(attributes["k8s.namespace.name"], "^.*kube\\.var\\.log\\.containers\\.[0-9a-zA-Z\\-]+\\_([0-9a-zA-Z\\-]*)_.*", "$$1")
   logstransform/cloudwatch:
     operators:
       - id: merge-cri-lines
