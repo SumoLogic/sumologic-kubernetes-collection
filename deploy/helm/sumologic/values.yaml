@@ -429,6 +429,9 @@ sumologic:
       # units:
       #   - docker.service
 
+      ## Behavior specified by journald.conf
+      journaldDirectory: /var/log/journal
+
       otelcol:
         ## Extra processors for systemd logs. See https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
