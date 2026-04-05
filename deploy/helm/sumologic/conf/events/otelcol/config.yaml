@@ -60,6 +60,39 @@ processors:
           - set(time, Now()) where time_unix_nano == 0
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
 
+{{- if not .Values.otelevents.useSumoK8sEventReceiver }}
+  ## Reformat body to align k8sobjects payload format with the older raw_k8s_events format
+  ## so that existing event queries continue to work
+  transform/reformat_body:
+    log_statements:
+      - context: log
+        statements:
+          # Copy 'object' from body to attributes
+          - set(attributes["object"], body["object"])
+          # Copy 'type' from body to attributes
+          - set(attributes["type"], body["type"])
+          # Lift 'message' out of 'object' and put it in 'body'
+          - set(body, attributes["object"]["message"])
+
+  ## Drop DELETED and other non-watch events (keep only ADDED and MODIFIED)
+  filter/watch_types:
+    logs:
+      log_record:
+        - attributes["type"] != "ADDED" and attributes["type"] != "MODIFIED"
+
+  ## Populate severity_text and severity_number from the event type field
+  transform/set_severity:
+    log_statements:
+      - context: log
+        statements:
+          # Warning → WARN (13)
+          - set(severity_text, "Warning") where attributes["object"]["type"] == "Warning"
+          - set(severity_number, 13) where attributes["object"]["type"] == "Warning"
+          # Normal → INFO (9)
+          - set(severity_text, "Normal") where attributes["object"]["type"] == "Normal"
+          - set(severity_number, 9) where attributes["object"]["type"] == "Normal"
+{{- end }}
+
 {{- if .Values.otelevents.reportConfigMaps }}
   ## Extract configmap name and chart label from body
   transform/extract_configmap_name:
@@ -91,7 +124,15 @@ receivers:
         mode: pull
         interval: 24h
 {{- end }}
+{{- if .Values.otelevents.useSumoK8sEventReceiver }}
   raw_k8s_events: {}
+{{- else }}
+  k8sobjects/events:
+    auth_type: serviceAccount
+    objects:
+      - name: events
+        mode: watch
+{{- end }}
 
 service:
   extensions:
@@ -132,13 +173,22 @@ service:
         - sumologic/sumologic-mock
 {{- end }}
       processors:
+{{- if not .Values.otelevents.useSumoK8sEventReceiver }}
+        - transform/reformat_body
+        - filter/watch_types
+        - transform/set_severity
+{{- end }}
         - resource/add_cluster
         - source
         - sumologic
         - transform/add_timestamp
         - batch
       receivers:
+{{- if .Values.otelevents.useSumoK8sEventReceiver }}
         - raw_k8s_events
+{{- else }}
+        - k8sobjects/events
+{{- end }}
 
 
   telemetry:

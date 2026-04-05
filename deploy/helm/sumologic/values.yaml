@@ -2071,6 +2071,11 @@ otelevents:
   ## Metrics Level (basic, normal, detailed)
   metricsLevel: normal
 
+  ## When true (default), use the in-house raw_k8s_events receiver for Kubernetes event collection.
+  ## When false, use the upstream k8sobjects receiver with additional transform and filter processors.
+  ## Note: k8sobjects receiver does not de-duplicate events on collector restarts.
+  useSumoK8sEventReceiver: true
+
   ## Enable reporting of ConfigMaps. Only Sumologic collection configmaps are reported for now.
   reportConfigMaps: true
 
