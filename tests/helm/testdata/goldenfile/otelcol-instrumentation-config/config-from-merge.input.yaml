@@ -1,6 +1,7 @@
 otelcolInstrumentation:
   config:
     merge:
-      processors:
-        batch:
-          timeout: 10s
+      exporters:
+        sumologic/metrics:
+          sending_queue:
+            num_consumers: 8

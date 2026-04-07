@@ -28,11 +28,6 @@ data:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
-    processors:
-      batch:
-        send_batch_max_size: 2000
-        send_batch_size: 1000
-        timeout: 1s
     receivers:
       filelog/containers:
         exclude:
@@ -184,8 +179,6 @@ data:
         logs/containers:
           exporters:
           - otlphttp
-          processors:
-          - batch
           receivers:
           - filelog/containers
       telemetry:

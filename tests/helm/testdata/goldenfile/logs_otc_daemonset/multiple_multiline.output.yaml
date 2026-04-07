@@ -29,10 +29,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2000
-        send_batch_size: 1000
-        timeout: 1s
       logstransform/systemd:
         operators:
         - from: body._SYSTEMD_UNIT
@@ -256,8 +252,6 @@ data:
         logs/containers:
           exporters:
           - otlphttp
-          processors:
-          - batch
           receivers:
           - filelog/containers
         logs/systemd:
@@ -265,7 +259,6 @@ data:
           - otlphttp
           processors:
           - logstransform/systemd
-          - batch
           receivers:
           - journald
       telemetry:

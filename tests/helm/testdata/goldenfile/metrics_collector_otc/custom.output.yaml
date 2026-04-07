@@ -141,10 +141,6 @@ spec:
         endpoint: "[${env:MY_POD_IP}]:13133"
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2000
-        send_batch_size: 5000
-        timeout: 1s
       filter/drop_stale_datapoints:
         metrics:
           datapoint:
@@ -175,7 +171,6 @@ spec:
           exporters:
             - otlphttp
           processors:
-            - batch
             - filter/drop_stale_datapoints
             - transform/drop_unnecessary_attributes
           receivers:
