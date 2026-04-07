@@ -1,0 +1,112 @@
+---
+# Source: sumologic/templates/events/otelcol/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-events
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-events
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  config.yaml: |
+    exporters:
+      sumologic:
+        client: k8s_%CURRENT_CHART_VERSION%
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
+        log_format: otlp
+        sending_queue:
+          enabled: true
+          storage: file_storage
+    extensions:
+      file_storage:
+        directory: /var/lib/storage/events
+        timeout: 10s
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 2048
+        send_batch_size: 1024
+        timeout: 1s
+      filter/watch_types:
+        logs:
+          log_record:
+          - attributes["type"] != "ADDED" and attributes["type"] != "MODIFIED"
+      resource/add_cluster:
+        attributes:
+        - action: upsert
+          key: cluster
+          value: kubernetes
+      source:
+        collector: kubernetes
+        source_category: kubernetes/events
+        source_category_prefix: ""
+        source_category_replace_dash: /
+        source_name: events
+      sumologic:
+        add_cloud_namespace: false
+      transform/add_timestamp:
+        log_statements:
+        - context: log
+          statements:
+          - set(time, Now()) where time_unix_nano == 0
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+      transform/reformat_body:
+        log_statements:
+        - context: log
+          statements:
+          - set(attributes["object"], body["object"])
+          - set(attributes["type"], body["type"])
+          - set(body, attributes["object"]["message"])
+      transform/set_severity:
+        log_statements:
+        - context: log
+          statements:
+          - set(severity_text, "Warning") where attributes["object"]["type"] == "Warning"
+          - set(severity_number, 13) where attributes["object"]["type"] == "Warning"
+          - set(severity_text, "Normal") where attributes["object"]["type"] == "Normal"
+          - set(severity_number, 9) where attributes["object"]["type"] == "Normal"
+    receivers:
+      k8sobjects/events:
+        auth_type: serviceAccount
+        objects:
+        - mode: watch
+          name: events
+    service:
+      extensions:
+      - health_check
+      - file_storage
+      - pprof
+      pipelines:
+        logs/events:
+          exporters:
+          - sumologic
+          processors:
+          - transform/reformat_body
+          - filter/watch_types
+          - transform/set_severity
+          - resource/add_cluster
+          - source
+          - sumologic
+          - transform/add_timestamp
+          - batch
+          receivers:
+          - k8sobjects/events
+      telemetry:
+        logs:
+          level: info
+        metrics:
+          level: normal
+          readers:
+          - pull:
+              exporter:
+                prometheus:
+                  host: ${env:MY_POD_IP}
+                  port: 8888
+                  without_scope_info: true
+                  without_type_suffix: true
+                  without_units: true
