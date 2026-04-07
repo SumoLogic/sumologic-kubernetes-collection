@@ -2,6 +2,12 @@ exporters:
 {{- if eq .Values.debug.logs.metadata.print true }}
   debug:
     verbosity: detailed
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- end }}
 
 {{- if eq .Values.sumologic.logs.sourceType "http" }}
@@ -13,6 +19,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -25,6 +35,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -40,6 +54,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -52,6 +70,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -68,6 +90,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -81,6 +107,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -124,15 +154,6 @@ processors:
     actions:
       - action: delete
         key: fluent.tag
-
-  ## The batch processor accepts spans and places them into batches grouped by node and resource
-  batch:
-    ## Maximum number of spans sent at once
-    send_batch_max_size: 2_048
-    ## Number of spans after which a batch will be sent regardless of time
-    send_batch_size: 1_024
-    ## Time duration after which a batch will be sent regardless of size
-    timeout: 1s
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
   filter/exclude_kubelet:
@@ -638,7 +659,6 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
-        - batch
       receivers:
         - otlp
 {{ end }}
@@ -675,7 +695,6 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
-        - batch
       receivers:
         - otlp
 
@@ -711,7 +730,6 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
-        - batch
       receivers:
         - otlp
 {{ end }}

@@ -8,10 +8,20 @@ exporters:
 {{- if .Values.sumologic.events.persistence.enabled }}
       storage: file_storage
 {{- end }}
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 
 {{- if eq .Values.debug.events.print true }}
   debug:
     verbosity: detailed
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- end }}
 
 {{- if eq (include "sumologic-mock.forward-events" .) "true" }}
@@ -21,6 +31,10 @@ exporters:
     log_format: {{ include "sumologic.events.exporter.format" . }}
     sending_queue:
       enabled: true
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- end }}
 
 extensions:
@@ -34,10 +48,6 @@ extensions:
   pprof: {}
 
 processors:
-  batch:
-    send_batch_max_size: 2_048
-    send_batch_size: 1024
-    timeout: 1s
   resource/add_cluster:
     attributes:
       - action: upsert
@@ -159,7 +169,6 @@ service:
         - source
         - sumologic
         - transform/add_timestamp
-        - batch
       receivers:
         - k8sobjects/configmaps
 {{- end }}
@@ -182,7 +191,6 @@ service:
         - source
         - sumologic
         - transform/add_timestamp
-        - batch
       receivers:
 {{- if .Values.otelevents.useSumoK8sEventReceiver }}
         - raw_k8s_events

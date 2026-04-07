@@ -21,6 +21,10 @@ data:
         max_request_body_size: 16777216
         metric_format: otlp
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -37,10 +41,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2048
-        send_batch_size: 1024
-        timeout: 1s
       filter/app_metrics:
         error_mode: ignore
         metrics:
@@ -233,7 +233,6 @@ data:
           - transform/remove_name
           - filter/drop_unnecessary_metrics
           - filter/app_metrics
-          - batch
           receivers:
           - telegraf
           - otlp

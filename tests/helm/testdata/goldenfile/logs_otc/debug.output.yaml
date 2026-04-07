@@ -14,11 +14,21 @@ data:
   config.yaml: |
     exporters:
       debug:
+        sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2000
+            min_size: 1000
+          enabled: true
         verbosity: detailed
       otlphttp:
         disable_keep_alives: true
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2000
+            min_size: 1000
           queue_size: 10
     extensions:
       file_storage:
@@ -31,10 +41,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2000
-        send_batch_size: 1000
-        timeout: 1s
       logstransform/systemd:
         operators:
         - from: body._SYSTEMD_UNIT
@@ -234,8 +240,6 @@ data:
           exporters:
           - otlphttp
           - debug
-          processors:
-          - batch
           receivers:
           - filelog/containers
         logs/systemd:
@@ -244,7 +248,6 @@ data:
           - debug
           processors:
           - logstransform/systemd
-          - batch
           receivers:
           - journald
       telemetry:

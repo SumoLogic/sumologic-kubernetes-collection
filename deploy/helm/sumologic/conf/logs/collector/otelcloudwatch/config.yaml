@@ -3,6 +3,10 @@ exporters:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
     sending_queue:
       queue_size: 10
+      batch:
+        flush_timeout: 1s
+        min_size: 1000
+        max_size: 2000
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
 
@@ -20,10 +24,6 @@ extensions:
   pprof: {}
 
 processors:
-  batch:
-    send_batch_max_size: 2000
-    send_batch_size: 1000
-    timeout: 1s
   transform/set_source_identifier:
     error_mode: ignore
     log_statements:
@@ -97,7 +97,6 @@ service:
         - transform/parsejson
         - logstransform/cloudwatch
         - transform/metadata
-        - batch
       exporters:
         - otlphttp
   telemetry:

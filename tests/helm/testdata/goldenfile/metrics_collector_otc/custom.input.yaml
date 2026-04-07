@@ -71,9 +71,12 @@ sumologic:
         allocationStrategy: consistent-hashing
         config:
           merge:
-            processors:
-              batch:
-                send_batch_size: 5000
+            exporters:
+              otlphttp:
+                sending_queue:
+                  batch:
+                    min_size: 5000
+                    max_size: 6000
         targetAllocator:
           resources:
             limits:

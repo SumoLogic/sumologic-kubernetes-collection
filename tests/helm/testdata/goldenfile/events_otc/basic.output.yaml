@@ -18,6 +18,10 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
         log_format: otlp
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           storage: file_storage
     extensions:
@@ -28,10 +32,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2048
-        send_batch_size: 1024
-        timeout: 1s
       filter/sumologic_configmaps:
         logs:
           include:
@@ -92,7 +92,6 @@ data:
           - source
           - sumologic
           - transform/add_timestamp
-          - batch
           receivers:
           - k8sobjects/configmaps
         logs/events:
@@ -103,7 +102,6 @@ data:
           - source
           - sumologic
           - transform/add_timestamp
-          - batch
           receivers:
           - raw_k8s_events
       telemetry:

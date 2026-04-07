@@ -15,6 +15,12 @@ data:
     exporters:
       otlphttp/traces:
         endpoint: http://RELEASE-NAME-sumologic-traces-gateway.sumologic:4318
+        sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
+          enabled: true
       sumologic/metrics:
         client: k8s_%CURRENT_CHART_VERSION%
         compression: gzip
@@ -28,8 +34,12 @@ data:
           max_elapsed_time: 120s
           max_interval: 30s
         sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
           enabled: false
-          num_consumers: 10
+          num_consumers: 8
           queue_size: 5000
         timeout: 5s
     extensions:
@@ -37,10 +47,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 512
-        send_batch_size: 256
-        timeout: 10s
       k8sattributes:
         auth_type: serviceAccount
         extract:
@@ -148,7 +154,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - otlp
           - otlp/deprecated
@@ -160,7 +165,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - jaeger
           - otlp

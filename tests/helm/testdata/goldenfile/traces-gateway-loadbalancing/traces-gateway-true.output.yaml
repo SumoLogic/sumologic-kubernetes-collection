@@ -17,6 +17,10 @@ data:
         protocol:
           otlp:
             sending_queue:
+              batch:
+                flush_timeout: 5s
+                max_size: 512
+                min_size: 256
               enabled: true
               num_consumers: 10
               queue_size: 10000
@@ -32,10 +36,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 512
-        send_batch_size: 256
-        timeout: 5s
       memory_limiter:
         check_interval: 5s
         limit_percentage: 90
@@ -57,7 +57,6 @@ data:
           - loadbalancing
           processors:
           - memory_limiter
-          - batch
           receivers:
           - otlp
       telemetry:

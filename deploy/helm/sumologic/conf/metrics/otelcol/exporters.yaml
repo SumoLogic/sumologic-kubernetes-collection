@@ -1,6 +1,12 @@
 {{- if eq .Values.debug.metrics.metadata.print true }}
 debug:
   verbosity: detailed
+  sending_queue:
+    enabled: true
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
 {{- end }}
 
 {{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
@@ -22,6 +28,10 @@ sumologic/sumologic-mock-default:
     ## setting queue_size a high number, so we always use maximum space of the storage
     ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -37,6 +47,10 @@ sumologic/sumologic-mock-http:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -62,6 +76,10 @@ sumologic/default:
     ## setting queue_size a high number, so we always use maximum space of the storage
     ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -77,6 +95,10 @@ sumologic/apiserver:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -91,6 +113,10 @@ sumologic/control_plane:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -105,6 +131,10 @@ sumologic/controller:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -119,6 +149,10 @@ sumologic/kubelet:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -133,6 +167,10 @@ sumologic/node:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -147,6 +185,10 @@ sumologic/scheduler:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -161,6 +203,10 @@ sumologic/state:
 {{- end }}
     num_consumers: 10
     queue_size: 10_000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s

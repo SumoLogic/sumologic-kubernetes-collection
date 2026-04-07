@@ -18,22 +18,22 @@ metadata:
     config:
       merge:
         processors:
-          batch:
-            send_batch_size: 7
+          filter/drop_unnecessary_metrics:
+            error_mode: silent
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig struct {
 		Processors struct {
-			Batch struct {
-				SendBatchSize int `yaml:"send_batch_size"`
-			}
+			FilterDropUnnecessaryMetrics struct {
+				ErrorMode string `yaml:"error_mode"`
+			} `yaml:"filter/drop_unnecessary_metrics"`
 		}
 	}
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 	require.NoError(t, err)
 
-	require.Equal(t, 7, otelConfig.Processors.Batch.SendBatchSize)
+	require.Equal(t, "silent", otelConfig.Processors.FilterDropUnnecessaryMetrics.ErrorMode)
 }
 
 func TestMetadataMetricsOtelConfigOverride(t *testing.T) {
@@ -136,7 +136,6 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"groupbyattrs/group_by_name",
 		"transform/remove_name",
 		"filter/drop_unnecessary_metrics",
-		"batch",
 	}
 
 	require.Equal(t, expectedPipelineValue, otelConfig.Service.Pipelines.Metrics.Processors)

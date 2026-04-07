@@ -3,6 +3,12 @@ exporters:
 {{- if eq .Values.debug.instrumentation.tracesSampler.print true }}
   debug:
     verbosity: detailed
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
 {{- end }}
 
 {{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}
@@ -13,6 +19,12 @@ exporters:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
 {{- end }}
     compression: gzip
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
 {{- end }}
 
   otlphttp:
@@ -26,6 +38,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
 {{- if .Values.tracesSampler.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -60,15 +76,6 @@ processors:
     ## Max number of traces for which decisions are kept in memory
     num_traces: 200000
 
-  ## The batch processor accepts spans and places them into batches grouped by node and resource
-  batch:
-    ## Number of spans after which a batch will be sent regardless of time
-    send_batch_size: 256
-    ## Never more than this many spans are being sent in a batch
-    send_batch_max_size: 512
-    ## Time duration after which a batch will be sent regardless of size
-    timeout: 5s
-
 extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
@@ -92,7 +99,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, cascading_filter, batch]
+      processors: [memory_limiter, cascading_filter]
       exporters:
         - otlphttp
 {{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}

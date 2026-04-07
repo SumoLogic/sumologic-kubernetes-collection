@@ -14,11 +14,21 @@ data:
   otelcol.instrumentation.conf.yaml: |
     exporters:
       debug:
+        sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
+          enabled: true
         verbosity: detailed
       loadbalancing:
         protocol:
           otlp:
             sending_queue:
+              batch:
+                flush_timeout: 5s
+                max_size: 512
+                min_size: 256
               enabled: true
               num_consumers: 10
               queue_size: 10000
@@ -42,6 +52,10 @@ data:
           max_elapsed_time: 120s
           max_interval: 30s
         sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
           enabled: false
           num_consumers: 10
           queue_size: 5000
@@ -51,10 +65,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 512
-        send_batch_size: 256
-        timeout: 5s
       k8sattributes:
         auth_type: serviceAccount
         extract:
@@ -163,7 +173,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - otlp
           - otlp/deprecated
@@ -176,7 +185,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - jaeger
           - otlp
