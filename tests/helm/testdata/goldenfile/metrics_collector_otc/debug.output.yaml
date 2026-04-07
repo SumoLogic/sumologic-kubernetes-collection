@@ -43,19 +43,18 @@ spec:
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
     behavior:
-      scaleUp:
-        stabilizationWindowSeconds: 60
-        policies:
-          - type: Percent
-            value: 100
-            periodSeconds: 60
       scaleDown:
-        stabilizationWindowSeconds: 60
         policies:
-          - type: Percent
+          - periodSeconds: 60
+            type: Percent
             value: 100
-            periodSeconds: 60
-
+        stabilizationWindowSeconds: 60
+      scaleUp:
+        policies:
+          - periodSeconds: 60
+            type: Percent
+            value: 100
+        stabilizationWindowSeconds: 60
   env:
     - name: METADATA_METRICS_SVC
       valueFrom:
@@ -118,10 +117,6 @@ spec:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2000
-        send_batch_size: 1000
-        timeout: 1s
       filter/drop_stale_datapoints:
         metrics:
           datapoint:
@@ -280,7 +275,6 @@ spec:
             - debug
             - otlphttp
           processors:
-            - batch
             - filter/drop_stale_datapoints
             - transform/extract_sum_count_from_histograms
             - transform/drop_unnecessary_attributes

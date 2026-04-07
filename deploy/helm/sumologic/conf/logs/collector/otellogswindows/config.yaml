@@ -21,12 +21,6 @@ extensions:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
 
-processors:
-  batch:
-    send_batch_max_size: 2000
-    send_batch_size: 1000
-    timeout: 1s
-
 receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
 {{ tpl (.Files.Get "conf/logs/collector/common/filelog_receiver.yaml") . | nindent 2 }}
@@ -45,8 +39,6 @@ service:
 {{- if eq .Values.debug.logs.collector.print true }}
         - debug
 {{- end }}
-      processors:
-        - batch
       receivers:
         - filelog/containers
 {{- end }}

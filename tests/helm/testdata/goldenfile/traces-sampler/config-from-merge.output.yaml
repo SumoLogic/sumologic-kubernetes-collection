@@ -27,10 +27,6 @@ data:
         size_mib: 512
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 512
-        send_batch_size: 256
-        timeout: 5s
       cascading_filter:
         num_traces: 200000
       memory_limiter:
@@ -55,7 +51,6 @@ data:
           processors:
           - memory_limiter
           - cascading_filter
-          - batch
           receivers:
           - otlp
       telemetry:
