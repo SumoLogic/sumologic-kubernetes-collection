@@ -20,10 +20,6 @@ extensions:
   pprof: {}
 
 processors:
-  batch:
-    send_batch_max_size: 2000
-    send_batch_size: 1000
-    timeout: 1s
   transform/set_source_identifier:
     error_mode: ignore
     log_statements:
@@ -97,7 +93,6 @@ service:
         - transform/parsejson
         - logstransform/cloudwatch
         - transform/metadata
-        - batch
       exporters:
         - otlphttp
   telemetry:

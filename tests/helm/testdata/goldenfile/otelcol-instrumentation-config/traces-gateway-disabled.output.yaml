@@ -49,10 +49,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 512
-        send_batch_size: 256
-        timeout: 5s
       k8sattributes:
         auth_type: serviceAccount
         extract:
@@ -160,7 +156,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - otlp
           - otlp/deprecated
@@ -172,7 +167,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - jaeger
           - otlp

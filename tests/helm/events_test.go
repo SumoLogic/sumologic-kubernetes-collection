@@ -15,22 +15,22 @@ otelevents:
   config:
     merge:
       processors:
-        batch:
-          send_batch_size: 7
+        source:
+          source_category_prefix: "prefix"
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig struct {
 		Processors struct {
-			Batch struct {
-				SendBatchSize int `yaml:"send_batch_size"`
+			Source struct {
+				SourceCategoryPrefix string `yaml:"source_category_prefix"`
 			}
 		}
 	}
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 	require.NoError(t, err)
 
-	require.Equal(t, 7, otelConfig.Processors.Batch.SendBatchSize)
+	require.Equal(t, "prefix", otelConfig.Processors.Source.SourceCategoryPrefix)
 }
 
 func TestEventOtelConfigOverride(t *testing.T) {
