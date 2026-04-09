@@ -65,7 +65,6 @@ spec:
           image: public.ecr.aws/nginx/nginx-custom:0.0-alpine
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
             - containerPort: 4318
           resources:
             limits:
@@ -76,7 +75,7 @@ spec:
               memory: 512Mi
           livenessProbe:
             tcpSocket:
-              port: 80
+              port: 4318
             failureThreshold: 10
             initialDelaySeconds: 60
             periodSeconds: 20
@@ -84,7 +83,7 @@ spec:
             timeoutSeconds: 10
           readinessProbe:
             tcpSocket:
-              port: 80
+              port: 4318
             failureThreshold: 6
             initialDelaySeconds: 10
             periodSeconds: 10

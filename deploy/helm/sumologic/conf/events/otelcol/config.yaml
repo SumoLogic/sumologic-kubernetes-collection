@@ -8,6 +8,12 @@ exporters:
 {{- if .Values.sumologic.events.persistence.enabled }}
       storage: file_storage
 {{- end }}
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 
 {{- if eq .Values.debug.events.print true }}
   debug:

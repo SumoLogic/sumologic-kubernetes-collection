@@ -25,6 +25,12 @@ sumologic/sumologic-mock-default:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 
 sumologic/sumologic-mock-http:
   client: {{ include "sumologic.sumo_client" . }}
@@ -40,6 +46,12 @@ sumologic/sumologic-mock-http:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 {{- end }}
 
 ## Configuration for Sumo Logic Exporter
@@ -65,6 +77,12 @@ sumologic/default:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 {{- if eq .Values.sumologic.metrics.sourceType "http" }}
 sumologic/apiserver:
   client: {{ include "sumologic.sumo_client" . }}
@@ -80,6 +98,12 @@ sumologic/apiserver:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 sumologic/control_plane:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
@@ -94,6 +118,12 @@ sumologic/control_plane:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 sumologic/controller:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
@@ -108,6 +138,12 @@ sumologic/controller:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 sumologic/kubelet:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
@@ -122,6 +158,12 @@ sumologic/kubelet:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 sumologic/node:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
@@ -136,6 +178,12 @@ sumologic/node:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 sumologic/scheduler:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
@@ -150,6 +198,12 @@ sumologic/scheduler:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 sumologic/state:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
@@ -164,4 +218,10 @@ sumologic/state:
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+  retry_on_failure:
+    enabled: true
+    initial_interval: 5s
+    multiplier: 1.2
+    max_interval: 5m
+    max_elapsed_time: 1h
 {{- end }}

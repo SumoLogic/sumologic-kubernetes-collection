@@ -25,8 +25,9 @@ data:
         retry_on_failure:
           enabled: true
           initial_interval: 5s
-          max_elapsed_time: 120s
-          max_interval: 30s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: false
           num_consumers: 10

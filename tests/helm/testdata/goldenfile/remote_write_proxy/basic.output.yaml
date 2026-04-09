@@ -33,7 +33,6 @@ spec:
           image: public.ecr.aws/sumologic/nginx-unprivileged:1.26.0-alpine-sumo-0
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
             - containerPort: 4318
           resources:
             limits:
@@ -44,7 +43,7 @@ spec:
               memory: 128Mi
           livenessProbe:
             tcpSocket:
-              port: 8080
+              port: 4318
             failureThreshold: 6
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -52,7 +51,7 @@ spec:
             timeoutSeconds: 5
           readinessProbe:
             tcpSocket:
-              port: 8080
+              port: 4318
             failureThreshold: 3
             initialDelaySeconds: 5
             periodSeconds: 5

@@ -26,10 +26,11 @@ exporters:
       enabled: true
       ## Time to wait after the first failure before retrying
       initial_interval: 5s
+      multiplier: 1.2
       ## Upper bound on backoff
-      max_interval: 30s
+      max_interval: 5m
       ## Maximum amount of time spent trying to send a batch
-      max_elapsed_time: 120s
+      max_elapsed_time: 1h
     sending_queue:
       enabled: false
       ## Number of consumers that dequeue batches

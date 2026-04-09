@@ -22,6 +22,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: otlp
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -35,6 +41,12 @@ data:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         max_request_body_size: 16777216
         metric_format: otlp
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -46,6 +58,12 @@ data:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10

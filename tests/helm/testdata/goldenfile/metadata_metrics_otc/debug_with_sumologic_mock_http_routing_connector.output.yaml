@@ -67,6 +67,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -78,6 +84,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -89,6 +101,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -102,6 +120,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -113,6 +137,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -124,6 +154,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -135,6 +171,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -146,6 +188,12 @@ data:
         endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -159,6 +207,12 @@ data:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -170,6 +224,12 @@ data:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         max_request_body_size: 16777216
         metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10

@@ -34,6 +34,18 @@
 {{- end -}}
 {{- end -}}
 
+{{/* Check if metrics are enabled but OTel collector is explicitly disabled (v5: Prometheus Operator removed) */}}
+{{- if .Values.sumologic.metrics.enabled -}}
+{{- if eq .Values.sumologic.metrics.collector.otelcol.enabled false -}}
+{{- fail "\nPrometheus Operator has been removed in v5. The OpenTelemetry Collector is the only supported metrics collection path.\nPlease enable the OTel collector and OTel operator:\n  sumologic.metrics.collector.otelcol.enabled: true\n  opentelemetry-operator.enabled: true\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/" -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Check if customer has explicitly re-enabled Prometheus Operator (removed in v5) */}}
+{{- if (index .Values "kube-prometheus-stack").prometheusOperator.enabled -}}
+{{- fail "\nPrometheus Operator has been removed in v5 and is no longer supported.\nPlease remove 'kube-prometheus-stack.prometheusOperator.enabled: true' from your configuration\nand migrate to the OpenTelemetry Collector instead.\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/" -}}
+{{- end -}}
+
 {{- $nameservers := (dig "otellogswindows" "daemonset" "nameservers" (list "...") .Values.AsMap) -}}
 {{/* Check if Windows nameservers has been overriden  */}}
 {{- if and (eq (include "logs.collector.otellogswindows.enabled" .) "true") (has "..." $nameservers) -}}
