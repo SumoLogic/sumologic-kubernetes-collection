@@ -13,16 +13,16 @@ metadata:
 data:
   config.yaml: |
     exporters:
-      retry_on_failure:
-        enabled: true
-        initial_interval: 5s
-        max_elapsed_time: 1h
-        max_interval: 5m
-        multiplier: 1.2
       sumologic:
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
         log_format: otlp
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
     extensions:

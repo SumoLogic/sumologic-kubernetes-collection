@@ -16,12 +16,12 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-  retry_on_failure:
-    enabled: true
-    initial_interval: 5s
-    multiplier: 1.2
-    max_interval: 5m
-    max_elapsed_time: 1h
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      multiplier: 1.2
+      max_interval: 5m
+      max_elapsed_time: 1h
 
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-containers:
@@ -34,12 +34,12 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-  retry_on_failure:
-    enabled: true
-    initial_interval: 5s
-    multiplier: 1.2
-    max_interval: 5m
-    max_elapsed_time: 1h
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      multiplier: 1.2
+      max_interval: 5m
+      max_elapsed_time: 1h
 {{- end }}
 
 {{- end }}
@@ -55,12 +55,12 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-  retry_on_failure:
-    enabled: true
-    initial_interval: 5s
-    multiplier: 1.2
-    max_interval: 5m
-    max_elapsed_time: 1h
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      multiplier: 1.2
+      max_interval: 5m
+      max_elapsed_time: 1h
 
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-systemd:
@@ -73,12 +73,12 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-  retry_on_failure:
-    enabled: true
-    initial_interval: 5s
-    multiplier: 1.2
-    max_interval: 5m
-    max_elapsed_time: 1h
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      multiplier: 1.2
+      max_interval: 5m
+      max_elapsed_time: 1h
 {{- end }}
 
 {{- end }}
@@ -95,12 +95,12 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-  retry_on_failure:
-    enabled: true
-    initial_interval: 5s
-    multiplier: 1.2
-    max_interval: 5m
-    max_elapsed_time: 1h
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      multiplier: 1.2
+      max_interval: 5m
+      max_elapsed_time: 1h
 
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock:
@@ -114,12 +114,12 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-  retry_on_failure:
-    enabled: true
-    initial_interval: 5s
-    multiplier: 1.2
-    max_interval: 5m
-    max_elapsed_time: 1h
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      multiplier: 1.2
+      max_interval: 5m
+      max_elapsed_time: 1h
 {{- end }}
 {{- end }}
 

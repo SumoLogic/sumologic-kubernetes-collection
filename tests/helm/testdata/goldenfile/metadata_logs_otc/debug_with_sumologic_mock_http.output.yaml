@@ -15,15 +15,15 @@ data:
     exporters:
       debug:
         verbosity: detailed
-      retry_on_failure:
-        enabled: true
-        initial_interval: 5s
-        max_elapsed_time: 1h
-        max_interval: 5m
-        multiplier: 1.2
       sumologic/containers:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         log_format: json
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -32,6 +32,12 @@ data:
       sumologic/sumologic-mock-containers:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         log_format: json
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -40,6 +46,12 @@ data:
       sumologic/sumologic-mock-systemd:
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         log_format: json
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -48,6 +60,12 @@ data:
       sumologic/systemd:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         log_format: json
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 1h
+          max_interval: 5m
+          multiplier: 1.2
         sending_queue:
           enabled: true
           num_consumers: 10
