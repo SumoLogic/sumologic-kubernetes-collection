@@ -551,6 +551,12 @@ processors:
         statements:
           - limit(attributes, 0, [])
 
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+  transform/add_default_pipeline_tag:
+    log_statements:
+      - set(resource.attributes["router.default_pipeline_route"], true)
+{{- end }}
+
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{ toYaml $processor | indent 2}}
@@ -580,33 +586,43 @@ receivers:
 {{- if (.Values.sumologic.logs.otelcol.routing.table) }}
 connectors:
   routing/containers:
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
     default_pipelines:
       - logs/otlp/containers/routing/default
+{{- end }}
     table:
 {{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
-      - statement: {{ $entry.statement }}
+      - statement: 'delete_key(resource.attributes, "router.default_pipeline_route") where {{ trimPrefix "route() where " $entry.statement }}'
+        action: copy
         pipelines:
 {{- range $exp := $entry.exporters }}
           - logs/otlp/containers/routing/{{ $exp }}
 {{- end }}
-{{- if $.Values.sumologic.logs.otelcol.useDefaultExporters }}
+{{- end }}
+{{- if not .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: 'route() where resource.attributes["router.default_pipeline_route"] != nil'
+        pipelines:
           - logs/otlp/containers/routing/default
-{{- end}}
-{{- end}}
+{{- end }}
 
   routing/systemd:
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
     default_pipelines:
       - logs/otlp/systemd/routing/default
+{{- end }}
     table:
 {{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
-      - statement: {{ $entry.statement }}
+      - statement: 'delete_key(resource.attributes, "router.default_pipeline_route") where {{ trimPrefix "route() where " $entry.statement }}'
+        action: copy
         pipelines:
 {{- range $exp := $entry.exporters }}
           - logs/otlp/systemd/routing/{{ $exp }}
 {{- end }}
-{{- if $.Values.sumologic.logs.otelcol.useDefaultExporters }}
-          - logs/otlp/systemd/routing/default
 {{- end }}
+{{- if not .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: 'route() where resource.attributes["router.default_pipeline_route"] != nil'
+        pipelines:
+          - logs/otlp/systemd/routing/default
 {{- end }}
 {{- end }}
 
@@ -650,10 +666,13 @@ service:
         - resource/remove_pod_name
         - resource/drop_annotations
         - transform/add_timestamp
-{{- if eq .Values.sumologic.logs.container.format "text" }} 
+{{- if eq .Values.sumologic.logs.container.format "text" }}
         - transform/remove_attributes
-{{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
+{{- else if eq .Values.sumologic.logs.container.format "json_merge" }}
         - transform/flatten
+{{- end }}
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+        - transform/add_default_pipeline_tag
 {{- end }}
         - batch
       receivers:
@@ -689,6 +708,9 @@ service:
 {{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
 {{- end }}
 {{- end }}
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+        - transform/add_default_pipeline_tag
+{{- end }}
         - batch
       receivers:
         - otlp
@@ -721,6 +743,9 @@ service:
 {{- range $processor := .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
 {{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
 {{- end }}
+{{- end }}
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+        - transform/add_default_pipeline_tag
 {{- end }}
         - batch
       receivers:

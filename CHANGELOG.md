@@ -7,6 +7,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.26.0]
+
+### Released 2026-04-01
+
+### Breaking Changes
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+
+Starting from version 4.26.0, We have changed our Bitnami based metrics server to the open source Metrics Server.
+
+Refer: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/#metrics-server-source-chart-changed
+
+### Changed
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+- feat: Updates routing connector config to use action:copy [#4116]
+
+[#4100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4100
+[#4116]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4116
+
+[v4.26.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.26.0## [v4.25.0]
 ## [v4.25.0]
 
 ### Released 2026-03-24
@@ -17,10 +38,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 For the k8sattributes processor, collection of node labels for metrics is disabled by default.
 
-This change primarily affects users who were already using the k8sattributes processor via the flag metadata.metrics.useSumoK8sProcessor and
-relying on node labels in their metrics queries.
+This change primarily affects users who were already using the k8sattributes processor via the flag
+`metadata.metrics.useSumoK8sProcessor=false` and relying on node labels in their metrics search queries or dashboards.
 
-You can re-enable node label enrichment for metrics by setting: metadata.metrics.extractNodeLabels=true
+You can re-enable node label enrichment for metrics by setting:
+
+`metadata.metrics.extractNodeLabels=true`
 
 Enable node labels only if required for your use case, as they can significantly increase metrics cardinality.
 

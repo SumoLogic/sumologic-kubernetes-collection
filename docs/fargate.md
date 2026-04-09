@@ -641,6 +641,15 @@ one might fail to enable [aws-logging](#invalid-configmap)
 
 For more information on this refer to [fargate-logging](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
 
+#### Fargate logging Verfication
+
+In order to verify that the log router is working as expected, please verify the following:
+
+- Pods in the cluster have the `Logging: LoggingEnabled` annotation. Use `kubectl describe pod <pod_name> -n <namespace>` This step verifies
+  if the logging is enabled in the fargate cluster.
+- AWS Cloudwatch logs should contain the log group which is specified in the `aws-logging` ConfigMap (fluent-bit-cloudwatch in this
+  example).
+
 ### Cloudwatch logs collection
 
 After setting up AWS Fluent Bit to forward logs to cloudwatch, the next step is to setup and enable cloudwatch collection in the helm chart.
