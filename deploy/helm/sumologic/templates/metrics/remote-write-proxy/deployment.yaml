@@ -58,16 +58,17 @@ spec:
         image: {{ .Values.sumologic.metrics.remoteWriteProxy.image.repository }}:{{ .Values.sumologic.metrics.remoteWriteProxy.image.tag }}
         imagePullPolicy: {{ .Values.sumologic.metrics.remoteWriteProxy.image.pullPolicy }}
         ports:
+        - containerPort: {{ .Values.sumologic.metrics.remoteWriteProxy.config.port }}
         - containerPort: 4318
         resources:
           {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.resources | nindent 10 }}
         livenessProbe:
           tcpSocket:
-            port: 4318
+            port: {{ .Values.sumologic.metrics.remoteWriteProxy.config.port }}
           {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.livenessProbe | nindent 10 }}
         readinessProbe:
           tcpSocket:
-            port: 4318
+            port: {{ .Values.sumologic.metrics.remoteWriteProxy.config.port }}
           {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.readinessProbe | nindent 10 }}
         {{- if .Values.sumologic.metrics.remoteWriteProxy.config.workerCountAutotune }}
         env:
