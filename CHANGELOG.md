@@ -7,6 +7,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.27.0]
+
+### Released 2026-04-09
+
+### Added
+
+- feat: Adds k8sObjects event receiver under feature flag [#4127]
+
+### Changed
+
+- chore: fixes fargate container/namespace name parsing regex [#4126]
+
+[#4127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4127
+[#4126]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4126
+[v4.27.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.0
+
 ## [v4.26.0]
 
 ### Released 2026-04-01
