@@ -28,7 +28,6 @@ Refer: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-cha
 [#4116]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4116
 
 [v4.26.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.26.0## [v4.25.0]
-## [v4.25.0]
 
 ### Released 2026-03-24
 
