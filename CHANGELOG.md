@@ -9,23 +9,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [v4.27.0]
 
-### Released 2026-04-09
+### Released 2026-04-10
 
 ### Added
 
-- feat: Adds k8sObjects event receiver under feature flag [#4127]
+- chore(deps): bump kube-state-metrics to 2.18.0 [#4137] 
+- chore(deps): bump tailing-sidecar-operator to 0.20.3 [#4137]
+- chore(deps): bump sumologic-otel-collector to 0.149.0 [#4137]
 
-### Changed
-
-- chore: fixes fargate container/namespace name parsing regex [#4126]
-- chore(deps): bump kube-state-metrics to 2.18.0 [#4135]
-- chore(deps): bump sumologic-otel-collector to 0.149.0 [#4135]
-- chore(deps): bump opentelemetry-operator to 0.109.0 [#4135]
-- chore(deps): bump tailing-sidecar-operator to 0.20.3 [#4135]
-
-[#4135]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4135
-[#4127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4127
-[#4126]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4126
+[#4137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4137
 [v4.27.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.0
 
 ## [v4.26.0]
