@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- chore(deps): bump kube-state-metrics to 2.18.0 [#4137] 
+- chore(deps): bump kube-state-metrics to 2.18.0 [#4137]
 - chore(deps): bump tailing-sidecar-operator to 0.20.3 [#4137]
 - chore(deps): bump sumologic-otel-collector to 0.149.0 [#4137]
 
