@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.27.0]
+
+### Released 2026-04-10
+
+### Added
+
+- chore(deps): bump kube-state-metrics to 2.18.0 [#4137]
+- chore(deps): bump tailing-sidecar-operator to 0.20.3 [#4137]
+- chore(deps): bump sumologic-otel-collector to 0.149.0 [#4137]
+
+[#4137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4137
+[v4.27.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.0
+
 ## [v4.26.0]
 
 ### Released 2026-04-01
