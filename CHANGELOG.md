@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.27.1]
+
+### Released 2026-04-14
+
+### Changed
+
+- chore: bump kubernetes-tools-kubectl and sumologic-mock from 2.26.0 to 2.27.0 [#4139]
+
+[#4139]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4139
+[v4.27.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.1
+
 ## [v4.27.0]
 
 ### Released 2026-04-10
