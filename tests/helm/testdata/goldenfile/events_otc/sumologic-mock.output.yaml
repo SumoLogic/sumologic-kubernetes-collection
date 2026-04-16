@@ -36,10 +36,6 @@ data:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2048
-        send_batch_size: 1024
-        timeout: 1s
       filter/sumologic_configmaps:
         logs:
           include:
@@ -102,7 +98,6 @@ data:
           - source
           - sumologic
           - transform/add_timestamp
-          - batch
           receivers:
           - k8sobjects/configmaps
         logs/events:
@@ -115,7 +110,6 @@ data:
           - source
           - sumologic
           - transform/add_timestamp
-          - batch
           receivers:
           - raw_k8s_events
       telemetry:

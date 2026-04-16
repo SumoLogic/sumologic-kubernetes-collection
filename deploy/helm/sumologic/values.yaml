@@ -621,10 +621,11 @@ sumologic:
           ## be directly merged with the generated configuration, overriding existing values.
           ## For example:
           # override:
-          #   processors:
-          #     batch:
-          #       send_batch_size: 512
-          ## will change the batch size of the pipeline.
+          #   exporters:
+          #     otlphttp:
+          #       sending_queue:
+          #         queue_size: 8
+          ## will change the queue size of the otlphttp exporter.
           ##
           ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
           ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1573,10 +1574,11 @@ otelcolInstrumentation:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 8
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1644,10 +1646,11 @@ tracesSampler:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 8
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1745,10 +1748,11 @@ metadata:
       ## be directly merged with the generated configuration, overriding existing values.
       ## For example:
       # override:
-      #   processors:
-      #     batch:
-      #       send_batch_size: 512
-      ## will change the batch size of the pipeline.
+      #   exporters:
+      #     otlphttp:
+      #       sending_queue:
+      #         queue_size: 8
+      ## will change the queue size of the otlphttp exporter
       ##
       ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
       ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1863,10 +1867,11 @@ metadata:
       ## be directly merged with the generated configuration, overriding existing values.
       ## For example:
       # override:
-      #   processors:
-      #     batch:
-      #       send_batch_size: 512
-      ## will change the batch size of the pipeline.
+      #   exporters:
+      #     otlphttp:
+      #       sending_queue:
+      #         queue_size: 8
+      ## will change the queue size of the otlphttp exporter
       ##
       ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
       ## of this chart. It involves implementation details that may change even in minor versions.
@@ -2044,10 +2049,11 @@ tracesGateway:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 8
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -2085,10 +2091,11 @@ otelevents:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 8
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -2240,10 +2247,11 @@ otellogs:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 8
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -2392,10 +2400,11 @@ otellogswindows:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 8
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.

@@ -154,10 +154,6 @@ data:
         endpoint: '[${env:MY_POD_IP}]:13133'
       pprof: {}
     processors:
-      batch:
-        send_batch_max_size: 2048
-        send_batch_size: 1024
-        timeout: 1s
       filter/drop_unnecessary_metrics:
         error_mode: ignore
         metrics:
@@ -325,7 +321,6 @@ data:
           - groupbyattrs/group_by_name
           - transform/remove_name
           - filter/drop_unnecessary_metrics
-          - batch
           receivers:
           - telegraf
           - otlp
