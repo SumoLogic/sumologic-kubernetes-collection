@@ -13,10 +13,8 @@ linters:
       line-length: 185
       tab-width: 8
 
-  disable-all: false
   disable:
     - prealloc
-    - gosimple
   enable:
     - unused
     - errcheck
