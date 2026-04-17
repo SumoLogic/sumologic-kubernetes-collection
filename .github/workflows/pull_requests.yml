@@ -155,7 +155,7 @@ jobs:
       - uses: actions/setup-go@v5
         if: needs.chart-changed.outputs.any_changed == 'true'
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache: false
       - name: golangci-lint
         if: needs.chart-changed.outputs.any_changed == 'true'
@@ -177,7 +177,7 @@ jobs:
         if: needs.chart-changed.outputs.any_changed == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache-dependency-path: "**/go.sum"
       - name: test
         if: needs.chart-changed.outputs.any_changed == 'true'

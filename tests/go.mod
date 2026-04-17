@@ -1,8 +1,6 @@
 module github.com/SumoLogic/sumologic-kubernetes-collection/tests
 
-go 1.23.0
-
-toolchain go1.23.3
+go 1.26.1
 
 require (
 	github.com/bmatcuk/doublestar/v4 v4.7.1
