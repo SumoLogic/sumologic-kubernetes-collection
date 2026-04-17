@@ -8,7 +8,7 @@ require (
 	github.com/gruntwork-io/terratest v0.48.1
 	github.com/open-telemetry/opentelemetry-operator v0.115.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.79.2
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.32.1
 	k8s.io/apiextensions-apiserver v0.32.1
@@ -66,7 +66,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.7.1 // indirect
+	github.com/jackc/pgx/v5 v5.9.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -152,10 +152,10 @@ require (
 	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0 // indirect
 	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
-	golang.org/x/sync v0.12.0 // indirect
+	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/term v0.30.0 // indirect
-	golang.org/x/text v0.23.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/protobuf v1.35.2 // indirect
