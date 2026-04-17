@@ -314,11 +314,12 @@ func addCollectorSpecificMetricLabels(labels sumologicmock.Labels, releaseName s
 		"url.scheme":     ".*",
 	}
 
-	if collector == Prometheus {
+	switch collector {
+	case Prometheus:
 		for key, value := range prometheusLabels {
 			outputLabels[key] = value
 		}
-	} else if collector == Otelcol {
+	case Otelcol:
 		for key, value := range otelcolLabels {
 			outputLabels[key] = value
 		}
