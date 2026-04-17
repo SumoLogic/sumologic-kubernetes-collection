@@ -159,9 +159,9 @@ jobs:
           cache: false
       - name: golangci-lint
         if: needs.chart-changed.outputs.any_changed == 'true'
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.63.4
+          version: v2.11.4
           working-directory: ./tests/helm/
           # Optional: golangci-lint command line arguments.
           args: --timeout=10m
