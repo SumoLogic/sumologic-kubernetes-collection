@@ -127,6 +127,10 @@ spec:
         disable_keep_alives: true
         endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 6000
+            min_size: 5000
           num_consumers: 10
           queue_size: 10000
           storage: file_storage

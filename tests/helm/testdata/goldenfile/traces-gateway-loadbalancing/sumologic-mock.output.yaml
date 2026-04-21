@@ -14,11 +14,21 @@ data:
   traces.gateway.conf.yaml: |
     exporters:
       debug:
+        sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
+          enabled: true
         verbosity: detailed
       loadbalancing:
         protocol:
           otlp:
             sending_queue:
+              batch:
+                flush_timeout: 5s
+                max_size: 512
+                min_size: 256
               enabled: true
               num_consumers: 10
               queue_size: 10000

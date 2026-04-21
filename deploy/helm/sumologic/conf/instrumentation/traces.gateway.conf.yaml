@@ -3,6 +3,12 @@ exporters:
 {{- if eq .Values.debug.instrumentation.tracesGateway.print true }}
   debug:
     verbosity: detailed
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
 {{- end }}
 
   loadbalancing:
@@ -15,6 +21,10 @@ exporters:
           enabled: true
           num_consumers: 10
           queue_size: 10_000
+          batch:
+            flush_timeout: 5s
+            min_size: 256
+            max_size: 512
     resolver:
       dns:
         hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'

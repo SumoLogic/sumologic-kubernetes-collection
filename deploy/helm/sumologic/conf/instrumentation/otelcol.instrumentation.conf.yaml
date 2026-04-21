@@ -5,6 +5,12 @@ exporters:
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
   debug:
     verbosity: detailed
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
 {{- end }}
 
   sumologic/metrics:
@@ -39,9 +45,19 @@ exporters:
       ## num_seconds is the number of seconds to buffer in case of a backend outage
       ## requests_per_second is the average number of requests per seconds.
       queue_size: 5000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
 {{- if eq .Values.tracesGateway.enabled true }}
   otlphttp/traces:
     endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
 {{- else }}
   loadbalancing:
     protocol:
@@ -53,6 +69,10 @@ exporters:
           enabled: true
           num_consumers: 10
           queue_size: 10_000
+          batch:
+            flush_timeout: 5s
+            min_size: 256
+            max_size: 512
     resolver:
       dns:
         hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'

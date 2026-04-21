@@ -2,6 +2,12 @@ exporters:
 {{- if eq .Values.debug.logs.metadata.print true }}
   debug:
     verbosity: detailed
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- end }}
 
 {{- if eq .Values.sumologic.logs.sourceType "http" }}
@@ -13,6 +19,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -25,6 +35,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -40,6 +54,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -52,6 +70,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -68,6 +90,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -81,6 +107,10 @@ exporters:
       enabled: true
       num_consumers: 10
       queue_size: 10_000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}

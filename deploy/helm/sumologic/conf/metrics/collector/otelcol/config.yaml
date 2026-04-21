@@ -4,6 +4,12 @@ exporters:
 {{- if eq .Values.debug.metrics.collector.print true }}
   debug:
     verbosity: detailed
+    sending_queue:
+      enabled: true
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
 {{- end }}
   otlphttp:
     endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
@@ -11,6 +17,10 @@ exporters:
       queue_size: 10000
       num_consumers: 10
       storage: file_storage
+      batch:
+        flush_timeout: 1s
+        min_size: 1_000
+        max_size: 2_000
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
 

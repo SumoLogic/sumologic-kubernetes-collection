@@ -61,6 +61,12 @@ data:
           statement: route() where resource.attributes["job"] == "kube-state-metrics"
     exporters:
       debug:
+        sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
+          enabled: true
         verbosity: detailed
       sumologic/apiserver:
         client: k8s_%CURRENT_CHART_VERSION%
@@ -68,6 +74,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -79,6 +89,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -90,6 +104,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -103,6 +121,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -114,6 +136,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -125,6 +151,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -136,6 +166,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -147,6 +181,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -160,6 +198,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000
@@ -171,6 +213,10 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
           queue_size: 10000

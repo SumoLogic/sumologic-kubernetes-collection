@@ -69,6 +69,14 @@ sumologic:
         annotatedPods:
           enabled: false
         allocationStrategy: consistent-hashing
+        config:
+          merge:
+            exporters:
+              otlphttp:
+                sending_queue:
+                  batch:
+                    min_size: 5000
+                    max_size: 6000
         targetAllocator:
           resources:
             limits:
