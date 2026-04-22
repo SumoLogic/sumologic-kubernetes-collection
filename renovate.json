@@ -466,7 +466,7 @@
     },
     {
       "description": "Add chore(deps) prefix to all dependency update commits",
-      "matchPackagePatterns": ["*"],
+      "matchPackagePatterns": [".*"],
       "commitMessagePrefix": "chore(deps):"
     }
   ]
