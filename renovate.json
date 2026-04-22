@@ -426,7 +426,8 @@
     {
       "description": "Group tailing-sidecar-operator Helm chart + docs/README updates",
       "matchPackageNames": ["tailing-sidecar-operator"],
-      "groupName": "tailing-sidecar-operator"
+      "groupName": "tailing-sidecar-operator",
+      "allowedVersions": "<= 0.99.0"
     },
     {
       "description": "Group kubernetes-tools-kubectl and sumologic-mock updates",
