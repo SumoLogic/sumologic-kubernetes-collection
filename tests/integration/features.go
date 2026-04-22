@@ -32,7 +32,7 @@ type MetricsCollector string
 
 const (
 	tickDuration             = 3 * time.Second
-	waitDuration             = 2 * time.Minute
+	waitDuration             = 10 * time.Minute
 	waitBeforeLogsGeneration = 15 * time.Second
 	// number determined experimentally
 	expectedEventCount uint = 50
