@@ -2,7 +2,12 @@ exporters:
   otlphttp:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
     sending_queue:
+      enabled: true
       queue_size: 10
+      batch:
+        flush_timeout: 1s
+        min_size: 1000
+        max_size: 2000
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
 {{- if eq .Values.debug.logs.collector.print true }}
