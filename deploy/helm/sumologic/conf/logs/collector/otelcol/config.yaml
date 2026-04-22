@@ -4,10 +4,12 @@ exporters:
     sending_queue:
       enabled: true
       queue_size: 10
+      sizer: requests
       batch:
         flush_timeout: 1s
         min_size: 1000
         max_size: 2000
+        sizer: items
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
 {{- if eq .Values.debug.logs.collector.print true }}
