@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dryRun": "full",
   "enabledManagers": ["custom.regex", "helmv3"],
   "customManagers": [
     {
