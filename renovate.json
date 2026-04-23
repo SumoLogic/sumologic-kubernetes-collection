@@ -3,6 +3,8 @@
   "enabledManagers": ["custom.regex", "helmv3"],
   "prHourlyLimit": 10,
   "labels": ["dependencies"],
+  "commitMessageAction": "bump",
+  "commitMessageExtra": "{{#if isSingleVersion}}from {{{currentValue}}} to {{{newValue}}}{{/if}}",
   "customManagers": [
     {
       "customType": "regex",
