@@ -55,7 +55,11 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-          # Add and commit changelog
+          # Add and commit changelog if there are changes
           git add .changelog/
-          git commit -m "chore: Add changelog entry for dependency update"
-          git push origin ${{ github.head_ref }}
+          if git diff --cached --quiet; then
+            echo "Changelog entry already exists, nothing to commit"
+          else
+            git commit -m "chore: Add changelog entry for dependency update"
+            git push origin ${{ github.head_ref }}
+          fi
