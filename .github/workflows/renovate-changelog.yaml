@@ -28,29 +28,8 @@ jobs:
           CHANGELOG_FILE=".changelog/${PR_NUMBER}.changed.txt"
           mkdir -p .changelog
 
-          CHANGELOG_TEXT="$PR_TITLE"
-          CHART_FILE="deploy/helm/sumologic/Chart.yaml"
-          VALUES_FILE="deploy/helm/sumologic/values.yaml"
-
-          # Enrich with old version from Chart.yaml (e.g. "Update falco to v7.2.1" -> "Update falco from 7.0.2 to v7.2.1")
-          if git diff HEAD~1 HEAD --name-only | grep -q "$CHART_FILE"; then
-            OLD_VER=$(git diff HEAD~1 HEAD -- "$CHART_FILE" | grep "^-.*version:" | head -1 | awk '{print $NF}')
-            if [[ -n "$OLD_VER" ]]; then
-              CHANGELOG_TEXT=$(echo "$PR_TITLE" | sed "s/ to / from $OLD_VER to /")
-            fi
-          fi
-
-          # Enrich with old/new tags from values.yaml (e.g. "Update otel-collector" -> "Update otel-collector (0.140.0-sumo-0 -> 0.143.0-sumo-0)")
-          if [[ "$CHANGELOG_TEXT" == "$PR_TITLE" ]] && git diff HEAD~1 HEAD --name-only | grep -q "$VALUES_FILE"; then
-            OLD_TAG=$(git diff HEAD~1 HEAD -- "$VALUES_FILE" | grep "^-.*tag:" | head -1 | awk '{print $NF}' | tr -d "\"'")
-            NEW_TAG=$(git diff HEAD~1 HEAD -- "$VALUES_FILE" | grep "^+.*tag:" | head -1 | awk '{print $NF}' | tr -d "\"'")
-            if [[ -n "$OLD_TAG" && -n "$NEW_TAG" ]]; then
-              CHANGELOG_TEXT="$PR_TITLE ($OLD_TAG -> $NEW_TAG)"
-            fi
-          fi
-
-          echo "$CHANGELOG_TEXT" > "$CHANGELOG_FILE"
-          echo "Created changelog file: $CHANGELOG_FILE with content: $CHANGELOG_TEXT"
+          echo "$PR_TITLE" > "$CHANGELOG_FILE"
+          echo "Created changelog file: $CHANGELOG_FILE with content: $PR_TITLE"
 
       - name: Commit changelog
         run: |
