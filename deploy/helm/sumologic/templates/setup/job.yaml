@@ -108,6 +108,7 @@ spec:
 {{- end }}
         - name: SUMOLOGIC_DASHBOARDS_ENABLED
           value: "{{ .Values.sumologic.setup.dashboards.enabled }}"
+        {{- include "godebug-env-variable" . | nindent 8 -}}
         {{- include "proxy-env-variables" . | nindent 8 -}}
 {{- if .Values.sumologic.setup.debug }}
         - name: DEBUG_MODE
