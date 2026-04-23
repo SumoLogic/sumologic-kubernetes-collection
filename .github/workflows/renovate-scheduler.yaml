@@ -2,7 +2,17 @@ name: Renovate-scheduler
 on:
   schedule:
     - cron: "30 18 * * *" # every day at 18:30 UTC (12:00 AM IST)
-  workflow_dispatch: # allow manual runs
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: "Run in dry-run mode (no changes made)"
+        type: choice
+        default: ""
+        options:
+          - ""
+          - "full"
+          - "lookup"
+          - "extract"
 
 jobs:
   renovate:
@@ -15,6 +25,7 @@ jobs:
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: SumoLogic/sumologic-kubernetes-collection
+          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           configurationFile: renovate.json
