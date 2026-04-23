@@ -8,7 +8,7 @@ on:
 
 jobs:
   add-changelog:
-    if: startsWith(github.head_ref, 'renovate/sumologic-kubernetes-collection')
+    if: startsWith(github.head_ref, 'renovate/')
     runs-on: ubuntu-latest
     permissions:
       contents: write
