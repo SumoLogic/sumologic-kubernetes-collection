@@ -326,7 +326,7 @@
       "matchStrings": [
         "\\|\\s*OpenTelemetry Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
       ],
-      "datasourceTemplate": "helm",
+      "datasourceTemplate": "helmv3",
       "depNameTemplate": "opentelemetry-operator",
       "registryUrlTemplate": "https://open-telemetry.github.io/opentelemetry-helm-charts"
     },
@@ -337,7 +337,7 @@
       "matchStrings": [
         "\\|\\s*Tailing Sidecar Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
       ],
-      "datasourceTemplate": "helm",
+      "datasourceTemplate": "helmv3",
       "depNameTemplate": "tailing-sidecar-operator",
       "registryUrlTemplate": "https://sumologic.github.io/tailing-sidecar"
     },
@@ -348,7 +348,7 @@
       "matchStrings": [
         "\\|\\s*Falco\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
       ],
-      "datasourceTemplate": "helm",
+      "datasourceTemplate": "helmv3",
       "depNameTemplate": "falco",
       "registryUrlTemplate": "https://falcosecurity.github.io/charts"
     },
@@ -359,7 +359,7 @@
       "matchStrings": [
         "\\|\\s*Metrics Server\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
       ],
-      "datasourceTemplate": "helm",
+      "datasourceTemplate": "helmv3",
       "depNameTemplate": "metrics-server",
       "registryUrlTemplate": "https://kubernetes-sigs.github.io/metrics-server/"
     },
@@ -370,7 +370,7 @@
       "matchStrings": [
         "\\|\\s*Telegraf Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
       ],
-      "datasourceTemplate": "helm",
+      "datasourceTemplate": "helmv3",
       "depNameTemplate": "telegraf-operator",
       "registryUrlTemplate": "https://helm.influxdata.com/"
     },
@@ -381,7 +381,7 @@
       "matchStrings": [
         "\\|\\s*kube-prometheus-stack/Prometheus Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
       ],
-      "datasourceTemplate": "helm",
+      "datasourceTemplate": "helmv3",
       "depNameTemplate": "kube-prometheus-stack",
       "registryUrlTemplate": "https://prometheus-community.github.io/helm-charts"
     }
@@ -400,14 +400,12 @@
     },
     {
       "description": "Constrain falco Helm chart to minor upgrades only",
-      "matchManagers": ["helmv3"],
       "matchPackageNames": ["falco"],
       "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
       "description": "Constrain metrics-server Helm chart to minor upgrades only",
-      "matchManagers": ["helmv3"],
       "matchPackageNames": ["metrics-server"],
       "matchUpdateTypes": ["major"],
       "enabled": false
