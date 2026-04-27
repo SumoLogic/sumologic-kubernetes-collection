@@ -1,6 +1,6 @@
 # Important update from Helm chart v5
 
-Prometheus support (including Prometheus Operator and remote write integration) has been removed in Helm chart v5. The Opentelemetry
+Prometheus operator which used to scrape metrics has been deprecated in v4 and removed in Helm chart v5. The Opentelemetry
 operator was made the default for metrics collection in Helm chart v4 and remains the single source for metrics collection in Helm chart v5.
 
 ## Prometheus (Till helm chart v4)

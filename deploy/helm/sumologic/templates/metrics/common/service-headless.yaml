@@ -19,6 +19,10 @@ spec:
   - name: otlphttp
     port: 4318
     protocol: TCP
+  - name: prom-write
+    port: 9888
+    targetPort: 9888
+    protocol: TCP
   - name: metrics
     port: 24231
     targetPort: 24231

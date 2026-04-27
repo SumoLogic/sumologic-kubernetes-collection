@@ -1491,6 +1491,11 @@ metadata:
     waitForMetadata: true
     waitForMetadataTimeout: 10s
 
+    ## When disabled (default), the upstream prometheusremotewrite receiver is used on port 9888
+    ## to receive Prometheus remote write requests.
+    ## When enabled, the Sumo Logic telegraf receiver is used on port 9888 instead.
+    enableSumoPrometheusRemotewriteReceiver: true
+
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
       ## be directly merged with the generated configuration, overriding existing values.
@@ -1509,6 +1514,9 @@ metadata:
       ## The value of this key should be a dictionary, that will replace the normal configuration.
       ## This is an advanced feature, use with caution, and review the generated configuration first.
       override: {}
+
+       ## List of additional endpoints to be handled by Metrics Metadata Pods
+      additionalEndpoints: []
 
     statefulset:
       nodeSelector: {}

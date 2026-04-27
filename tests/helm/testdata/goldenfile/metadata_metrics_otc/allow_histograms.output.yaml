@@ -159,6 +159,8 @@ data:
         protocols:
           http:
             endpoint: ${env:MY_POD_IP}:4318
+      prometheusremotewrite:
+        endpoint: ${env:MY_POD_IP}:9888
     service:
       extensions:
       - health_check
@@ -184,6 +186,7 @@ data:
           - filter/drop_unnecessary_metrics
           - batch
           receivers:
+          - prometheusremotewrite
           - otlp
       telemetry:
         logs:

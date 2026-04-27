@@ -29,7 +29,7 @@
 {{- if .Values.sumologic.metrics.enabled -}}
 {{- if not (index .Values "kube-prometheus-stack").prometheus.enabled -}}
 {{- if ne (dig "kube-prometheus-stack" "prometheus" "prometheusSpec" "additionalRemoteWrites" nil .Values.AsMap) nil -}}
-{{- fail "\nRemote write definitions are not supported by Otel. Please follow the migration guide: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#convert-prometheus-remote-writes-to-otel-metrics-filters" }}
+{{- fail "\nPrometheus V1 Remote write definitions are not supported by Otel metrics collector. Please follow the migration guide: https://github.com/SumoLogic/sumologic-documentation/edit/helm/v5/docs/send-data/kubernetes/v5/how-to-upgrade.md#forwarding-metrics-using-prometheus-remote-writes-into-otel-pipeline" }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -37,13 +37,13 @@
 {{/* Check if metrics are enabled but OTel collector is explicitly disabled (v5: Prometheus Operator removed) */}}
 {{- if .Values.sumologic.metrics.enabled -}}
 {{- if eq .Values.sumologic.metrics.collector.otelcol.enabled false -}}
-{{- fail "\nPrometheus Operator has been removed in v5. The OpenTelemetry Collector is the only supported metrics collection mechanism.\nPlease enable the OTel collector and OTel operator:\n  sumologic.metrics.collector.otelcol.enabled: true\n  opentelemetry-operator.enabled: true\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/" -}}
+{{- fail "\nPrometheus Operator has been removed in v5. The OpenTelemetry Collector is the only supported metrics collection mechanism.\nPlease enable the OTel collector and OTel operator:\n  sumologic.metrics.collector.otelcol.enabled: true\n  opentelemetry-operator.enabled: true\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/" -}}
 {{- end -}}
 {{- end -}}
 
 {{/* Check if customer has explicitly re-enabled Prometheus Operator (removed in v5) */}}
 {{- if (index .Values "kube-prometheus-stack").prometheusOperator.enabled -}}
-{{- fail "\nPrometheus Operator has been removed in v5 and is no longer supported.\nPlease remove 'kube-prometheus-stack.prometheusOperator.enabled: true' from your configuration\nand migrate to the OpenTelemetry Collector instead.\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/" -}}
+{{- fail "\nPrometheus Operator has been removed in v5 and is no longer supported.\nPlease remove 'kube-prometheus-stack.prometheusOperator.enabled: true' and 'kube-prometheus-stack.prometheus.enabled: true' from your configuration\nand migrate to the OpenTelemetry Collector instead.\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/" -}}
 {{- end -}}
 
 {{- $nameservers := (dig "otellogswindows" "daemonset" "nameservers" (list "...") .Values.AsMap) -}}

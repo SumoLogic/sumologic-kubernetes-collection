@@ -28,6 +28,21 @@ Example Usage:
 {{- end -}}
 
 {{/*
+Generate list of remoteWrite endpoints for telegraf configuration
+
+'{{ include "metric.endpoints" . }}'
+*/}}
+{{- define "metric.endpoints" -}}
+{{- $endpoints := list -}}
+{{- range $endpoint := .Values.metadata.metrics.config.additionalEndpoints }}
+{{- $endpoints = append $endpoints ($endpoint | quote) -}}
+{{- end -}}
+{{- $endpoints := uniq $endpoints -}}
+{{- $endpoints := sortAlpha $endpoints -}}
+{{ $endpoints | join ",\n" }}
+{{- end -}}
+
+{{/*
 Check if remote write proxy is enabled.
 Example Usage:
 {{- if eq (include "metrics.remoteWriteProxy.enabled" .) "true" }}
