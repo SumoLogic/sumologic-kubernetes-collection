@@ -7,6 +7,136 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.27.1]
+
+### Released 2026-04-14
+
+### Changed
+
+- chore: bump kubernetes-tools-kubectl and sumologic-mock from 2.26.0 to 2.27.0 [#4139]
+
+[#4139]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4139
+[v4.27.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.1
+
+## [v4.27.0]
+
+### Released 2026-04-10
+
+### Added
+
+- chore(deps): bump kube-state-metrics to 2.18.0 [#4137]
+- chore(deps): bump tailing-sidecar-operator to 0.20.3 [#4137]
+- chore(deps): bump sumologic-otel-collector to 0.149.0 [#4137]
+
+[#4137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4137
+[v4.27.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.0
+
+## [v4.26.0]
+
+### Released 2026-04-01
+
+### Breaking Changes
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+
+Starting from version 4.26.0, We have changed our Bitnami based metrics server to the open source Metrics Server.
+
+Refer: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/#metrics-server-source-chart-changed
+
+### Changed
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+- feat: Updates routing connector config to use action:copy [#4116]
+
+[#4100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4100
+[#4116]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4116
+
+[v4.26.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.26.0## [v4.25.0]
+
+### Released 2026-03-24
+
+### Breaking Changes
+
+- feat(k8sattributesprocessor): Make k8sattributes processor as default and deprecate k8s_tagger for k8s metadata enrichment [#4093]
+
+For the k8sattributes processor, collection of node labels for metrics is disabled by default.
+
+This change primarily affects users who were already using the k8sattributes processor via the flag
+`metadata.metrics.useSumoK8sProcessor=false` and relying on node labels in their metrics search queries or dashboards.
+
+You can re-enable node label enrichment for metrics by setting:
+
+`metadata.metrics.extractNodeLabels=true`
+
+Enable node labels only if required for your use case, as they can significantly increase metrics cardinality.
+
+[#4093]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4093
+
+### Changed
+
+- feat: Drops k8s_attributes metrics [#4118]
+
+[#4118]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4118
+[v4.25.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.25.0
+
+## [v4.24.1]
+
+### Released 2026-03-19
+
+### Added
+
+- feat: add serviceAnnotations and trafficDistribution support to service templates [#4113]
+- chore: bump tailing sidecar to v0.20.2
+
+[#4113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4113
+[v4.24.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.1
+
+## [v4.24.0]
+
+### Released 2026-03-16
+
+### Added
+
+- feat: Feature flags configMap pull and prevents pulling non-sumo configmaps. [#4103]
+- chore: add support for ESC deployment [#4106]
+
+### Changed
+
+- chore(SUMO-278717): fix the uninstall by upgrading the upstream operator [#4107]
+- chore(SUMO-280239): Bump otel version to 0.147.0 [#4110]
+
+[#4103]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4103
+[#4106]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4106
+[#4107]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4107
+[#4110]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4110
+[v4.24.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.0
+
+## [v4.23.0]
+
+### Released 2026-03-06
+
+### Added
+
+- feat: Added support for internal terraform provider registries [#4091]
+
+[#4091]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4091
+[v4.23.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.23.0
+
+## [v4.22.0]
+
+### Released 2026-03-02
+
+### Changed
+
+- chore: bumping otel version from 145 to 146 [#4085]
+- chore: bump tailing sidecar to 0.20.0 [#4086]
+- chore: bump opentelemetry-operator from 0.105.1 to 0.106.0 [#4088]
+
+[#4085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4085
+[#4086]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4086
+[#4088]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4088
+[v4.22.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.22.0
+
 ## [v4.21.1]
 
 ### Released 2026-02-19
@@ -916,7 +1046,7 @@ See the [migration guide][v4_migration_guide] for details.
 [#3332]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3332
 [#3340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3340
 [v4.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0
-[v4_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v4/important-changes/
+[v4_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
 
 ## [v3.19.3]
 
@@ -1759,7 +1889,7 @@ See the [migration guide][v3_migration_guide] for details.
 [#2794]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2794
 [#2807]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2807
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
-[v3_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v3/important-changes/
+[v3_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v3/important-changes/
 [v3.0.0-rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...v3.0.0-rc.0
 
 ## [v3.0.0-beta.1]
@@ -2720,7 +2850,7 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [v0.38.1-cfp]:
   https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
-[v0.38.1-cfp-help]: https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
+[v0.38.1-cfp-help]: https://www.sumologic.com/help/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
 [#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895

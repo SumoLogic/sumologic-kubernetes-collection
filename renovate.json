@@ -1,9 +1,14 @@
 {
-  "enabledManagers": ["custom.regex"],
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "enabledManagers": ["custom.regex", "helmv3"],
+  "prHourlyLimit": 10,
+  "labels": ["dependencies"],
+  "commitMessageAction": "bump",
+  "commitMessageExtra": "{{#if isSingleVersion}}from {{{currentValue}}} to {{{newValue}}}{{/if}}",
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Update Sumo Logic container images in values.yaml (repository/tag pattern)",
+      "description": "Update sumologic-otel-collector image in values.yaml (repository/tag pattern)",
       "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
       "matchStrings": [
         "repository:\\s*\"?(?<depName>public\\.ecr\\.aws/sumologic/sumologic-otel-collector)\"?\\s*\\n\\s*tag:\\s*\"?(?<currentValue>[^\"\\s]+)\"?"
@@ -13,7 +18,7 @@
     },
     {
       "customType": "regex",
-      "description": "Update Sumo Logic container images in test files",
+      "description": "Update sumologic-otel-collector image in golden test files",
       "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
       "matchStrings": [
         "image:\\s*\"?(?<depName>public\\.ecr\\.aws/sumologic/sumologic-otel-collector):(?<currentValue>[a-zA-Z0-9._-]+)\"?"
@@ -23,7 +28,7 @@
     },
     {
       "customType": "regex",
-      "description": "Update version references in documentation tables",
+      "description": "Update sumologic-otel-collector version in deploy/helm/sumologic/README.md",
       "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
       "matchStrings": [
         "\\|\\s*`(sumologic\\.otelcolImage\\.tag|opentelemetry-operator\\.manager\\.collectorImage\\.tag)`\\s*\\|.*?\\|\\s*`(?<currentValue>[0-9.]+(?:-[a-z0-9-]+)?)`\\s*\\|"
@@ -34,7 +39,7 @@
     },
     {
       "customType": "regex",
-      "description": "Update OpenTelemetry Collector version in docs README table",
+      "description": "Update OpenTelemetry Collector version in docs/README.md table",
       "fileMatch": ["^docs/README\\.md$"],
       "matchStrings": [
         "\\|\\s*OpenTelemetry Collector\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
@@ -43,17 +48,428 @@
       "depNameTemplate": "public.ecr.aws/sumologic/sumologic-otel-collector",
       "versioningTemplate": "loose",
       "extractVersionTemplate": "^(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kubernetes-setup image in values.yaml",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/kubernetes-setup)\\s*\\n\\s*tag:\\s*(?<currentValue>[0-9][^\\s]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kubernetes-setup image in golden test files",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/kubernetes-setup):(?<currentValue>[0-9][a-zA-Z0-9._-]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kubernetes-setup version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`sumologic\\.setup\\.job\\.image\\.tag`\\s*\\|.*?\\|\\s*`(?<currentValue>[0-9][^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/kubernetes-setup",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update nginx-unprivileged image in values.yaml",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/nginx-unprivileged)[^\\n]*\\n(?:[^\\n]*\\n){0,3}\\s*tag:\\s*(?<currentValue>[^\\s\"]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "regex:^(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-alpine-sumo-(?<build>[0-9]+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update nginx-unprivileged image in golden test files",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/nginx-unprivileged):(?<currentValue>[a-zA-Z0-9._-]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "regex:^(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-alpine-sumo-(?<build>[0-9]+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update nginx-unprivileged version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`sumologic\\.metrics\\.remoteWriteProxy\\.image`\\s*\\|.*?\"tag\":\\s*\"(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+-alpine-sumo-[0-9]+)\""
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/nginx-unprivileged",
+      "versioningTemplate": "regex:^(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-alpine-sumo-(?<build>[0-9]+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update metrics-server image in values.yaml",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/metrics-server)\\s*\\n\\s*tag:\\s*(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update metrics-server image in golden test files",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/metrics-server):(?<currentValue>[a-zA-Z0-9._-]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update metrics-server image version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`metrics-server\\.image\\.tag`\\s*\\|.*?\\|\\s*`(?<currentValue>[^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/metrics-server",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kube-state-metrics image in values.yaml",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/kube-state-metrics)\\s*\\n\\s*tag:\\s*\"?(?<currentValue>[^\"\\s]+)\"?"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kube-state-metrics image version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`kube-prometheus-stack\\.kube-state-metrics\\.image\\.tag`\\s*\\|.*?\\|\\s*`(?<currentValue>[^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/kube-state-metrics",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation images in values.yaml",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/autoinstrumentation-(?:java|dotnet|nodejs))\\s*\\n\\s*tag:\\s*(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation-python image in values.yaml (PEP 440 versioning)",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/autoinstrumentation-python)\\s*\\n\\s*tag:\\s*(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "pep440"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation images in golden test files",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/autoinstrumentation-(?:java|dotnet|nodejs)):(?<currentValue>[a-zA-Z0-9._-]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation-python image in golden test files (PEP 440 versioning)",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/autoinstrumentation-python):(?<currentValue>[a-zA-Z0-9._-]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "pep440"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation-java version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`opentelemetry-operator\\.manager\\.autoInstrumentationImage\\.java\\.tag`\\s*\\|.*?\\|\\s*`(?<currentValue>[^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/autoinstrumentation-java",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation-dotnet version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`opentelemetry-operator\\.manager\\.autoInstrumentationImage\\.dotnet\\.tag`\\s*\\|.*?\\|\\s*`(?<currentValue>[^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/autoinstrumentation-dotnet",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation-nodejs version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`opentelemetry-operator\\.manager\\.autoInstrumentationImage\\.nodejs\\.tag`\\s*\\|.*?\\|\\s*`(?<currentValue>[^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/autoinstrumentation-nodejs",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update autoinstrumentation-python version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`opentelemetry-operator\\.manager\\.autoInstrumentationImage\\.python\\.tag`\\s*\\|.*?\\|\\s*`(?<currentValue>[^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/autoinstrumentation-python",
+      "versioningTemplate": "pep440"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kubernetes-tools-kubectl image in values.yaml",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/kubernetes-tools-kubectl)\\s*\\n\\s*tag:\\s*(?<currentValue>[0-9][^\\s]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kubernetes-tools-kubectl image in golden test files",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/kubernetes-tools-kubectl):(?<currentValue>[a-zA-Z0-9._-]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kubernetes-tools-kubectl version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`(?:pvcCleaner\\.job\\.image\\.tag|instrumentation\\.instrumentationJobImage\\.image\\.tag)`\\s*\\|.*?\\|\\s*`(?<currentValue>[^`]+)`\\s*\\|"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/kubernetes-tools-kubectl",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update sumologic-mock image in values.yaml",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "repository:\\s*\"?(?<depName>public\\.ecr\\.aws/sumologic/sumologic-mock)\"?\\s*\\n\\s*tag:\\s*\"?(?<currentValue>[0-9][^\"\\s]+)\"?"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update sumologic-mock image in golden test files",
+      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/sumologic-mock):(?<currentValue>[a-zA-Z0-9._-]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update sumologic-mock version in deploy/helm/sumologic/README.md",
+      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*`debug\\.sumologicMock\\.image`\\s*\\|.*?\"tag\":\\s*\"(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\""
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "public.ecr.aws/sumologic/sumologic-mock",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update telegraf sidecar image in values.yaml (inline format)",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "matchStrings": [
+        "sidecarImage:\\s*\"?(?<depName>public\\.ecr\\.aws/sumologic/telegraf):(?<currentValue>[0-9][^\"\\s]+)\"?"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Update OpenTelemetry Operator chart version in docs/README.md",
+      "fileMatch": ["^docs/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*OpenTelemetry Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
+      ],
+      "datasourceTemplate": "helmv3",
+      "depNameTemplate": "opentelemetry-operator",
+      "registryUrlTemplate": "https://open-telemetry.github.io/opentelemetry-helm-charts"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Tailing Sidecar Operator chart version in docs/README.md",
+      "fileMatch": ["^docs/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*Tailing Sidecar Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
+      ],
+      "datasourceTemplate": "helmv3",
+      "depNameTemplate": "tailing-sidecar-operator",
+      "registryUrlTemplate": "https://sumologic.github.io/tailing-sidecar"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Falco chart version in docs/README.md",
+      "fileMatch": ["^docs/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*Falco\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
+      ],
+      "datasourceTemplate": "helmv3",
+      "depNameTemplate": "falco",
+      "registryUrlTemplate": "https://falcosecurity.github.io/charts"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Metrics Server chart version in docs/README.md",
+      "fileMatch": ["^docs/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*Metrics Server\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
+      ],
+      "datasourceTemplate": "helmv3",
+      "depNameTemplate": "metrics-server",
+      "registryUrlTemplate": "https://kubernetes-sigs.github.io/metrics-server/"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Telegraf Operator chart version in docs/README.md",
+      "fileMatch": ["^docs/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*Telegraf Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
+      ],
+      "datasourceTemplate": "helmv3",
+      "depNameTemplate": "telegraf-operator",
+      "registryUrlTemplate": "https://helm.influxdata.com/"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kube-prometheus-stack chart version in docs/README.md",
+      "fileMatch": ["^docs/README\\.md$"],
+      "matchStrings": [
+        "\\|\\s*kube-prometheus-stack/Prometheus Operator\\s*\\|\\s*(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|"
+      ],
+      "datasourceTemplate": "helmv3",
+      "depNameTemplate": "kube-prometheus-stack",
+      "registryUrlTemplate": "https://prometheus-community.github.io/helm-charts"
     }
   ],
   "packageRules": [
     {
-      "description": "Group OpenTelemetry Collector updates together",
+      "description": "Disable kube-prometheus-stack — intentionally pinned for OpenShift CRD compatibility",
+      "matchPackageNames": ["kube-prometheus-stack"],
+      "enabled": false
+    },
+    {
+      "description": "Disable busybox — floating/utility init container",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["public.ecr.aws/sumologic/busybox"],
+      "enabled": false
+    },
+    {
+      "description": "Constrain falco Helm chart to minor upgrades only",
+      "matchPackageNames": ["falco"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "Constrain metrics-server Helm chart to minor upgrades only",
+      "matchPackageNames": ["metrics-server"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "Group sumologic-otel-collector updates across all files",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["public.ecr.aws/sumologic/sumologic-otel-collector"],
-      "groupName": "sumologic-kubernetes-collection",
-      "commitMessage": "chore(deps): update sumologic-otel-collector version",
+      "groupName": "sumologic-otel-collector",
+      "commitMessageTopic": "sumologic-otel-collector version",
       "separateMinorPatch": false,
-      "allowedVersions": "/^0\\.[0-9]+\\.[0-9]+(\\-sumo\\-[0-9]+)?$/"
+      "allowedVersions": "/^[0-9]+\\.[0-9]+\\.[0-9]+-sumo-[0-9]+$/"
+    },
+    {
+      "description": "Group opentelemetry-operator Helm chart + docs/README updates",
+      "matchPackageNames": ["opentelemetry-operator"],
+      "groupName": "opentelemetry-operator"
+    },
+    {
+      "description": "Group tailing-sidecar-operator Helm chart + docs/README updates",
+      "matchPackageNames": ["tailing-sidecar-operator"],
+      "groupName": "tailing-sidecar-operator",
+      "allowedVersions": "<= 0.99.0"
+    },
+    {
+      "description": "Group kubernetes-tools-kubectl and sumologic-mock updates",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "public.ecr.aws/sumologic/kubernetes-tools-kubectl",
+        "public.ecr.aws/sumologic/sumologic-mock"
+      ],
+      "groupName": "kubernetes-tools"
+    },
+    {
+      "description": "Group autoinstrumentation image updates (java, dotnet, nodejs)",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["^public\\.ecr\\.aws/sumologic/autoinstrumentation-(?:java|dotnet|nodejs)$"],
+      "groupName": "autoinstrumentation"
+    },
+    {
+      "description": "Group autoinstrumentation-python separately (PEP 440 versioning)",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["public.ecr.aws/sumologic/autoinstrumentation-python"],
+      "groupName": "autoinstrumentation-python"
+    },
+    {
+      "description": "Group falco Helm chart + docs/README updates",
+      "matchPackageNames": ["falco"],
+      "groupName": "falco"
+    },
+    {
+      "description": "Group metrics-server Helm chart + docs/README + image updates",
+      "matchPackageNames": ["metrics-server", "public.ecr.aws/sumologic/metrics-server"],
+      "groupName": "metrics-server"
+    },
+    {
+      "description": "Group telegraf-operator Helm chart + docs/README updates",
+      "matchPackageNames": ["telegraf-operator"],
+      "groupName": "telegraf-operator"
+    },
+    {
+      "description": "Add chore(deps) prefix to all dependency update commits",
+      "matchPackagePatterns": [".*"],
+      "commitMessagePrefix": "chore(deps):"
     }
   ]
 }

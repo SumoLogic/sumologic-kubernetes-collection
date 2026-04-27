@@ -18,7 +18,11 @@ filter/drop_unnecessary_metrics:
       # drop histograms we've extracted sums and counts from, but don't want the full thing
       - (not IsMatch(name, {{ .Values.sumologic.metrics.allowHistogramRegex | quote }})) and (type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY or IsMatch(name, ".*_bucket"))
 {{- end }}
-
+      # Exclude k8sattributes pod related metrics which could cause unwanted noise
+      # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/documentation.md#internal-telemetry
+      - IsMatch(name, "^otelcol[._](k8s[._]pod[._]association|otelsvc_k8s_(pod_added|pod_updated|pod_table_size|pod_deleted|ip_lookup_miss))$")
+      # Exclude all otelcol internal k8s metrics (broad catch-all)
+      - IsMatch(name, "^otelcol[._].*k8s.*")
 # Prometheus receiver puts all labels in record-level attributes, and we need them in resource
 groupbyattrs:
   keys:
@@ -59,13 +63,19 @@ k8sattributes:
   wait_for_metadata_timeout: {{ .Values.metadata.metrics.waitForMetadataTimeout | quote }}
   auth_type: "serviceAccount"
   extract:
+    {{- if or .Values.metadata.metrics.extractPodLabels .Values.metadata.metrics.extractNodeLabels }}
     labels:
+      {{- if .Values.metadata.metrics.extractPodLabels }}
       - key_regex: "(.*)"
         tag_name: "pod_labels_$$1"
         from: pod
-      - key_regex: "(.*)" 
+      {{- end }}
+      {{- if .Values.metadata.metrics.extractNodeLabels }}
+      - key_regex: "(.*)"
         tag_name: "node_labels_$$1"
         from: node
+      {{- end }}
+    {{- end }}
     metadata:
       ## extract the following well-known metadata fields
       - k8s.pod.name
@@ -80,6 +90,13 @@ k8sattributes:
   ## Has to be false to enrich metadata
   passthrough: false
   pod_association:
+  ## Mirrors k8s_tagger's `build_hostname` association (pod_association.go):
+  ## build_hostname combined k8s.pod.name + k8s.namespace.name into a single
+  ## compound key "{podName}.{namespace}" for pod cache lookup.
+  ## k8sattributes two-source match achieves the same uniqueness guarantee:
+  ## both sources must match simultaneously, equivalent to the compound key.
+  ## Metrics from OtelOperator scraping always carry pod name + namespace
+  ## (set by the prometheus receiver from target labels), so no uid fallback needed.
     - sources:
       - from: resource_attribute
         name: k8s.pod.name

@@ -7,25 +7,31 @@ on:
         type: choice
         description: Repository and suffix
         options:
-          - '["docker.io/bitnamilegacy/metrics-server", "METRICS_SERVER"]'
-          - '["docker.io/busybox", "BUSYBOX"]'
-          - '["docker.io/nginxinc/nginx-unprivileged", "NGINX_UNPRIVILEGED"]'
-          - '["docker.io/telegraf", "TELEGRAF"]'
-          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet", "AUTOINSTRUMENTATION_DOTNET"]'
-          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java", "AUTOINSTRUMENTATION_JAVA"]'
-          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs", "AUTOINSTRUMENTATION_NODEJS"]'
-          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python", "AUTOINSTRUMENTATION_PYTHON"]'
-          - '["ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator", "OPENTELEMETRY_OPERATOR"]'
-          - '["public.ecr.aws/falcosecurity/falco-driver-loader", "FALCO_DRIVER_LOADER"]'
-          - '["public.ecr.aws/falcosecurity/falco-no-driver", "FALCO_NO_DRIVER"]'
-          - '["quay.io/brancz/kube-rbac-proxy", "KUBE_RBAC_PROXY"]'
-          - '["quay.io/influxdb/telegraf-operator", "TELEGRAF_OPERATOR"]'
-          - '["quay.io/prometheus/node-exporter", "NODE_EXPORTER"]'
-          - '["quay.io/prometheus/prometheus", "PROMETHEUS"]'
-          - '["quay.io/prometheus-operator/prometheus-config-reloader", "PROMETHEUS_CONFIG_RELOADER"]'
-          - '["quay.io/prometheus-operator/prometheus-operator", "PROMETHEUS_OPERATOR"]'
-          - '["quay.io/thanos/thanos", "THANOS"]'
-          - '["registry.k8s.io/kube-state-metrics/kube-state-metrics", "KUBE_STATE_METRICS"]'
+          - '["registry.k8s.io/metrics-server/metrics-server", "METRICS_SERVER", "ci/skopeo/metrics-server.yaml"]'
+          - '["docker.io/busybox", "BUSYBOX", "ci/skopeo/busybox.yaml"]'
+          - '["docker.io/nginxinc/nginx-unprivileged", "NGINX_UNPRIVILEGED", "ci/skopeo/nginx-unprivileged.yaml"]'
+          - '["docker.io/telegraf", "TELEGRAF", "ci/skopeo/telegraf.yaml"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet", "AUTOINSTRUMENTATION_DOTNET",
+            "ci/skopeo/autoinstrumentation-dotnet.yaml"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java", "AUTOINSTRUMENTATION_JAVA",
+            "ci/skopeo/autoinstrumentation-java.yaml"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs", "AUTOINSTRUMENTATION_NODEJS",
+            "ci/skopeo/autoinstrumentation-nodejs.yaml"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python", "AUTOINSTRUMENTATION_PYTHON",
+            "ci/skopeo/autoinstrumentation-python.yaml"]'
+          - '["ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator", "OPENTELEMETRY_OPERATOR",
+            "ci/skopeo/opentelemetry-operator.yaml"]'
+          - '["public.ecr.aws/falcosecurity/falco-driver-loader", "FALCO_DRIVER_LOADER", "ci/skopeo/falco-driver-loader.yaml"]'
+          - '["public.ecr.aws/falcosecurity/falco-no-driver", "FALCO_NO_DRIVER", "ci/skopeo/falco-no-driver.yaml"]'
+          - '["quay.io/brancz/kube-rbac-proxy", "KUBE_RBAC_PROXY", "ci/skopeo/kube-rbac-proxy.yaml"]'
+          - '["quay.io/influxdb/telegraf-operator", "TELEGRAF_OPERATOR", "ci/skopeo/telegraf-operator.yaml"]'
+          - '["quay.io/prometheus/node-exporter", "NODE_EXPORTER", "ci/skopeo/node-exporter.yaml"]'
+          - '["quay.io/prometheus/prometheus", "PROMETHEUS", "ci/skopeo/prometheus.yaml"]'
+          - '["quay.io/prometheus-operator/prometheus-config-reloader", "PROMETHEUS_CONFIG_RELOADER",
+            "ci/skopeo/prometheus-config-reloader.yaml"]'
+          - '["quay.io/prometheus-operator/prometheus-operator", "PROMETHEUS_OPERATOR", "ci/skopeo/prometheus-operator.yaml"]'
+          - '["quay.io/thanos/thanos", "THANOS", "ci/skopeo/thanos.yaml"]'
+          - '["registry.k8s.io/kube-state-metrics/kube-state-metrics", "KUBE_STATE_METRICS", "ci/skopeo/kube-state-metrics.yaml"]'
 jobs:
   sync-repository:
     name: Sync container repository
@@ -34,6 +40,7 @@ jobs:
       src_repository: ${{ fromJSON(inputs.input)[0] }}
       dest_docker_namespace: docker.io/sumologic
       dest_ecr_namespace: public.ecr.aws/a4t4y2n3
+      src_yaml_path: ${{ fromJSON(inputs.input)[2] }}
     secrets:
       DOCKER_USERNAME: ${{ secrets[format('DOCKERHUB_LOGIN_{0}', fromJSON(inputs.input)[1])] }}
       DOCKER_PASSWORD: ${{ secrets[format('DOCKERHUB_PASSWORD_{0}', fromJSON(inputs.input)[1])] }}

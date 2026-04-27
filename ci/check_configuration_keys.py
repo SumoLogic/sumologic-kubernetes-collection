@@ -51,7 +51,7 @@ SKIP_DEFAULTS = {
     'sumologic.pullSecrets',
     'sumologic.setup.force',
     'sumologic.setup.debug',
-    'metrics-server.image.pullSecrets',
+    'metrics-server.imagePullSecrets',
     'sumologic.events.sourceCategory',
 }
 

@@ -47,6 +47,8 @@ Let's consider the following variables:
 - `METRIC_PODS` - Maximum number of metric pods for the cluster. This value is needed to manually create Volumes
 - `LOG_PODS` - Maximum number of log pods for the cluster. This value is needed to manually create Volumes
 - `EVENT_PODS` - Maximum number of event pods for the cluster. This value is needed to manually create Volumes
+- `partition` - AWS partition (use `aws` for standard AWS, `aws-us-gov` for AWS GovCloud, `aws-cn` for AWS China, or `aws-eusc` for AWS
+  EUSC)
 
 Let's consider the following example values:
 
@@ -60,6 +62,7 @@ export SG_NAME=sumologic-collection
 export METRIC_PODS=10
 export LOG_PODS=3
 export EVENT_PODS=1
+export partition=aws
 ```
 
 ## Common operations
@@ -573,7 +576,7 @@ cat >eks-logging-policy.json <<EOF
 EOF
 
 aws iam create-policy --policy-name eks-logging-policy --policy-document file://eks-logging-policy.json
-aws iam attach-role-policy --role-name <eks-fargate-pod-execution-role> --policy-arn=arn:aws:iam::$account_id:policy/eks-logging-policy
+aws iam attach-role-policy --role-name <eks-fargate-pod-execution-role> --policy-arn=arn:${partition}:iam::$account_id:policy/eks-logging-policy
 ```
 
 #### Configuration
@@ -638,6 +641,15 @@ one might fail to enable [aws-logging](#invalid-configmap)
 
 For more information on this refer to [fargate-logging](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
 
+#### Fargate logging Verfication
+
+In order to verify that the log router is working as expected, please verify the following:
+
+- Pods in the cluster have the `Logging: LoggingEnabled` annotation. Use `kubectl describe pod <pod_name> -n <namespace>` This step verifies
+  if the logging is enabled in the fargate cluster.
+- AWS Cloudwatch logs should contain the log group which is specified in the `aws-logging` ConfigMap (fluent-bit-cloudwatch in this
+  example).
+
 ### Cloudwatch logs collection
 
 After setting up AWS Fluent Bit to forward logs to cloudwatch, the next step is to setup and enable cloudwatch collection in the helm chart.
@@ -677,8 +689,8 @@ cat >cloudwatch-policy.json <<EOF
                 "logs:ListTagsForResource"
             ],
             "Resource": [
-                "arn:aws:logs:*:*:log-group:*:log-stream:*",
-                "arn:aws:logs:*:*:destination:*"
+                "arn:${partition}:logs:*:*:log-group:*:log-stream:*",
+                "arn:${partition}:logs:*:*:destination:*"
             ]
         },
         {
@@ -728,7 +740,7 @@ cat >trust-relationship.json <<EOF
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::$account_id:oidc-provider/$oidc_provider"
+        "Federated": "arn:${partition}:iam::$account_id:oidc-provider/$oidc_provider"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
@@ -748,7 +760,7 @@ aws iam create-role --role-name cloudwatch-role --assume-role-policy-document fi
 Attach the cloudwatch-role to the cloudwatch policy
 
 ```bash
-aws iam attach-role-policy --role-name cloudwatch-role --policy-arn=arn:aws:iam::$account_id:policy/cloudwatch-policy
+aws iam attach-role-policy --role-name cloudwatch-role --policy-arn=arn:${partition}:iam::$account_id:policy/cloudwatch-policy
 ```
 
 The above policy must have permissions to list, read and describe cloudwatch log groups and streams. For more on this please refer to
@@ -765,8 +777,8 @@ sumologic:
     collector:
       ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
       otelcloudwatch:
-        enabled: false
-        roleArn: arn:aws:iam::${account_id}:role/cloudwatch-role
+        enabled: true
+        roleArn: arn:${partition}:iam::${account_id}:role/cloudwatch-role
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
@@ -807,7 +819,7 @@ sumologic:
     collector:
       otelcloudwatch:
         enabled: true
-        roleArn: arn:aws:iam::${account_id}:role/cloudwatch-role
+        roleArn: arn:${partition}:iam::${account_id}:role/cloudwatch-role
         region: <region>
         logGroups:
           fluent-bit-cloudwatch:

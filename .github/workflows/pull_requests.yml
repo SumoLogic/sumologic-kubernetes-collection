@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [chart-changed]
     env:
-      PRETTIER_VERSION: 2.8.8
+      PRETTIER_VERSION: 3.2.5
     steps:
       - uses: actions/checkout@v6
       - name: install yamllint
@@ -152,16 +152,16 @@ jobs:
     needs: [chart-changed]
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         if: needs.chart-changed.outputs.any_changed == 'true'
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache: false
       - name: golangci-lint
         if: needs.chart-changed.outputs.any_changed == 'true'
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: v1.63.4
+          version: v2.11.4
           working-directory: ./tests/helm/
           # Optional: golangci-lint command line arguments.
           args: --timeout=10m
@@ -175,9 +175,9 @@ jobs:
       - uses: actions/checkout@v6
       - name: Setup go
         if: needs.chart-changed.outputs.any_changed == 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache-dependency-path: "**/go.sum"
       - name: test
         if: needs.chart-changed.outputs.any_changed == 'true'

@@ -44,7 +44,7 @@ Full list of `user-values.yaml` keys for all the images that are used, can be fo
 | Sumo Logic OT distro  | `sumologic.pullSecrets`                         |
 | remote-write-proxy    | `sumologic.pullSecrets`                         |
 | kube-prometheus-stack | `kube-prometheus-stack.global.imagePullSecrets` |
-| metrics-server        | `metrics-server.image.pullSecrets`              |
+| metrics-server        | `metrics-server.imagePullSecrets`               |
 | telegraf-operator     | `telegraf-operator.imagePullSecrets`            |
 | falco                 | `falco.image.pullSecrets`                       |
 

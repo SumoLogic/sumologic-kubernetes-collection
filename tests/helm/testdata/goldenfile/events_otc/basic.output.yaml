@@ -32,6 +32,13 @@ data:
         send_batch_max_size: 2048
         send_batch_size: 1024
         timeout: 1s
+      filter/sumologic_configmaps:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: chart
+              value: ^sumologic.*
       resource/add_cluster:
         attributes:
         - action: upsert
@@ -51,6 +58,14 @@ data:
           statements:
           - set(time, Now()) where time_unix_nano == 0
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+      transform/extract_configmap_name:
+        log_statements:
+        - context: log
+          statements:
+          - set(attributes["configmap_name"], body["metadata"]["name"]) where body["metadata"]["name"]
+            != nil
+          - set(attributes["chart"], body["metadata"]["labels"]["chart"]) where body["metadata"]["labels"]["chart"]
+            != nil
     receivers:
       k8sobjects/configmaps:
         auth_type: serviceAccount
@@ -71,6 +86,8 @@ data:
           exporters:
           - sumologic
           processors:
+          - transform/extract_configmap_name
+          - filter/sumologic_configmaps
           - resource/add_cluster
           - source
           - sumologic

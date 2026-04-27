@@ -11,7 +11,14 @@ metadata:
 {{- if .Values.metadata.serviceLabels }}
 {{ toYaml .Values.metadata.serviceLabels | indent 4 }}
 {{- end }}
+{{- if .Values.metadata.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.metadata.serviceAnnotations | indent 4 }}
+{{- end }}
 spec:
+{{- if .Values.metadata.trafficDistribution }}
+  trafficDistribution: {{ .Values.metadata.trafficDistribution }}
+{{- end }}
   selector:
     app: {{ template "sumologic.labels.app.metrics.pod" . }}
   ports:

@@ -34,7 +34,7 @@ function load_dashboards_folder_id() {
   if [[ "${ADMIN_FOLDER_JOB_STATUS}" != "Success" ]]; then
     echo "Could not fetch data from the \"Admin Recommended\" content folder. The K8s Dashboards won't be installed."
     echo "You can still install them manually:"
-    echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
+    echo "https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
     exit 1
   fi
 
@@ -109,7 +109,7 @@ if [[ -z "${K8S_FOLDER_ID}" ]]; then
 
     echo "Installation of the K8s Dashboards failed."
     echo "You can still install them manually:"
-    echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
+    echo "https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
     exit 2
   else
     load_dashboards_folder_id
@@ -137,5 +137,5 @@ if [[ -z "${K8S_FOLDER_ID}" ]]; then
 else
   echo "The K8s Dashboards have been already installed."
   echo "You can (re)install them manually with:"
-  echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
+  echo "https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
 fi

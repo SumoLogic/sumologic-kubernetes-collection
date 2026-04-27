@@ -94,28 +94,22 @@ func GetMetricsK8sattributes(expectedMetrics []string, metricsCollector MetricsC
 				}
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := sumologicmock.Labels{
-					"cluster":                             "kubernetes",
-					"_origin":                             "kubernetes",
-					"container":                           "sumologic-mock",
-					"deployment":                          deployment,
-					"endpoint":                            "https-metrics",
-					"image":                               "sumologic/sumologic-mock:.*",
-					"job":                                 "kubelet",
-					"metrics_path":                        "/metrics/cadvisor",
-					"namespace":                           ctxopts.Namespace(ctx),
-					"node":                                internal.NodeNameRegex,
-					"pod_labels_app":                      deployment,
-					"pod_labels_pod-template-hash":        ".+",
-					"pod":                                 podList.Items[0].Name,
-					"replicaset":                          fmt.Sprintf("%s-.*", deployment),
-					"service":                             deployment,
-					"service.namespace":                   ctxopts.Namespace(ctx),
-					"k8s.node.uid":                        internal.UIDRegex,
-					"node_labels_beta.kubernetes.io/os":   internal.NodeLabelOSRegex,
-					"node_labels_beta.kubernetes.io/arch": internal.NodeLabelArchRegex,
-					"node_labels_kubernetes.io/hostname":  internal.NodeLabelHostnameRegex,
-					"node_labels_kubernetes.io/os":        internal.NodeLabelOSRegex,
-					"node_labels_kubernetes.io/arch":      internal.NodeLabelArchRegex,
+					"cluster":                      "kubernetes",
+					"_origin":                      "kubernetes",
+					"container":                    "sumologic-mock",
+					"deployment":                   deployment,
+					"endpoint":                     "https-metrics",
+					"image":                        "sumologic/sumologic-mock:.*",
+					"job":                          "kubelet",
+					"metrics_path":                 "/metrics/cadvisor",
+					"namespace":                    ctxopts.Namespace(ctx),
+					"node":                         internal.NodeNameRegex,
+					"pod_labels_app":               deployment,
+					"pod_labels_pod-template-hash": ".+",
+					"pod":                          podList.Items[0].Name,
+					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
+					"service":                      deployment,
+					"service.namespace":            ctxopts.Namespace(ctx),
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
@@ -174,6 +168,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod":                          podList.Items[0].Name,
 					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
 					"service":                      deployment,
+					"service.namespace":            ctxopts.Namespace(ctx),
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
@@ -190,12 +185,13 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				}
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := sumologicmock.Labels{
-					"cluster":    "kubernetes",
-					"_origin":    "kubernetes",
-					"deployment": deployment,
-					"endpoint":   "http",
-					"job":        "kube-state-metrics",
-					"namespace":  ctxopts.Namespace(ctx),
+					"cluster":           "kubernetes",
+					"_origin":           "kubernetes",
+					"deployment":        deployment,
+					"endpoint":          "http",
+					"job":               "kube-state-metrics",
+					"namespace":         ctxopts.Namespace(ctx),
+					"service.namespace": ctxopts.Namespace(ctx),
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 				// drop some unnecessary labels
@@ -234,8 +230,9 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"pod_labels_pod-template-hash":            ".+",
 					"pod":                                     fmt.Sprintf("%s-.+", deployment),
 					"replicaset":                              fmt.Sprintf("%s-.+", deployment),
-					"service":                                 deployment,
+					"service":                                 fmt.Sprintf("%s.*", releaseName),
 					"service_discovery_pod":                   fmt.Sprintf("%s-.+", deployment),
+					"service.namespace":                       namespace,
 					"uid":                                     ".+",
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
@@ -278,6 +275,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 					"pod":                          "nginx-.+",
 					"replicaset":                   "nginx-.*",
 					"service":                      "nginx",
+					"service.namespace":            internal.NginxTelegrafNamespace,
 					"app":                          "nginx",
 					"host":                         "nginx-.+",
 					"port":                         "80",
@@ -316,11 +314,12 @@ func addCollectorSpecificMetricLabels(labels sumologicmock.Labels, releaseName s
 		"url.scheme":     ".*",
 	}
 
-	if collector == Prometheus {
+	switch collector {
+	case Prometheus:
 		for key, value := range prometheusLabels {
 			outputLabels[key] = value
 		}
-	} else if collector == Otelcol {
+	case Otelcol:
 		for key, value := range otelcolLabels {
 			outputLabels[key] = value
 		}
