@@ -311,10 +311,10 @@
     },
     {
       "customType": "regex",
-      "description": "Update telegraf sidecar image in values.yaml (inline format)",
-      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
+      "description": "Update telegraf sidecar image in values.yaml and README.md",
+      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$", "^deploy/helm/sumologic/README\\.md$"],
       "matchStrings": [
-        "sidecarImage:\\s*\"?(?<depName>public\\.ecr\\.aws/sumologic/telegraf):(?<currentValue>[0-9][^\"\\s]+)\"?"
+        "(?<depName>public\\.ecr\\.aws/sumologic/telegraf):(?<currentValue>[0-9][^`\"\\s]+)"
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "semver"
@@ -465,6 +465,12 @@
       "description": "Group telegraf-operator Helm chart + docs/README updates",
       "matchPackageNames": ["telegraf-operator"],
       "groupName": "telegraf-operator"
+    },
+    {
+      "description": "Group telegraf sidecar image updates across values.yaml and README",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["public.ecr.aws/sumologic/telegraf"],
+      "groupName": "telegraf-sidecar"
     },
     {
       "description": "Add chore(deps) prefix to all dependency update commits",
