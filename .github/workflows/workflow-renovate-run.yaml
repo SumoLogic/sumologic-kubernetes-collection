@@ -52,7 +52,7 @@ jobs:
           RENOVATE_DRY_RUN: ${{ inputs.dryRun }}
           RENOVATE_ONBOARDING: "false"
           RENOVATE_USERNAME: "renovatebot-sumologic[bot]"
-          RENOVATE_GIT_AUTHOR: "RenovateBot-SumoLogic <3519431+renovatebot-sumologic[bot]@users.noreply.github.com>"
+          RENOVATE_GIT_AUTHOR: "renovatebot-sumologic[bot] <279692411+renovatebot-sumologic[bot]@users.noreply.github.com>"
         with:
           token: ${{ steps.app-token.outputs.token }}
           configurationFile: ${{ inputs.configurationFile }}
