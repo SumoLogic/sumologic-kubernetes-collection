@@ -1,0 +1,58 @@
+name: Renovate Run
+
+on:
+  workflow_call:
+    inputs:
+      logLevel:
+        description: "Override default log level"
+        required: false
+        default: "info"
+        type: string
+      dryRun:
+        description: "Dry-run mode (full, lookup, extract, or empty)"
+        required: false
+        default: ""
+        type: string
+      configurationFile:
+        description: "Path to renovate config file"
+        required: false
+        default: "renovate.json"
+        type: string
+    secrets:
+      RENOVATE_APP_ID:
+        required: true
+      RENOVATE_PRIVATE_KEY:
+        required: true
+
+concurrency: renovate
+
+jobs:
+  renovate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate Renovate config
+        uses: rinchsan/renovate-config-validator@v0.2.0
+        with:
+          pattern: ${{ inputs.configurationFile }}
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
+
+      - name: Renovate run
+        uses: renovatebot/github-action@v46.1.10
+        env:
+          LOG_LEVEL: ${{ inputs.logLevel }}
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_DRY_RUN: ${{ inputs.dryRun }}
+          RENOVATE_ONBOARDING: "false"
+          RENOVATE_USERNAME: "renovatebot-sumologic[bot]"
+          RENOVATE_GIT_AUTHOR: "RenovateBot-SumoLogic <3519431+renovatebot-sumologic[bot]@users.noreply.github.com>"
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          configurationFile: ${{ inputs.configurationFile }}
