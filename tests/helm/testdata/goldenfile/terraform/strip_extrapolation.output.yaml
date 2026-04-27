@@ -811,7 +811,11 @@ data:
     }
   terraform.tfvars.json: |
     {
-      "collector_fields": {},
+      "collector_fields": {
+        "sumo.cluster.name": "kubernetes",
+        "sumo.helm.release": "%CURRENT_CHART_VERSION%",
+        "sumo.hostedCollector.subType": "K8s"
+      },
       "fields": [
         "cluster",
         "container",
