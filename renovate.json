@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "enabledManagers": ["custom.regex", "helmv3"],
+  "recreateWhen": "always",
   "prHourlyLimit": 10,
   "labels": ["dependencies"],
   "commitMessageAction": "bump",
