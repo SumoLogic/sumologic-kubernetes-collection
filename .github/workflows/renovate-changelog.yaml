@@ -14,17 +14,17 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Generate token
-        id: generate_token
+      - name: Generate GitHub App token
+        id: app-token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.BACKPORT_APP_ID }}
-          private-key: ${{ secrets.BACKPORT_PRIVATE_KEY }}
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
 
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          token: ${{ steps.generate_token.outputs.token }}
+          token: ${{ steps.app-token.outputs.token }}
           ref: ${{ github.head_ref }}
 
       - name: Create changelog entry
@@ -41,8 +41,8 @@ jobs:
       - name: Commit changelog
         run: |
           # Configure git
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "3519431+renovatebot-sumologic[bot]@users.noreply.github.com"
+          git config --local user.name "renovatebot-sumologic[bot]"
 
           # Add and commit changelog if there are changes
           git add .changelog/
