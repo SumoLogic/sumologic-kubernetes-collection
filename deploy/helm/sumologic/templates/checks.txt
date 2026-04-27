@@ -34,6 +34,15 @@
 {{- end -}}
 {{- end -}}
 
+{{/* Check if additionalEndpoints are configured without enableSumoPrometheusRemotewriteReceiver */}}
+{{- if .Values.sumologic.metrics.enabled -}}
+{{- if not .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver -}}
+{{- if .Values.metadata.metrics.config.additionalEndpoints -}}
+{{- fail "\nmetadata.metrics.config.additionalEndpoints is configured but the default prometheusremotewritereceiver only supports Prometheus Remote Write v2.\nIf your senders use Remote Write v1, enable the compatibility flag:\n  metadata.metrics.enableSumoPrometheusRemotewriteReceiver: true\nNote: this flag is a temporary migration aid and will be removed in a future release.\nSee the migration guide: https://github.com/SumoLogic/sumologic-documentation/edit/helm/v5/docs/send-data/kubernetes/v5/how-to-upgrade.md#forwarding-metrics-using-prometheus-remote-writes-into-otel-pipeline" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{/* Check if metrics are enabled but OTel collector is explicitly disabled (v5: Prometheus Operator removed) */}}
 {{- if .Values.sumologic.metrics.enabled -}}
 {{- if eq .Values.sumologic.metrics.collector.otelcol.enabled false -}}
