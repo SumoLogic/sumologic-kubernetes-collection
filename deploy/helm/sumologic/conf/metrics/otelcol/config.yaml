@@ -48,6 +48,8 @@ receivers:
   ## Configuration for upstream Prometheus Remote Write Receiver
   prometheusremotewrite:
     endpoint: ${env:MY_POD_IP}:9888
+    read_timeout: 1m
+    write_timeout: 1m
 {{- end }}
   otlp:
     protocols:

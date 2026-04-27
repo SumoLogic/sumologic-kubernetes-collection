@@ -1582,6 +1582,12 @@ metadata:
   ## This section affects only otelcol provider.
   metrics:
     enabled: true
+
+    ## Enable Sumo Logic Telegraf receiver to accept both Prometheus Remote Write v1 and v2.
+    ## When set to false (default), the upstream prometheusremotewritereceiver is used, which only supports v2.
+    ## This flag is intended as a temporary migration aid and will be removed in a future release.
+    enableSumoPrometheusRemotewriteReceiver: false
+
     logLevel: info
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
@@ -1627,7 +1633,7 @@ metadata:
       ## This is an advanced feature, use with caution, and review the generated configuration first.
       override: {}
 
-       ## List of additional endpoints to be handled by Metrics Metadata Pods
+      ## List of additional endpoints to be handled by Metrics Metadata Pods
       additionalEndpoints: []
 
     statefulset:

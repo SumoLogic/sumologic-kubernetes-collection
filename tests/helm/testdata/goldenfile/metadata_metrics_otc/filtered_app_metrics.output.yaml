@@ -196,6 +196,8 @@ data:
             endpoint: ${env:MY_POD_IP}:4318
       prometheusremotewrite:
         endpoint: ${env:MY_POD_IP}:9888
+        read_timeout: 1m
+        write_timeout: 1m
     service:
       extensions:
       - health_check
