@@ -113,7 +113,7 @@ The following table displays the currently used software versions for our Helm c
 | Falco                                     | 7.0.2   |
 | Metrics Server                            | 3.13.0  |
 | Telegraf Operator                         | 1.4.0   |
-| Tailing Sidecar Operator                  | 0.18.1  |
+| Tailing Sidecar Operator                  | 0.20.3  |
 
 ### Kubernetes Attributes Processor support
 
