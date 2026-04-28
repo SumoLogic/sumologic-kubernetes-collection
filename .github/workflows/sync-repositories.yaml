@@ -1,6 +1,8 @@
 name: Sync Repositories
 
 on:
+  schedule:
+    - cron: "0 6 * * *" # every day at 06:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -10,46 +12,66 @@ jobs:
       matrix:
         include:
           - src_repository: registry.k8s.io/metrics-server/metrics-server
+            src_yaml_path: ci/skopeo/metrics-server.yaml
             suffix: METRICS_SERVER
           - src_repository: docker.io/busybox
+            src_yaml_path: ci/skopeo/busybox.yaml
             suffix: BUSYBOX
           - src_repository: docker.io/nginxinc/nginx-unprivileged
+            src_yaml_path: ci/skopeo/nginx-unprivileged.yaml
             suffix: NGINX_UNPRIVILEGED
           - src_repository: docker.io/telegraf
+            src_yaml_path: ci/skopeo/telegraf.yaml
             suffix: TELEGRAF
           - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet
+            src_yaml_path: ci/skopeo/autoinstrumentation-dotnet.yaml
             suffix: AUTOINSTRUMENTATION_DOTNET
           - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java
+            src_yaml_path: ci/skopeo/autoinstrumentation-java.yaml
             suffix: AUTOINSTRUMENTATION_JAVA
           - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs
+            src_yaml_path: ci/skopeo/autoinstrumentation-nodejs.yaml
             suffix: AUTOINSTRUMENTATION_NODEJS
           - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python
+            src_yaml_path: ci/skopeo/autoinstrumentation-python.yaml
             suffix: AUTOINSTRUMENTATION_PYTHON
           - src_repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
+            src_yaml_path: ci/skopeo/opentelemetry-operator.yaml
             suffix: OPENTELEMETRY_OPERATOR
           - src_repository: public.ecr.aws/falcosecurity/falco-driver-loader
+            src_yaml_path: ci/skopeo/falco-driver-loader.yaml
             suffix: FALCO_DRIVER_LOADER
           - src_repository: public.ecr.aws/falcosecurity/falco-no-driver
+            src_yaml_path: ci/skopeo/falco-no-driver.yaml
             suffix: FALCO_NO_DRIVER
           - src_repository: quay.io/brancz/kube-rbac-proxy
+            src_yaml_path: ci/skopeo/kube-rbac-proxy.yaml
             suffix: KUBE_RBAC_PROXY
           - src_repository: quay.io/influxdb/telegraf-operator
+            src_yaml_path: ci/skopeo/telegraf-operator.yaml
             suffix: TELEGRAF_OPERATOR
           - src_repository: quay.io/prometheus/node-exporter
+            src_yaml_path: ci/skopeo/node-exporter.yaml
             suffix: NODE_EXPORTER
           - src_repository: quay.io/prometheus/prometheus
+            src_yaml_path: ci/skopeo/prometheus.yaml
             suffix: PROMETHEUS
           - src_repository: quay.io/prometheus-operator/prometheus-config-reloader
+            src_yaml_path: ci/skopeo/prometheus-config-reloader.yaml
             suffix: PROMETHEUS_CONFIG_RELOADER
           - src_repository: quay.io/prometheus-operator/prometheus-operator
+            src_yaml_path: ci/skopeo/prometheus-operator.yaml
             suffix: PROMETHEUS_OPERATOR
           - src_repository: quay.io/thanos/thanos
+            src_yaml_path: ci/skopeo/thanos.yaml
             suffix: THANOS
           - src_repository: registry.k8s.io/kube-state-metrics/kube-state-metrics
+            src_yaml_path: ci/skopeo/kube-state-metrics.yaml
             suffix: KUBE_STATE_METRICS
     uses: ./.github/workflows/workflow-sync-repositories.yaml
     with:
       src_repository: ${{ matrix.src_repository }}
+      src_yaml_path: ${{ matrix.src_yaml_path }}
       dest_docker_namespace: docker.io/sumologic
       dest_ecr_namespace: public.ecr.aws/a4t4y2n3
     secrets:
