@@ -29,7 +29,7 @@
 {{- if .Values.sumologic.metrics.enabled -}}
 {{- if not (index .Values "kube-prometheus-stack").prometheus.enabled -}}
 {{- if ne (dig "kube-prometheus-stack" "prometheus" "prometheusSpec" "additionalRemoteWrites" nil .Values.AsMap) nil -}}
-{{- fail "\nPrometheus V1 Remote write definitions are not supported by Otel metrics collector. Please follow the migration guide: https://github.com/SumoLogic/sumologic-documentation/edit/helm/v5/docs/send-data/kubernetes/v5/how-to-upgrade.md#forwarding-metrics-using-prometheus-remote-writes-into-otel-pipeline" }}
+{{- fail "\nkube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrites is configured while kube-prometheus-stack Prometheus is disabled. This configuration is not supported by the Otel metrics collector. Please follow the migration guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/#forwarding-metrics-using-prometheus-remote-writes-into-otel-pipeline" }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
