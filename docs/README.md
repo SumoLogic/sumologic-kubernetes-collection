@@ -98,7 +98,7 @@ The following table displays the tested Kubernetes and Helm versions.
 | K8s with EKS (fargate) | 1.33<br/>1.34<br/>1.35 |
 | K8s with Kops          | 1.32<br/>1.33<br/>1.34 |
 | K8s with GKE           | 1.33<br/>1.34<br/>1.35 |
-| K8s with AKS           | 1.32<br/>1.33<br/>1.34 |
+| K8s with AKS           | 1.33<br/>1.34<br/>1.35 |
 | OpenShift              | 4.16<br/>4.17<br/>4.18 |
 | Helm                   | 3.18.5 (Linux)         |
 | kubectl                | 1.29.3                 |
@@ -110,10 +110,10 @@ The following table displays the currently used software versions for our Helm c
 | OpenTelemetry Collector                   | 0.147.0 |
 | OpenTelemetry Operator                    | 0.110.0 |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
-| Falco                                     | 7.0.2   |
+| Falco                                     | 7.2.1   |
 | Metrics Server                            | 3.13.0  |
 | Telegraf Operator                         | 1.4.0   |
-| Tailing Sidecar Operator                  | 0.18.1  |
+| Tailing Sidecar Operator                  | 0.20.3  |
 
 ### Kubernetes Attributes Processor support
 
