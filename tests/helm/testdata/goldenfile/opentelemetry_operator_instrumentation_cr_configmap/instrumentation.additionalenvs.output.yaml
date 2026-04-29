@@ -70,9 +70,9 @@ data:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
           - name: OTEL_EXPORTER_OTLP_PROTOCOL
-            value: http/protobuf
+            value: grpc
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
           - name: test
             value: nodeval
       java:
@@ -146,9 +146,9 @@ data:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
           - name: OTEL_EXPORTER_OTLP_PROTOCOL
-            value: http/protobuf
+            value: grpc
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
           - name: test
             value: nodeval
       java:
