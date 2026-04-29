@@ -66,10 +66,8 @@ spec:
     env:
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "instrumentation.resource.exporter" (dict "enabled" $instrumentation.nodejs.metrics.enabled) }}
-      - name: OTEL_EXPORTER_OTLP_PROTOCOL
-        value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4317
 {{- if $instrumentation.nodejs.extraEnvVars -}}
 {{- toYaml $instrumentation.nodejs.extraEnvVars | nindent 6 -}}
 {{- end }}
