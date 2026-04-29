@@ -45,7 +45,7 @@ jobs:
           private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
 
       - name: Renovate run
-        uses: renovatebot/github-action@v46.1.11
+        uses: renovatebot/github-action@v46.1.12
         env:
           LOG_LEVEL: ${{ inputs.logLevel }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
