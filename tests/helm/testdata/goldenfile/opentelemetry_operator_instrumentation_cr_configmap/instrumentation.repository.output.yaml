@@ -47,6 +47,8 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: OTEL_DOTNET_AUTO_RULE_ENGINE_ENABLED
+            value: "false"
       python:
         image: mypythonrepo:mypythontag
         env:
@@ -113,6 +115,8 @@ data:
             value: http/protobuf
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
+          - name: OTEL_DOTNET_AUTO_RULE_ENGINE_ENABLED
+            value: "false"
       python:
         image: mypythonrepo:mypythontag
         env:
