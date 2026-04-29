@@ -1,10 +1,1 @@
 chore(deps): bump public.ecr.aws/sumologic/telegraf from 1.21.2 to 1.31.0
-
-Notable changes for users who use Telegraf Operator sidecars via pod annotations:
-
-- [Breaking] The `inputs.cassandra` plugin has been removed in Telegraf 1.30.0 (deprecated since 1.7).
-  Users must migrate to `inputs.jolokia2`. See: https://github.com/influxdata/telegraf/blob/master/plugins/inputs/jolokia2/examples/cassandra.conf
-- [Breaking] The default minimum TLS version for all plugins changed from TLS 1.0 to TLS 1.2 in Telegraf 1.24.0.
-  If backend services require TLS 1.0 or 1.1, add `tls_min_version = "TLS10"` to the relevant input plugin configuration.
-- [Deprecated] MongoDB `*_per_sec` fields (e.g. `commands_per_sec`) have been deprecated since Telegraf 1.10.
-  Use the non-suffixed versions (e.g. `commands`) instead.
