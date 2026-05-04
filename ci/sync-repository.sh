@@ -15,7 +15,6 @@ docker run \
             --preserve-digests \
             --retry-times 5 \
             --src yaml \
-            --src-no-creds \
             --dest docker \
             "/workspace/${SRC_YAML_PATH}" \
             "${DESTINATION_NAMESPACE}"
