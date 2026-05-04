@@ -51,6 +51,11 @@
 {{- fail "\nPlease set `sumologic.logs.otelcol.extraExporters` if you set `sumologic.logs.otelcol.useDefaultExporters` to false : https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/" }}
 {{- end -}}
 
+{{/* Check if kubeRbacProxy overrides are set for opentelemetry-operator */}}
+{{- if (dig "opentelemetry-operator" "kubeRbacProxy" nil .Values.AsMap) -}}
+{{- fail "\nopentelemetry-operator.kubeRbacProxy has been removed in opentelemetry-operator 0.110.0 in favor of built-in metrics authentication. Please remove any opentelemetry-operator.kubeRbacProxy.* overrides from your custom values before upgrading." }}
+{{- end -}}
+
 {{/* Check if metrics server has been configured properly */}}
 {{- if eq (index .Values "metrics-server" "image" "repository") "public.ecr.aws/sumologic/metrics-server" -}}
 {{- if and (ne (index .Values "metrics-server" "image" "tag") "") (not (semverCompare ">0.8.0" (index .Values "metrics-server" "image" "tag")) ) -}}

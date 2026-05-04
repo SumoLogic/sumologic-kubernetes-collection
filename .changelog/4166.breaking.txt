@@ -1,0 +1,1 @@
+chore(deps): bump opentelemetry-operator from 0.109.0 to 0.110.0, removing kube-rbac-proxy sidecar in favor of built-in metrics authentication. Remove any `opentelemetry-operator.kubeRBACProxy.*` overrides from custom values before upgrading.
