@@ -29,7 +29,7 @@ spec:
             some: annotation
         spec:
           nodeSelector:
-            kubernetes.io/os: linux
+            kubernetes.io/os: null
             my: node
           tolerations:
             - effect: NoSchedule
