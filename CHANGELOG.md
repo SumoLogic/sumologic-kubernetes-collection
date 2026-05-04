@@ -7,6 +7,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.28.0]
+
+### Released 2026-05-04
+
+### Breaking Changes
+
+- chore(deps): bump opentelemetry-operator from 0.109.0 to 0.110.0, removing kube-rbac-proxy sidecar in favor of built-in metrics
+  authentication. Remove any `opentelemetry-operator.kubeRBACProxy.*` overrides from custom values before upgrading. [#4166]
+- autoinstrumentation-dotnet now requires .NET 8 or newer (.NET 6 and .NET 7 are no longer supported) [#4172]
+- autoinstrumentation-nodejs now requires Node.js 18.19.0+ or 20.6.0+ (Node.js 14 and 16 are no longer supported) [#4172]
+
+### Added
+
+- Adds k8s cluster-name/helm-version fields [#4164]
+
+### Changed
+
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.3.1 to 0.12.6 [#4167]
+- chore(deps): bump public.ecr.aws/sumologic/kubernetes-setup Docker tag to v3.17.0 [#4168]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf from 1.21.2 to 1.31.0 [#4170]
+- chore(deps): bump Helm release tailing-sidecar-operator from 0.18.1 to 0.20.3 [#4171]
+- chore(deps): bump autoinstrumentation-dotnet from 1.9.0 to 1.15.0 [#4172]
+- chore(deps): bump autoinstrumentation-java from 2.20.1 to 2.27.0 [#4172]
+- chore(deps): bump autoinstrumentation-nodejs from 0.54.0 to 0.73.0 [#4172]
+- chore(deps): bump Helm release falco from 7.0.2 to 7.2.1 [#4173]
+- chore(deps): bump public.ecr.aws/sumologic/kubernetes-setup Docker tag to v3.18.0 [#4181]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.38.3 [#4182]
+
+### Fixed
+
+- ci: enable renovate bot and add more dependencies in it [#4145]
+- ci: fix changelog for renovate branches [#4149]
+
+[#4166]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4166
+[#4172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4172
+[#4164]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4164
+[#4167]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4167
+[#4168]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4168
+[#4170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4170
+[#4171]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4171
+[#4173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4173
+[#4181]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4181
+[#4182]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4182
+[#4145]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4145
+[#4149]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4149
+[v4.28.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.28.0
+
 ## [v4.27.1]
 
 ### Released 2026-04-14

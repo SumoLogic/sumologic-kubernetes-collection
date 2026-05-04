@@ -4,8 +4,16 @@ on:
     - cron: "30 18 * * *" # every day at 18:30 UTC (12:00 AM IST)
   workflow_dispatch:
     inputs:
+      logLevel:
+        description: "Log level"
+        type: choice
+        default: "info"
+        options:
+          - "info"
+          - "debug"
+          - "warn"
       dryRun:
-        description: "Run in dry-run mode (no changes made)"
+        description: "Dry-run: full (simulate PRs), lookup (check updates only), extract (parse deps only)"
         type: choice
         default: ""
         options:
@@ -16,16 +24,8 @@ on:
 
 jobs:
   renovate:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Renovate run
-        uses: renovatebot/github-action@v46.1.10
-        env:
-          LOG_LEVEL: debug
-          RENOVATE_REPOSITORIES: SumoLogic/sumologic-kubernetes-collection
-          RENOVATE_DRY_RUN: ${{ github.event.inputs.dryRun }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          configurationFile: renovate.json
+    uses: ./.github/workflows/workflow-renovate-run.yaml
+    with:
+      logLevel: ${{ github.event.inputs.logLevel || 'info' }}
+      dryRun: ${{ github.event.inputs.dryRun || '' }}
+    secrets: inherit

@@ -123,7 +123,7 @@ sumologic:
       restartPolicy: OnFailure # or Never
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.16.0
+        tag: 3.18.0
         pullPolicy: IfNotPresent
       initContainerImage:
         repository: public.ecr.aws/sumologic/busybox
@@ -304,7 +304,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.149.0-sumo-0"
+    tag: "0.151.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -2395,7 +2395,7 @@ telegraf-operator:
   ## Put here the new name if you want to override the full name used for Telegraf Operator components.
   # fullnameOverride: ""
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.21.2
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.38.3
     repository: public.ecr.aws/sumologic/telegraf-operator
   replicaCount: 1
   classes:
@@ -2561,20 +2561,20 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.149.0-sumo-0"
+      tag: "0.151.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
-        tag: 2.20.1
+        tag: 2.27.0
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
-        tag: 1.9.0
+        tag: 1.15.0
       python:
         repository: public.ecr.aws/sumologic/autoinstrumentation-python
         tag: 0.48b0
       nodejs:
         repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
-        tag: 0.54.0
+        tag: 0.73.0
     env:
       {}
       # ENABLE_WEBHOOKS: "true"
@@ -2587,10 +2587,6 @@ opentelemetry-operator:
         memory: 256Mi
     podLabels: {}
     podAnnotations: {}
-
-  kubeRBACProxy:
-    image:
-      repository: public.ecr.aws/sumologic/kube-rbac-proxy
 
   testFramework:
     image:

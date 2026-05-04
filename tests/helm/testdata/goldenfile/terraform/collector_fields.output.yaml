@@ -812,6 +812,9 @@ data:
     {
       "collector_fields": {
         "here_is_very_long_field_name": "another_value",
+        "sumo.cluster.name": "kubernetes",
+        "sumo.helm.release": "%CURRENT_CHART_VERSION%",
+        "sumo.hostedCollector.subType": "K8s",
         "test_fields": "test_value"
       },
       "fields": [

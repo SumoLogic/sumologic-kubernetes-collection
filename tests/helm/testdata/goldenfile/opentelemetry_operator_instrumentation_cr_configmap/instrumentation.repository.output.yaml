@@ -63,6 +63,8 @@ data:
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: grpc
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:
@@ -127,6 +129,8 @@ data:
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: grpc
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:

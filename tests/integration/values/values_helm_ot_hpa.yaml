@@ -83,12 +83,6 @@ opentelemetry-operator:
         cpu: 10m
         memory: 64Mi
 
-  kubeRBACProxy:
-    resources:
-      requests:
-        cpu: 5m
-        memory: 64Mi
-
 instrumentation:
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator-instr-1"
