@@ -47,10 +47,6 @@ data:
         actions:
         - action: delete
           key: fluent.tag
-      batch:
-        send_batch_max_size: 2048
-        send_batch_size: 1024
-        timeout: 1s
       filter/exclude_kubelet:
         logs:
           exclude:
@@ -327,7 +323,6 @@ data:
           - resource/remove_pod_name
           - resource/drop_annotations
           - transform/add_timestamp
-          - batch
           receivers:
           - otlp
         logs/otlp/kubelet:
@@ -350,7 +345,6 @@ data:
           - transform/remove_attributes
           - transform/flatten
           - transform/add_timestamp
-          - batch
           receivers:
           - otlp
         logs/otlp/systemd:
@@ -374,7 +368,6 @@ data:
           - transform/remove_attributes
           - transform/flatten
           - transform/add_timestamp
-          - batch
           receivers:
           - otlp
       telemetry:

@@ -19,22 +19,22 @@ metadata:
     config:
       merge:
         processors:
-          batch:
-            send_batch_size: 7
+          transform/flatten:
+            error_mode: silent
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig struct {
 		Processors struct {
-			Batch struct {
-				SendBatchSize int `yaml:"send_batch_size"`
-			}
+			TransformFlatten struct {
+				ErrorMode string `yaml:"error_mode"`
+			} `yaml:"transform/flatten"`
 		}
 	}
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 	require.NoError(t, err)
 
-	require.Equal(t, 7, otelConfig.Processors.Batch.SendBatchSize)
+	require.Equal(t, "silent", otelConfig.Processors.TransformFlatten.ErrorMode)
 }
 
 func TestMetadataOtelConfigOverride(t *testing.T) {
@@ -288,23 +288,26 @@ func TestCollectorOtelConfigMerge(t *testing.T) {
 otellogs:
   config:
     merge:
-      processors:
-        batch:
-          send_batch_size: 7
+      exporters:
+        otlphttp:
+          sending_queue:
+            queue_size: 8
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig struct {
-		Processors struct {
-			Batch struct {
-				SendBatchSize int `yaml:"send_batch_size"`
-			}
-		}
+		Exporters struct {
+			OtlpHttp struct {
+				SendingQueue struct {
+					QueueSize int `yaml:"queue_size"`
+				} `yaml:"sending_queue"`
+			} `yaml:"otlphttp"`
+		} `yaml:"exporters"`
 	}
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 	require.NoError(t, err)
 
-	require.Equal(t, 7, otelConfig.Processors.Batch.SendBatchSize)
+	require.Equal(t, 8, otelConfig.Exporters.OtlpHttp.SendingQueue.QueueSize)
 }
 
 func TestCollectorOtelConfigOverride(t *testing.T) {

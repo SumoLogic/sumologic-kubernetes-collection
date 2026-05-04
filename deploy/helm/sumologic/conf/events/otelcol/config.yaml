@@ -34,10 +34,6 @@ extensions:
   pprof: {}
 
 processors:
-  batch:
-    send_batch_max_size: 2_048
-    send_batch_size: 1024
-    timeout: 1s
   resource/add_cluster:
     attributes:
       - action: upsert
@@ -159,7 +155,6 @@ service:
         - source
         - sumologic
         - transform/add_timestamp
-        - batch
       receivers:
         - k8sobjects/configmaps
 {{- end }}
@@ -182,7 +177,6 @@ service:
         - source
         - sumologic
         - transform/add_timestamp
-        - batch
       receivers:
 {{- if .Values.otelevents.useSumoK8sEventReceiver }}
         - raw_k8s_events

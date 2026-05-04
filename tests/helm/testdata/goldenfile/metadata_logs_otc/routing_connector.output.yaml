@@ -74,10 +74,6 @@ data:
         actions:
         - action: delete
           key: fluent.tag
-      batch:
-        send_batch_max_size: 2048
-        send_batch_size: 1024
-        timeout: 1s
       filter/exclude_kubelet:
         logs:
           exclude:
@@ -357,7 +353,6 @@ data:
           - resource/drop_annotations
           - transform/add_timestamp
           - transform/add_default_pipeline_tag
-          - batch
           receivers:
           - otlp
         logs/otlp/containers/routing/debug:
@@ -396,7 +391,6 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - transform/add_default_pipeline_tag
-          - batch
           receivers:
           - otlp
         logs/otlp/systemd:
@@ -420,7 +414,6 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - transform/add_default_pipeline_tag
-          - batch
           receivers:
           - otlp
         logs/otlp/systemd/routing/debug:

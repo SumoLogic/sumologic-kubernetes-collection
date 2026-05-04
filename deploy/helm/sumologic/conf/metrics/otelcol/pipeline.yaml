@@ -49,7 +49,6 @@ processors:
 {{- if .Values.sumologic.metrics.enableDefaultFilters }}
   - filter/app_metrics
 {{- end }}
-  - batch
 receivers:
   - telegraf
   - otlp

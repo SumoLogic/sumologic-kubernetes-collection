@@ -44,16 +44,6 @@ processors:
     ## Maximum spike expected between the measurements of memory usage, in %.
     spike_limit_percentage: 20
 
-  ## The batch processor accepts spans and places them into batches grouped by node and resource
-  batch:
-    ## Number of spans after which a batch will be sent regardless of time
-    send_batch_size: 256
-    ## Maximum number of spans sent at once
-    send_batch_max_size: 512
-    ## Time duration after which a batch will be sent regardless of size
-    timeout: 5s
-    ## Never more than this many spans are being sent in a batch
-    # send_batch_max_size: 512
 extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
@@ -64,7 +54,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: [memory_limiter]
       exporters:
         - loadbalancing
 {{- if eq .Values.debug.instrumentation.tracesGateway.print true }}
