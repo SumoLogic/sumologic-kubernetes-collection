@@ -27,7 +27,8 @@ processors:
 {{ end -}}
 
 receivers:
-  ## Configuration for Telegraf Receiver
+{{- if .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver }}
+  ## Configuration for Sumo Logic Telegraf Receiver
   telegraf:
     agent_config: |
       [agent]
@@ -43,6 +44,13 @@ receivers:
         paths = [
 {{ include "metric.endpoints" . | indent 10 }}
         ]
+{{- else }}
+  ## Configuration for upstream Prometheus Remote Write Receiver
+  prometheusremotewrite:
+    endpoint: ${env:MY_POD_IP}:9888
+    read_timeout: 1m
+    write_timeout: 1m
+{{- end }}
   otlp:
     protocols:
       http:

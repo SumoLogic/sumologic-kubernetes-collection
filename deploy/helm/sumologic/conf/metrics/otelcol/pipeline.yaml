@@ -51,5 +51,9 @@ processors:
 {{- end }}
   - batch
 receivers:
+{{- if .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver }}
   - telegraf
+{{- else }}
+  - prometheusremotewrite
+{{- end }}
   - otlp
