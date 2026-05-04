@@ -47,7 +47,7 @@ receivers:
 {{- else }}
   ## Configuration for upstream Prometheus Remote Write Receiver
   prometheusremotewrite:
-    endpoint: ${env:MY_POD_IP}:9888
+    endpoint: {{ template "sumologic.prometheusremotewrite_endpoint" . }}
     read_timeout: 1m
     write_timeout: 1m
 {{- end }}
