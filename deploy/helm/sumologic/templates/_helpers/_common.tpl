@@ -696,6 +696,14 @@ ${env:MY_POD_IP}:13133
 {{- end -}}
 {{- end }}
 
+{{- define "sumologic.prometheusremotewrite_endpoint" -}}
+{{- if .Values.sumologic.ipv6mode -}}
+"[${env:MY_POD_IP}]:9888"
+{{- else -}}
+${env:MY_POD_IP}:9888
+{{- end -}}
+{{- end }}
+
 {{- define "useDefaultConfig" }}
 {{/*
 This function checks if any keys other than 'merge' and 'override' exist in a given map.

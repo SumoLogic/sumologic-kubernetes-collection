@@ -29,9 +29,30 @@
 {{- if .Values.sumologic.metrics.enabled -}}
 {{- if not (index .Values "kube-prometheus-stack").prometheus.enabled -}}
 {{- if ne (dig "kube-prometheus-stack" "prometheus" "prometheusSpec" "additionalRemoteWrites" nil .Values.AsMap) nil -}}
-{{- fail "\nRemote write definitions are not supported by Otel. Please follow the migration guide: https://help.sumologic.com/docs/send-data/kubernetes/v4/how-to-upgrade/#convert-prometheus-remote-writes-to-otel-metrics-filters" }}
+{{- fail "\nkube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrites is configured while kube-prometheus-stack Prometheus is disabled. This configuration is not supported by the Otel metrics collector. Please follow the migration guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/#forwarding-metrics-using-prometheus-remote-writes-into-otel-pipeline" }}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/* Check if additionalEndpoints are configured without enableSumoPrometheusRemotewriteReceiver */}}
+{{- if .Values.sumologic.metrics.enabled -}}
+{{- if not .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver -}}
+{{- if .Values.metadata.metrics.config.additionalEndpoints -}}
+{{- fail "\nmetadata.metrics.config.additionalEndpoints is configured, but custom remote write endpoints are only supported by the Telegraf compatibility receiver.\nThe default prometheusremotewrite receiver ignores metadata.metrics.config.additionalEndpoints.\nTo use custom endpoints, enable the compatibility flag:\n  metadata.metrics.enableSumoPrometheusRemotewriteReceiver: true\nNote: this flag is a temporary migration aid and will be removed in a future release.\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/#forwarding-metrics-using-prometheus-remote-writes-into-otel-pipeline" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Check if metrics are enabled but OTel collector is explicitly disabled (v5: Prometheus Operator removed) */}}
+{{- if .Values.sumologic.metrics.enabled -}}
+{{- if eq .Values.sumologic.metrics.collector.otelcol.enabled false -}}
+{{- fail "\nPrometheus Operator has been removed in v5. The OpenTelemetry Collector is the only supported metrics collection mechanism.\nPlease enable the OTel collector and OTel operator:\n  sumologic.metrics.collector.otelcol.enabled: true\n  opentelemetry-operator.enabled: true\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/" -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Check if customer has explicitly re-enabled Prometheus Operator (removed in v5) */}}
+{{- if (index .Values "kube-prometheus-stack").prometheusOperator.enabled -}}
+{{- fail "\nPrometheus Operator has been removed in v5 and is no longer supported.\nPlease remove 'kube-prometheus-stack.prometheusOperator.enabled: true' and 'kube-prometheus-stack.prometheus.enabled: true' from your configuration\nand migrate to the OpenTelemetry Collector instead.\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/" -}}
 {{- end -}}
 
 {{- $nameservers := (dig "otellogswindows" "daemonset" "nameservers" (list "...") .Values.AsMap) -}}

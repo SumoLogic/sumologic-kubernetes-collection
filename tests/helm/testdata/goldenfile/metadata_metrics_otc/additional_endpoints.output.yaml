@@ -183,7 +183,6 @@ data:
             service_address = ":9888"
             data_format = "prometheusremotewrite"
             paths = [
-              "/prometheus.metrics",
               "/prometheus.metrics.custom",
               "/prometheus.metrics.others"
             ]
