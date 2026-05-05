@@ -75,10 +75,10 @@ func GetOtelConfigFromTemplate(t *testing.T, templateContent string) string {
 
 // GetServiceMonitors returns serviceMonitors list from the given templatePath
 // In case of error it returns empty list
-func GetServiceMonitors(t *testing.T, valuesYaml string, templatePath string) []*monitoringv1.ServiceMonitor {
+func GetServiceMonitors(t *testing.T, valuesYaml string, templatePath string) []monitoringv1.ServiceMonitor {
 	renderedYamlString, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
 	if err != nil {
-		return []*monitoringv1.ServiceMonitor{}
+		return []monitoringv1.ServiceMonitor{}
 	}
 
 	var list monitoringv1.ServiceMonitorList
