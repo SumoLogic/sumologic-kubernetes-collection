@@ -20,7 +20,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4081]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4081
 [#4185]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4185
 [#4187]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4187
-
 [v5.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.0.0
 
 ## [v4.28.0]
