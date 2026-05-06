@@ -7,6 +7,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.0.0]
+
+### Released 2026-05-06
+
+### Changed
+
+- feat(helm v5): Remove prometheus operator and deprecate telegraf receiver [#4081]
+- chore: update OpenTelemetry collector to 0.151.0 [#4185]
+- chore(deps): bump Helm release opentelemetry-operator from 0.110.0 to 0.111.0 [#4187]
+
+[#4081]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4081
+[#4185]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4185
+[#4187]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4187
+
+[v5.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.0.0
+
 ## [v4.28.0]
 
 ### Released 2026-05-04
