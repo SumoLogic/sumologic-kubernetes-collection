@@ -11,9 +11,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Released 2026-05-06
 
-### Changed
+### Migration from v4
+
+See the [migration guide][v5_migration_guide] for details.
+
+### Breaking
 
 - feat(helm v5): Remove prometheus operator and deprecate telegraf receiver [#4081]
+
+### Changed
+
 - chore: update OpenTelemetry collector to 0.151.0 [#4185]
 - chore(deps): bump Helm release opentelemetry-operator from 0.110.0 to 0.111.0 [#4187]
 - chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-nodejs Docker tag to v0.74.0 [#4188]
@@ -25,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4188]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4188
 [#4191]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4191
 [v5.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.0.0
+[v5_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v5/important-changes/
 
 ## [v4.28.0]
 
