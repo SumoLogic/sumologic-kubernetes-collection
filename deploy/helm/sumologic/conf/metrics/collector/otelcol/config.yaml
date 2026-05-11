@@ -8,9 +8,17 @@ exporters:
   otlphttp:
     endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
     sending_queue:
-      queue_size: 10000
       num_consumers: 10
       storage: file_storage
+{{- if eq .Values.useExporterBatching true }}
+      queue_size: 10000000
+      batch:
+        flush_timeout: 1s
+        min_size: 1000
+        max_size: 2000
+{{ else }}
+      queue_size: 10000
+{{- end }}
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
 
@@ -89,7 +97,9 @@ service:
 {{- end }}
         - otlphttp
       processors:
+{{- if eq .Values.useExporterBatching false }}
         - batch
+{{- end }}
         - filter/drop_stale_datapoints
 {{- if .Values.sumologic.metrics.dropHistogramBuckets }}
         - transform/extract_sum_count_from_histograms

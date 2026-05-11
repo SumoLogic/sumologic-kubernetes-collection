@@ -3,6 +3,15 @@ exporters:
 {{- if eq .Values.debug.instrumentation.tracesGateway.print true }}
   debug:
     verbosity: detailed
+{{- if eq .Values.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- end }}
 
   loadbalancing:
@@ -14,7 +23,15 @@ exporters:
         sending_queue:
           enabled: true
           num_consumers: 10
+{{- if eq .Values.useExporterBatching true }}
+          queue_size: 2560000
+          batch:
+            flush_timeout: 5s
+            min_size: 256
+            max_size: 512
+{{ else }}
           queue_size: 10_000
+{{- end }}
     resolver:
       dns:
         hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
@@ -64,7 +81,11 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: 
+        - memory_limiter
+{{- if eq .Values.useExporterBatching false }}
+        - batch
+{{- end }}
       exporters:
         - loadbalancing
 {{- if eq .Values.debug.instrumentation.tracesGateway.print true }}
