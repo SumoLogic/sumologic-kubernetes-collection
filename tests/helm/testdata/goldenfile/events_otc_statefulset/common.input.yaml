@@ -1,4 +1,5 @@
 sumologic:
+  useExporterBatching: true
   nodeSelector:
     kubernetes.io/os: linux
   affinity:

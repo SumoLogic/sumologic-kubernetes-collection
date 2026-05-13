@@ -2,5 +2,6 @@ tracesGateway:
   enabled: true
 
 sumologic:
+  useExporterBatching: true
   traces:
     enabled: true

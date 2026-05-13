@@ -136,7 +136,6 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"groupbyattrs/group_by_name",
 		"transform/remove_name",
 		"filter/drop_unnecessary_metrics",
-		"batch",
 	}
 
 	require.Equal(t, expectedPipelineValue, otelConfig.Service.Pipelines.Metrics.Processors)

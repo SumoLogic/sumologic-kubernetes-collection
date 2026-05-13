@@ -14,6 +14,13 @@ data:
   config.yaml: |
     exporters:
       debug:
+        sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
+          enabled: true
+          queue_size: 1024000
         verbosity: detailed
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
@@ -23,9 +30,13 @@ data:
         max_request_body_size: 16777216
         metric_format: otlp
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
     extensions:
@@ -200,7 +211,6 @@ data:
           - groupbyattrs/group_by_name
           - transform/remove_name
           - filter/drop_unnecessary_metrics
-          - batch
           receivers:
           - prometheusremotewrite
           - otlp

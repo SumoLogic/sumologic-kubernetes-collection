@@ -616,18 +616,6 @@ data:
     {
       "locals": {
         "source_configs": {
-          "apiserver_metrics_source": {
-            "config-name": "endpoint-metrics-apiserver",
-            "name": "apiserver-metrics"
-          },
-          "control_plane_metrics_source": {
-            "config-name": "endpoint-control_plane_metrics_source",
-            "name": "control-plane-metrics"
-          },
-          "controller_metrics_source": {
-            "config-name": "endpoint-metrics-kube-controller-manager",
-            "name": "kube-controller-manager-metrics"
-          },
           "default_events_source": {
             "config-name": "endpoint-events",
             "name": "events",
@@ -670,13 +658,6 @@ data:
               "content_type": "Otlp"
             }
           },
-          "default_otlp_metrics_source": {
-            "config-name": "endpoint-metrics-otlp",
-            "name": "metrics-otlp",
-            "properties": {
-              "content_type": "Otlp"
-            }
-          },
           "default_otlp_traces_source": {
             "config-name": "endpoint-traces-otlp",
             "name": "traces-otlp",
@@ -690,56 +671,20 @@ data:
             "properties": {
               "content_type": "Zipkin"
             }
-          },
-          "kubelet_metrics_source": {
-            "config-name": "endpoint-metrics-kubelet",
-            "name": "kubelet-metrics"
-          },
-          "node_metrics_source": {
-            "config-name": "endpoint-metrics-node-exporter",
-            "name": "node-exporter-metrics"
-          },
-          "scheduler_metrics_source": {
-            "config-name": "endpoint-metrics-kube-scheduler",
-            "name": "kube-scheduler-metrics"
-          },
-          "state_metrics_source": {
-            "config-name": "endpoint-metrics-kube-state",
-            "name": "kube-state-metrics"
           }
         },
         "sources": {
-          "apiserver_metrics_source": "${ sumologic_http_source.apiserver_metrics_source }",
-          "control_plane_metrics_source": "${ sumologic_http_source.control_plane_metrics_source }",
-          "controller_metrics_source": "${ sumologic_http_source.controller_metrics_source }",
           "default_events_source": "${ sumologic_http_source.default_events_source }",
           "default_logs_source": "${ sumologic_http_source.default_logs_source }",
           "default_metrics_source": "${ sumologic_http_source.default_metrics_source }",
           "default_otlp_events_source": "${ sumologic_http_source.default_otlp_events_source }",
           "default_otlp_logs_source": "${ sumologic_http_source.default_otlp_logs_source }",
-          "default_otlp_metrics_source": "${ sumologic_http_source.default_otlp_metrics_source }",
           "default_otlp_traces_source": "${ sumologic_http_source.default_otlp_traces_source }",
-          "default_traces_source": "${ sumologic_http_source.default_traces_source }",
-          "kubelet_metrics_source": "${ sumologic_http_source.kubelet_metrics_source }",
-          "node_metrics_source": "${ sumologic_http_source.node_metrics_source }",
-          "scheduler_metrics_source": "${ sumologic_http_source.scheduler_metrics_source }",
-          "state_metrics_source": "${ sumologic_http_source.state_metrics_source }"
+          "default_traces_source": "${ sumologic_http_source.default_traces_source }"
         }
       },
       "resource": {
         "sumologic_http_source": {
-          "apiserver_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "apiserver-metrics"
-          },
-          "control_plane_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "control-plane-metrics"
-          },
-          "controller_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kube-controller-manager-metrics"
-          },
           "default_events_source": {
             "collector_id": "${ sumologic_collector.collector.id }",
             "default_date_formats": [
@@ -774,11 +719,6 @@ data:
             "content_type": "Otlp",
             "name": "logs-otlp"
           },
-          "default_otlp_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "content_type": "Otlp",
-            "name": "metrics-otlp"
-          },
           "default_otlp_traces_source": {
             "collector_id": "${ sumologic_collector.collector.id }",
             "content_type": "Otlp",
@@ -788,22 +728,6 @@ data:
             "collector_id": "${ sumologic_collector.collector.id }",
             "content_type": "Zipkin",
             "name": "traces"
-          },
-          "kubelet_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kubelet-metrics"
-          },
-          "node_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "node-exporter-metrics"
-          },
-          "scheduler_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kube-scheduler-metrics"
-          },
-          "state_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kube-state-metrics"
           }
         }
       }

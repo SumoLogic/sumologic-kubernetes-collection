@@ -45,9 +45,13 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
         log_format: otlp
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
       sumologic/test:
         endpoint: https://test-endpoint
@@ -357,7 +361,6 @@ data:
           - resource/drop_annotations
           - transform/add_timestamp
           - transform/add_default_pipeline_tag
-          - batch
           receivers:
           - otlp
         logs/otlp/containers/routing/debug:
@@ -396,7 +399,6 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - transform/add_default_pipeline_tag
-          - batch
           receivers:
           - otlp
         logs/otlp/systemd:
@@ -420,7 +422,6 @@ data:
           - transform/flatten
           - transform/add_timestamp
           - transform/add_default_pipeline_tag
-          - batch
           receivers:
           - otlp
         logs/otlp/systemd/routing/debug:

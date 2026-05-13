@@ -12,73 +12,36 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
     sumologic.com/scrape: "true"
-
-    podLabelKey: podLabelValue
-
-    podKey: podValue
 spec:
-  image: "my_repository:my_tag"
+  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.151.0-sumo-0"
   mode: statefulset
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
   managementState: managed
   upgradeStrategy: automatic
   targetAllocator:
-    allocationStrategy: consistent-hashing
     enabled: true
     filterStrategy: relabel-config
     prometheusCR:
       enabled: true
-      scrapeInterval: 60s
+      scrapeInterval: 30s
       serviceMonitorSelector:
         matchLabels:
-          smkey: smvalue
-
+          release: RELEASE-NAME
       podMonitorSelector:
         matchLabels:
-          pmkey: pmvalue
-
+          release: RELEASE-NAME
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     nodeSelector:
       kubernetes.io/os: linux
-      workingGroup: production
-    resources:
-      limits:
-        cpu: 2000m
-        memory: 3Gi
-      requests:
-        cpu: 500m
-        memory: 2Gi
-    tolerations:
-      - effect: NoSchedule
-        key: null
-        operator: Exists
-    affinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                  - sumo-east1
-                  - sumo-west1
+    resources: {}
   nodeSelector:
     kubernetes.io/os: linux
-    workingGroup: production
-  tolerations:
-    - effect: NoSchedule
-      key: null
-      operator: Exists
-  affinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: topology.kubernetes.io/zone
-              operator: In
-              values:
-                - sumo-east1
-                - sumo-west1
-  priorityClassName: "customPriority"
+  autoscaler:
+    maxReplicas: 10
+    minReplicas: 1
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 70
   env:
     - name: METADATA_METRICS_SVC
       valueFrom:
@@ -97,8 +60,6 @@ spec:
   podAnnotations:
     ## The operator adds this annotation by default, but we use our own ServiceMonitor
     prometheus.io/scrape: "false"
-    podAnnotationKey: podAnnotationValue
-    annotationKey: annotationValue
   podSecurityContext:
     fsGroup: 999
   ports:
@@ -106,11 +67,11 @@ spec:
       port: 1777
   resources:
     limits:
-      cpu: 3000m
+      cpu: 1000m
       memory: 2Gi
     requests:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: 100m
+      memory: 768Mi
   volumes:
     - name: tmp
       emptyDir: {}
@@ -138,12 +99,12 @@ spec:
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check:
-        endpoint: "[${env:MY_POD_IP}]:13133"
+        endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
       batch:
         send_batch_max_size: 2000
-        send_batch_size: 5000
+        send_batch_size: 1000
         timeout: 1s
       filter/drop_stale_datapoints:
         metrics:
@@ -159,12 +120,139 @@ spec:
               - delete_key(attributes, "net.host.port")
               - delete_key(attributes, "service.instance.id")
               - delete_matching_keys(attributes, "k8s.*")
+      transform/extract_sum_count_from_histograms:
+        error_mode: ignore
+        metric_statements:
+          - context: metric
+            statements:
+              - extract_sum_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type ==
+                METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+              - extract_count_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type ==
+                METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
     receivers:
       prometheus:
         config:
           global:
-            scrape_interval: 60s
-          scrape_configs: []
+            scrape_interval: 30s
+          scrape_configs:
+            - job_name: pod-annotations
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - action: keep
+                  regex: true
+                  source_labels:
+                    - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+                - action: replace
+                  regex: (.+)
+                  source_labels:
+                    - __meta_kubernetes_pod_annotation_prometheus_io_path
+                  target_label: __metrics_path__
+                - action: replace
+                  regex: ([^:]+)(?::\d+)?;(\d+)
+                  replacement: $1:$2
+                  source_labels:
+                    - __address__
+                    - __meta_kubernetes_pod_annotation_prometheus_io_port
+                  target_label: __address__
+                - action: replace
+                  regex: (.*)
+                  replacement: $1
+                  separator: ;
+                  source_labels:
+                    - __metrics_path__
+                  target_label: endpoint
+                - action: replace
+                  source_labels:
+                    - __meta_kubernetes_namespace
+                  target_label: namespace
+                - action: labelmap
+                  regex: __meta_kubernetes_pod_label_(.+)
+                - action: replace
+                  regex: (.*)
+                  replacement: $1
+                  separator: ;
+                  source_labels:
+                    - __meta_kubernetes_pod_name
+                  target_label: pod
+            - authorization:
+                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              honor_labels: true
+              job_name: kubelet
+              kubernetes_sd_configs:
+                - role: node
+              metric_relabel_configs:
+                - action: keep
+                  regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+                  source_labels:
+                    - __name__
+                - action: labeldrop
+                  regex: id
+              relabel_configs:
+                - source_labels:
+                    - __meta_kubernetes_node_name
+                  target_label: node
+                - replacement: https-metrics
+                  target_label: endpoint
+                - action: replace
+                  source_labels:
+                    - __metrics_path__
+                  target_label: metrics_path
+                - action: replace
+                  source_labels:
+                    - __address__
+                  target_label: instance
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
+            - authorization:
+                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              honor_labels: true
+              job_name: cadvisor
+              kubernetes_sd_configs:
+                - role: node
+              metric_relabel_configs:
+                - action: replace
+                  regex: .*
+                  replacement: kubelet
+                  source_labels:
+                    - __name__
+                  target_label: job
+                - action: keep
+                  regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
+                  source_labels:
+                    - __name__
+                - action: drop
+                  regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
+                  source_labels:
+                    - __name__
+                    - container
+                - action: labelmap
+                  regex: container_name
+                  replacement: container
+                - action: drop
+                  regex: POD
+                  source_labels:
+                    - container
+                - action: labeldrop
+                  regex: (id|name)
+              metrics_path: /metrics/cadvisor
+              relabel_configs:
+                - replacement: https-metrics
+                  target_label: endpoint
+                - action: replace
+                  source_labels:
+                    - __metrics_path__
+                  target_label: metrics_path
+                - action: replace
+                  source_labels:
+                    - __address__
+                  target_label: instance
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
     service:
       extensions:
         - health_check
@@ -177,6 +265,7 @@ spec:
           processors:
             - batch
             - filter/drop_stale_datapoints
+            - transform/extract_sum_count_from_histograms
             - transform/drop_unnecessary_attributes
           receivers:
             - prometheus
