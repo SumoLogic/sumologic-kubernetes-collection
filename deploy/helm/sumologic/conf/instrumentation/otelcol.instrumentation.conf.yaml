@@ -5,7 +5,7 @@ exporters:
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
   debug:
     verbosity: detailed
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     sending_queue:
       enabled: true
       queue_size: 2560000
@@ -43,7 +43,7 @@ exporters:
       enabled: false
       ## Number of consumers that dequeue batches
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 1280000
       batch:
         flush_timeout: 5s
@@ -59,7 +59,7 @@ exporters:
 {{- if eq .Values.tracesGateway.enabled true }}
   otlphttp/traces:
     endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     sending_queue:
       enabled: true
       queue_size: 256000
@@ -78,7 +78,7 @@ exporters:
         sending_queue:
           enabled: true
           num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
           queue_size: 2560000
           batch:
             flush_timeout: 5s
@@ -274,7 +274,7 @@ service:
 {{ end }}
         - source
         - resource
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       exporters:
@@ -297,7 +297,7 @@ service:
 {{ end }}
         - source
         - resource
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       exporters:

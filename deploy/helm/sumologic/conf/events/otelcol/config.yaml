@@ -8,7 +8,7 @@ exporters:
 {{- if .Values.sumologic.events.persistence.enabled }}
       storage: file_storage
 {{- end }}
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 1024000
       batch:
         flush_timeout: 1s
@@ -19,7 +19,7 @@ exporters:
 {{- if eq .Values.debug.events.print true }}
   debug:
     verbosity: detailed
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     sending_queue:
       enabled: true
       queue_size: 1024000
@@ -37,7 +37,7 @@ exporters:
     log_format: {{ include "sumologic.events.exporter.format" . }}
     sending_queue:
       enabled: true
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 1024000
       batch:
         flush_timeout: 1s
@@ -182,7 +182,7 @@ service:
         - source
         - sumologic
         - transform/add_timestamp
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       receivers:
@@ -207,7 +207,7 @@ service:
         - source
         - sumologic
         - transform/add_timestamp
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       receivers:

@@ -3,7 +3,7 @@ exporters:
 {{- if eq .Values.debug.instrumentation.tracesSampler.print true }}
   debug:
     verbosity: detailed
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     sending_queue:
       enabled: true
       queue_size: 2560000
@@ -22,7 +22,7 @@ exporters:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
 {{- end }}
     compression: gzip
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     sending_queue:
       enabled: true
       queue_size: 2560000
@@ -43,7 +43,7 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 2560000
       batch:
         flush_timeout: 5s
@@ -121,7 +121,7 @@ service:
       processors:
         - memory_limiter
         - cascading_filter
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       exporters:

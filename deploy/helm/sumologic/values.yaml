@@ -6,13 +6,13 @@ fullnameOverride: ""
 ## Use the same namespace as namespaceOverride in 'kube-prometheus-stack.namespaceOverride' if Prometheus setup is also enabled
 namespaceOverride: ""
 
-## flag to switch the implementation between batch processor and export level batching
-useExporterBatching: false
-
-## used for helm checks to verify that customer has cautiously read the docs and enabled the export level batching
-customBatchingConfigured: false
-
 sumologic:
+  ## flag to switch the implementation between batch processor and export level batching
+  useExporterBatching: false
+
+  ## used for helm checks to verify that customer has cautiously read the docs and enabled the export level batching
+  customBatchingConfigured: false
+
   ### Setup
 
   ## If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
@@ -633,7 +633,7 @@ sumologic:
           #   exporters:
           #     otlphttp:
           #       sending_queue:
-          #         queue_size: 8
+          #         queue_size: 10000
           ## will change the queue size of the otlphttp exporter.
           ##
           ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -1454,7 +1454,7 @@ otelcolInstrumentation:
     #   exporters:
     #     otlphttp:
     #       sending_queue:
-    #         queue_size: 8
+    #         queue_size: 10000
     ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -1526,7 +1526,7 @@ tracesSampler:
     #   exporters:
     #     otlphttp:
     #       sending_queue:
-    #         queue_size: 8
+    #         queue_size: 10000
     ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -1634,7 +1634,7 @@ metadata:
       #   exporters:
       #     otlphttp:
       #       sending_queue:
-      #         queue_size: 8
+      #         queue_size: 10000
       ## will change the queue size of the otlphttp exporter
       ##
       ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -1753,7 +1753,7 @@ metadata:
       #   exporters:
       #     otlphttp:
       #       sending_queue:
-      #         queue_size: 8
+      #         queue_size: 10000
       ## will change the queue size of the otlphttp exporter
       ##
       ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -1935,7 +1935,7 @@ tracesGateway:
     #   exporters:
     #     otlphttp:
     #       sending_queue:
-    #         queue_size: 8
+    #         queue_size: 10000
     ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -1977,7 +1977,7 @@ otelevents:
     #   exporters:
     #     otlphttp:
     #       sending_queue:
-    #         queue_size: 8
+    #         queue_size: 10000
     ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -2133,7 +2133,7 @@ otellogs:
     #   exporters:
     #     otlphttp:
     #       sending_queue:
-    #         queue_size: 8
+    #         queue_size: 10000
     ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
@@ -2286,7 +2286,7 @@ otellogswindows:
     #   exporters:
     #     otlphttp:
     #       sending_queue:
-    #         queue_size: 8
+    #         queue_size: 10000
     ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest

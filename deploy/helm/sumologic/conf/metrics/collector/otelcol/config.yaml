@@ -10,7 +10,7 @@ exporters:
     sending_queue:
       num_consumers: 10
       storage: file_storage
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 10000000
       batch:
         flush_timeout: 1s
@@ -97,7 +97,7 @@ service:
 {{- end }}
         - otlphttp
       processors:
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
         - filter/drop_stale_datapoints

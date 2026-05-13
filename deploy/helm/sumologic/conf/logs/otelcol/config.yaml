@@ -12,7 +12,7 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 10240000
       batch:
         flush_timeout: 1s
@@ -32,7 +32,7 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 10240000
       batch:
         flush_timeout: 1s
@@ -55,7 +55,7 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 10240000
       batch:
         flush_timeout: 1s
@@ -75,7 +75,7 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 10240000
       batch:
         flush_timeout: 1s
@@ -99,7 +99,7 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 10240000
       batch:
         flush_timeout: 1s
@@ -120,7 +120,7 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
       queue_size: 10240000
       batch:
         flush_timeout: 1s
@@ -686,7 +686,7 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       receivers:
@@ -725,7 +725,7 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       receivers:
@@ -763,7 +763,7 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       receivers:

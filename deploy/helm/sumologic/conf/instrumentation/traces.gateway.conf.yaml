@@ -3,7 +3,7 @@ exporters:
 {{- if eq .Values.debug.instrumentation.tracesGateway.print true }}
   debug:
     verbosity: detailed
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     sending_queue:
       enabled: true
       queue_size: 2560000
@@ -23,7 +23,7 @@ exporters:
         sending_queue:
           enabled: true
           num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
           queue_size: 2560000
           batch:
             flush_timeout: 5s
@@ -81,9 +81,9 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: 
+      processors:
         - memory_limiter
-{{- if eq .Values.useExporterBatching false }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
 {{- end }}
       exporters:

@@ -35,11 +35,11 @@ spec:
     exporters:
       debug:
         sending_queue:
-        enabled: true
-        queue_size: 10000000
-        batch:
-          flush_timeout: 10s
-          min_size: 10000
+          enabled: true
+          queue_size: 10000000
+          batch:
+            flush_timeout: 10s
+            min_size: 10000
 
     service:
       pipelines:

@@ -98,7 +98,8 @@
 {{- define "check.exporters.queueSize" -}}
 {{- range $_, $exporterConfig := .exporters -}}
 {{- if kindIs "map" $exporterConfig -}}
-{{- if dig "sending_queue" "queue_size" nil $exporterConfig -}}
+{{- $sendingQueue := dig "sending_queue" nil $exporterConfig -}}
+{{- if and (kindIs "map" $sendingQueue) (hasKey $sendingQueue "queue_size") -}}
 {{- fail (printf "\nCustom configuration of queue_size is found in %s.[exporter].sending_queue.queue_size. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/best-practices/#opentelemetry-collector-queueing-and-batching" $.path) -}}
 {{- end -}}
 {{- end -}}
@@ -106,7 +107,7 @@
 {{- end -}}
 
 {{/* Check if queue_size is configured in sending_queue for any exporter (only when useExporterBatching is enabled and customBatchingConfigured is not set) */}}
-{{- if and .Values.useExporterBatching (not .Values.customBatchingConfigured) -}}
+{{- if and .Values.sumologic.useExporterBatching (not .Values.sumologic.customBatchingConfigured) -}}
 {{/* Instrumentation */}}
 {{- include "check.exporters.queueSize" (dict "exporters" (dig "otelcolInstrumentation" "config" "merge" "exporters" dict .Values.AsMap) "path" "otelcolInstrumentation.config.merge.exporters") -}}
 {{- include "check.exporters.queueSize" (dict "exporters" (dig "otelcolInstrumentation" "config" "override" "exporters" dict .Values.AsMap) "path" "otelcolInstrumentation.config.override.exporters") -}}

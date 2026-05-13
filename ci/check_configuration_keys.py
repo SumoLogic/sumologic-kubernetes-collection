@@ -53,8 +53,8 @@ SKIP_DEFAULTS = {
     'sumologic.setup.debug',
     'metrics-server.imagePullSecrets',
     'sumologic.events.sourceCategory',
-    'useExporterBatching',
-    'customBatchingConfigured',
+    'sumologic.useExporterBatching',
+    'sumologic.customBatchingConfigured',
 }
 
 def main(values_path: str, readme_path: str, full_diff=False) -> None:

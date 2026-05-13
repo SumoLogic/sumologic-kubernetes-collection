@@ -1,7 +1,7 @@
 {{- if eq .Values.debug.metrics.metadata.print true }}
 debug:
   verbosity: detailed
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
   sending_queue:
     enabled: true
     queue_size: 1024000
@@ -30,7 +30,7 @@ sumologic/sumologic-mock-default:
     num_consumers: 10
     ## setting queue_size a high number, so we always use maximum space of the storage
     ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -53,7 +53,7 @@ sumologic/sumologic-mock-http:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -86,7 +86,7 @@ sumologic/default:
     num_consumers: 10
     ## setting queue_size a high number, so we always use maximum space of the storage
     ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -109,7 +109,7 @@ sumologic/apiserver:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -131,7 +131,7 @@ sumologic/control_plane:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -153,7 +153,7 @@ sumologic/controller:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -175,7 +175,7 @@ sumologic/kubelet:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -197,7 +197,7 @@ sumologic/node:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -219,7 +219,7 @@ sumologic/scheduler:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
@@ -241,7 +241,7 @@ sumologic/state:
     storage: file_storage
 {{- end }}
     num_consumers: 10
-{{- if eq .Values.useExporterBatching true }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
     queue_size: 10240000
     batch:
       flush_timeout: 1s
