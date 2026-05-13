@@ -51,7 +51,7 @@ data:
       batch:
         send_batch_max_size: 512
         send_batch_size: 256
-        timeout: 10s
+        timeout: 5s
       k8sattributes:
         auth_type: serviceAccount
         extract:
@@ -94,7 +94,7 @@ data:
         wait_for_metadata: true
         wait_for_metadata_timeout: 10s
       memory_limiter:
-        check_interval: 5s
+        check_interval: 10s
         limit_percentage: 90
         spike_limit_percentage: 20
       resource:

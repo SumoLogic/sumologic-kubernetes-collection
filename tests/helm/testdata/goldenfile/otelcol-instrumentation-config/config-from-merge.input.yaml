@@ -4,5 +4,5 @@ otelcolInstrumentation:
   config:
     merge:
       processors:
-        batch:
-          timeout: 10s
+        memory_limiter:
+          check_interval: 10s

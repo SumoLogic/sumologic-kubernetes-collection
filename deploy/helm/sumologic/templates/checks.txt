@@ -106,7 +106,16 @@
 {{- end -}}
 {{- end -}}
 
-{{/* Check if queue_size is configured in sending_queue for any exporter (only when useExporterBatching is enabled and customBatchingConfigured is not set) */}}
+{{/* Helper: fail if the batch processor is configured in the given processors map.
+     Call with: (dict "processors" <map> "path" <string>) */}}
+{{- define "check.processors.batch" -}}
+{{- if hasKey .processors "batch" -}}
+{{- fail (printf "\nCustom configuration of batch processor is found in %s.batch. Please refer https://www.sumologic.com/help/docs/send-data/kubernetes/best-practices/#opentelemetry-collector-queueing-and-batching" .path) -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Check if queue_size is configured in sending_queue for any exporter, or if batch processor is configured
+     in processors (only when useExporterBatching is enabled and customBatchingConfigured is not set) */}}
 {{- if and .Values.sumologic.useExporterBatching (not .Values.sumologic.customBatchingConfigured) -}}
 {{/* Instrumentation */}}
 {{- include "check.exporters.queueSize" (dict "exporters" (dig "otelcolInstrumentation" "config" "merge" "exporters" dict .Values.AsMap) "path" "otelcolInstrumentation.config.merge.exporters") -}}
@@ -125,4 +134,20 @@
 {{- include "check.exporters.queueSize" (dict "exporters" (dig "sumologic" "metrics" "collector" "otelcol" "config" "override" "exporters" dict .Values.AsMap) "path" "sumologic.metrics.collector.otelcol.config.override.exporters") -}}
 {{- include "check.exporters.queueSize" (dict "exporters" (dig "metadata" "metrics" "config" "merge" "exporters" dict .Values.AsMap) "path" "metadata.metrics.config.merge.exporters") -}}
 {{- include "check.exporters.queueSize" (dict "exporters" (dig "metadata" "metrics" "config" "override" "exporters" dict .Values.AsMap) "path" "metadata.metrics.config.override.exporters") -}}
+{{/* Instrumentation */}}
+{{- include "check.processors.batch" (dict "processors" (dig "otelcolInstrumentation" "config" "merge" "processors" dict .Values.AsMap) "path" "otelcolInstrumentation.config.merge.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "otelcolInstrumentation" "config" "override" "processors" dict .Values.AsMap) "path" "otelcolInstrumentation.config.override.processors") -}}
+{{/* Events */}}
+{{- include "check.processors.batch" (dict "processors" (dig "otelevents" "config" "merge" "processors" dict .Values.AsMap) "path" "otelevents.config.merge.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "otelevents" "config" "override" "processors" dict .Values.AsMap) "path" "otelevents.config.override.processors") -}}
+{{/* Logs */}}
+{{- include "check.processors.batch" (dict "processors" (dig "otellogs" "config" "merge" "processors" dict .Values.AsMap) "path" "otellogs.config.merge.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "otellogs" "config" "override" "processors" dict .Values.AsMap) "path" "otellogs.config.override.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "metadata" "logs" "config" "merge" "processors" dict .Values.AsMap) "path" "metadata.logs.config.merge.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "metadata" "logs" "config" "override" "processors" dict .Values.AsMap) "path" "metadata.logs.config.override.processors") -}}
+{{/* Metrics */}}
+{{- include "check.processors.batch" (dict "processors" (dig "sumologic" "metrics" "collector" "otelcol" "config" "merge" "processors" dict .Values.AsMap) "path" "sumologic.metrics.collector.otelcol.config.merge.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "sumologic" "metrics" "collector" "otelcol" "config" "override" "processors" dict .Values.AsMap) "path" "sumologic.metrics.collector.otelcol.config.override.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "metadata" "metrics" "config" "merge" "processors" dict .Values.AsMap) "path" "metadata.metrics.config.merge.processors") -}}
+{{- include "check.processors.batch" (dict "processors" (dig "metadata" "metrics" "config" "override" "processors" dict .Values.AsMap) "path" "metadata.metrics.config.override.processors") -}}
 {{- end -}}
