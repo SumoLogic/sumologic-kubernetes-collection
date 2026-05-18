@@ -338,6 +338,7 @@ var (
 		"otelcol_exporter_enqueue_failed_metric_points",
 		"otelcol_exporter_enqueue_failed_spans",
 		"otelcol_exporter_enqueue_failed_log_records",
+		"otelcol_exporter_in_flight_requests",
 		"otelcol_routing_processor_non_routed_metric_points",
 		"kube_pod_container_status_waiting_reason",
 		"kube_pod_container_status_terminated_reason",
