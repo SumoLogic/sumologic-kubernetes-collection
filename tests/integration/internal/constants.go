@@ -237,6 +237,7 @@ var (
 		"otelcol_exporter_requests_duration",
 		"otelcol_exporter_requests_records",
 		"otelcol_exporter_requests_sent",
+		"otelcol_exporter_in_flight_requests",
 		"otelcol_exporter_sent_metric_points",
 		"otelcol_processor_accepted_metric_points",
 		// "otelcol_processor_batch_batch_send_size_count", // Deprecated
