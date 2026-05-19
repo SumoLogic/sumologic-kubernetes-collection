@@ -12,7 +12,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -24,7 +32,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -39,7 +55,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -51,7 +75,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -67,7 +99,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -80,7 +120,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -638,7 +686,9 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
+{{- end }}
       receivers:
         - otlp
 {{ end }}
@@ -675,7 +725,9 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
+{{- end }}
       receivers:
         - otlp
 
@@ -711,7 +763,9 @@ service:
 {{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
         - transform/add_default_pipeline_tag
 {{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
+{{- end }}
       receivers:
         - otlp
 {{ end }}

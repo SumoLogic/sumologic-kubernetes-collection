@@ -17,9 +17,13 @@ data:
         protocol:
           otlp:
             sending_queue:
+              batch:
+                flush_timeout: 5s
+                max_size: 512
+                min_size: 256
               enabled: true
               num_consumers: 10
-              queue_size: 10000
+              queue_size: 2560000
             timeout: 10s
             tls:
               insecure: true
@@ -40,9 +44,13 @@ data:
           max_elapsed_time: 120s
           max_interval: 30s
         sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
           enabled: false
           num_consumers: 10
-          queue_size: 5000
+          queue_size: 1280000
         timeout: 5s
     extensions:
       health_check:
@@ -160,7 +168,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - otlp
           - otlp/deprecated
@@ -172,7 +179,6 @@ data:
           - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - jaeger
           - otlp

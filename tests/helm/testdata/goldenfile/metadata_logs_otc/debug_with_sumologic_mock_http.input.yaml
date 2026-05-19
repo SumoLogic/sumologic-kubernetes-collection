@@ -7,5 +7,6 @@ debug:
       forwardToSumologicMock: true
       stopLogsIngestion: true
 sumologic:
+  useExporterBatching: true
   logs:
     sourceType: http

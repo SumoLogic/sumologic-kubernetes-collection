@@ -239,15 +239,15 @@ var (
 		"otelcol_exporter_requests_sent",
 		"otelcol_exporter_sent_metric_points",
 		"otelcol_processor_accepted_metric_points",
-		"otelcol_processor_batch_batch_send_size_count",
-		"otelcol_processor_batch_batch_send_size_sum",
-		"otelcol_processor_batch_timeout_trigger_send",
+		// "otelcol_processor_batch_batch_send_size_count", // Deprecated
+		// "otelcol_processor_batch_batch_send_size_sum", // Deprecated
+		// "otelcol_processor_batch_timeout_trigger_send", // Deprecated
 		"otelcol_processor_groupbyattrs_metric_groups_count",
 		"otelcol_processor_groupbyattrs_metric_groups_sum",
 		"otelcol_processor_groupbyattrs_num_non_grouped_metrics",
 		"otelcol_processor_outgoing_items",
 		"otelcol_processor_incoming_items",
-		"otelcol_processor_batch_metadata_cardinality",
+		// "otelcol_processor_batch_metadata_cardinality", // Deprecated
 	}
 	LogsOtelcolMetrics = []string{
 		"otelcol_exporter_sent_log_records",

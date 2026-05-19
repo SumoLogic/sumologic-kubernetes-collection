@@ -4,6 +4,7 @@ otelevents:
   reportConfigMaps: false
 
 sumologic:
+  useExporterBatching: true
   ipv6mode: true
   clusterName: testCluster
   collectorName: testCollector

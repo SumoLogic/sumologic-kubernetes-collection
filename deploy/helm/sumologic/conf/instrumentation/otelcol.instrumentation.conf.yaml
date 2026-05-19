@@ -5,6 +5,15 @@ exporters:
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
   debug:
     verbosity: detailed
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- end }}
 
   sumologic/metrics:
@@ -34,14 +43,31 @@ exporters:
       enabled: false
       ## Number of consumers that dequeue batches
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 1280000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{ else }}
       ## Maximum number of batches kept in memory before data
       ## User should calculate this as num_seconds * requests_per_second where:
       ## num_seconds is the number of seconds to buffer in case of a backend outage
       ## requests_per_second is the average number of requests per seconds.
       queue_size: 5000
+{{- end }}
 {{- if eq .Values.tracesGateway.enabled true }}
   otlphttp/traces:
     endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 256000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- else }}
   loadbalancing:
     protocol:
@@ -52,7 +78,15 @@ exporters:
         sending_queue:
           enabled: true
           num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+          queue_size: 2560000
+          batch:
+            flush_timeout: 5s
+            min_size: 256
+            max_size: 512
+{{ else }}
           queue_size: 10_000
+{{- end }}
     resolver:
       dns:
         hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
@@ -231,7 +265,18 @@ service:
   pipelines:
     traces:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]
-      processors: [memory_limiter, {{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}k8s_tagger{{ else }}k8sattributes{{ end }}, source, resource, batch]
+      processors:
+        - memory_limiter
+{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
+        - k8s_tagger
+{{ else }}
+        - k8sattributes
+{{ end }}
+        - source
+        - resource
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
       exporters:
 {{- if eq .Values.tracesGateway.enabled true }}
         - otlphttp/traces
@@ -243,7 +288,18 @@ service:
 {{- end }}
     metrics:
       receivers: [otlp, otlp/deprecated]
-      processors: [memory_limiter, {{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}k8s_tagger{{ else }}k8sattributes{{ end }}, source, resource, batch]
+      processors:
+        - memory_limiter
+{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
+        - k8s_tagger
+{{ else }}
+        - k8sattributes
+{{ end }}
+        - source
+        - resource
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
       exporters:
         - sumologic/metrics
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}

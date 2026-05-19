@@ -1,6 +1,15 @@
 {{- if eq .Values.debug.metrics.metadata.print true }}
 debug:
   verbosity: detailed
+{{- if eq .Values.sumologic.useExporterBatching true }}
+  sending_queue:
+    enabled: true
+    queue_size: 1024000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{- end }}
 {{- end }}
 
 {{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
@@ -21,7 +30,15 @@ sumologic/sumologic-mock-default:
     num_consumers: 10
     ## setting queue_size a high number, so we always use maximum space of the storage
     ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -36,7 +53,15 @@ sumologic/sumologic-mock-http:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -61,7 +86,15 @@ sumologic/default:
     num_consumers: 10
     ## setting queue_size a high number, so we always use maximum space of the storage
     ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -76,7 +109,15 @@ sumologic/apiserver:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -90,7 +131,15 @@ sumologic/control_plane:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -104,7 +153,15 @@ sumologic/controller:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -118,7 +175,15 @@ sumologic/kubelet:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -132,7 +197,15 @@ sumologic/node:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -146,7 +219,15 @@ sumologic/scheduler:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
@@ -160,7 +241,15 @@ sumologic/state:
     storage: file_storage
 {{- end }}
     num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    queue_size: 10240000
+    batch:
+      flush_timeout: 1s
+      min_size: 1_024
+      max_size: 2_048
+{{ else }}
     queue_size: 10_000
+{{- end }}
   max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s

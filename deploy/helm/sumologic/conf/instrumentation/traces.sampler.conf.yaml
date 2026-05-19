@@ -3,6 +3,15 @@ exporters:
 {{- if eq .Values.debug.instrumentation.tracesSampler.print true }}
   debug:
     verbosity: detailed
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- end }}
 
 {{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}
@@ -13,6 +22,15 @@ exporters:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
 {{- end }}
     compression: gzip
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- end }}
 
   otlphttp:
@@ -25,7 +43,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.tracesSampler.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -92,7 +118,12 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, cascading_filter, batch]
+      processors:
+        - memory_limiter
+        - cascading_filter
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
       exporters:
         - otlphttp
 {{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}

@@ -17,7 +17,11 @@ data:
         disable_keep_alives: true
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:
-          queue_size: 10
+          batch:
+            flush_timeout: 1s
+            max_size: 2000
+            min_size: 1000
+          queue_size: 10000
     extensions:
       file_storage:
         compaction:
@@ -117,7 +121,6 @@ data:
           - otlphttp
           processors:
           - logstransform/systemd
-          - batch
           receivers:
           - journald
       telemetry:

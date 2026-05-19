@@ -5,6 +5,7 @@ debug:
       stopLogsIngestion: true
 
 sumologic:
+  useExporterBatching: true
   metrics:
     collector:
       otelcol:

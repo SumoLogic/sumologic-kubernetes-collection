@@ -49,7 +49,9 @@ processors:
 {{- if .Values.sumologic.metrics.enableDefaultFilters }}
   - filter/app_metrics
 {{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
   - batch
+{{- end }}
 receivers:
 {{- if .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver }}
   - telegraf

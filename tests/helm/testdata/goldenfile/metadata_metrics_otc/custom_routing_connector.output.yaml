@@ -52,6 +52,13 @@ data:
           statement: route() where resource.attributes["job"] == "kube-state-metrics"
     exporters:
       debug:
+        sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
+          enabled: true
+          queue_size: 1024000
         verbosity: detailed
       sumologic/apiserver:
         client: k8s_%CURRENT_CHART_VERSION%
@@ -59,9 +66,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
       sumologic/control_plane:
@@ -70,9 +81,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
       sumologic/controller:
@@ -81,9 +96,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
       sumologic/default:
@@ -94,9 +113,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
       sumologic/kubelet:
@@ -105,9 +128,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
       sumologic/node:
@@ -116,9 +143,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
       sumologic/scheduler:
@@ -127,9 +158,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
       sumologic/state:
@@ -138,9 +173,13 @@ data:
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
     extensions:
@@ -314,7 +353,6 @@ data:
           - groupbyattrs/group_by_name
           - transform/remove_name
           - filter/drop_unnecessary_metrics
-          - batch
           receivers:
           - prometheusremotewrite
           - otlp

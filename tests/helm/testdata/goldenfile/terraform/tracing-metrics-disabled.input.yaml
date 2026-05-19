@@ -1,4 +1,6 @@
-metrics:
-  enabled: false
-traces:
-  enabled: true
+sumologic:
+  useExporterBatching: true
+  metrics:
+    enabled: false
+  traces:
+    enabled: true

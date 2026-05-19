@@ -43,19 +43,18 @@ spec:
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
     behavior:
-      scaleUp:
-        stabilizationWindowSeconds: 60
-        policies:
-          - type: Percent
-            value: 100
-            periodSeconds: 60
       scaleDown:
-        stabilizationWindowSeconds: 60
         policies:
-          - type: Percent
+          - periodSeconds: 60
+            type: Percent
             value: 100
-            periodSeconds: 60
-
+        stabilizationWindowSeconds: 60
+      scaleUp:
+        policies:
+          - periodSeconds: 60
+            type: Percent
+            value: 100
+        stabilizationWindowSeconds: 60
   env:
     - name: METADATA_METRICS_SVC
       valueFrom:
@@ -104,8 +103,12 @@ spec:
         disable_keep_alives: true
         endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2000
+            min_size: 1000
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10000000
           storage: file_storage
     extensions:
       file_storage:
@@ -280,7 +283,6 @@ spec:
             - debug
             - otlphttp
           processors:
-            - batch
             - filter/drop_stale_datapoints
             - transform/extract_sum_count_from_histograms
             - transform/drop_unnecessary_attributes
