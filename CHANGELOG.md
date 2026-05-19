@@ -7,6 +7,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.1.0]
+
+### Released 2026-05-19
+
+### Added
+
+- feat: Allow journald directory to be overriden [#4017]
+- OSC-1274: Add export level batching [#4129]
+
+### Changed
+
+- chore(deps): bump Helm release opentelemetry-operator from 0.112.0 to 0.112.1 [#4194]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-nodejs Docker tag to v0.75.0 [#4195]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.38.4 [#4198]
+- chore(deps): bump Helm release opentelemetry-operator from 0.112.1 to 0.113.0 [#4199]
+- chore(deps): bump Helm release opentelemetry-operator from 0.113.0 to 0.113.1 [#4200]
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.12.6 to 0.12.7 [#4201]
+- chore(deps): bump sumologic-otel-collector version to v0.152.0-sumo-0 [#4203]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-nodejs Docker tag to v0.76.0 [#4204]
+
+[#4017]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4017
+[#4129]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4129
+[#4194]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4194
+[#4195]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4195
+[#4198]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4198
+[#4199]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4199
+[#4200]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4200
+[#4201]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4201
+[#4203]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4203
+[#4204]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4204
+[v5.1.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.1.0
+
 ## [v5.0.0]
 
 ### Released 2026-05-06
