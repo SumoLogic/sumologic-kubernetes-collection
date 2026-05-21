@@ -1,19 +1,18 @@
 # Add 'documentation' label to any change to *.md files
 documentation:
   - changed-files:
-      - any-glob-to-any-file: [ "**/*.md" ]
+      - any-glob-to-any-file: ["**/*.md"]
 
 # Add 'ci' label to any change in .github/ directory
 ci:
   - changed-files:
-      - any-glob-to-any-file: [ ".github/**/*" ]
+      - any-glob-to-any-file: [".github/**/*"]
 
 # Add 'integration-tests' label to any change in tests/integration/ directory
 integration-tests:
   - changed-files:
-      - any-glob-to-any-file: [ "tests/integration/**" ]
+      - any-glob-to-any-file: ["tests/integration/**"]
 
 osc:
   - changed-files:
-      - any-glob-to-any-file: [ '**' ]
-
+      - any-glob-to-any-file: ["**"]
