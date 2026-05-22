@@ -26,7 +26,7 @@ func PrintClusterStateOpt(force ...bool) features.Func {
 			kubectlOptions := *ctxopts.KubectlOptions(ctx, envConf)
 			kubectlOptions.Namespace = ctxopts.Namespace(ctx)
 			k8s.RunKubectlContext(t, ctx, &kubectlOptions,
-				"logs", "-lapp=sumoloigic-mock", "--tail=1000",
+				"logs", "-lsumologic.com/app=sumologic-mock", "--tail=1000",
 			)
 
 			k8s.RunKubectlContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), "get", "all")
