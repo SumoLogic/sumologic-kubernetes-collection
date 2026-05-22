@@ -63,8 +63,9 @@ func (client *SumologicMockClient) GetMetricCounts(t *testing.T) (MetricCounts, 
 	path := parseUrl(t, "metrics-list")
 	url := client.baseUrl.ResolveReference(path)
 
-	statusCode, body := http_helper.HttpGet(
+	statusCode, body := http_helper.HTTPGetContext(
 		t,
+		context.Background(),
 		url.String(),
 		&client.tlsConfig,
 	)
@@ -148,8 +149,9 @@ func (client *SumologicMockClient) GetLogsCount(t *testing.T, metadataFilters Me
 	url := client.baseUrl.ResolveReference(path)
 	url.RawQuery = queryParams.Encode()
 
-	statusCode, body, err := http_helper.HttpGetE(
+	statusCode, body, err := http_helper.HTTPGetContextE(
 		t,
+		context.Background(),
 		url.String(),
 		&client.tlsConfig,
 	)

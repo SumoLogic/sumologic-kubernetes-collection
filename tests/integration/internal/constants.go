@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"os"
@@ -464,7 +465,7 @@ func InitializeConstants() error {
 func getKubernetesVersion(
 	t *testing.T,
 ) string {
-	v, err := k8s.GetKubernetesClusterVersionE(t)
+	v, err := k8s.GetKubernetesClusterVersionContextE(t, context.Background())
 	require.NoError(t, err)
 	return v
 }
