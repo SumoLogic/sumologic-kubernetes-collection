@@ -3,6 +3,7 @@ package helm
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -252,7 +253,7 @@ func RenderTemplateE(t *testing.T, options *helm.Options, chartDir string, relea
 
 	// check chart dependencies
 	if !skipDependencies {
-		if _, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{}, "dependency", "build", chartDir); err != nil {
+		if _, err := helm.RunHelmCommandAndGetOutputContextE(t, context.Background(), &helm.Options{}, "dependency", "build", chartDir); err != nil {
 			return "", errors.WithStackTrace(err)
 		}
 	}
@@ -285,7 +286,7 @@ func RenderTemplateE(t *testing.T, options *helm.Options, chartDir string, relea
 	args = append(args, releaseName, chartDir)
 
 	// Finally, call out to helm template command
-	return helm.RunHelmCommandAndGetStdOutE(t, options, "template", args...)
+	return helm.RunHelmCommandAndGetStdOutContextE(t, context.Background(), options, "template", args...)
 }
 
 // getValuesArgsE computes the args to pass in for setting values
