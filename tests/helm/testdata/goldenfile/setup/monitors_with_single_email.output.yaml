@@ -85,6 +85,8 @@ spec:
             - name: SUMOLOGIC_DASHBOARDS_ENABLED
               value: "true"
 
+            - name: GODEBUG
+              value: "netdns=go"
             - name: NO_PROXY
               value: kubernetes.default.svc
       securityContext:

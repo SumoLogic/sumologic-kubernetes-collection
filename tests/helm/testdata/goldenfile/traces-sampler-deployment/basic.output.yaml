@@ -50,6 +50,8 @@ spec:
                   name: sumologic
                   key: endpoint-traces-otlp
 
+            - name: GODEBUG
+              value: "netdns=go"
             - name: NO_PROXY
               value: kubernetes.default.svc
             - name: MY_POD_IP
