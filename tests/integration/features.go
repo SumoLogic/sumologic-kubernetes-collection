@@ -926,7 +926,6 @@ func GetCurlAppFeature() features.Feature {
 				"network.protocol.version":  "1.1",
 				"_sourceCategory":           "kubernetes/test/apps/java/app",
 				"_sourceName":               fmt.Sprintf("%s.java-app.javaapp", internal.InstrumentationAppsNamespace),
-				"telemetry.distro.version":  "2.28.0",
 				"telemetry.sdk.language":    "java",
 				"telemetry.sdk.name":        "opentelemetry",
 				"telemetry.sdk.version":     "1.62.0",
