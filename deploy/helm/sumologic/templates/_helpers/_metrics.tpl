@@ -79,6 +79,21 @@ Return the otelcol metrics collector image
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.sumologic.metrics.collector.otelcol.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
 
+{{/*
+Check if single-layer pipeline for metrics collector is enabled.
+When true, the collector handles both scraping and enrichment, eliminating the metadata layer.
+
+Example Usage:
+{{- if eq (include "metrics.collector.singleLayerPipeline.enabled" .) "true" }}
+*/}}
+{{- define "metrics.collector.singleLayerPipeline.enabled" -}}
+{{- $enabled := false -}}
+{{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
 {{- define "metrics.collector.otelcol.nodeSelector" -}}
 {{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.sumologic.metrics.collector.otelcol.nodeSelector)}}
 {{- end -}}

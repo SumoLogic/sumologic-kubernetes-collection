@@ -7,6 +7,14 @@
 {{ $finalConfig = $overrideConfig }}
 {{ else }}
 {{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+{{/* In single-layer mode, also apply metadata layer config.merge so existing customers'
+     metadata-layer customizations carry over to the combined collector pipeline. */}}
+{{ $metadataMergeConfig := .Values.metadata.metrics.config.merge }}
+{{ if $metadataMergeConfig }}
+{{ $finalConfig = mergeOverwrite $finalConfig $metadataMergeConfig }}
+{{ end }}
+{{- end }}
 {{ end }}
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
@@ -101,11 +109,16 @@ spec:
 {{- end }}
 {{- end }}
   env:
+{{- if not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
   - name: METADATA_METRICS_SVC
     valueFrom:
       configMapKeyRef:
         name: sumologic-configmap
         key: metadataMetrics
+{{- else }}
+{{- $ctx := .Values -}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 2 -}}
+{{- end }}
   - name: NAMESPACE
     valueFrom:
       fieldRef:
@@ -134,13 +147,25 @@ spec:
   volumes:
   - name: tmp
     emptyDir: {}
+{{- if not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
   - name: file-storage
     emptyDir: {}
+{{- end }}
   volumeMounts:
   - name: tmp
     mountPath: /tmp
   - name: file-storage
     mountPath: /var/lib/storage/otc
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: file-storage
+    spec:
+      accessModes: [ReadWriteOnce]
+      resources:
+        requests:
+          storage: 10Gi
+{{- end }}
   config:
 {{- $finalConfig | toYaml | nindent 4 }}
 {{- end }}

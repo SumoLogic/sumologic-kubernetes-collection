@@ -1,5 +1,6 @@
 {{- $collectorConfig := .Values.sumologic.metrics.collector.otelcol -}}
 {{- $scrapeConfigsPresent := or $collectorConfig.kubelet.enabled $collectorConfig.cAdvisor.enabled $collectorConfig.annotatedPods.enabled -}}
+{{- if not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
 exporters:
 {{- if eq .Values.debug.metrics.collector.print true }}
   debug:
@@ -106,6 +107,212 @@ service:
 {{- end }}
         - transform/drop_unnecessary_attributes
       receivers: [prometheus]
+{{- else }}
+{{/* Single-layer pipeline: two logical pipelines in one pod connected via forward connector.
+     Pipeline 1 (metrics/collector): scraping + collector-stage processors → forward connector
+     Pipeline 2 (metrics): enrichment + export (same name/structure as 2-layer metadata pipeline)
+     This preserves backward compatibility with customer metadata.metrics.config.merge overrides. */}}
+connectors:
+  forward: {}
+{{- if (eq .Values.sumologic.metrics.sourceType "http") }}
+{{ tpl (.Files.Get "conf/metrics/otelcol/connectors.yaml") . | indent 2 }}
+{{- end}}
+
+exporters:
+{{- if eq .Values.debug.metrics.collector.print true }}
+  debug:
+    verbosity: detailed
+{{- end }}
+{{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
+
+extensions:
+  health_check:
+    endpoint: {{ template "sumologic.healthEndpoint" . }}
+  pprof: {}
+  file_storage:
+    directory: /var/lib/storage/otc
+    timeout: 10s
+    compaction:
+      on_rebound: true
+      directory: /tmp
+
+processors:
+  batch:
+    send_batch_max_size: 2000
+    send_batch_size: 1000
+    timeout: 1s
+
+  # staleness markers may simply indicate targets being moved between collector Pods, so they do more harm than good
+  filter/drop_stale_datapoints:
+    metrics:
+      datapoint:
+      - 'flags == FLAG_NO_RECORDED_VALUE'
+
+  transform/drop_unnecessary_attributes:
+    error_mode: ignore
+    metric_statements:
+      - context: resource
+        statements:
+          - delete_key(attributes, "http.scheme")
+          - delete_key(attributes, "net.host.name")
+          - delete_key(attributes, "net.host.port")
+          - delete_key(attributes, "service.instance.id")
+          - delete_matching_keys(attributes, "k8s.*")
+
+{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
+  transform/extract_sum_count_from_histograms:
+    error_mode: ignore
+    metric_statements:
+      - context: metric
+        statements:
+          - extract_sum_metric(true) where (not IsMatch(name, {{ .Values.sumologic.metrics.allowHistogramRegex | quote }})) and (type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+          - extract_count_metric(true) where (not IsMatch(name, {{ .Values.sumologic.metrics.allowHistogramRegex | quote }})) and (type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+{{- end }}
+
+{{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+{{ if .Values.sumologic.metrics.enableDefaultFilters -}}
+{{ tpl (.Files.Get "conf/metrics/otelcol/default-filters.yaml") . | indent 2 }}
+{{ end -}}
+
+service:
+  telemetry:
+    logs:
+      level: {{ .Values.metadata.metrics.logLevel }}
+    metrics:
+      level: {{ .Values.metadata.metrics.metricsLevel }}
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: ${env:MY_POD_IP}
+                port: 8888
+                without_type_suffix: true
+                without_units: true
+                without_scope_info: true
+  extensions:
+    - health_check
+    - pprof
+    - file_storage
+  pipelines:
+    ## Pipeline 1: Collector stage — scraping + light processing → forward connector
+    metrics/collector:
+      receivers: [prometheus]
+      processors:
+        - filter/drop_stale_datapoints
+{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
+        - transform/extract_sum_count_from_histograms
+{{- end }}
+        - transform/drop_unnecessary_attributes
+      exporters:
+        - forward
+    ## Pipeline 2: Metadata stage — enrichment + export (same structure as 2-layer metadata pipeline)
+    ## Customer metadata.metrics.config.merge applies to this pipeline.
+    metrics:
+      exporters:
+{{- if (eq .Values.sumologic.metrics.sourceType "http") }}
+        - routing/default
+{{- else }}
+        - sumologic/default
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-default
+{{- end }}
+{{- end }}
+      processors:
+        - memory_limiter
+        - metricstransform
+        - groupbyattrs
+        - resource
+{{ if .Values.metadata.metrics.useSumoK8sProcessor }}
+        - k8s_tagger
+{{ else }}
+        - k8sattributes
+{{ end }}
+        - source
+        - sumologic
+{{- if .Values.sumologic.metrics.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.metrics.otelcol.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
+        - resource/remove_k8s_pod_pod_name
+        - resource/delete_source_metadata
+        - transform/set_name
+        - groupbyattrs/group_by_name
+        - transform/remove_name
+        - filter/drop_unnecessary_metrics
+{{- if .Values.sumologic.metrics.enableDefaultFilters }}
+        - filter/app_metrics
+{{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
+      receivers:
+        - forward
+{{- if (eq .Values.sumologic.metrics.sourceType "http") }}
+    metrics/sumologic/default:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/default
+{{- if eq .Values.debug.metrics.metadata.print true }}
+    metrics/debug:
+      receivers:
+        - routing/default
+      exporters:
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+    metrics/sumologic/sumologic-mock-default:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/sumologic-mock-default
+    metrics/sumologic/sumologic-mock-http:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/sumologic-mock-http
+{{- end }}
+    metrics/apiserver:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/apiserver
+    metrics/control_plane:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/control_plane
+    metrics/controller:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/controller
+    metrics/kubelet:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/kubelet
+    metrics/node:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/node
+    metrics/scheduler:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/scheduler
+    metrics/state:
+      receivers:
+        - routing/default
+      exporters:
+        - sumologic/state
+{{- end }}
+{{- end }}
 
 receivers:
   prometheus:
