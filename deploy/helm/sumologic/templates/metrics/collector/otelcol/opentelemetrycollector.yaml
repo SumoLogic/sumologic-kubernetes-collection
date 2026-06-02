@@ -148,7 +148,7 @@ spec:
   volumes:
   - name: tmp
     emptyDir: {}
-{{- if not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+{{- if not (and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.persistence.enabled) }}
   - name: file-storage
     emptyDir: {}
 {{- end }}
@@ -157,8 +157,7 @@ spec:
     mountPath: /tmp
   - name: file-storage
     mountPath: /var/lib/storage/otc
-{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
-{{- if .Values.metadata.persistence.enabled }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: file-storage
@@ -174,11 +173,6 @@ spec:
       resources:
         requests:
           storage: {{ .Values.metadata.persistence.size }}
-{{- else }}
-  volumes:
-  - name: file-storage
-    emptyDir: {}
-{{- end }}
 {{- end }}
   config:
 {{- $finalConfig | toYaml | nindent 4 }}
