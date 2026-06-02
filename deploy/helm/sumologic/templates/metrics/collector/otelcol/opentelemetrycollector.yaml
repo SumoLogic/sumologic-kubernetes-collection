@@ -118,6 +118,7 @@ spec:
 {{- else }}
 {{- $ctx := .Values -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 2 -}}
+{{- include "proxy-env-variables" . | nindent 2 -}}
 {{- end }}
   - name: NAMESPACE
     valueFrom:
@@ -157,14 +158,27 @@ spec:
   - name: file-storage
     mountPath: /var/lib/storage/otc
 {{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+{{- if .Values.metadata.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: file-storage
+{{- if .Values.metadata.persistence.pvcLabels }}
+      labels:
+{{ toYaml .Values.metadata.persistence.pvcLabels | indent 8 }}
+{{- end }}
     spec:
-      accessModes: [ReadWriteOnce]
+      accessModes: [{{ .Values.metadata.persistence.accessMode }}]
+{{- if .Values.metadata.persistence.storageClass }}
+      storageClassName: {{ .Values.metadata.persistence.storageClass | quote }}
+{{- end }}
       resources:
         requests:
-          storage: 10Gi
+          storage: {{ .Values.metadata.persistence.size }}
+{{- else }}
+  volumes:
+  - name: file-storage
+    emptyDir: {}
+{{- end }}
 {{- end }}
   config:
 {{- $finalConfig | toYaml | nindent 4 }}

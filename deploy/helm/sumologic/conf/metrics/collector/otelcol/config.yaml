@@ -129,12 +129,14 @@ extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
+{{- if .Values.metadata.persistence.enabled }}
   file_storage:
     directory: /var/lib/storage/otc
     timeout: 10s
     compaction:
       on_rebound: true
       directory: /tmp
+{{- end }}
 
 processors:
   batch:
@@ -192,7 +194,9 @@ service:
   extensions:
     - health_check
     - pprof
+{{- if .Values.metadata.persistence.enabled }}
     - file_storage
+{{- end }}
   pipelines:
     ## Pipeline 1: Collector stage — scraping + light processing → forward connector
     metrics/collector:
