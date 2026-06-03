@@ -143,6 +143,10 @@ spec:
   ports:
   - name: pprof
     port: 1777
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+  - name: metrics-rw
+    port: 9888
+{{- end }}
   resources:
     {{ .Values.sumologic.metrics.collector.otelcol.resources | toYaml | nindent 4 }}
   volumes:
