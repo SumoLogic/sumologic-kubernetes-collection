@@ -69,6 +69,9 @@ const (
 	NginxTelegrafMetricsTest = "yamls/nginx.yaml"
 	NginxTelegrafNamespace   = "nginx"
 
+	RemoteWritePrometheusTest      = "yamls/remote-write-prometheus.yaml"
+	RemoteWritePrometheusNamespace = "remote-write-test"
+
 	// useful regular expressions for matching metadata
 	PodDeploymentSuffixRegex = "-[a-z0-9]{9,10}-[a-z0-9]{4,5}" // the Pod suffix for Deployments
 	PodDaemonSetSuffixRegex  = "-[a-z0-9]{4,5}"

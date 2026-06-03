@@ -1397,6 +1397,98 @@ func CheckTracesWithoutGatewayInstall(builder *features.FeatureBuilder) *feature
 		)
 }
 
+// GetRemoteWriteMetricsFeature creates a feature that deploys a minimal Prometheus instance
+// configured to remote_write to the collector's port 9888, then verifies those metrics
+// arrive at sumologic-mock with the expected labels.
+func GetRemoteWriteMetricsFeature() features.Feature {
+	return features.New("remote_write_metrics").
+		Setup(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			release := strings_internal.ReleaseNameFromT(t)
+			namespace := ctxopts.Namespace(ctx)
+			remoteWriteURL := fmt.Sprintf(
+				"http://%s-sumologic-metrics-collector.%s.svc.my.cluster:9888/prometheus.metrics",
+				release, namespace,
+			)
+
+			rwNamespace := internal.RemoteWritePrometheusNamespace
+
+			// Create namespace
+			nsObj := &corev1.Namespace{
+				ObjectMeta: v1.ObjectMeta{Name: rwNamespace},
+			}
+			err := envConf.Client().Resources().Create(ctx, nsObj)
+			require.NoError(t, err)
+
+			// Create ConfigMap with the correct remote write URL
+			configData := fmt.Sprintf(`global:
+  scrape_interval: 10s
+  external_labels:
+    source: remote_write_test
+scrape_configs:
+  - job_name: "remote-write-test"
+    static_configs:
+      - targets: ["localhost:9090"]
+remote_write:
+  - url: %s
+`, remoteWriteURL)
+
+			cm := &corev1.ConfigMap{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      "prometheus-remote-write-config",
+					Namespace: rwNamespace,
+				},
+				Data: map[string]string{
+					"prometheus.yml": configData,
+				},
+			}
+			err = envConf.Client().Resources(rwNamespace).Create(ctx, cm)
+			require.NoError(t, err)
+
+			// Create the Prometheus deployment
+			kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
+			kubectlOpts.Namespace = rwNamespace
+			// Apply only the Deployment portion (namespace and configmap already created)
+			terrak8s.KubectlApply(t, &kubectlOpts, internal.RemoteWritePrometheusTest)
+			return ctx
+		}).
+		Assess("remote write metrics are present in sumologic-mock",
+			stepfuncs.WaitUntilExpectedMetricsPresentWithFilters(
+				[]string{"prometheus_build_info"},
+				sumologicmock.MetadataFilters{"job": "remote-write-test"},
+				false,
+				5*time.Minute,
+				tickDuration,
+			),
+		).
+		Assess("remote write metrics have expected source label",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				metricFilters := sumologicmock.MetadataFilters{
+					"__name__": "prometheus_build_info",
+					"job":      "remote-write-test",
+				}
+				expectedLabels := sumologicmock.Labels{
+					"source": "remote_write_test",
+					"job":    "remote-write-test",
+				}
+				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(
+					metricFilters, expectedLabels, waitDuration, tickDuration,
+				)(ctx, t, envConf)
+			},
+		).
+		Teardown(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			rwNamespace := internal.RemoteWritePrometheusNamespace
+			kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
+			kubectlOpts.Namespace = rwNamespace
+			terrak8s.KubectlDelete(t, &kubectlOpts, internal.RemoteWritePrometheusTest)
+			nsObj := &corev1.Namespace{
+				ObjectMeta: v1.ObjectMeta{Name: rwNamespace},
+			}
+			_ = envConf.Client().Resources().Delete(ctx, nsObj)
+			return ctx
+		}).
+		Feature()
+}
+
 func CheckTailingSidecarOperatorInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
 	return builder.
 		Assess("tailing sidecar deployment is ready",
