@@ -1,0 +1,10 @@
+sumologic:
+  useExporterBatching: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+metadata:
+  metrics:
+    enableSumoPrometheusRemotewriteReceiver: true
