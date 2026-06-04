@@ -1461,19 +1461,18 @@ remote_write:
 			),
 		).
 		Assess("remote write metrics have expected source label",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				metricFilters := sumologicmock.MetadataFilters{
+			stepfuncs.WaitUntilExpectedMetricLabelsContain(
+				sumologicmock.MetadataFilters{
 					"__name__": "prometheus_build_info",
 					"job":      "remote-write-test",
-				}
-				expectedLabels := sumologicmock.Labels{
+				},
+				sumologicmock.Labels{
 					"source": "remote_write_test",
 					"job":    "remote-write-test",
-				}
-				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(
-					metricFilters, expectedLabels, waitDuration, tickDuration,
-				)(ctx, t, envConf)
-			},
+				},
+				waitDuration,
+				tickDuration,
+			),
 		).
 		Teardown(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			rwNamespace := internal.RemoteWritePrometheusNamespace

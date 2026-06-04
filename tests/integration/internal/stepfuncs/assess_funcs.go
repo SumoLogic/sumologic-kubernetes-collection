@@ -353,6 +353,41 @@ func WaitUntilExpectedMetricLabelsPresent(
 	}
 }
 
+// WaitUntilExpectedMetricLabelsContain returns a features.Func that checks whether
+// the expected labels are present on the metric, without requiring that no other labels exist.
+func WaitUntilExpectedMetricLabelsContain(
+	metricFilters sumologicmock.MetadataFilters,
+	expectedLabels sumologicmock.Labels,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		sumoMockServiceName := GetSumoMockServiceName(ctx, t)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, envConf, t, sumoMockServiceName, waitDuration, tickDuration)
+
+		rClient, tunnelCloseFunc := sumologicmock.NewClientWithK8sTunnel(ctx, envConf, t, sumoMockServiceName)
+		defer tunnelCloseFunc()
+
+		assert.Eventually(t, func() bool {
+			metricsSamples, err := rClient.GetMetricsSamples(metricFilters)
+			if err != nil {
+				log.ErrorS(err, "failed getting samples from sumologic-mock")
+				return false
+			}
+
+			if len(metricsSamples) == 0 {
+				log.InfoS("got 0 metrics samples", "filters", metricFilters)
+				return false
+			}
+
+			sort.Sort(sumologicmock.MetricsSamplesByTime(metricsSamples))
+			sample := metricsSamples[0]
+			return sample.Labels.MatchAll(expectedLabels)
+		}, waitDuration, tickDuration)
+		return ctx
+	}
+}
+
 // WaitUntilHPAConfigured returns a features.Func that can be used in `Assess` calls.
 // It will wait until all the provided HPA are configured and active.
 func WaitUntilHPAConfigured(
