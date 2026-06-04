@@ -1448,7 +1448,7 @@ remote_write:
 			kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
 			kubectlOpts.Namespace = rwNamespace
 			// Apply only the Deployment portion (namespace and configmap already created)
-			terrak8s.KubectlApply(t, &kubectlOpts, internal.RemoteWritePrometheusTest)
+			terrak8s.RunKubectl(t, &kubectlOpts, "apply", "-f", internal.RemoteWritePrometheusTest)
 			return ctx
 		}).
 		Assess("remote write metrics are present in sumologic-mock",
@@ -1479,11 +1479,11 @@ remote_write:
 			rwNamespace := internal.RemoteWritePrometheusNamespace
 			kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
 			kubectlOpts.Namespace = rwNamespace
-			terrak8s.KubectlDelete(t, &kubectlOpts, internal.RemoteWritePrometheusTest)
+			terrak8s.RunKubectl(t, &kubectlOpts, "delete", "-f", internal.RemoteWritePrometheusTest)
 			nsObj := &corev1.Namespace{
 				ObjectMeta: v1.ObjectMeta{Name: rwNamespace},
 			}
-			_ = envConf.Client().Resources().Delete(ctx, nsObj)
+			envConf.Client().Resources().Delete(ctx, nsObj) //nolint:errcheck
 			return ctx
 		}).
 		Feature()
