@@ -2413,7 +2413,7 @@ telegraf-operator:
   ## Put here the new name if you want to override the full name used for Telegraf Operator components.
   # fullnameOverride: ""
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.38.4
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.39.0
     repository: public.ecr.aws/sumologic/telegraf-operator
   replicaCount: 1
   classes:
