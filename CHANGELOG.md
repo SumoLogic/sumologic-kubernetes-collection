@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: Upgrade sumologic mock to 2.28.0 [#4220]
 - chore(deps): bump tailing-sidecar-operator from 0.20.3 to 0.20.4 [#4221]
 - chore(deps): bump kubernetes-tools to v2.28.0 [#4222]
+- chore(deps): bump tailing-sidecar-operator from 0.20.4 to 0.20.5 [#4225]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.0 [#4226]
 
 [#4210]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4210
 [#4212]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4212
@@ -32,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4220]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4220
 [#4221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4221
 [#4222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4222
+[#4225]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4225
+[#4226]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4226
 [v5.1.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.1.1
 
 ## [v5.1.0]
