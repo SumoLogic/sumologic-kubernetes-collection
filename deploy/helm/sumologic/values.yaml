@@ -545,6 +545,11 @@ sumologic:
       otelcol:
         enabled: true
 
+        ## Single-layer pipeline merges metadata enrichment into the collector,
+        ## eliminating the need for a separate metadata StatefulSet.
+        singleLayerPipeline:
+          enabled: false  # opt-in; set true to merge enrichment into collector
+
         ## Configure image for Opentelemetry Collector
         image:
           # repository: ""

@@ -1,4 +1,7 @@
 {{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.config.override }}
+{{- fail "metadata.metrics.config.override cannot be used with singleLayerPipeline.enabled. Use metadata.metrics.config.merge instead, or disable single-layer mode." }}
+{{- end }}
 {{ $baseConfig := (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | fromYaml }}
 {{ $mergeConfig := .Values.sumologic.metrics.collector.otelcol.config.merge }}
 {{ $overrideConfig := .Values.sumologic.metrics.collector.otelcol.config.override }}
@@ -7,6 +10,14 @@
 {{ $finalConfig = $overrideConfig }}
 {{ else }}
 {{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+{{/* In single-layer mode, also apply metadata layer config.merge so existing customers'
+     metadata-layer customizations carry over to the combined collector pipeline. */}}
+{{ $metadataMergeConfig := .Values.metadata.metrics.config.merge }}
+{{ if $metadataMergeConfig }}
+{{ $finalConfig = mergeOverwrite $finalConfig $metadataMergeConfig }}
+{{ end }}
+{{- end }}
 {{ end }}
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
@@ -101,11 +112,20 @@ spec:
 {{- end }}
 {{- end }}
   env:
+{{- if not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
   - name: METADATA_METRICS_SVC
     valueFrom:
       configMapKeyRef:
         name: sumologic-configmap
         key: metadataMetrics
+{{- else }}
+{{- $ctx := .Values -}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 2 -}}
+{{- include "proxy-env-variables" . | nindent 2 -}}
+{{- if .Values.metadata.metrics.statefulset.extraEnvVars }}
+{{ toYaml .Values.metadata.metrics.statefulset.extraEnvVars | nindent 2 }}
+{{- end }}
+{{- end }}
   - name: NAMESPACE
     valueFrom:
       fieldRef:
@@ -129,18 +149,47 @@ spec:
   ports:
   - name: pprof
     port: 1777
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+  - name: metrics-rw
+    port: 9888
+{{- end }}
   resources:
     {{ .Values.sumologic.metrics.collector.otelcol.resources | toYaml | nindent 4 }}
   volumes:
   - name: tmp
     emptyDir: {}
+{{- if not (and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.persistence.enabled) }}
   - name: file-storage
     emptyDir: {}
+{{- end }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.statefulset.extraVolumes }}
+{{ toYaml .Values.metadata.metrics.statefulset.extraVolumes | nindent 2 }}
+{{- end }}
   volumeMounts:
   - name: tmp
     mountPath: /tmp
   - name: file-storage
     mountPath: /var/lib/storage/otc
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.statefulset.extraVolumeMounts }}
+{{ toYaml .Values.metadata.metrics.statefulset.extraVolumeMounts | nindent 2 }}
+{{- end }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: file-storage
+{{- if .Values.metadata.persistence.pvcLabels }}
+      labels:
+{{ toYaml .Values.metadata.persistence.pvcLabels | indent 8 }}
+{{- end }}
+    spec:
+      accessModes: [{{ .Values.metadata.persistence.accessMode }}]
+{{- if .Values.metadata.persistence.storageClass }}
+      storageClassName: {{ .Values.metadata.persistence.storageClass | quote }}
+{{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.metadata.persistence.size }}
+{{- end }}
   config:
 {{- $finalConfig | toYaml | nindent 4 }}
 {{- end }}
