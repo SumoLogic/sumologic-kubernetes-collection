@@ -101,7 +101,11 @@ spec:
 {{- if eq (include "metrics.collector.autoscaling.enabled" .) "true" }}
   autoscaler:
     maxReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.maxReplicas }}
+{{- if eq (include "metrics.collector.singleLayerPipeline.enabled" .) "true" }}
+    minReplicas: 3
+{{- else }}
     minReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.minReplicas }}
+{{- end }}
     targetCPUUtilization: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.targetCPUUtilizationPercentage }}
 {{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.targetMemoryUtilizationPercentage }}
     targetMemoryUtilization: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.targetMemoryUtilizationPercentage }}
