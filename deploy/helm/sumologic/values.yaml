@@ -547,8 +547,17 @@ sumologic:
 
         ## Single-layer pipeline merges metadata enrichment into the collector,
         ## eliminating the need for a separate metadata StatefulSet.
+        ## WARNING: When enabling single-layer pipeline, the collector pod handles
+        ## both scraping AND enrichment/export (previously done by metadata pods).
+        ## You MUST increase collector resources to account for:
+        ##   - k8sattributes processor cache (holds all pod/namespace objects in memory)
+        ##   - Sumo Logic export sending queues (previously on metadata PVCs)
+        ##   - Additional CPU for enrichment processors
+        ##
+        ## Recommended: set collector memory request >= (current collector memory) + (current metadata memory)
+        ## Recommended: set collector CPU request >= (current collector CPU) + (current metadata CPU / replica count)
         singleLayerPipeline:
-          enabled: false  # opt-in; set true to merge enrichment into collector
+          enabled: false # opt-in; set true to merge enrichment into collector
 
         ## Configure image for Opentelemetry Collector
         image:
