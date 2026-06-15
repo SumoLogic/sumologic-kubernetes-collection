@@ -47,3 +47,47 @@ Installation of the Sumo Logic dashboards is disabled.
 You can install them manually later with:
 https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
 {{- end }}
+
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+{{- if .Values.metadata.metrics.statefulset.nodeSelector }}
+WARNING: metadata.metrics.statefulset.nodeSelector is set but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.nodeSelector instead.
+{{- end }}
+{{- if .Values.metadata.metrics.statefulset.tolerations }}
+WARNING: metadata.metrics.statefulset.tolerations is set but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.tolerations instead.
+{{- end }}
+{{- if .Values.metadata.metrics.statefulset.affinity }}
+WARNING: metadata.metrics.statefulset.affinity is set but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.affinity instead.
+{{- end }}
+{{- if and .Values.metadata.metrics.statefulset.podAntiAffinity (ne .Values.metadata.metrics.statefulset.podAntiAffinity "soft") }}
+WARNING: metadata.metrics.statefulset.podAntiAffinity is set but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.affinity or topologySpreadConstraints instead.
+{{- end }}
+{{- if .Values.metadata.metrics.statefulset.topologySpreadConstraints }}
+WARNING: metadata.metrics.statefulset.topologySpreadConstraints is set but ignored in single-layer pipeline mode.
+  Configure topology constraints via collector pod template patches if needed.
+{{- end }}
+{{- if .Values.metadata.metrics.statefulset.priorityClassName }}
+WARNING: metadata.metrics.statefulset.priorityClassName is set but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.priorityClassName instead.
+{{- end }}
+{{- if .Values.metadata.metrics.statefulset.podLabels }}
+WARNING: metadata.metrics.statefulset.podLabels is set but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.podLabels instead.
+{{- end }}
+{{- if .Values.metadata.metrics.statefulset.podAnnotations }}
+WARNING: metadata.metrics.statefulset.podAnnotations is set but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.podAnnotations instead.
+{{- end }}
+{{- if .Values.metadata.metrics.statefulset.resources }}
+WARNING: metadata.metrics.statefulset.resources is set but ignored in single-layer pipeline mode.
+  The collector now handles both scraping and enrichment. Configure resources at
+  sumologic.metrics.collector.otelcol.resources instead.
+{{- end }}
+{{- if .Values.metadata.metrics.autoscaling.enabled }}
+WARNING: metadata.metrics.autoscaling is enabled but ignored in single-layer pipeline mode.
+  Use sumologic.metrics.collector.otelcol.autoscaling instead.
+{{- end }}
+{{- end }}
