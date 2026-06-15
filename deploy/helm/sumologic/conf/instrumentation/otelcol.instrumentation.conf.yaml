@@ -148,39 +148,6 @@ processors:
     override: false
     timeout: 10s
 
-  ## Tags spans with K8S metadata, basing on the context IP
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-  k8s_tagger:
-    ## When true, only IP is assigned and passed (so it could be tagged on another collector)
-    passthrough: false
-    ## When true, additional fields, such as serviceName are being also extracted
-    owner_lookup_enabled: true
-    ## Extracted fields and assigned names
-    extract:
-      metadata:
-        ## extract the following well-known metadata fields
-        - containerId
-        - containerName
-        - daemonSetName
-        - deploymentName
-        - hostName
-        - namespace
-        - nodeName
-        - podId
-        - podName
-        - replicaSetName
-        - serviceName
-        - statefulSetName
-      annotations:
-        - tag_name: "k8s.pod.annotation.%s"
-          key: "*"
-      namespace_labels:
-        - tag_name: "k8s.namespace.label.%s"
-          key: "*"
-      labels:
-        - tag_name: "k8s.pod.label.%s"
-          key: "*"
-{{ else }}
   k8sattributes:
     wait_for_metadata: {{ .Values.otelcolInstrumentation.waitForMetadata }}
     wait_for_metadata_timeout: {{ .Values.otelcolInstrumentation.waitForMetadataTimeout | quote }}
@@ -230,7 +197,6 @@ processors:
           name: ip
       - sources:
         - from: connection
-{{ end }}
 
   ## The memory_limiter processor is used to prevent out of memory situations on the collector.
   memory_limiter:
@@ -267,11 +233,7 @@ service:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]
       processors:
         - memory_limiter
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-        - k8s_tagger
-{{ else }}
         - k8sattributes
-{{ end }}
         - source
         - resource
 {{- if eq .Values.sumologic.useExporterBatching false }}
@@ -290,11 +252,7 @@ service:
       receivers: [otlp, otlp/deprecated]
       processors:
         - memory_limiter
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-        - k8s_tagger
-{{ else }}
         - k8sattributes
-{{ end }}
         - source
         - resource
 {{- if eq .Values.sumologic.useExporterBatching false }}

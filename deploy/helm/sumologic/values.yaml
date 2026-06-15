@@ -1354,11 +1354,6 @@ otelcolInstrumentation:
     ## Matching pods will be excluded from Sumo. The logs will still be sent to otelcol.
     excludePodRegex: ""
 
-  ## Use the sumologic k8s processor to add metadata to traces.
-  ## This is disabled by default, but can be enabled if you want to use the sumologic k8s_tagger processor.
-  useSumoK8sProcessor: false
-
-  ## Only used if useSumoK8sProcessor is set to false
   waitForMetadata: true
   waitForMetadataTimeout: 10s
 
@@ -1604,18 +1599,12 @@ metadata:
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
 
-    ## Use the sumologic k8s processor to add metadata to the logs.
-    ## This is disabled by default, but can be enabled if you want to use the sumologic k8s_tagger processor.
-    useSumoK8sProcessor: false
-
-    ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true
     waitForMetadataTimeout: 10s
 
     ## Extract pod labels as resource attributes
     ## Pod labels include: app, version, tier, component, etc.
     ## Default: true
-    ## Only used if useSumoK8sProcessor is set to false
     extractPodLabels: true
 
     ## Extract node labels as resource attributes
@@ -1623,7 +1612,6 @@ metadata:
     ## Cloud providers add 50-100 labels per node (instance-type, zone, etc.)
     ## Example impact: 100 nodes × 50 labels = 5,000+ additional label combinations
     ## Default: false
-    ## Only used if useSumoK8sProcessor is set to false
     extractNodeLabels: false
 
     config:
@@ -1737,11 +1725,6 @@ metadata:
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
 
-    ## Use the k8sattributes processor to add metadata to the logs.
-    ## This is disabled by default, but can be disabled if you want to use the sumologic k8s_tagger processor.
-    useSumoK8sProcessor: false
-
-    ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true
     waitForMetadataTimeout: 10s
 

@@ -36,28 +36,7 @@ groupbyattrs/group_by_name:
     - __name__
     - job
 
-## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
-{{ if .Values.metadata.metrics.useSumoK8sProcessor }}
-k8s_tagger:
-  extract:
-    delimiter: "_"
-    labels:
-      - key: "*"
-        tag_name: "pod_labels_%s"
-    metadata:
-      ## extract the following well-known metadata fields
-      - daemonSetName
-      - deploymentName
-      - nodeName
-      - replicaSetName
-      - serviceName
-      - statefulSetName
-  owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
-  ## Has to be false to enrich metadata
-  passthrough: false
-  pod_association:
-    - from: build_hostname  # Pods are identified by Pod name and namespace
-{{ else }}
+## The Kubernetes processor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
 k8sattributes:
   wait_for_metadata: {{ .Values.metadata.metrics.waitForMetadata }}
   wait_for_metadata_timeout: {{ .Values.metadata.metrics.waitForMetadataTimeout | quote }}
@@ -102,7 +81,6 @@ k8sattributes:
         name: k8s.pod.name
       - from: resource_attribute
         name: k8s.namespace.name
-{{ end }}
 
 ## Configuration for Memory Limiter Processor
 ## The memory_limiter processor is used to prevent out of memory situations on the collector.
