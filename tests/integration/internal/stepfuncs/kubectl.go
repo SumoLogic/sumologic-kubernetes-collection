@@ -35,13 +35,13 @@ func KubectlDeleteNamespaceOpt(namespace string, force bool) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		var err error
 		if force {
-			ns := k8s.GetNamespace(t, ctxopts.KubectlOptions(ctx, envConf), namespace)
+			ns := k8s.GetNamespaceContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), namespace)
 			client := envConf.Client()
 			ns.Spec.Finalizers = []corev1.FinalizerName{}
 			err = client.Resources().Update(ctx, ns)
 			require.NoError(t, err)
 		}
-		k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx, envConf), namespace)
+		k8s.DeleteNamespaceContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), namespace)
 		return ctx
 	}
 }
@@ -51,7 +51,7 @@ func KubectlDeleteNamespaceOpt(namespace string, force bool) features.Func {
 func KubectlCreateNamespaceOpt(namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
-		k8s.CreateNamespace(t, kubectlOptions, namespace)
+		k8s.CreateNamespaceContext(t, ctx, kubectlOptions, namespace)
 		return ctxopts.WithNamespace(ctx, namespace)
 	}
 }
@@ -71,7 +71,7 @@ func KubectlCreateOperatorNamespacesOpt() features.Func {
 		if values.Instrumentation.InstrumentationNamespaces != "" {
 			namespaces := stdstrings.Split(values.Instrumentation.InstrumentationNamespaces, ",")
 			for _, namespace := range namespaces {
-				k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx, envConf), namespace)
+				k8s.CreateNamespaceContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), namespace)
 			}
 		}
 		return ctx
@@ -111,7 +111,7 @@ func KubectlCreateOverrideNamespaceOpt() features.Func {
 		err := yaml.Unmarshal(valuesFileBytes, &values)
 		require.NoError(t, err)
 		if values.NamespaceOverride != "" {
-			k8s.CreateNamespace(t, ctxopts.KubectlOptions(ctx, envConf), values.NamespaceOverride)
+			k8s.CreateNamespaceContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), values.NamespaceOverride)
 		}
 		return ctx
 	}
@@ -149,7 +149,7 @@ func KubectlApplyFOpt(yamlPath string, namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
 		kubectlOpts.Namespace = namespace
-		k8s.KubectlApply(t, &kubectlOpts, yamlPath)
+		k8s.KubectlApplyContext(t, ctx, &kubectlOpts, yamlPath)
 		return ctx
 	}
 }
@@ -160,7 +160,7 @@ func KubectlDeleteFOpt(yamlPath string, namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
 		kubectlOpts.Namespace = namespace
-		k8s.KubectlDelete(t, &kubectlOpts, yamlPath)
+		k8s.KubectlDeleteContext(t, ctx, &kubectlOpts, yamlPath)
 		return ctx
 	}
 }
@@ -181,7 +181,7 @@ func KubectlCreateSumologicSecretOpt() features.Func {
 		kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
 		kubectlOptions.Namespace = namespace
 		t.Logf("Creating sumologic secret in namespace: %s", namespace)
-		k8s.RunKubectl(t, kubectlOptions, "apply", "-f", "yamls/sumologic-secret.yaml", "-n", namespace)
+		k8s.RunKubectlContext(t, ctx, kubectlOptions, "apply", "-f", "yamls/sumologic-secret.yaml", "-n", namespace)
 		return ctx
 	}
 }

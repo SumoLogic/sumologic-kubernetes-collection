@@ -477,14 +477,14 @@ func checkKubeletLogs(count uint, strict bool, waitFunction stepfuncs.WaitForLog
 func removeLogsDeployment(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 	opts := *ctxopts.KubectlOptions(ctx, envConf)
 	opts.Namespace = internal.LogsGeneratorNamespace
-	terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.LogsGeneratorName)
+	terrak8s.RunKubectlContext(t, ctx, &opts, "delete", "deployment", internal.LogsGeneratorName)
 	return ctx
 }
 
 func removeLogsDaemonset(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 	opts := *ctxopts.KubectlOptions(ctx, envConf)
 	opts.Namespace = internal.LogsGeneratorNamespace
-	terrak8s.RunKubectl(t, &opts, "delete", "daemonset", internal.LogsGeneratorName)
+	terrak8s.RunKubectlContext(t, ctx, &opts, "delete", "daemonset", internal.LogsGeneratorName)
 	return ctx
 }
 
@@ -926,10 +926,9 @@ func GetCurlAppFeature() features.Feature {
 				"network.protocol.version":  "1.1",
 				"_sourceCategory":           "kubernetes/test/apps/java/app",
 				"_sourceName":               fmt.Sprintf("%s.java-app.javaapp", internal.InstrumentationAppsNamespace),
-				"telemetry.distro.version":  "2.27.0",
 				"telemetry.sdk.language":    "java",
 				"telemetry.sdk.name":        "opentelemetry",
-				"telemetry.sdk.version":     "1.61.0",
+				"telemetry.sdk.version":     "1.62.0",
 			},
 			waitDuration,
 			tickDuration,
@@ -1033,7 +1032,7 @@ func GetTracesFeature() features.Feature {
 		Teardown(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			opts := *ctxopts.KubectlOptions(ctx, envConf)
 			opts.Namespace = internal.TracesGeneratorNamespace
-			terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.TracesGeneratorName)
+			terrak8s.RunKubectlContext(t, ctx, &opts, "delete", "deployment", internal.TracesGeneratorName)
 			return ctx
 		}).
 		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.TracesGeneratorNamespace, true)).
@@ -1129,8 +1128,8 @@ func CheckSumologicSecret(endpointCount int) featureCheck {
 	return func(builder *features.FeatureBuilder) *features.FeatureBuilder {
 		return builder.Assess("sumologic secret is created with endpoints",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx, envConf), "sumologic", 60, tickDuration)
-				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx, envConf), "sumologic")
+				terrak8s.WaitUntilSecretAvailableContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), "sumologic", 60, tickDuration)
+				secret := terrak8s.GetSecretContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), "sumologic")
 				require.Len(t, secret.Data, endpointCount, "Secret has incorrect number of endpoints")
 				return ctx
 			})
@@ -1266,7 +1265,7 @@ func CheckOtelcolEventsInstall(builder *features.FeatureBuilder) *features.Featu
 				kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
 
 				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
-				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsContextE(t, ctx, kubectlOptions)
 				require.NoError(t, err)
 
 				assert.Eventually(t, func() bool {

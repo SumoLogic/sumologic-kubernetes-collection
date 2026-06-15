@@ -310,7 +310,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.152.0-sumo-0"
+    tag: "0.153.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -1200,7 +1200,7 @@ kube-prometheus-stack:
     ## so we bump the image manually.
     image:
       repository: public.ecr.aws/sumologic/kube-state-metrics
-      tag: "v2.18.0"
+      tag: "v2.19.1"
     prometheus:
       monitor:
         ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -2427,7 +2427,7 @@ telegraf-operator:
   ## Put here the new name if you want to override the full name used for Telegraf Operator components.
   # fullnameOverride: ""
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.38.4
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.39.0
     repository: public.ecr.aws/sumologic/telegraf-operator
   replicaCount: 1
   classes:
@@ -2593,11 +2593,11 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.152.0-sumo-0"
+      tag: "0.153.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
-        tag: 2.27.0
+        tag: 2.28.1
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
         tag: 1.15.0
@@ -2634,7 +2634,7 @@ pvcCleaner:
   job:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.27.0
+      tag: 2.28.0
       pullPolicy: IfNotPresent
 
     resources:
@@ -2675,7 +2675,7 @@ instrumentation:
   instrumentationJobImage:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.27.0
+      tag: 2.28.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
@@ -2731,7 +2731,7 @@ debug:
     enabled: false
     image:
       repository: public.ecr.aws/sumologic/sumologic-mock
-      tag: 2.27.0
+      tag: 2.28.0
       pullPolicy: IfNotPresent
     deployment:
       nodeSelector: {}

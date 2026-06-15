@@ -7,6 +7,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.1.1]
+
+### Released 2026-06-09
+
+### Changed
+
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.28.0 [#4210]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.28.1 [#4212]
+- chore(deps): bump public.ecr.aws/sumologic/kube-state-metrics Docker tag to v2.19.0 [#4213]
+- chore(deps): bump Helm release opentelemetry-operator from 0.113.1 to 0.114.0 [#4215]
+- chore(deps): bump Helm release opentelemetry-operator from 0.114.0 to 0.114.1 [#4216]
+- chore(deps): bump sumologic-otel-collector to v0.153.0-sumo-0 [#4219]
+- chore: Upgrade sumologic mock to 2.28.0 [#4220]
+- chore(deps): bump tailing-sidecar-operator from 0.20.3 to 0.20.4 [#4221]
+- chore(deps): bump kubernetes-tools to v2.28.0 [#4222]
+- chore(deps): bump tailing-sidecar-operator from 0.20.4 to 0.20.5 [#4225]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.0 [#4226]
+
+[#4210]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4210
+[#4212]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4212
+[#4213]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4213
+[#4215]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4215
+[#4216]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4216
+[#4219]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4219
+[#4220]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4220
+[#4221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4221
+[#4222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4222
+[#4225]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4225
+[#4226]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4226
+[v5.1.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.1.1
+
 ## [v5.1.0]
 
 ### Released 2026-05-19

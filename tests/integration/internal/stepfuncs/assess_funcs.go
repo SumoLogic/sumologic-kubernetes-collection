@@ -168,8 +168,9 @@ func WaitUntilExpectedMetricsPresent(
 		defer closeTunnelFunc()
 
 		retries := int(waitDuration / tickDuration)
-		message, err := retry.DoWithRetryE(
+		message, err := retry.DoWithRetryContextE(
 			t,
+			ctx,
 			"WaitUntilExpectedMetricsPresent()",
 			retries,
 			tickDuration,
@@ -245,8 +246,9 @@ func WaitUntilExpectedMetricsPresentWithFilters(
 		defer closeTunnelFunc()
 
 		retries := int(waitDuration / tickDuration)
-		message, err := retry.DoWithRetryE(
+		message, err := retry.DoWithRetryContextE(
 			t,
+			ctx,
 			"WaitUntilExpectedMetricsPresentWithFilters()",
 			retries,
 			tickDuration,
@@ -763,8 +765,9 @@ func WaitForPvcCount(appName string, count int, waitDuration time.Duration, tick
 		kubectlOptions := ctxopts.KubectlOptions(ctx, c)
 
 		assert.Eventually(t, func() bool {
-			output, err := terrak8s.RunKubectlAndGetOutputE(
+			output, err := terrak8s.RunKubectlAndGetOutputContextE(
 				t,
+				ctx,
 				kubectlOptions,
 				"get",
 				"pvc",
