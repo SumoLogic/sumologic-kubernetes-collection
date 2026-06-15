@@ -39,7 +39,7 @@ spec:
     kubernetes.io/os: linux
   autoscaler:
     maxReplicas: 10
-    minReplicas: 1
+    minReplicas: 3
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
   env:
