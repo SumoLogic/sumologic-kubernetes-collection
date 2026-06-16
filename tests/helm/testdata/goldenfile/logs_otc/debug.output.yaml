@@ -53,9 +53,6 @@ data:
         - from: body.PRIORITY
           to: attributes.PRIORITY
           type: copy
-        - field: attributes["fluent.tag"]
-          type: add
-          value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
         - field: body.__CURSOR
           type: remove
         - field: body.__MONOTONIC_TIMESTAMP

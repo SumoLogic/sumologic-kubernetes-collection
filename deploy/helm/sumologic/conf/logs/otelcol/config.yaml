@@ -161,17 +161,12 @@ processors:
   attributes/extract_systemd_source_fields:
     actions:
       - action: extract
-        key: fluent.tag
-        pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+        key: _SYSTEMD_UNIT
+        pattern: ^(?P<_sourceName>[a-zA-Z0-9]+)\..+$
       - action: insert
         from_attribute: _HOSTNAME
         key: _sourceHost
 {{ end }}
-
-  attributes/remove_fluent_tag:
-    actions:
-      - action: delete
-        key: fluent.tag
 
   ## The batch processor accepts spans and places them into batches grouped by node and resource
   batch:
@@ -280,16 +275,6 @@ processors:
         record_attributes:
           - key: k8s.container.name
             value: .+
-{{ end }}
-
-{{ if .Values.sumologic.logs.systemd.enabled }}
-  filter/include_fluent_tag_host:
-    logs:
-      include:
-        match_type: regexp
-        record_attributes:
-          - key: fluent.tag
-            value: host\..+
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
@@ -703,14 +688,12 @@ service:
 {{- end }}
       processors:
         - memory_limiter
-        - filter/include_fluent_tag_host
         - filter/include_kubelet
         - filter/exclude_kubelet_syslog
         - filter/exclude_kubelet_hostname
         - filter/exclude_kubelet_priority
         - filter/exclude_kubelet_unit
         - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/kubelet
@@ -740,7 +723,6 @@ service:
 {{- end }}
       processors:
         - memory_limiter
-        - filter/include_fluent_tag_host
         - filter/include_systemd
         - filter/exclude_kubelet
         - filter/exclude_systemd_syslog
@@ -748,7 +730,6 @@ service:
         - filter/exclude_systemd_priority
         - filter/exclude_systemd_unit
         - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/systemd
