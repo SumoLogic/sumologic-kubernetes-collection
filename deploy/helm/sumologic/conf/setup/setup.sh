@@ -177,6 +177,87 @@ TF_LOG_PROVIDER=DEBUG terraform apply \
     -var="create_fields=${CREATE_FIELDS}" \
     || { echo "Error during applying Terraform changes"; exit 1; }
 
+# Delete sources that exist on the collector but are not in the current config.
+# This cleans up sources that became unused after sourceType changes.
+function cleanup_unused_sources() {
+    echo "Checking for unused sources to clean up..."
+
+    # Get expected source names from the current config
+    local EXPECTED_SOURCES
+    EXPECTED_SOURCES=$(jq -r '.resource.sumologic_http_source | to_entries[] | .value.name' sources.tf.json 2>/dev/null)
+    if [[ -z "${EXPECTED_SOURCES}" ]]; then
+        echo "No sources in config, skipping cleanup."
+        return
+    fi
+
+    # Get collector ID by looking up the collector
+    local COLLECTOR_RESPONSE
+    COLLECTOR_RESPONSE=$(curl -s -XGET \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        "${SUMOLOGIC_BASE_URL}v1/collectors?filter=${SUMOLOGIC_COLLECTOR_NAME}")
+
+    local COLLECTOR_ID
+    COLLECTOR_ID=$(echo "${COLLECTOR_RESPONSE}" | jq -r ".collectors[] | select(.name == \"${SUMOLOGIC_COLLECTOR_NAME}\") | .id")
+    if [[ -z "${COLLECTOR_ID}" || "${COLLECTOR_ID}" == "null" ]]; then
+        echo "Could not find collector ID, skipping source cleanup."
+        return
+    fi
+
+    # List all existing sources on the collector
+    local SOURCES_RESPONSE
+    SOURCES_RESPONSE=$(curl -s -XGET \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}/sources")
+
+    local EXISTING_SOURCES
+    EXISTING_SOURCES=$(echo "${SOURCES_RESPONSE}" | jq -r '.sources[] | "\(.id)\t\(.name)"')
+    if [[ -z "${EXISTING_SOURCES}" ]]; then
+        echo "No existing sources found on collector, skipping cleanup."
+        return
+    fi
+
+    # Get all chart-managed source names (both HTTP and OTLP variants for all signals).
+    # This list is generated from values.yaml at helm render time via
+    # chart-managed-sources.json, ensuring it stays in sync automatically.
+    # Only sources whose names appear in this list are candidates for deletion.
+    # Sources created manually (via UI or API) will never be touched.
+    local KNOWN_CHART_SOURCES
+    KNOWN_CHART_SOURCES=$(jq -r '.sources[]' /etc/terraform/chart-managed-sources.json 2>/dev/null)
+    if [[ -z "${KNOWN_CHART_SOURCES}" ]]; then
+        echo "WARNING: Could not read chart-managed-sources.json, skipping cleanup."
+        return
+    fi
+
+    # Delete sources that are chart-managed but not in the current config
+    while IFS=$'\t' read -r source_id source_name; do
+        # Only consider sources that are known chart-managed sources
+        if ! echo "${KNOWN_CHART_SOURCES}" | grep -qxF "${source_name}"; then
+            continue
+        fi
+        # Delete if not in current expected config
+        if ! echo "${EXPECTED_SOURCES}" | grep -qxF "${source_name}"; then
+            echo "Deleting unused source: ${source_name} (id: ${source_id})"
+            local DELETE_RESPONSE
+            DELETE_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -XDELETE \
+                -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+                "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}/sources/${source_id}")
+            if [[ "${DELETE_RESPONSE}" == "200" ]]; then
+                echo "  Successfully deleted source: ${source_name}"
+            else
+                echo "  WARNING: Failed to delete source ${source_name} (HTTP ${DELETE_RESPONSE})"
+            fi
+        fi
+    done <<< "${EXISTING_SOURCES}"
+
+    echo "Source cleanup complete."
+}
+
+if [[ "${CLEANUP_UNUSED_SOURCES}" == "true" ]]; then
+    cleanup_unused_sources
+else
+    echo "Source cleanup skipped (cleanupUnusedSources is not enabled)."
+fi
+
 # Setup Sumo Logic monitors if enabled
 if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" ]]; then
     bash /etc/terraform/monitors.sh

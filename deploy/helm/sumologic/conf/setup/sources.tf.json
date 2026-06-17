@@ -5,7 +5,13 @@
 {{- range $type, $sources := .Values.sumologic.collector.sources }}
   {{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" }}
     {{- range $key, $source := $sources }}
-      {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
+      {{- $sourceType := "otlp" -}}
+      {{- if and (hasKey $ctx.sumologic $type) (hasKey (index $ctx.sumologic $type) "sourceType") -}}
+        {{- $sourceType = (index $ctx.sumologic $type "sourceType") -}}
+      {{- end -}}
+      {{- $isOtlpSource := hasSuffix "-otlp" $key -}}
+      {{- $matchesSourceType := or (and $isOtlpSource (eq $sourceType "otlp")) (and (not $isOtlpSource) (eq $sourceType "http")) -}}
+      {{- if and (eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true") $matchesSourceType }}
         {{- $resourceName := (include "terraform.sources.name" (dict "Name" $key "Type" $type)) -}}
         {{- $sourceConfig := deepCopy $source -}}
         {{- /* Ensure config-name is set for all source configurations to make things simpler. */ -}}

@@ -123,6 +123,15 @@ sumologic:
     create: false
 
   setup:
+    ## When true, the setup job will delete chart-managed sources that
+    ## don't match the configured sourceType.
+    ## When false (default), existing sources are preserved on the collector.
+    ## Example: if sumologic.logs.sourceType is "http", then the "logs-otlp"
+    ## source will be deleted from the collector on the next helm upgrade.
+    ## WARNING: Only set to true after confirming no external systems
+    ## (Prometheus remote write, FluentD, custom apps) are sending data
+    ## to the source endpoints that will be removed.
+    cleanupUnusedSources: false
     ## uncomment to force collection installation (disables k8s version verification)
     # force: true
     job:
