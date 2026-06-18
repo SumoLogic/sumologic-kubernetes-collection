@@ -362,9 +362,11 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_labels_$$1"
           from: namespace
+        {{- if .Values.metadata.logs.extractNodeLabels }}
         - key_regex: "(.*)" 
           tag_name: "node_labels_$$1"
           from: node
+        {{- end }}
       annotations:
         - key_regex: "(.*)"
           tag_name: "pod_annotations_$$1"
@@ -372,9 +374,11 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_annotations_$$1"
           from: namespace
+        {{- if .Values.metadata.logs.extractNodeLabels }}
         - key_regex: "(.*)" 
           tag_name: "node_annotations_$$1"
           from: node
+        {{- end }}
       metadata:
         ## extract the following well-known metadata fields
         - k8s.pod.name
