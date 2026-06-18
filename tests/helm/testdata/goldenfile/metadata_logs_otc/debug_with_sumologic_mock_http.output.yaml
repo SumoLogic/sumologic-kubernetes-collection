@@ -78,7 +78,7 @@ data:
         actions:
         - action: extract
           key: _SYSTEMD_UNIT
-          pattern: ^(?P<_sourceName>[a-zA-Z0-9]+)\..+$
+          pattern: ^(?P<_sourceName>[a-zA-Z0-9-]+)\..+$
         - action: insert
           from_attribute: _HOSTNAME
           key: _sourceHost
