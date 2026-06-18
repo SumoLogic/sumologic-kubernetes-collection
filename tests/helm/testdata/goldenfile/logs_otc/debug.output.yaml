@@ -76,8 +76,6 @@ data:
         operators:
         - id: get-format
           routes:
-          - expr: body matches "^\\{"
-            output: parser-docker
           - expr: body matches "^[^ Z]+ "
             output: parser-crio
           - expr: body matches "^[^ Z]+Z"
@@ -100,21 +98,6 @@ data:
             layout: '%Y-%m-%dT%H:%M:%S.%LZ'
             parse_from: body.time
           type: regex_parser
-        - id: parser-docker
-          output: merge-docker-lines
-          parse_to: body
-          timestamp:
-            layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-            parse_from: body.time
-          type: json_parser
-        - combine_field: body.log
-          combine_with: ""
-          id: merge-docker-lines
-          is_last_entry: body.log matches "\n$"
-          max_unmatched_batch_size: 0
-          output: strip-trailing-newline
-          source_identifier: attributes["log.file.path"]
-          type: recombine
         - combine_field: body.log
           combine_with: ""
           id: merge-cri-lines
@@ -124,14 +107,6 @@ data:
           overwrite_with: newest
           source_identifier: attributes["log.file.path"]
           type: recombine
-        - id: strip-trailing-newline
-          output: extract-metadata-from-filepath
-          parse_from: body.log
-          parse_to: body
-          regex: |-
-            ^(?P<log>.*)
-            $
-          type: regex_parser
         - id: extract-metadata-from-filepath
           parse_from: attributes["log.file.path"]
           regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$
