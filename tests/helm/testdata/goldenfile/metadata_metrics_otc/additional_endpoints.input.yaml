@@ -1,9 +1,0 @@
-sumologic:
-  useExporterBatching: true
-metadata:
-  metrics:
-    enableSumoPrometheusRemotewriteReceiver: true
-    config:
-      additionalEndpoints:
-        - /prometheus.metrics.others
-        - /prometheus.metrics.custom
