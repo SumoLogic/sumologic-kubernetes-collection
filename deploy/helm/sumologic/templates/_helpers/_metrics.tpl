@@ -43,36 +43,6 @@ Generate list of remoteWrite endpoints for telegraf configuration
 {{- end -}}
 
 {{/*
-Check if remote write proxy is enabled.
-Example Usage:
-{{- if eq (include "metrics.remoteWriteProxy.enabled" .) "true" }}
-
-*/}}
-{{- define "metrics.remoteWriteProxy.enabled" -}}
-{{ and (eq (include "metrics.enabled" .) "true") (eq .Values.sumologic.metrics.remoteWriteProxy.enabled true) }}
-{{- end -}}
-
-{{- define "metrics.remoteWriteProxy.nodeSelector" -}}
-{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.sumologic.metrics.remoteWriteProxy.nodeSelector)}}
-{{- end -}}
-
-{{- define "metrics.remoteWriteProxy.tolerations" -}}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
-{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
-{{- else -}}
-{{- template "kubernetes.defaultTolerations" . -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "metrics.remoteWriteProxy.affinity" -}}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.affinity -}}
-{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.affinity -}}
-{{- else -}}
-{{- template "kubernetes.defaultAffinity" . -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return the otelcol metrics collector image
 */}}
 {{- define "sumologic.metrics.collector.image" -}}
@@ -182,36 +152,12 @@ Example Usage:
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.remoteWriteProxy" -}}
-{{- template "sumologic.fullname" . }}-remote-write-proxy
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.configmap" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.deployment" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.pod" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.service" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
 {{- define "sumologic.metadata.name.metrics" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.metrics.metadata.endpoint" -}}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy.service" . }}
-{{- else -}}
 {{ template "sumologic.metadata.name.metrics.service" . }}
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
@@ -238,21 +184,6 @@ Example Usage:
 {{- template "sumologic.metadata.name.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.remoteWriteProxy" -}}
-{{ template "sumologic.fullname" . }}-remote-write-proxy
-{{- end -}}
-
-{{- define "sumologic.metadata.name.remoteWriteProxy.configmap" -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.metadata.name.remoteWriteProxy.deployment" -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.metadata.name.remoteWriteProxy.service" -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
-{{- end -}}
 
 {{- define "sumologic.labels.metrics" -}}
 sumologic.com/app: otelcol-metrics

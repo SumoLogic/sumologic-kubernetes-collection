@@ -75,7 +75,7 @@ local kp =
       clusterName: 'CLUSTER NAME HERE',
 
       // This should be the FQDN of the metadata enrichment service.
-      sumologicCollectorSvc: 'http://collection-sumologic-remote-write-proxy.sumologic.svc.cluster.local.:9888/',
+      sumologicCollectorSvc: 'http://collection-sumologic-metadata-metrics.sumologic.svc.cluster.local.:9888/',
     },
   };
 
