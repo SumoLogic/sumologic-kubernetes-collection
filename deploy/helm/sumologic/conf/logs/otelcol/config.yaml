@@ -374,7 +374,7 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_annotations_$$1"
           from: namespace
-        - key_regex: "(.*)" 
+        - key_regex: "(.*)"
           tag_name: "node_annotations_$$1"
           from: node
       metadata:
