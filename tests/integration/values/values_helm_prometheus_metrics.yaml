@@ -10,9 +10,6 @@ sumologic:
     collector:
       otelcol:
         enabled: false
-    remoteWriteProxy:
-      enabled: true
-
 kube-prometheus-stack:
   prometheus:
     enabled: true

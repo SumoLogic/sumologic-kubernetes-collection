@@ -286,7 +286,7 @@ are correctly added to your Kube Prometheus Stack configuration:
     apiVersion: v1
     data:
       metadataLogs: collection-sumologic-metadata-logs
-      metadataMetrics: collection-sumologic-remote-write-proxy
+      metadataMetrics: collection-sumologic-metadata-metrics
       metadataNamespace: sumologic
     kind: ConfigMap
     metadata:
