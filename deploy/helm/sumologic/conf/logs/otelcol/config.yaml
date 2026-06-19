@@ -356,9 +356,11 @@ processors:
     auth_type: "serviceAccount"
     extract:
       labels:
+        {{- if .Values.metadata.logs.extractPodLabels }}
         - key_regex: "(.*)"
           tag_name: "pod_labels_$$1"
           from: pod
+        {{- end }}
         - key_regex: "(.*)"
           tag_name: "namespace_labels_$$1"
           from: namespace

@@ -1760,6 +1760,7 @@ metadata:
     waitForMetadataTimeout: 10s
 
     extractNodeLabels: true
+    extractPodLabels: true
 
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
