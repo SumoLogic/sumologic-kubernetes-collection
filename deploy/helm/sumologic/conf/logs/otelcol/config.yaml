@@ -323,15 +323,19 @@ processors:
     auth_type: "serviceAccount"
     extract:
       labels:
+        {{- if .Values.metadata.logs.extractPodLabels }}
         - key_regex: "(.*)"
           tag_name: "pod_labels_$$1"
           from: pod
+        {{- end }}
         - key_regex: "(.*)"
           tag_name: "namespace_labels_$$1"
           from: namespace
+        {{- if .Values.metadata.logs.extractNodeLabels }}
         - key_regex: "(.*)" 
           tag_name: "node_labels_$$1"
           from: node
+        {{- end }}
       annotations:
         - key_regex: "(.*)"
           tag_name: "pod_annotations_$$1"
@@ -339,7 +343,7 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_annotations_$$1"
           from: namespace
-        - key_regex: "(.*)" 
+        - key_regex: "(.*)"
           tag_name: "node_annotations_$$1"
           from: node
       metadata:
