@@ -15,7 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - chore(SUMO-286652): Remove useSumoK8sProcessor and k8s_tagger [#4233]
 - chore(SUMO-286654): Update k8s min cluster version to 1.24 and remove docker-shim parser path [#4234]
-- Remove nginx remote-write-proxy component (sumologic.metrics.remoteWriteProxy). This was a Prometheus remote-write load balancer that is no longer needed with the OTel-based pipeline. [#4242]
+- Remove nginx remote-write-proxy component (sumologic.metrics.remoteWriteProxy). This was a Prometheus remote-write load balancer that is
+  no longer needed with the OTel-based pipeline. [#4242]
 
 ### Added
 
@@ -47,7 +48,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4247]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4247
 [#4228]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4228
 [#4244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4244
-
 [v5.2.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.2.0
 
 ## [v5.1.1]
