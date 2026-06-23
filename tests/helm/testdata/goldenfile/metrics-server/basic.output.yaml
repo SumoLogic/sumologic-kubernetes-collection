@@ -6,10 +6,10 @@ metadata:
   name: RELEASE-NAME-metrics-server
   namespace: sumologic
   labels:
-    helm.sh/chart: metrics-server-3.13.0
+    helm.sh/chart: metrics-server-3.13.1
     app.kubernetes.io/name: metrics-server
     app.kubernetes.io/instance: RELEASE-NAME
-    app.kubernetes.io/version: "0.8.0"
+    app.kubernetes.io/version: "0.8.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
