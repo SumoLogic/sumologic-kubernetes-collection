@@ -928,7 +928,7 @@ func GetCurlAppFeature() features.Feature {
 				"_sourceName":               fmt.Sprintf("%s.java-app.javaapp", internal.InstrumentationAppsNamespace),
 				"telemetry.sdk.language":    "java",
 				"telemetry.sdk.name":        "opentelemetry",
-				"telemetry.sdk.version":     "1.62.0",
+				"telemetry.sdk.version":     "1.63.0",
 			},
 			waitDuration,
 			tickDuration,
