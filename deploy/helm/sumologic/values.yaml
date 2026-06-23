@@ -310,7 +310,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.153.0-sumo-0"
+    tag: "0.154.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -545,6 +545,20 @@ sumologic:
       otelcol:
         enabled: true
 
+        ## Single-layer pipeline merges metadata enrichment into the collector,
+        ## eliminating the need for a separate metadata StatefulSet.
+        ## WARNING: When enabling single-layer pipeline, the collector pod handles
+        ## both scraping AND enrichment/export (previously done by metadata pods).
+        ## You MUST increase collector resources to account for:
+        ##   - k8sattributes processor cache (holds all pod/namespace objects in memory)
+        ##   - Sumo Logic export sending queues (previously on metadata PVCs)
+        ##   - Additional CPU for enrichment processors
+        ##
+        ## Recommended: set collector memory request >= (current collector memory) + (current metadata memory)
+        ## Recommended: set collector CPU request >= (current collector CPU) + (current metadata CPU / replica count)
+        singleLayerPipeline:
+          enabled: false # opt-in; set true to merge enrichment into collector
+
         ## Configure image for Opentelemetry Collector
         image:
           # repository: ""
@@ -676,63 +690,6 @@ sumologic:
       ##           - hello/world
       extraProcessors: []
 
-    ### Enable a load balancing proxy for Prometheus remote writes.
-    ## Prometheus remote write uses a single persistent HTTP connection per target,
-    ## which interacts poorly with TCP load balancing with iptables that K8s Services do.
-    ## Use a real HTTP load balancer for this instead.
-    ## This is an advanced feature, enable only if you're experiencing performance
-    ## issues with metrics metadata enrichment.
-    remoteWriteProxy:
-      enabled: false
-      config:
-        ## Increase this if you've increased samples_per_send in Prometheus to prevent nginx
-        ## from spilling proxied request bodies to disk
-        clientBodyBufferSize: "64k"
-        ## This feature autodetects how much CPU is assigned to the nginx instance and sets
-        ## the right amount of workers based on that. Disable to use the default of 8 workers.
-        workerCountAutotune: true
-        ## Nginx listen port
-        port: 8080
-        ## Nginx access logs
-        enableAccessLogs: false
-      replicaCount: 3
-      image:
-        repository: public.ecr.aws/sumologic/nginx-unprivileged
-        ## This is simply 1.26.0-alpine with a newer version of Alpine
-        ## In the nginx repo, this a moving tag, so I've chosen to add a -sumo-1 suffix to indicate the change
-        tag: 1.26.0-alpine-sumo-0
-        pullPolicy: IfNotPresent
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
-      livenessProbe:
-        initialDelaySeconds: 30
-        periodSeconds: 10
-        timeoutSeconds: 5
-        successThreshold: 1
-        failureThreshold: 6
-      readinessProbe:
-        initialDelaySeconds: 5
-        periodSeconds: 5
-        timeoutSeconds: 3
-        successThreshold: 1
-        failureThreshold: 3
-
-      securityContext: {}
-      nodeSelector: {}
-      tolerations: []
-      affinity: {}
-      ## Option to define priorityClassName to assign a priority class to pods.
-      priorityClassName:
-
-      ## Add custom labels only to metrics sts pods
-      podLabels: {}
-      ## Add custom annotations only to metrics sts pods
-      podAnnotations: {}
     ## Prometheus serviceMonitors related to Sumo Logic services
     ## They are applied only if kube-prometheus-stack is enabled
     serviceMonitors:
@@ -1186,7 +1143,7 @@ kube-prometheus-stack:
     ## so we bump the image manually.
     image:
       repository: public.ecr.aws/sumologic/kube-state-metrics
-      tag: "v2.19.0"
+      tag: "v2.19.1"
     prometheus:
       monitor:
         ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -1354,11 +1311,6 @@ otelcolInstrumentation:
     ## Matching pods will be excluded from Sumo. The logs will still be sent to otelcol.
     excludePodRegex: ""
 
-  ## Use the sumologic k8s processor to add metadata to traces.
-  ## This is disabled by default, but can be enabled if you want to use the sumologic k8s_tagger processor.
-  useSumoK8sProcessor: false
-
-  ## Only used if useSumoK8sProcessor is set to false
   waitForMetadata: true
   waitForMetadataTimeout: 10s
 
@@ -1604,18 +1556,12 @@ metadata:
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
 
-    ## Use the sumologic k8s processor to add metadata to the logs.
-    ## This is disabled by default, but can be enabled if you want to use the sumologic k8s_tagger processor.
-    useSumoK8sProcessor: false
-
-    ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true
     waitForMetadataTimeout: 10s
 
     ## Extract pod labels as resource attributes
     ## Pod labels include: app, version, tier, component, etc.
     ## Default: true
-    ## Only used if useSumoK8sProcessor is set to false
     extractPodLabels: true
 
     ## Extract node labels as resource attributes
@@ -1623,7 +1569,6 @@ metadata:
     ## Cloud providers add 50-100 labels per node (instance-type, zone, etc.)
     ## Example impact: 100 nodes × 50 labels = 5,000+ additional label combinations
     ## Default: false
-    ## Only used if useSumoK8sProcessor is set to false
     extractNodeLabels: false
 
     config:
@@ -1737,13 +1682,11 @@ metadata:
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
 
-    ## Use the k8sattributes processor to add metadata to the logs.
-    ## This is disabled by default, but can be disabled if you want to use the sumologic k8s_tagger processor.
-    useSumoK8sProcessor: false
-
-    ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true
     waitForMetadataTimeout: 10s
+
+    extractNodeLabels: true
+    extractPodLabels: true
 
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
@@ -2579,7 +2522,7 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.153.0-sumo-0"
+      tag: "0.154.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
@@ -2592,7 +2535,7 @@ opentelemetry-operator:
         tag: 0.48b0
       nodejs:
         repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
-        tag: 0.76.0
+        tag: 0.77.0
     env:
       {}
       # ENABLE_WEBHOOKS: "true"

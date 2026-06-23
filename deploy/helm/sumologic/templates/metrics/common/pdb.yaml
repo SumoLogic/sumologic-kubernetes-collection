@@ -1,4 +1,4 @@
-{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+{{- if and (eq (include "metrics.otelcol.enabled" .) "true") (ne (include "metrics.collector.singleLayerPipeline.enabled" .) "true") }}
 {{- if .Values.metadata.metrics.podDisruptionBudget -}}
 apiVersion: {{ include "apiVersion.podDisruptionBudget" . }}
 kind: PodDisruptionBudget

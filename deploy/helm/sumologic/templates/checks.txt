@@ -1,7 +1,7 @@
-{{/* Check if kubernetes version is less than 1.16 */}}
+{{/* Check if kubernetes version is less than 1.24 */}}
 {{- if not .Values.sumologic.setup.force -}}
-{{- if and (eq .Capabilities.KubeVersion.Major "1") (lt (int (include "kubernetes.minor" .)) 16) -}}
-{{- fail "\nAt least k8s 1.16 is required. Please update your k8s version or set sumologic.setup.force to true" -}}
+{{- if and (eq .Capabilities.KubeVersion.Major "1") (lt (int (include "kubernetes.minor" .)) 24) -}}
+{{- fail "\nAt least k8s 1.24 is required. Please update your k8s version or set sumologic.setup.force to true" -}}
 {{- end -}}
 {{- end -}}
 
@@ -114,6 +114,14 @@
 {{- end -}}
 {{- end -}}
 
+{{/* Helper: fail if the k8s_tagger is configured in the given processors map.
+     Call with: (dict "processors" <map> "path" <string>) */}}
+{{- define "check.processors.k8s_tagger" -}}
+{{- if hasKey .processors "k8s_tagger" -}}
+{{- fail (printf "\nk8s_tagger is deprecated. Please start using k8sattributes https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md") -}}
+{{- end -}}
+{{- end -}}
+
 {{/* Check if queue_size is configured in sending_queue for any exporter, or if batch processor is configured
      in processors (only when useExporterBatching is enabled and customBatchingConfigured is not set) */}}
 {{- if and .Values.sumologic.useExporterBatching (not .Values.sumologic.customBatchingConfigured) -}}
@@ -151,3 +159,20 @@
 {{- include "check.processors.batch" (dict "processors" (dig "metadata" "metrics" "config" "merge" "processors" dict .Values.AsMap) "path" "metadata.metrics.config.merge.processors") -}}
 {{- include "check.processors.batch" (dict "processors" (dig "metadata" "metrics" "config" "override" "processors" dict .Values.AsMap) "path" "metadata.metrics.config.override.processors") -}}
 {{- end -}}
+
+{{/* Instrumentation */}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "otelcolInstrumentation" "config" "merge" "processors" dict .Values.AsMap) "path" "otelcolInstrumentation.config.merge.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "otelcolInstrumentation" "config" "override" "processors" dict .Values.AsMap) "path" "otelcolInstrumentation.config.override.processors") -}}
+{{/* Events */}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "otelevents" "config" "merge" "processors" dict .Values.AsMap) "path" "otelevents.config.merge.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "otelevents" "config" "override" "processors" dict .Values.AsMap) "path" "otelevents.config.override.processors") -}}
+{{/* Logs */}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "otellogs" "config" "merge" "processors" dict .Values.AsMap) "path" "otellogs.config.merge.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "otellogs" "config" "override" "processors" dict .Values.AsMap) "path" "otellogs.config.override.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "metadata" "logs" "config" "merge" "processors" dict .Values.AsMap) "path" "metadata.logs.config.merge.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "metadata" "logs" "config" "override" "processors" dict .Values.AsMap) "path" "metadata.logs.config.override.processors") -}}
+{{/* Metrics */}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "sumologic" "metrics" "collector" "otelcol" "config" "merge" "processors" dict .Values.AsMap) "path" "sumologic.metrics.collector.otelcol.config.merge.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "sumologic" "metrics" "collector" "otelcol" "config" "override" "processors" dict .Values.AsMap) "path" "sumologic.metrics.collector.otelcol.config.override.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "metadata" "metrics" "config" "merge" "processors" dict .Values.AsMap) "path" "metadata.metrics.config.merge.processors") -}}
+{{- include "check.processors.k8s_tagger" (dict "processors" (dig "metadata" "metrics" "config" "override" "processors" dict .Values.AsMap) "path" "metadata.metrics.config.override.processors") -}}

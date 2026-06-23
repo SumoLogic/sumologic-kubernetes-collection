@@ -83,37 +83,6 @@
     },
     {
       "customType": "regex",
-      "description": "Update nginx-unprivileged image in values.yaml",
-      "fileMatch": ["^deploy/helm/sumologic/values\\.yaml$"],
-      "matchStrings": [
-        "repository:\\s*(?<depName>public\\.ecr\\.aws/sumologic/nginx-unprivileged)[^\\n]*\\n(?:[^\\n]*\\n){0,3}\\s*tag:\\s*(?<currentValue>[^\\s\"]+)"
-      ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "regex:^(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-alpine-sumo-(?<build>[0-9]+)$"
-    },
-    {
-      "customType": "regex",
-      "description": "Update nginx-unprivileged image in golden test files",
-      "fileMatch": ["^tests/helm/testdata/goldenfile/.*\\.yaml$"],
-      "matchStrings": [
-        "image:\\s*(?<depName>public\\.ecr\\.aws/sumologic/nginx-unprivileged):(?<currentValue>[a-zA-Z0-9._-]+)"
-      ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "regex:^(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-alpine-sumo-(?<build>[0-9]+)$"
-    },
-    {
-      "customType": "regex",
-      "description": "Update nginx-unprivileged version in deploy/helm/sumologic/README.md",
-      "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
-      "matchStrings": [
-        "\\|\\s*`sumologic\\.metrics\\.remoteWriteProxy\\.image`\\s*\\|.*?\"tag\":\\s*\"(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+-alpine-sumo-[0-9]+)\""
-      ],
-      "datasourceTemplate": "docker",
-      "depNameTemplate": "public.ecr.aws/sumologic/nginx-unprivileged",
-      "versioningTemplate": "regex:^(?<major>[0-9]+)\\.(?<minor>[0-9]+)\\.(?<patch>[0-9]+)-alpine-sumo-(?<build>[0-9]+)$"
-    },
-    {
-      "customType": "regex",
       "description": "Update metrics-server image version in deploy/helm/sumologic/README.md",
       "fileMatch": ["^deploy/helm/sumologic/README\\.md$"],
       "matchStrings": [

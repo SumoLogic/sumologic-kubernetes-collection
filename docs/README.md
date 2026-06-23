@@ -108,7 +108,7 @@ The following table displays the currently used software versions for our Helm c
 | Name                                      | Version |
 | ----------------------------------------- | ------- |
 | OpenTelemetry Collector                   | 0.151.0 |
-| OpenTelemetry Operator                    | 0.114.1 |
+| OpenTelemetry Operator                    | 0.115.1 |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
 | Falco                                     | 7.2.1   |
 | Metrics Server                            | 3.13.1  |
@@ -119,8 +119,7 @@ The following table displays the currently used software versions for our Helm c
 
 The
 [k8sattributesprocessor](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md)
-is now supported for logs and metrics metadata enrichment. This processor is enabled by default. To disable this processor for logs, set
-`metadata.logs.useSumoK8sProcessor` to `true`. To disable this processor for metrics, set `metadata.metrics.useSumoK8sProcessor` to `true`.
+is now supported for logs and metrics metadata enrichment. This processor is enabled by default.
 
 > [!NOTE] The Service name isn't part of the metadata enrichment with this new processor.
 
