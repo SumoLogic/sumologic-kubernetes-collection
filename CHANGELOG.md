@@ -30,6 +30,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore(SUMO-286650): Remove fluent.tag synthetic attribute [#4236]
 - chore(deps): bump sumologic-otel-collector to v0.154.0-sumo-0 [#4237], [#4239]
 - chore(deps): bump opentelemetry-operator [#4247]
+- chore(deps): bump metrics-server from 3.13.0 to 3.13.1 [#4228]
+- chore(deps): bump autoinstrumentation [#4244]
 
 [#4233]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4233
 [#4234]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4234
@@ -43,6 +45,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4237]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4237
 [#4239]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4239
 [#4247]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4247
+[#4228]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4228
+[#4244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4244
 
 [v5.2.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.2.0
 
