@@ -18,7 +18,6 @@ func Test_Helm_Single_Layer_Pipeline(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
-	featRemoteWrite := GetRemoteWriteMetricsFeature()
 
-	testenv.Test(t, featInstall, featMetrics, featRemoteWrite)
+	testenv.Test(t, featInstall, featMetrics)
 }

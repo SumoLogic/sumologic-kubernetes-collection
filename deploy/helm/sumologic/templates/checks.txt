@@ -34,13 +34,16 @@
 {{- end -}}
 {{- end -}}
 
-{{/* Check if additionalEndpoints are configured without enableSumoPrometheusRemotewriteReceiver */}}
-{{- if .Values.sumologic.metrics.enabled -}}
-{{- if not .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver -}}
+{{/* Check if removed enableSumoPrometheusRemotewriteReceiver flag is still set */}}
+{{- if hasKey .Values.metadata.metrics "enableSumoPrometheusRemotewriteReceiver" -}}
+{{- if .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver -}}
+{{- fail "\nmetadata.metrics.enableSumoPrometheusRemotewriteReceiver has been removed in v6.\nThe Telegraf compatibility receiver is no longer available. The metrics pipeline now always uses the upstream prometheusremotewrite receiver (PRW v2 only).\nPlease remove this flag from your values file." }}
+{{- end -}}
+{{- end -}}
+
+{{/* Check if removed additionalEndpoints config is still set */}}
 {{- if .Values.metadata.metrics.config.additionalEndpoints -}}
-{{- fail "\nmetadata.metrics.config.additionalEndpoints is configured, but custom remote write endpoints are only supported by the Telegraf compatibility receiver.\nThe default prometheusremotewrite receiver ignores metadata.metrics.config.additionalEndpoints.\nTo use custom endpoints, enable the compatibility flag:\n  metadata.metrics.enableSumoPrometheusRemotewriteReceiver: true\nNote: this flag is a temporary migration aid and will be removed in a future release.\nSee the upgrade guide: https://help.sumologic.com/docs/send-data/kubernetes/v5/how-to-upgrade/#forwarding-metrics-using-prometheus-remote-writes-into-otel-pipeline" }}
-{{- end -}}
-{{- end -}}
+{{- fail "\nmetadata.metrics.config.additionalEndpoints has been removed in v6.\nCustom remote write endpoints were only supported by the Telegraf compatibility receiver, which has been removed.\nPlease remove additionalEndpoints from your values file." }}
 {{- end -}}
 
 {{/* Check if metrics are enabled but OTel collector is explicitly disabled (v5: Prometheus Operator removed) */}}
