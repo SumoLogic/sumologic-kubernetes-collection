@@ -192,9 +192,10 @@ function cleanup_unused_sources() {
 
     # Get collector ID by looking up the collector
     local COLLECTOR_RESPONSE
-    COLLECTOR_RESPONSE=$(curl -s -XGET \
+    COLLECTOR_RESPONSE=$(curl -s -G \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-        "${SUMOLOGIC_BASE_URL}v1/collectors?filter=${SUMOLOGIC_COLLECTOR_NAME}")
+        --data-urlencode "filter=${SUMOLOGIC_COLLECTOR_NAME}" \
+        "${SUMOLOGIC_BASE_URL}v1/collectors")
 
     local COLLECTOR_ID
     COLLECTOR_ID=$(echo "${COLLECTOR_RESPONSE}" | jq -r ".collectors[] | select(.name == \"${SUMOLOGIC_COLLECTOR_NAME}\") | .id")
