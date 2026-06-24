@@ -23,6 +23,7 @@ release.
 
 | version                                                                                                 | planned end of life date |
 | ------------------------------------------------------------------------------------------------------- | ------------------------ |
+| [v5.2](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v5.2/docs/README.md)   | TBD                      |
 | [v5.1.1](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v5.1/docs/README.md) | TBD                      |
 | [v5.1](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v5.1/docs/README.md)   | TBD                      |
 | [v5.0](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v5.0/docs/README.md)   | TBD                      |
