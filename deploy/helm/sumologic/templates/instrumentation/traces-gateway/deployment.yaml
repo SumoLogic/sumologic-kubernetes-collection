@@ -72,6 +72,7 @@ spec:
         - name: GOGC
           value: "80"
 {{- $ctx := .Values -}}
+{{- include "godebug-env-variable" . | nindent 8 -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") | nindent 8 -}}
 {{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" "metrics" "Name" "default" ) | nindent 8 }}
 {{- include "proxy-env-variables" . | nindent 8 -}}

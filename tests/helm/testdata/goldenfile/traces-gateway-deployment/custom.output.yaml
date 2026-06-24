@@ -43,6 +43,8 @@ spec:
           args:
             - "--config=/conf/traces.gateway.conf.yaml"
           env:
+            - name: GODEBUG
+              value: "netdns=go"
             - name: GOGC
               value: "80"
             - name: SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE
