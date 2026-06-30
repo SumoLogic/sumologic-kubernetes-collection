@@ -4,7 +4,27 @@ exporters:
     verbosity: detailed
 {{- end }}
 
-{{- if eq .Values.sumologic.logs.sourceType "http" }}
+{{- if .Values.sumologic.useExtension }}
+  sumologic:
+    client: {{ include "sumologic.sumo_client" . }}
+    log_format: otlp
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
+      queue_size: 10_000
+{{- end }}
+{{- if .Values.metadata.persistence.enabled }}
+      storage: file_storage
+{{- end }}
+
+{{- else if eq .Values.sumologic.logs.sourceType "http" }}
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
@@ -155,6 +175,11 @@ extensions:
       directory: /tmp
 {{ end }}
   pprof: {}
+{{- if .Values.sumologic.useExtension }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_credentials_directory: /var/lib/storage/otc/credentials
+{{- end }}
 
 processors:
 {{ if .Values.sumologic.logs.systemd.enabled }}
@@ -600,6 +625,9 @@ service:
     - file_storage
 {{ end }}
     - pprof
+{{- if .Values.sumologic.useExtension }}
+    - sumologic
+{{- end }}
   pipelines:
 {{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
 {{ if .Values.sumologic.logs.container.enabled }}

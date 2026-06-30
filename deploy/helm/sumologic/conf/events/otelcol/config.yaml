@@ -1,7 +1,9 @@
 exporters:
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
+{{- if not .Values.sumologic.useExtension }}
     endpoint: {{ include "sumologic.events.exporter.endpoint" . }}
+{{- end }}
     log_format: {{ include "sumologic.events.exporter.format" . }}
     sending_queue:
       enabled: true
@@ -55,6 +57,11 @@ extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
+{{- if .Values.sumologic.useExtension }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_credentials_directory: /var/lib/storage/otc/credentials
+{{- end }}
 
 processors:
   batch:
@@ -164,6 +171,9 @@ service:
     - file_storage
 {{- end }}
     - pprof
+{{- if .Values.sumologic.useExtension }}
+    - sumologic
+{{- end }}
   pipelines:
 {{- if .Values.otelevents.reportConfigMaps }}
     logs/configmaps:

@@ -411,6 +411,22 @@ As a result, the user can upgrade without enabling setup until they actually ena
 {{- end -}}
 
 {{/*
+Generate env vars for SumoLogic extension mode: installation token + collector ID from the sumologic secret.
+*/}}
+{{- define "kubernetes.extension.envs" -}}
+- name: SUMOLOGIC_INSTALLATION_TOKEN
+  valueFrom:
+    secretKeyRef:
+      name: sumologic
+      key: SUMOLOGIC_INSTALLATION_TOKEN
+- name: SUMOLOGIC_COLLECTOR_ID
+  valueFrom:
+    secretKeyRef:
+      name: sumologic
+      key: SUMOLOGIC_COLLECTOR_ID
+{{- end -}}
+
+{{/*
 Generate envs for given source type:
 
 Example:

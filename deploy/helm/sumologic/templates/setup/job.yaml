@@ -97,6 +97,8 @@ spec:
           value: "{{ template "terraform.secret.name" }}"
         - name: CHART_VERSION
           value: "{{ .Chart.Version }}"
+        - name: SUMOLOGIC_USE_EXTENSION
+          value: "{{ .Values.sumologic.useExtension }}"
         - name: SUMOLOGIC_MONITORS_ENABLED
           value: "{{ .Values.sumologic.setup.monitors.enabled }}"
         - name: SUMOLOGIC_MONITORS_STATUS

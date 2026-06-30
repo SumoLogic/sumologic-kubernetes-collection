@@ -30,3 +30,9 @@ variable "chart_version" {
   description = "The Helm Chart version."
   type        = string
 }
+
+variable "use_extension" {
+  description = "If set, use SumoLogic extension instead of HTTP sources. An installation token is created automatically."
+  type        = bool
+  default     = false
+}
