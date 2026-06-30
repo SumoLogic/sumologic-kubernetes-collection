@@ -1,4 +1,4 @@
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
 {{- /*
 Extension mode: create only the HTTP sources still needed for traces and the instrumentation
 collector (metrics/default). Logs, events, and main metrics are handled via the extension.
