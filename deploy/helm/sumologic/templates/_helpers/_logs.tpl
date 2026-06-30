@@ -86,12 +86,12 @@ Return default exporters for .Type pipeline
 {{- define "logs.otelcol.defaultExporters" -}}
 {{- $exporters := list -}}
 {{- if .Values.sumologic.logs.otelcol.useDefaultExporters -}}
-{{- if and (not .Values.sumologic.useExtension) (eq .Values.sumologic.logs.sourceType "http") -}}
+{{- if and (not .Values.sumologic.sourcelessMode) (eq .Values.sumologic.logs.sourceType "http") -}}
 {{- $exporters = append $exporters (printf "sumologic/%s" .Type) -}}
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" -}}
 {{- $exporters = append $exporters (printf "sumologic/sumologic-mock-%s" .Type) -}}
 {{- end -}}
-{{- else if or .Values.sumologic.useExtension (eq .Values.sumologic.logs.sourceType "otlp") -}}
+{{- else if or .Values.sumologic.sourcelessMode (eq .Values.sumologic.logs.sourceType "otlp") -}}
 {{- $exporters = append $exporters "sumologic" -}}
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" -}}
 {{- $exporters = append $exporters "sumologic/sumologic-mock" -}}

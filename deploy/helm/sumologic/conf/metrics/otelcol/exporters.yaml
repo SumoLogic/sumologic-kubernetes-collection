@@ -72,7 +72,7 @@ sumologic/sumologic-mock-http:
 sumologic/default:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: {{ include "metrics.otelcol.exporter.format" . }}
-{{- if not .Values.sumologic.useExtension }}
+{{- if not .Values.sumologic.sourcelessMode }}
   endpoint: {{ include "metrics.otelcol.exporter.endpoint" . }}
 {{- end }}
   ## Sumo doesn't yet natively support OTLP Histograms

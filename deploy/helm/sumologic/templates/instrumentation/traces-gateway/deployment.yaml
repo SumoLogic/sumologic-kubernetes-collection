@@ -72,7 +72,7 @@ spec:
         - name: GOGC
           value: "80"
 {{- $ctx := .Values -}}
-{{- if not .Values.sumologic.useExtension -}}
+{{- if not .Values.sumologic.sourcelessMode -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") | nindent 8 -}}
 {{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" "metrics" "Name" "default" ) | nindent 8 }}
 {{- end -}}

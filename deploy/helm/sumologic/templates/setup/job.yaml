@@ -98,7 +98,7 @@ spec:
         - name: CHART_VERSION
           value: "{{ .Chart.Version }}"
         - name: SUMOLOGIC_USE_EXTENSION
-          value: "{{ .Values.sumologic.useExtension }}"
+          value: "{{ .Values.sumologic.sourcelessMode }}"
         - name: SUMOLOGIC_MONITORS_ENABLED
           value: "{{ .Values.sumologic.setup.monitors.enabled }}"
         - name: SUMOLOGIC_MONITORS_STATUS

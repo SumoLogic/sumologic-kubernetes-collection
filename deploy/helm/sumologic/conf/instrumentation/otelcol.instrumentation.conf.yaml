@@ -18,7 +18,7 @@ exporters:
 
   sumologic/metrics:
     client: '{{ include "sumologic.sumo_client" . }}'
-{{- if not .Values.sumologic.useExtension }}
+{{- if not .Values.sumologic.sourcelessMode }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
 {{- end }}
     ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
@@ -228,15 +228,15 @@ extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     collector_credentials_directory: /tmp/otc-credentials
     ephemeral: true
     clobber: true
-{{- end }}
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 service:
-  extensions: [health_check, pprof{{- if .Values.sumologic.useExtension }}, sumologic{{- end }}]
+  extensions: [health_check, pprof{{- if .Values.sumologic.sourcelessMode }}, sumologic{{- end }}]
   pipelines:
     traces:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]

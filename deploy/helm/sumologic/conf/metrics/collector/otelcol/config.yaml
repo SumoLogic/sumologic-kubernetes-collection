@@ -114,7 +114,7 @@ service:
      This preserves backward compatibility with customer metadata.metrics.config.merge overrides. */}}
 connectors:
   forward: {}
-{{- if and (not .Values.sumologic.useExtension) (eq .Values.sumologic.metrics.sourceType "http") }}
+{{- if and (not .Values.sumologic.sourcelessMode) (eq .Values.sumologic.metrics.sourceType "http") }}
 {{ tpl (.Files.Get "conf/metrics/otelcol/connectors.yaml") . | indent 2 }}
 {{- end}}
 
@@ -211,7 +211,7 @@ service:
     ## Customer metadata.metrics.config.merge applies to this pipeline.
     metrics:
       exporters:
-{{- if and (not .Values.sumologic.useExtension) (eq .Values.sumologic.metrics.sourceType "http") }}
+{{- if and (not .Values.sumologic.sourcelessMode) (eq .Values.sumologic.metrics.sourceType "http") }}
         - routing/default
 {{- else }}
         - sumologic/default
@@ -258,7 +258,7 @@ service:
 {{- else if (eq (include "metrics.collector.singleLayerPipeline.enabled" .) "true") }}
         - prometheusremotewrite
 {{- end }}
-{{- if and (not .Values.sumologic.useExtension) (eq .Values.sumologic.metrics.sourceType "http") }}
+{{- if and (not .Values.sumologic.sourcelessMode) (eq .Values.sumologic.metrics.sourceType "http") }}
     metrics/sumologic/default:
       receivers:
         - routing/default
