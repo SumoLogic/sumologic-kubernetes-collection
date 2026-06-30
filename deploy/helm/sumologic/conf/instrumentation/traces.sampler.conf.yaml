@@ -132,6 +132,7 @@ extensions:
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     collector_credentials_directory: /var/lib/storage/tracessampler/credentials
+    ephemeral: true
 {{- end }}
 service:
   extensions:

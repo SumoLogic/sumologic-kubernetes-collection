@@ -232,6 +232,7 @@ extensions:
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     collector_credentials_directory: /var/lib/storage/otc/credentials
+    ephemeral: true
 {{- end }}
 service:
   extensions: [health_check, pprof{{- if .Values.sumologic.useExtension }}, sumologic{{- end }}]
