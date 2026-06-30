@@ -1,50 +1,6 @@
 {{- if .Values.sumologic.sourcelessMode }}
-{{- /*
-Extension mode: create only the HTTP sources still needed for traces and the instrumentation
-collector (metrics/default). Logs, events, and main metrics are handled via the extension.
-*/ -}}
-{{- $ctx := .Values -}}
-{{- $sourceConfigs := dict -}}
-{{- /* Include metrics/default (used by traces-gateway and instrumentation collector). */ -}}
-{{- if hasKey .Values.sumologic.collector.sources.metrics "default" }}
-  {{- $key := "default" -}}
-  {{- $sourceConfig := deepCopy (get .Values.sumologic.collector.sources.metrics $key) -}}
-  {{- $resourceName := include "terraform.sources.name" (dict "Name" $key "Type" "metrics") -}}
-  {{- if not (hasKey $sourceConfig "config-name") }}
-    {{- $configName := include "terraform.sources.config-map-variable" (dict "Type" "metrics" "Context" $ctx "Name" $key) -}}
-    {{- $_ := set $sourceConfig "config-name" $configName -}}
-  {{- end -}}
-  {{- $_ := set $sourceConfigs $resourceName $sourceConfig -}}
-{{- end -}}
-{{- /* Include all traces sources. */ -}}
-{{- if .Values.sumologic.traces.enabled }}
-  {{- range $key, $source := .Values.sumologic.collector.sources.traces }}
-    {{- $resourceName := include "terraform.sources.name" (dict "Name" $key "Type" "traces") -}}
-    {{- $sourceConfig := deepCopy $source -}}
-    {{- if not (hasKey $sourceConfig "config-name") }}
-      {{- $configName := include "terraform.sources.config-map-variable" (dict "Type" "traces" "Context" $ctx "Name" $key) -}}
-      {{- $_ := set $sourceConfig "config-name" $configName -}}
-    {{- end -}}
-    {{- $_ := set $sourceConfigs $resourceName $sourceConfig -}}
-  {{- end }}
-{{- end -}}
-{{- $sourceResources := dict -}}
-{{- range $resourceName, $sourceConfig := $sourceConfigs }}
-  {{- $properties := get $sourceConfig "properties" | default (dict) -}}
-  {{- $sourceResource := deepCopy $sourceConfig -}}
-  {{- $sourceResource := omit $sourceResource "properties" "config-name" -}}
-  {{- $sourceResource := merge $sourceResource $properties -}}
-  {{- $_ := set $sourceResource "collector_id" "${ sumologic_collector.collector.id }" -}}
-  {{- $_ := set $sourceResources $resourceName $sourceResource -}}
-{{- end }}
-{{- $resourceMap := dict -}}
-{{- range $resourceName, $_ := $sourceResources -}}
-  {{- $_ := set $resourceMap $resourceName (printf "${ sumologic_http_source.%s }" $resourceName) -}}
-{{- end -}}
-{{- $terraformData := dict "resource" (dict "sumologic_http_source" $sourceResources) -}}
-{{- $locals :=  dict "source_configs" $sourceConfigs "sources" $resourceMap -}}
-{{- $_ := set $terraformData "locals" $locals -}}
-{{- toPrettyJson $terraformData | nindent 2 }}
+{{- /* sourcelessMode: no HTTP sources needed — all data paths use the SumoLogic extension. */ -}}
+{{- toPrettyJson (dict "resource" (dict "sumologic_http_source" dict) "locals" (dict "source_configs" dict "sources" dict)) | nindent 2 }}
 {{- else }}
 {{- $ctx := .Values -}}
 {{- $sourceConfigs := dict -}}

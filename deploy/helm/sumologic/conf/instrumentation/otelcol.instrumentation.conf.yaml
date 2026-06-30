@@ -231,7 +231,6 @@ extensions:
 {{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
-    collector_credentials_directory: /tmp/otc-credentials
     ephemeral: true
     clobber: true
 {{ include "sumologic.extension.api_base_url" . }}{{- end }}

@@ -60,7 +60,9 @@ extensions:
 {{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
-    collector_credentials_directory: {{ if .Values.sumologic.events.persistence.enabled }}{{ .Values.sumologic.events.persistence.persistentVolume.path }}/credentials{{ else }}/tmp/otc-credentials{{ end }}
+{{- if .Values.sumologic.events.persistence.enabled }}
+    collector_credentials_directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}/credentials
+{{- end }}
     ephemeral: true
     clobber: true
 {{ include "sumologic.extension.api_base_url" . }}{{- end }}

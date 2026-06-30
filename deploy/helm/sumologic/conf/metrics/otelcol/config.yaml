@@ -22,7 +22,9 @@ extensions:
 {{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
-    collector_credentials_directory: {{ if .Values.metadata.persistence.enabled }}/var/lib/storage/otc/credentials{{ else }}/tmp/otc-credentials{{ end }}
+{{- if .Values.metadata.persistence.enabled }}
+    collector_credentials_directory: /var/lib/storage/otc/credentials
+{{- end }}
     ephemeral: true
     clobber: true
 {{ include "sumologic.extension.api_base_url" . }}{{- end }}
