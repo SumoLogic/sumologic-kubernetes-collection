@@ -60,8 +60,9 @@ extensions:
 {{- if .Values.sumologic.useExtension }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
-    collector_credentials_directory: /var/lib/storage/otc/credentials
+    collector_credentials_directory: {{ if .Values.sumologic.events.persistence.enabled }}{{ .Values.sumologic.events.persistence.persistentVolume.path }}/credentials{{ else }}/tmp/otc-credentials{{ end }}
     ephemeral: true
+    clobber: true
 {{- end }}
 
 processors:

@@ -178,7 +178,9 @@ extensions:
 {{- if .Values.sumologic.useExtension }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
-    collector_credentials_directory: /var/lib/storage/otc/credentials
+    collector_credentials_directory: {{ if .Values.metadata.persistence.enabled }}/var/lib/storage/otc/credentials{{ else }}/tmp/otc-credentials{{ end }}
+    ephemeral: true
+    clobber: true
 {{- end }}
 
 processors:
