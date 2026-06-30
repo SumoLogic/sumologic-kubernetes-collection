@@ -33,6 +33,25 @@ exporters:
 {{- end }}
 {{- end }}
 
+{{- if .Values.sumologic.useExtension }}
+  sumologic:
+    client: {{ include "sumologic.sumo_client" . }}
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{ else }}
+      queue_size: 10_000
+{{- end }}
+{{- if .Values.tracesSampler.persistence.enabled }}
+      storage: file_storage
+{{- end }}
+{{- else }}
   otlphttp:
 {{- if eq .Values.sumologic.traces.sourceType "http" }}
     traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
@@ -54,6 +73,7 @@ exporters:
 {{- end }}
 {{- if .Values.tracesSampler.persistence.enabled }}
       storage: file_storage
+{{- end }}
 {{- end }}
 receivers:
   otlp:
@@ -108,6 +128,11 @@ extensions:
       directory: /tmp
 {{- end }}
   pprof: {}
+{{- if .Values.sumologic.useExtension }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_credentials_directory: /var/lib/storage/tracessampler/credentials
+{{- end }}
 service:
   extensions:
     - health_check
@@ -115,6 +140,9 @@ service:
     - file_storage
 {{- end }}
     - pprof
+{{- if .Values.sumologic.useExtension }}
+    - sumologic
+{{- end }}
   pipelines:
     traces:
       receivers: [otlp]
@@ -125,7 +153,11 @@ service:
         - batch
 {{- end }}
       exporters:
+{{- if .Values.sumologic.useExtension }}
+        - sumologic
+{{- else }}
         - otlphttp
+{{- end }}
 {{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}
         - otlphttp/sumologic-mock
 {{- end }}

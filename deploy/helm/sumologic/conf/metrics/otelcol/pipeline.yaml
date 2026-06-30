@@ -1,5 +1,5 @@
 exporters:
-{{- if (eq .Values.sumologic.metrics.sourceType "http") }}
+{{- if and (not .Values.sumologic.useExtension) (eq .Values.sumologic.metrics.sourceType "http") }}
   - routing/default
 {{- else }}
   - sumologic/default
@@ -9,7 +9,7 @@ exporters:
 {{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
   - sumologic/sumologic-mock-default
 {{- end }}
-{{- if eq .Values.sumologic.metrics.sourceType "http" }}
+{{- if and (not .Values.sumologic.useExtension) (eq .Values.sumologic.metrics.sourceType "http") }}
   - sumologic/apiserver
   - sumologic/control_plane
   - sumologic/controller

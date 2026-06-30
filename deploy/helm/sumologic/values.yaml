@@ -15,6 +15,11 @@ sumologic:
 
   ### Setup
 
+  ## If enabled, uses SumoLogic extension for auth/endpoint discovery instead of HTTP source URLs.
+  ## Terraform will auto-create an installation token and store it in the sumologic secret.
+  ## OTLP/HTTP sources are not created when this is enabled.
+  useExtension: false
+
   ## If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 

@@ -124,7 +124,11 @@ spec:
         key: metadataMetrics
 {{- else }}
 {{- $ctx := .Values -}}
+{{- if .Values.sumologic.useExtension -}}
+{{- include "kubernetes.extension.envs" . | nindent 2 -}}
+{{- else -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 2 -}}
+{{- end -}}
 {{- include "proxy-env-variables" . | nindent 2 -}}
 {{- if .Values.metadata.metrics.statefulset.extraEnvVars }}
 {{ toYaml .Values.metadata.metrics.statefulset.extraEnvVars | nindent 2 }}

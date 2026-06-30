@@ -11,6 +11,7 @@ export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
 export TF_VAR_namespace_name="${NAMESPACE}"
 export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
+export TF_VAR_use_extension="${SUMOLOGIC_USE_EXTENSION:-false}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -166,6 +167,26 @@ if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}";
     jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
         terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
     done || true
+fi
+
+# Import existing installation token if extension mode is enabled (prevents recreation on upgrades)
+function import_installation_token() {
+    local TOKEN_NAME="kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}"
+    local RESPONSE TOKEN_ID
+    RESPONSE="$(curl -XGET -s \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        "${SUMOLOGIC_BASE_URL}v1/installationTokens")"
+    TOKEN_ID=$(echo "${RESPONSE}" | jq -r ".data[] | select(.name == \"${TOKEN_NAME}\") | .id" | head -1)
+    if [[ -n "${TOKEN_ID}" ]]; then
+        echo "Importing existing installation token: ${TOKEN_NAME} (${TOKEN_ID})"
+        terraform import \
+            -var="use_extension=true" \
+            'sumologic_installation_token.collection_token[0]' "${TOKEN_ID}" || true
+    fi
+}
+
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" ]]; then
+    import_installation_token
 fi
 
 # Kubernetes Secret

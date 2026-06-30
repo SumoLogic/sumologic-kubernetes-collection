@@ -286,10 +286,10 @@ Return the metrics format for the default Sumologic exporter for metrics.
 '{{ include "metrics.otelcol.exporter.format" . }}'
 */}}
 {{- define "metrics.otelcol.exporter.format" -}}
-{{- if eq .Values.sumologic.metrics.sourceType "http" -}}
-{{- "prometheus" -}}
-{{- else if eq .Values.sumologic.metrics.sourceType "otlp" -}}
+{{- if or .Values.sumologic.useExtension (eq .Values.sumologic.metrics.sourceType "otlp") -}}
 {{- "otlp" -}}
+{{- else if eq .Values.sumologic.metrics.sourceType "http" -}}
+{{- "prometheus" -}}
 {{- else -}}
 {{- fail "`sumologic.metrics.sourceType` can only be `http` or `otlp`" -}}
 {{- end -}}
