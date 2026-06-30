@@ -131,7 +131,9 @@ extensions:
 {{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
-    collector_credentials_directory: {{ if .Values.tracesSampler.persistence.enabled }}/var/lib/storage/tracessampler/credentials{{ else }}/tmp/otc-credentials{{ end }}
+{{- if .Values.tracesSampler.persistence.enabled }}
+    collector_credentials_directory: /var/lib/storage/tracessampler/credentials
+{{- end }}
     ephemeral: true
     clobber: true
 {{ include "sumologic.extension.api_base_url" . }}{{- end }}
