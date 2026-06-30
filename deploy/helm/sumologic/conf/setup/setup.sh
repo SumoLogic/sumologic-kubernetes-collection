@@ -175,13 +175,13 @@ function import_installation_token() {
     local RESPONSE TOKEN_ID
     RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-        "${SUMOLOGIC_BASE_URL}v1/installationTokens")"
+        "${SUMOLOGIC_BASE_URL}v1/tokens")"
     TOKEN_ID=$(echo "${RESPONSE}" | jq -r ".data[] | select(.name == \"${TOKEN_NAME}\") | .id" | head -1)
     if [[ -n "${TOKEN_ID}" ]]; then
         echo "Importing existing installation token: ${TOKEN_NAME} (${TOKEN_ID})"
         terraform import \
             -var="use_extension=true" \
-            'sumologic_installation_token.collection_token[0]' "${TOKEN_ID}" || true
+            'sumologic_token.collection_token[0]' "${TOKEN_ID}" || true
     fi
 }
 
