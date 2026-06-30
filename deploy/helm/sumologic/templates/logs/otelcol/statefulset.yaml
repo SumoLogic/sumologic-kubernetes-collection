@@ -144,7 +144,7 @@ spec:
 {{- if or .Values.sumologic.collector.sources .Values.metadata.logs.statefulset.extraEnvVars }}
         env:
 {{- $ctx := .Values -}}
-{{- if .Values.sumologic.useExtension -}}
+{{- if .Values.sumologic.sourcelessMode -}}
 {{- include "kubernetes.extension.envs" . | nindent 8 -}}
 {{- else -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs") | nindent 8 -}}

@@ -4,7 +4,7 @@ exporters:
     verbosity: detailed
 {{- end }}
 
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
     log_format: otlp
@@ -175,13 +175,13 @@ extensions:
       directory: /tmp
 {{ end }}
   pprof: {}
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     collector_credentials_directory: {{ if .Values.metadata.persistence.enabled }}/var/lib/storage/otc/credentials{{ else }}/tmp/otc-credentials{{ end }}
     ephemeral: true
     clobber: true
-{{- end }}
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 
 processors:
 {{ if .Values.sumologic.logs.systemd.enabled }}
@@ -627,7 +627,7 @@ service:
     - file_storage
 {{ end }}
     - pprof
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
     - sumologic
 {{- end }}
   pipelines:

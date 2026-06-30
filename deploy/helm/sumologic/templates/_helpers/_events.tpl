@@ -107,7 +107,7 @@ ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
 Return the events otel exporter format
 */}}
 {{- define "sumologic.events.exporter.format" -}}
-{{- if or .Values.sumologic.useExtension (eq .Values.sumologic.events.sourceType "otlp") -}}
+{{- if or .Values.sumologic.sourcelessMode (eq .Values.sumologic.events.sourceType "otlp") -}}
 otlp
 {{- else if eq .Values.sumologic.events.sourceType "http" -}}
 json

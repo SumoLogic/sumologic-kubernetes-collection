@@ -33,7 +33,7 @@ exporters:
 {{- end }}
 {{- end }}
 
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
     sending_queue:
@@ -128,13 +128,13 @@ extensions:
       directory: /tmp
 {{- end }}
   pprof: {}
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     collector_credentials_directory: {{ if .Values.tracesSampler.persistence.enabled }}/var/lib/storage/tracessampler/credentials{{ else }}/tmp/otc-credentials{{ end }}
     ephemeral: true
     clobber: true
-{{- end }}
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 service:
   extensions:
     - health_check
@@ -142,7 +142,7 @@ service:
     - file_storage
 {{- end }}
     - pprof
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
     - sumologic
 {{- end }}
   pipelines:
@@ -155,7 +155,7 @@ service:
         - batch
 {{- end }}
       exporters:
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
         - sumologic
 {{- else }}
         - otlphttp

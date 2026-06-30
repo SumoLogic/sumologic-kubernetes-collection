@@ -124,7 +124,7 @@ spec:
         key: metadataMetrics
 {{- else }}
 {{- $ctx := .Values -}}
-{{- if .Values.sumologic.useExtension -}}
+{{- if .Values.sumologic.sourcelessMode -}}
 {{- include "kubernetes.extension.envs" . | nindent 2 -}}
 {{- else -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 2 -}}

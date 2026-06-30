@@ -232,15 +232,15 @@ extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
-{{- if .Values.sumologic.useExtension }}
+{{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     collector_credentials_directory: /tmp/otc-credentials
     ephemeral: true
     clobber: true
-{{- end }}
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 service:
-  extensions: [health_check, pprof{{- if .Values.sumologic.useExtension }}, sumologic{{- end }}]
+  extensions: [health_check, pprof{{- if .Values.sumologic.sourcelessMode }}, sumologic{{- end }}]
   pipelines:
     traces:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]
