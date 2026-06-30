@@ -1,6 +1,6 @@
 {{- if .Values.sumologic.sourcelessMode }}
 {{- /* sourcelessMode: no HTTP sources needed — all data paths use the SumoLogic extension. */ -}}
-{{- toPrettyJson (dict "resource" (dict "sumologic_http_source" dict) "locals" (dict "source_configs" dict "sources" dict)) | nindent 2 }}
+{{- toPrettyJson (dict "resource" dict "locals" (dict "source_configs" dict "sources" dict)) | nindent 2 }}
 {{- else }}
 {{- $ctx := .Values -}}
 {{- $sourceConfigs := dict -}}
