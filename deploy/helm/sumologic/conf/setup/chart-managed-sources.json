@@ -1,0 +1,7 @@
+{{- $sourceNames := list -}}
+{{- range $type, $sources := .Values.sumologic.collector.sources -}}
+{{- range $key, $source := $sources -}}
+{{- $sourceNames = append $sourceNames $source.name -}}
+{{- end -}}
+{{- end -}}
+{{- dict "sources" $sourceNames | toPrettyJson | nindent 2 }}
