@@ -164,7 +164,7 @@ fi
 
 # Sumo Logic Collector and HTTP sources
 # Only import sources when collector exists.
-if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
+if terraform import 'sumologic_collector.collector[0]' "${SUMOLOGIC_COLLECTOR_NAME}"; then
     jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
         terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
     done || true
