@@ -1,3 +1,8 @@
+{{/* Check that sourcelessMode is not enabled when setupEnabled is false */}}
+{{- if and .Values.sumologic.sourcelessMode (not .Values.sumologic.setupEnabled) -}}
+{{- fail "\nsumologic.sourcelessMode requires sumologic.setupEnabled=true.\nThe setup job creates the installation token needed for sourceless authentication." -}}
+{{- end -}}
+
 {{/* Check if kubernetes version is less than 1.24 */}}
 {{- if not .Values.sumologic.setup.force -}}
 {{- if and (eq .Capabilities.KubeVersion.Major "1") (lt (int (include "kubernetes.minor" .)) 24) -}}

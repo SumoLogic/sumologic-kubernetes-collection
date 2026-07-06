@@ -1,4 +1,5 @@
 resource "sumologic_collector" "collector" {
+  count       = var.use_extension ? 0 : 1
   name        = var.collector_name
   description = format("Sumo Logic Kubernetes Collection\nversion: %s", var.chart_version)
   fields      = var.collector_fields
@@ -19,12 +20,9 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
   }
 
   data = merge(
-    # Source URL keys: all sources in normal mode; only traces + metrics/default in extension mode
     { for name, config in local.source_configs : config["config-name"] => lookup(local.sources, name).url },
-    # Extension-specific keys: installation token and hosted collector ID
     var.use_extension ? {
       "SUMOLOGIC_INSTALLATION_TOKEN" = sumologic_token.collection_token[0].encoded_token_and_url
-      "SUMOLOGIC_COLLECTOR_ID"       = sumologic_collector.collector.id
     } : {}
   )
 
