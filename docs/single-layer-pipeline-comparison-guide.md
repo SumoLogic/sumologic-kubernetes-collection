@@ -1,6 +1,7 @@
 # Single-Layer Pipeline: Before vs After Comparison Guide
 
-This document outlines the key metrics and parameters to measure when evaluating the impact of enabling `singleLayerPipeline` for metrics collection. All comparisons should be made over the same time window (e.g., 24h) with equivalent workloads.
+This document outlines the key metrics and parameters to measure when evaluating the impact of enabling `singleLayerPipeline` for metrics
+collection. All comparisons should be made over the same time window (e.g., 24h) with equivalent workloads.
 
 ## 1. Data Correctness (Must-Have)
 
@@ -22,7 +23,8 @@ _collector=<cluster> namespace=<ns> metric=otelcol_exporter_queue_size statefuls
 | quantize to 10m | avg by statefulset
 ```
 
-**Expected:** Stable and well below queue capacity (configured `queue_size: 10000`). A growing queue indicates the exporter can't keep up. After single-layer, expect a decrease due to eliminated inter-pod backpressure and connection reuse.
+**Expected:** Stable and well below queue capacity (configured `queue_size: 10000`). A growing queue indicates the exporter can't keep up.
+After single-layer, expect a decrease due to eliminated inter-pod backpressure and connection reuse.
 
 ### Exporter Send Failures
 
@@ -64,7 +66,8 @@ _collector=<cluster> namespace=<ns> metric=otelcol_process_memory_rss statefulse
 | quantize to 1m | avg
 ```
 
-**Expected:** The collector pods will use more memory individually (they now hold the k8sattributes cache), but the total across all pods should be similar or lower since the metadata pods are eliminated.
+**Expected:** The collector pods will use more memory individually (they now hold the k8sattributes cache), but the total across all pods
+should be similar or lower since the metadata pods are eliminated.
 
 ### Memory vs Limits (per pod)
 
@@ -73,7 +76,8 @@ _collector=<cluster> namespace=<ns> metric=container_memory_working_set_bytes po
 | quantize to 1m | max by pod
 ```
 
-Compare against the configured memory limit. Ensure headroom remains (recommend <80% of limit). If approaching limits, increase collector memory requests/limits.
+Compare against the configured memory limit. Ensure headroom remains (recommend <80% of limit). If approaching limits, increase collector
+memory requests/limits.
 
 ### PVC Disk Usage
 
@@ -82,60 +86,64 @@ _collector=<cluster> namespace=<ns> metric=kubelet_volume_stats_used_bytes persi
 | quantize to 5m | max by persistentvolumeclaim
 ```
 
-**Expected:** The collector PVCs now hold sending queue data that was previously on metadata PVCs. Monitor that usage stays well below the provisioned size (e.g., 70Gi).
+**Expected:** The collector PVCs now hold sending queue data that was previously on metadata PVCs. Monitor that usage stays well below the
+provisioned size (e.g., 70Gi).
 
 ### Total Pod Count
 
-Count the total number of pods before (collector + metadata replicas) vs after (collector only). Fewer pods = less scheduling overhead, fewer PVCs, fewer node resources consumed.
+Count the total number of pods before (collector + metadata replicas) vs after (collector only). Fewer pods = less scheduling overhead,
+fewer PVCs, fewer node resources consumed.
 
 ---
 
 ## 3. Pipeline Latency
 
-The sumologic exporter emits custom telemetry: `otelcol_exporter_requests_duration` (cumulative ms)
-and `otelcol_exporter_requests_sent` (cumulative count). To compute average per-request latency,
-use a multi-query approach in Sumo Logic:
+The sumologic exporter emits custom telemetry: `otelcol_exporter_requests_duration` (cumulative ms) and `otelcol_exporter_requests_sent`
+(cumulative count). To compute average per-request latency, use a multi-query approach in Sumo Logic:
 
 ### Average Export Request Latency (ms)
 
 **Query A** — total request duration rate:
+
 ```
 _collector=<cluster> namespace=<ns> metric=otelcol_exporter_requests_duration statefulset=(*-metrics-collector OR *-otelcol-metrics)
 | quantize to 1m | rate counter | sum by pipeline
 ```
 
 **Query B** — total request count rate:
+
 ```
 _collector=<cluster> namespace=<ns> metric=otelcol_exporter_requests_sent statefulset=(*-metrics-collector OR *-otelcol-metrics)
 | quantize to 1m | rate counter | sum by pipeline
 ```
 
 **Query C** — average latency per request:
+
 ```
 #A / #B
 ```
 
-**Expected:** Lower or unchanged after enabling single-layer pipeline. The two-layer setup used
-`disable_keep_alives: true` on the OTLP HTTP exporter (new TCP connection per request), which added
-connection setup overhead. The single-layer sumologic exporter reuses connections and sends larger
-payloads (up to 16MB per request), resulting in fewer round-trips and lower average latency.
+**Expected:** Lower or unchanged after enabling single-layer pipeline. The two-layer setup used `disable_keep_alives: true` on the OTLP HTTP
+exporter (new TCP connection per request), which added connection setup overhead. The single-layer sumologic exporter reuses connections and
+sends larger payloads (up to 16MB per request), resulting in fewer round-trips and lower average latency.
 
 ### Average Payload Size per Request (bytes)
 
 **Query D** — bytes sent rate:
+
 ```
 _collector=<cluster> namespace=<ns> metric=otelcol_exporter_requests_bytes statefulset=(*-metrics-collector OR *-otelcol-metrics)
 | quantize to 1m | rate counter | sum by pipeline
 ```
 
 **Query E** — average payload size per request:
+
 ```
 #D / #B
 ```
 
-**Expected:** After single-layer, payload size per request should be significantly larger
-(up to 16MB max_request_body_size vs small OTLP proto batches before), confirming fewer
-but fatter requests — which explains the lower queue depth.
+**Expected:** After single-layer, payload size per request should be significantly larger (up to 16MB max_request_body_size vs small OTLP
+proto batches before), confirming fewer but fatter requests — which explains the lower queue depth.
 
 ### Backpressure Detection
 
@@ -144,7 +152,8 @@ _collector=<cluster> namespace=<ns> metric=otelcol_exporter_queue_size statefuls
 | quantize to 1m | max
 ```
 
-**Expected:** Well below the configured `queue_size` of 10,000. If max approaches this limit, the pipeline is under backpressure and needs more resources or replicas.
+**Expected:** Well below the configured `queue_size` of 10,000. If max approaches this limit, the pipeline is under backpressure and needs
+more resources or replicas.
 
 ---
 
@@ -182,7 +191,8 @@ _collector=<cluster> namespace=<ns> metric=kube_horizontalpodautoscaler_status_c
 
 ### Inter-Pod Traffic Reduction
 
-Before single-layer, the collector sent all scraped data over the network to the metadata StatefulSet. After, this traffic is eliminated (processing is in-process).
+Before single-layer, the collector sent all scraped data over the network to the metadata StatefulSet. After, this traffic is eliminated
+(processing is in-process).
 
 ```
 _collector=<cluster> namespace=<ns> metric=container_network_transmit_bytes_total pod=*-metrics-collector*
@@ -195,19 +205,19 @@ _collector=<cluster> namespace=<ns> metric=container_network_transmit_bytes_tota
 
 ## 6. Cost Summary Table
 
-| Parameter | Before (Two-Layer) | After (Single-Layer) | Change |
-|-----------|-------------------|---------------------|--------|
-| Total CPU (cores) | | | |
-| Total Memory (GB) | | | |
-| Pod Count | | | |
-| PVC Count | | | |
-| PVC Total Size (GB) | | | |
-| Network (intra-namespace GB/day) | | | |
-| Metric Points/min | | | |
-| Avg Queue Size | | | |
-| Avg Export Latency (ms) | | | |
-| Avg Payload Size (bytes) | | | |
-| Pod Restarts (24h) | | | |
+| Parameter                        | Before (Two-Layer) | After (Single-Layer) | Change |
+| -------------------------------- | ------------------ | -------------------- | ------ |
+| Total CPU (cores)                |                    |                      |        |
+| Total Memory (GB)                |                    |                      |        |
+| Pod Count                        |                    |                      |        |
+| PVC Count                        |                    |                      |        |
+| PVC Total Size (GB)              |                    |                      |        |
+| Network (intra-namespace GB/day) |                    |                      |        |
+| Metric Points/min                |                    |                      |        |
+| Avg Queue Size                   |                    |                      |        |
+| Avg Export Latency (ms)          |                    |                      |        |
+| Avg Payload Size (bytes)         |                    |                      |        |
+| Pod Restarts (24h)               |                    |                      |        |
 
 ---
 

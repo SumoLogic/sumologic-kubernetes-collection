@@ -28,61 +28,63 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       volumes:
-        - name: setup
-          configMap:
-            name: RELEASE-NAME-sumologic-setup
-            defaultMode: 0777
-        - name: custom
-          configMap:
-            name: RELEASE-NAME-sumologic-setup-custom
-            defaultMode: 0777
-        - name: manifests
-          configMap:
-            name: RELEASE-NAME-sumologic-setup-crds
-            defaultMode: 0777
+      - name: setup
+        configMap:
+          name: RELEASE-NAME-sumologic-setup
+          defaultMode: 0777
+      - name: custom
+        configMap:
+          name: RELEASE-NAME-sumologic-setup-custom
+          defaultMode: 0777
+      - name: manifests
+        configMap:
+          name: RELEASE-NAME-sumologic-setup-crds
+          defaultMode: 0777
       containers:
+      - name: setup
+        image: public.ecr.aws/sumologic/kubernetes-setup:3.18.0
+        imagePullPolicy: IfNotPresent
+        command: ["/etc/terraform/setup.sh", "kubectl apply --server-side -f /manifests/crds-configmaps.yaml --force-conflicts"]
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 64Mi
+        volumeMounts:
         - name: setup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.18.0
-          imagePullPolicy: IfNotPresent
-          command: ["/etc/terraform/setup.sh", "kubectl apply --server-side -f /manifests/crds-configmaps.yaml --force-conflicts"]
-          resources:
-            limits:
-              cpu: 2000m
-              memory: 256Mi
-            requests:
-              cpu: 200m
-              memory: 64Mi
-          volumeMounts:
-            - name: setup
-              mountPath: /etc/terraform
-            - name: custom
-              mountPath: /customer-scripts
-            - name: manifests
-              mountPath: /manifests
-          envFrom:
-            - secretRef:
-                name: RELEASE-NAME-sumologic-setup
-          env:
-            - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: SUMOLOGIC_BASE_URL
-              value:
-            - name: SUMOLOGIC_COLLECTOR_NAME
-              value: kubernetes
-            - name: SUMOLOGIC_SECRET_NAME
-              value: "sumologic"
-            - name: CHART_VERSION
-              value: "%CURRENT_CHART_VERSION%"
-            - name: SUMOLOGIC_MONITORS_ENABLED
-              value: "true"
-            - name: SUMOLOGIC_MONITORS_STATUS
-              value: "enabled"
-            - name: SUMOLOGIC_DASHBOARDS_ENABLED
-              value: "true"
-
-            - name: NO_PROXY
-              value: kubernetes.default.svc
+          mountPath: /etc/terraform
+        - name: custom
+          mountPath: /customer-scripts
+        - name: manifests
+          mountPath: /manifests
+        envFrom:
+        - secretRef:
+            name: RELEASE-NAME-sumologic-setup
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: SUMOLOGIC_BASE_URL
+          value: 
+        - name: SUMOLOGIC_COLLECTOR_NAME
+          value: kubernetes
+        - name: SUMOLOGIC_SECRET_NAME
+          value: "sumologic"
+        - name: CHART_VERSION
+          value: "%CURRENT_CHART_VERSION%"
+        - name: SUMOLOGIC_MONITORS_ENABLED
+          value: "true"
+        - name: SUMOLOGIC_MONITORS_STATUS
+          value: "enabled"
+        - name: SUMOLOGIC_DASHBOARDS_ENABLED
+          value: "true"
+        - name: CLEANUP_UNUSED_SOURCES
+          value: "false"
+        
+        - name: NO_PROXY
+          value: kubernetes.default.svc
       securityContext:
         runAsUser: 1000
