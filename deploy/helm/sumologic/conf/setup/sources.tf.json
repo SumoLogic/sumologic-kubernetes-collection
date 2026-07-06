@@ -52,7 +52,7 @@
   {{- $sourceResource := deepCopy $sourceConfig -}}
   {{- $sourceResource := omit $sourceResource "properties" "config-name" -}}
   {{- $sourceResource := merge $sourceResource $properties -}}
-  {{- $_ := set $sourceResource "collector_id" "${ sumologic_collector.collector.id }" -}}
+  {{- $_ := set $sourceResource "collector_id" "${ sumologic_collector.collector[0].id }" -}}
   {{- $_ := set $sourceResources $resourceName $sourceResource -}}
 {{- end }}
 

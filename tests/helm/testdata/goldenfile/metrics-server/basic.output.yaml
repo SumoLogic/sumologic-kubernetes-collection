@@ -6,10 +6,10 @@ metadata:
   name: RELEASE-NAME-metrics-server
   namespace: sumologic
   labels:
-    helm.sh/chart: metrics-server-3.13.1
+    helm.sh/chart: metrics-server-3.13.0
     app.kubernetes.io/name: metrics-server
     app.kubernetes.io/instance: RELEASE-NAME
-    app.kubernetes.io/version: "0.8.1"
+    app.kubernetes.io/version: "0.8.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -38,7 +38,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - ALL
+              - ALL
             privileged: false
             readOnlyRootFilesystem: true
             runAsGroup: 1001
@@ -58,9 +58,9 @@ spec:
             - --kubelet-insecure-tls=true
             - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
           ports:
-            - name: https
-              protocol: TCP
-              containerPort: 10250
+          - name: https
+            protocol: TCP
+            containerPort: 10250
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -94,3 +94,4 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+
