@@ -38,7 +38,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-              - ALL
+                - ALL
             privileged: false
             readOnlyRootFilesystem: true
             runAsGroup: 1001
@@ -58,9 +58,9 @@ spec:
             - --kubelet-insecure-tls=true
             - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
           ports:
-          - name: https
-            protocol: TCP
-            containerPort: 10250
+            - name: https
+              protocol: TCP
+              containerPort: 10250
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -94,4 +94,3 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
-
