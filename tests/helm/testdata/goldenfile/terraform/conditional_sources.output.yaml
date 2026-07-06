@@ -40,15 +40,15 @@ data:
     #
     # shellcheck disable=SC2010
     # extract target directory names from the file names using _ as separator
-
+  
     set -euo pipefail
-
+  
     err_report() {
         echo "Custom script error on line $1"
         exit 1
     }
     trap 'err_report $LINENO' ERR
-
+  
     declare -a dirs
     ls -1 /customer-scripts 2>/dev/null | grep _ | grep -oE '^.*?_' | sed 's/_//g' | sort | uniq | read -ar dirs || true
     for dir in "${dirs[@]}"; do
@@ -58,7 +58,7 @@ data:
         echo "Skipping 'terraform' directory (already processed by setup.sh)"
         continue
       fi
-
+  
       target="/scripts/${dir}"
       mkdir "${target}"
       # Get files for given directory and take only filename part (after first _)
@@ -67,30 +67,30 @@ data:
       for file in "${files[@]}"; do
         cp "/customer-scripts/${dir}_${file}" "${target}/${file}"
       done
-
+  
       if [[ ! -f "${target}/setup.sh" ]]; then
         echo "You're missing setup.sh script in custom scripts directory: '${dir}'"
         continue
       fi
-
+  
       cd "${target}" && bash setup.sh
     done
   dashboards.sh: |
     #!/bin/bash
-
+  
     set -euo pipefail
-
+  
     SUMOLOGIC_ACCESSID=${SUMOLOGIC_ACCESSID:=""}
     readonly SUMOLOGIC_ACCESSID
     SUMOLOGIC_ACCESSKEY=${SUMOLOGIC_ACCESSKEY:=""}
     readonly SUMOLOGIC_ACCESSKEY
     SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL:=""}
     readonly SUMOLOGIC_BASE_URL
-
+  
     INTEGRATIONS_FOLDER_NAME="Sumo Logic Integrations"
     K8S_FOLDER_NAME="Kubernetes"
     K8S_APP_UUID="162ceac7-166a-4475-8427-65e170ae9837"
-
+  
     function load_dashboards_folder_id() {
       local ADMIN_FOLDER_JOB_ID
       ADMIN_FOLDER_JOB_ID="$(curl -XGET -s \
@@ -98,42 +98,42 @@ data:
               -H "isAdminMode: true" \
               "${SUMOLOGIC_BASE_URL}"v2/content/folders/adminRecommended | jq '.id' | tr -d '"' )"
       readonly ADMIN_FOLDER_JOB_ID
-
+  
       local ADMIN_FOLDER_JOB_STATUS
       ADMIN_FOLDER_JOB_STATUS="InProgress"
       while [[ "${ADMIN_FOLDER_JOB_STATUS}" = "InProgress" ]]; do
         ADMIN_FOLDER_JOB_STATUS="$(curl -XGET -s \
               -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
               "${SUMOLOGIC_BASE_URL}"v2/content/folders/adminRecommended/"${ADMIN_FOLDER_JOB_ID}"/status | jq '.status' | tr -d '"' )"
-
+  
         sleep 1
       done
-
+  
       if [[ "${ADMIN_FOLDER_JOB_STATUS}" != "Success" ]]; then
         echo "Could not fetch data from the \"Admin Recommended\" content folder. The K8s Dashboards won't be installed."
         echo "You can still install them manually:"
         echo "https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
         exit 1
       fi
-
+  
       local ADMIN_FOLDER
       ADMIN_FOLDER="$(curl -XGET -s \
               -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
               -H "isAdminMode: true" \
               "${SUMOLOGIC_BASE_URL}"v2/content/folders/adminRecommended/"${ADMIN_FOLDER_JOB_ID}"/result )"
       readonly ADMIN_FOLDER
-
+  
       local ADMIN_FOLDER_CHILDREN
       ADMIN_FOLDER_CHILDREN="$( echo "${ADMIN_FOLDER}" | jq '.children[]')"
       readonly ADMIN_FOLDER_CHILDREN
-
+  
       local ADMIN_FOLDER_ID
       ADMIN_FOLDER_ID="$( echo "${ADMIN_FOLDER}" | jq '.id' | tr -d '"')"
       readonly ADMIN_FOLDER_ID
-
+  
       INTEGRATIONS_FOLDER_ID="$( echo "${ADMIN_FOLDER_CHILDREN}" | \
                 jq -r "select(.name == \"${INTEGRATIONS_FOLDER_NAME}\") | .id" )"
-
+  
       if [[ -z "${INTEGRATIONS_FOLDER_ID}" ]]; then
         INTEGRATIONS_FOLDER_ID="$(curl -XPOST -s \
                 -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
@@ -143,7 +143,7 @@ data:
                 "${SUMOLOGIC_BASE_URL}"v2/content/folders | \
                 jq -r " .id" )"
       fi
-
+  
       local INTEGRATIONS_FOLDER_CHILDREN
       INTEGRATIONS_FOLDER_CHILDREN="$(curl -XGET -s \
                 -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
@@ -151,13 +151,13 @@ data:
                 "${SUMOLOGIC_BASE_URL}"v2/content/folders/"${INTEGRATIONS_FOLDER_ID}" | \
                 jq '.children[]')"
       readonly INTEGRATIONS_FOLDER_CHILDREN
-
+  
       K8S_FOLDER_ID="$( echo "${INTEGRATIONS_FOLDER_CHILDREN}" | \
                 jq -r "select(.name == \"${K8S_FOLDER_NAME}\") | .id" )"
     }
-
+  
     load_dashboards_folder_id
-
+  
     if [[ -z "${K8S_FOLDER_ID}" ]]; then
       APP_INSTALL_JOB_RESPONSE="$(curl -XPOST -s \
              -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
@@ -166,37 +166,37 @@ data:
              -d "{\"name\":\"${K8S_FOLDER_NAME}\",\"destinationFolderId\":\"${INTEGRATIONS_FOLDER_ID}\",\"description\":\"Kubernetes dashboards provided by Sumo Logic.\"}" \
              "${SUMOLOGIC_BASE_URL}"v1/apps/"${K8S_APP_UUID}"/install )"
       readonly APP_INSTALL_JOB_RESPONSE
-
+  
       APP_INSTALL_JOB_ID="$(echo "${APP_INSTALL_JOB_RESPONSE}" | jq '.id' | tr -d '"' )"
       readonly APP_INSTALL_JOB_ID
-
+  
       APP_INSTALL_JOB_STATUS="InProgress"
       while [[ "${APP_INSTALL_JOB_STATUS}" = "InProgress" ]]; do
         APP_INSTALL_JOB_STATUS="$(curl -XGET -s \
               -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
               "${SUMOLOGIC_BASE_URL}"v1/apps/install/"${APP_INSTALL_JOB_ID}"/status | jq '.status' | tr -d '"' )"
-
+  
         sleep 1
       done
-
+  
       if [[ "${APP_INSTALL_JOB_STATUS}" != "Success" ]]; then
         ERROR_MSG="$(curl -XGET -s \
               -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
               "${SUMOLOGIC_BASE_URL}"v1/apps/install/"${APP_INSTALL_JOB_ID}"/status )"
         echo "${ERROR_MSG}"
-
+  
         echo "Installation of the K8s Dashboards failed."
         echo "You can still install them manually:"
         echo "https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
         exit 2
       else
         load_dashboards_folder_id
-
+  
         ORG_ID="$(curl -XGET -s \
                 -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
                 "${SUMOLOGIC_BASE_URL}"v1/account/contract | jq '.orgId' | tr -d '"' )"
         readonly ORG_ID
-
+  
         PERMS_ERRORS=$( curl -XPUT -s \
           -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
           -H "isAdminMode: true" \
@@ -204,12 +204,12 @@ data:
           -d "{\"contentPermissionAssignments\": [{\"permissionName\": \"View\",\"sourceType\": \"org\",\"sourceId\": \"${ORG_ID}\",\"contentId\": \"${K8S_FOLDER_ID}\"}],\"notifyRecipients\":false,\"notificationMessage\":\"\"}" \
           "${SUMOLOGIC_BASE_URL}"v2/content/"${K8S_FOLDER_ID}"/permissions/add | jq '.errors' )
         readonly PERMS_ERRORS
-
+  
         if [[ "${PERMS_ERRORS}" != "null" ]]; then
           echo "Setting permissions for the installed content failed."
           echo "${PERMS_ERRORS}"
         fi
-
+  
         echo "Installation of the K8s Dashboards succeeded."
       fi
     else
@@ -220,13 +220,13 @@ data:
   fields.tf: |
     resource "sumologic_field" "collection_field" {
       for_each = var.create_fields ? toset(var.fields) : toset([])
-
+  
       lifecycle {
         # ignore changes for name and type, as older installations have been case sensitive
         # see: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
         ignore_changes = [field_name, data_type]
       }
-
+  
       field_name = each.key
       data_type  = "String"
       state      = "Enabled"
@@ -246,29 +246,29 @@ data:
     }
   monitors.sh: |
     #!/bin/bash
-
+  
     SUMOLOGIC_ACCESSID=${SUMOLOGIC_ACCESSID:=""}
     readonly SUMOLOGIC_ACCESSID
     SUMOLOGIC_ACCESSKEY=${SUMOLOGIC_ACCESSKEY:=""}
     readonly SUMOLOGIC_ACCESSKEY
     SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL:=""}
     readonly SUMOLOGIC_BASE_URL
-
+  
     INTEGRATIONS_FOLDER_NAME="Sumo Logic Integrations"
     MONITORS_FOLDER_NAME="Kubernetes"
-
+  
     if [[ "${SUMOLOGIC_MONITORS_STATUS:?}" = "enabled" ]]; then
       MONITORS_DISABLED="false"
     else
       MONITORS_DISABLED="true"
     fi
-
+  
     MONITORS_CURL_RESPONSE=$(curl -XGET -s \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/monitors/root)
     MONITORS_ROOT_ID="$(echo "${MONITORS_CURL_RESPONSE}" | jq -r '.id' )"
     readonly MONITORS_ROOT_ID
-
+  
     # verify if the integrations folder already exists
     INTEGRATIONS_CURL_RESPONSE=$(curl -XGET -s -G \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
@@ -276,10 +276,10 @@ data:
             --data-urlencode "query=type:folder ${INTEGRATIONS_FOLDER_NAME}")
     INTEGRATIONS_RESPONSE="$(echo "${INTEGRATIONS_CURL_RESPONSE}" | jq '.[]' )"
     readonly INTEGRATIONS_RESPONSE
-
+  
     INTEGRATIONS_FOLDER_ID="$( echo "${INTEGRATIONS_RESPONSE}" | \
             jq -r "select(.item.name == \"${INTEGRATIONS_FOLDER_NAME}\") | select(.item.parentId == \"${MONITORS_ROOT_ID}\") | .item.id" )"
-
+  
     # and create it if necessary
     if [[ -z "${INTEGRATIONS_FOLDER_ID}" ]]; then
       INTEGRATIONS_FOLDER_CURL_RESPONSE=$(curl -XPOST -s \
@@ -289,7 +289,7 @@ data:
                   "${SUMOLOGIC_BASE_URL}"v1/monitors?parentId="${MONITORS_ROOT_ID}")
       INTEGRATIONS_FOLDER_ID="$(echo "${INTEGRATIONS_FOLDER_CURL_RESPONSE}" | jq -r " .id" )"
     fi
-
+  
     # verify if the k8s monitors folder already exists
     MONITORS_CURL_RESPONSE="$(curl -XGET -s -G \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
@@ -297,26 +297,26 @@ data:
             --data-urlencode "query=type:folder ${MONITORS_FOLDER_NAME}")"
     MONITORS_RESPONSE="$(echo "${MONITORS_CURL_RESPONSE}" | jq '.[]' )"
     readonly MONITORS_RESPONSE
-
+  
     MONITORS_FOLDER_ID="$( echo "${MONITORS_RESPONSE}" | \
             jq -r "select(.item.name == \"${MONITORS_FOLDER_NAME}\") | select(.item.parentId == \"${INTEGRATIONS_FOLDER_ID}\") | .item.id" )"
     readonly MONITORS_FOLDER_ID
-
+  
     if [[ -z "${MONITORS_FOLDER_ID}" ]]; then
       # go to monitors directory
       cd /monitors || exit 2
-
+  
       # Fall back to init -upgrade to prevent:
       # Error: Inconsistent dependency lock file
       terraform init -input=false || terraform init -input=false -upgrade
-
+  
       # extract environment from SUMOLOGIC_BASE_URL
       # see: https://www.sumologic.com/help/docs/api/getting-started/#sumo-logic-endpoints-by-deployment-and-firewall-security
       SUMOLOGIC_ENV=$( echo "${SUMOLOGIC_BASE_URL}" | sed -E 's/https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|ch|esc|us2)\.sumologic\.com.*/\1/' )
       if [[ "${SUMOLOGIC_BASE_URL}" == "${SUMOLOGIC_ENV}" ]] ; then
         SUMOLOGIC_ENV="us1"
       fi
-
+  
       TERRAFORM_ARGS=(
         -auto-approve
         -var="access_id=${SUMOLOGIC_ACCESSID}"
@@ -326,7 +326,7 @@ data:
         -var="folder_parent_id=${INTEGRATIONS_FOLDER_ID}"
         -var="monitors_disabled=${MONITORS_DISABLED}"
       )
-
+  
       if [[ -z ${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS+x} ]]; then
         NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{TriggerType}} on {{Name}}\",message_body=\"Triggered {{TriggerType}} alert on {{Name}}: {{QueryURL}}\""
         NOTIFICATIONS_SETTINGS="recipients=${SUMOLOGIC_MONITORS_NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
@@ -336,7 +336,7 @@ data:
           -var="email_notifications_missingdata=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"MissingData\", \"ResolvedMissingData\"]}]"
         )
       fi
-
+  
       TF_LOG_PROVIDER=DEBUG terraform apply "${TERRAFORM_ARGS[@]}" \
           || { echo "Error during applying Terraform monitors."; exit 1; }
     else
@@ -350,105 +350,105 @@ data:
       description = format("Sumo Logic Kubernetes Collection\nversion: %s", var.chart_version)
       fields      = var.collector_fields
     }
-
+  
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
         name      = var.secret_name
         namespace = var.namespace_name
       }
-
+  
       data = {
         for name, config in local.source_configs : config["config-name"] => lookup(local.sources, name).url
       }
-
+  
       type                           = "Opaque"
       wait_for_service_account_token = false
     }
   setup.sh: |
     #!/bin/bash
-
+  
     readonly DEBUG_MODE=${DEBUG_MODE:="false"}
     readonly DEBUG_MODE_ENABLED_FLAG="true"
     readonly SUMOLOGIC_COLLECTOR_NAME="${SUMOLOGIC_COLLECTOR_NAME:?}"
     readonly NAMESPACE="${NAMESPACE:?}"
     readonly SUMOLOGIC_SECRET_NAME="${SUMOLOGIC_SECRET_NAME:?}"
-
+  
     # Set variables for terraform
     export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
     export TF_VAR_namespace_name="${NAMESPACE}"
     export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
     export TF_VAR_chart_version="${CHART_VERSION:?}"
-
+  
     # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
     # so that we don't have to deal with True vs true vs TRUE
     if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
         echo "Entering the debug mode with continuous sleep. No setup will be performed."
         echo "Please exec into the setup container and run the setup.sh by hand or set the sumologic.setup.debug=false and reinstall."
-
+  
         while true; do
             sleep 10
             DATE=$(date)
             echo "${DATE} Sleeping in the debug mode..."
         done
     fi
-
+  
     function fix_sumo_base_url() {
       local BASE_URL
       BASE_URL=${SUMOLOGIC_BASE_URL}
-
+  
       if [[ "${BASE_URL}" =~ ^\s*$ ]]; then
         BASE_URL="https://api.sumologic.com/api/"
       fi
-
+  
       # shellcheck disable=SC2312
       OPTIONAL_REDIRECTION="$(curl -XGET -s -o /dev/null -D - \
               -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
               "${BASE_URL}"v1/collectors \
               | grep -Fi location )"
-
+  
       if [[ ! ${OPTIONAL_REDIRECTION} =~ ^\s*$ ]]; then
         BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|ch|esc|us2)?\.sumologic\.com\/api\/).*/\1/' )
       fi
-
+  
       BASE_URL=${BASE_URL%v1*}
-
+  
       echo "${BASE_URL}"
     }
-
+  
     SUMOLOGIC_BASE_URL=$(fix_sumo_base_url)
     export SUMOLOGIC_BASE_URL
     # Support proxy for Terraform
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
     export NO_PROXY=${NO_PROXY:=""}
-
+  
     function get_remaining_fields() {
         local RESPONSE
         RESPONSE="$(curl -XGET -s \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/fields/quota)"
         readonly RESPONSE
-
+  
         echo "${RESPONSE}"
     }
-
+  
     # Check if we'd have at least 10 fields remaining after additional fields
     # would be created for the collection
     function should_create_fields() {
         local RESPONSE
         RESPONSE=$(get_remaining_fields)
         readonly RESPONSE
-
+  
         if ! jq -e <<< "${RESPONSE}" ; then
             printf "Failed requesting fields API:\n%s\n" "${RESPONSE}"
             return 1
         fi
-
+  
         if ! jq -e '.remaining' <<< "${RESPONSE}" ; then
             printf "Failed requesting fields API:\n%s\n" "${RESPONSE}"
             return 1
         fi
-
+  
         local REMAINING
         REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
         readonly REMAINING
@@ -458,19 +458,19 @@ data:
             return 1
         fi
     }
-
+  
     cp /etc/terraform/* /terraform/
     cd /terraform || exit 1
-
+  
     FIELDS_STRING=$(jq -r '.fields[]' terraform.tfvars.json)
     mapfile -t FIELDS < <(echo "${FIELDS_STRING}")
-
+  
     # Remove lock file to prevent version conflicts on upgrades
     if [[ -f .terraform.lock.hcl ]]; then
         echo "Removing existing Terraform lock file to prevent provider version conflicts"
         rm -f .terraform.lock.hcl
     fi
-
+  
     # Run pre-init script if provided (for downloading providers, etc.)
     if [[ -f /customer-scripts/terraform_pre-init.sh ]]; then
         echo "===================================================================="
@@ -483,7 +483,7 @@ data:
         fi
         echo "Pre-init script completed successfully"
     fi
-
+  
     # Check for custom Terraform CLI config file (for internal registry support)
     if [[ -f /customer-scripts/terraform_terraformrc ]]; then
         export TF_CLI_CONFIG_FILE=/customer-scripts/terraform_terraformrc
@@ -492,14 +492,14 @@ data:
         echo "Providers will be downloaded from internal registry as configured."
         echo "===================================================================="
     fi
-
+  
     # Initialize Terraform with upgrade to handle provider version changes
     terraform init -input=false -upgrade || {
         echo "Terraform init failed, attempting to clean .terraform directory"
         rm -rf .terraform
         terraform init -input=false -upgrade
     }
-
+  
     # Sumo Logic fields
     if should_create_fields ; then
         readonly CREATE_FIELDS=1
@@ -508,14 +508,14 @@ data:
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
         readonly FIELDS_RESPONSE
-
+  
         for FIELD in "${FIELDS[@]}" ; do
             FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName | ascii_downcase == \"${FIELD}\") | .fieldId" )
             # Don't try to import non existing fields
             if [[ -z "${FIELD_ID}" ]]; then
                 continue
             fi
-
+  
             terraform import \
                 -var="create_fields=1" \
                 sumologic_field.collection_field[\""${FIELD}"\"] "${FIELD_ID}"
@@ -526,7 +526,7 @@ data:
         echo "You do not have enough field capacity to create the required fields automatically."
         echo "Please refer to https://www.sumologic.com/help/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
     fi
-
+  
     # Sumo Logic Collector and HTTP sources
     # Only import sources when collector exists.
     if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
@@ -534,16 +534,99 @@ data:
             terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
         done || true
     fi
-
+  
     # Kubernetes Secret
     terraform import kubernetes_secret.sumologic_collection_secret "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}"
-
+  
     # Apply planned changes
     TF_LOG_PROVIDER=DEBUG terraform apply \
         -auto-approve \
         -var="create_fields=${CREATE_FIELDS}" \
         || { echo "Error during applying Terraform changes"; exit 1; }
-
+  
+    # Delete sources that exist on the collector but are not in the current config.
+    # This cleans up sources that became unused after sourceType changes.
+    function cleanup_unused_sources() {
+        echo "Checking for unused sources to clean up..."
+  
+        # Get expected source names from the current config
+        local EXPECTED_SOURCES
+        EXPECTED_SOURCES=$(jq -r '.resource.sumologic_http_source | to_entries[] | .value.name' sources.tf.json 2>/dev/null)
+        if [[ -z "${EXPECTED_SOURCES}" ]]; then
+            echo "No sources in config, skipping cleanup."
+            return
+        fi
+  
+        # Get collector ID by looking up the collector
+        local COLLECTOR_RESPONSE
+        COLLECTOR_RESPONSE=$(curl -s -G \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            --data-urlencode "filter=${SUMOLOGIC_COLLECTOR_NAME}" \
+            "${SUMOLOGIC_BASE_URL}v1/collectors")
+  
+        local COLLECTOR_ID
+        COLLECTOR_ID=$(echo "${COLLECTOR_RESPONSE}" | jq -r ".collectors[] | select(.name == \"${SUMOLOGIC_COLLECTOR_NAME}\") | .id")
+        if [[ -z "${COLLECTOR_ID}" || "${COLLECTOR_ID}" == "null" ]]; then
+            echo "Could not find collector ID, skipping source cleanup."
+            return
+        fi
+  
+        # List all existing sources on the collector
+        local SOURCES_RESPONSE
+        SOURCES_RESPONSE=$(curl -s -XGET \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}/sources")
+  
+        local EXISTING_SOURCES
+        EXISTING_SOURCES=$(echo "${SOURCES_RESPONSE}" | jq -r '.sources[] | "\(.id)\t\(.name)"')
+        if [[ -z "${EXISTING_SOURCES}" ]]; then
+            echo "No existing sources found on collector, skipping cleanup."
+            return
+        fi
+  
+        # Get all chart-managed source names (both HTTP and OTLP variants for all signals).
+        # This list is generated from values.yaml at helm render time via
+        # chart-managed-sources.json, ensuring it stays in sync automatically.
+        # Only sources whose names appear in this list are candidates for deletion.
+        # Sources created manually (via UI or API) will never be touched.
+        local KNOWN_CHART_SOURCES
+        KNOWN_CHART_SOURCES=$(jq -r '.sources[]' /etc/terraform/chart-managed-sources.json 2>/dev/null)
+        if [[ -z "${KNOWN_CHART_SOURCES}" ]]; then
+            echo "WARNING: Could not read chart-managed-sources.json, skipping cleanup."
+            return
+        fi
+  
+        # Delete sources that are chart-managed but not in the current config
+        while IFS=$'\t' read -r source_id source_name; do
+            # Only consider sources that are known chart-managed sources
+            if ! echo "${KNOWN_CHART_SOURCES}" | grep -qxF "${source_name}"; then
+                continue
+            fi
+            # Delete if not in current expected config
+            if ! echo "${EXPECTED_SOURCES}" | grep -qxF "${source_name}"; then
+                echo "Deleting unused source: ${source_name} (id: ${source_id})"
+                local DELETE_RESPONSE
+                DELETE_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -XDELETE \
+                    -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+                    "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}/sources/${source_id}")
+                if [[ "${DELETE_RESPONSE}" == "200" ]]; then
+                    echo "  Successfully deleted source: ${source_name}"
+                else
+                    echo "  WARNING: Failed to delete source ${source_name} (HTTP ${DELETE_RESPONSE})"
+                fi
+            fi
+        done <<< "${EXISTING_SOURCES}"
+  
+        echo "Source cleanup complete."
+    }
+  
+    # shellcheck disable=SC2154
+    if [[ "${CLEANUP_UNUSED_SOURCES}" == "true" ]]; then
+        cleanup_unused_sources
+    else
+        echo "Source cleanup skipped (cleanupUnusedSources is not enabled)."
+    fi
+  
     # Setup Sumo Logic monitors if enabled
     if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" ]]; then
         bash /etc/terraform/monitors.sh
@@ -552,7 +635,7 @@ data:
         echo "You can install them manually later with:"
         echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
     fi
-
+  
     # Setup Sumo Logic dashboards if enabled
     if [[ "${SUMOLOGIC_DASHBOARDS_ENABLED:?}" = "true" ]]; then
         bash /etc/terraform/dashboards.sh
@@ -561,45 +644,49 @@ data:
         echo "You can install them manually later with:"
         echo "https://www.sumologic.com/help/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
     fi
-
+  
     # Cleanup env variables
     export SUMOLOGIC_BASE_URL=
     export SUMOLOGIC_ACCESSKEY=
     export SUMOLOGIC_ACCESSID=
-
+  
     bash /etc/terraform/custom.sh
   variables.tf: |
     variable "collector_name" {
       type = string
     }
-
+  
     variable "namespace_name" {
       type = string
     }
-
+  
     variable "secret_name" {
       type = string
     }
-
+  
     variable "create_fields" {
       description = "If set, Terraform will attempt to create fields at Sumo Logic"
       type        = bool
       default     = true
     }
-
+  
     variable "fields" {
       description = "Log fields to create."
       type        = list(string)
     }
-
+  
     variable "collector_fields" {
       description = "Fields to set on the collector."
       type        = map(string)
     }
-
+  
     variable "chart_version" {
       description = "The Helm Chart version."
       type        = string
+    }
+  chart-managed-sources.json: |
+    {
+      "sources": []
     }
   providers.tf.json: |
     {

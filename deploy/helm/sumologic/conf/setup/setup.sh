@@ -253,6 +253,7 @@ function cleanup_unused_sources() {
     echo "Source cleanup complete."
 }
 
+# shellcheck disable=SC2154
 if [[ "${CLEANUP_UNUSED_SOURCES}" == "true" ]]; then
     cleanup_unused_sources
 else

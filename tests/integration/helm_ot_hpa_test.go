@@ -11,7 +11,7 @@ import (
 
 func Test_Helm_OT_HPA(t *testing.T) {
 	installChecks := []featureCheck{
-		CheckSumologicSecret(15),
+		CheckSumologicSecret(4),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,

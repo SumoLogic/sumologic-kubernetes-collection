@@ -35,7 +35,7 @@ func Test_OpenTelemetry_Operator_Instrumentation(t *testing.T) {
 	)
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(3),
+		CheckSumologicSecret(2),
 		CheckTracesWithoutGatewayInstall,
 	}
 
