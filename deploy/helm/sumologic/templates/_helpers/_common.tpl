@@ -426,11 +426,6 @@ Renders nothing when the value is empty (uses the extension's built-in default).
     secretKeyRef:
       name: sumologic
       key: SUMOLOGIC_INSTALLATION_TOKEN
-- name: SUMOLOGIC_COLLECTOR_ID
-  valueFrom:
-    secretKeyRef:
-      name: sumologic
-      key: SUMOLOGIC_COLLECTOR_ID
 {{- end -}}
 
 {{/*

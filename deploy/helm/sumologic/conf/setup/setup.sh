@@ -12,6 +12,7 @@ export TF_VAR_namespace_name="${NAMESPACE}"
 export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
 export TF_VAR_use_extension="${SUMOLOGIC_USE_EXTENSION:-false}"
+export TF_VAR_cleanup_hosted_collector="${SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR:-false}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -176,7 +177,9 @@ function import_installation_token() {
     RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}v1/tokens")"
-    TOKEN_ID=$(echo "${RESPONSE}" | jq -r ".data[] | select(.name == \"${TOKEN_NAME}\") | .id" | head -1)
+    local JQ_OUTPUT
+    JQ_OUTPUT=$(jq -r ".data[] | select(.name == \"${TOKEN_NAME}\") | .id" <<< "${RESPONSE}")
+    TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
     if [[ -n "${TOKEN_ID}" ]]; then
         echo "Importing existing installation token: ${TOKEN_NAME} (${TOKEN_ID})"
         terraform import \

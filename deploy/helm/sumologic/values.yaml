@@ -23,6 +23,11 @@ sumologic:
   ## Endpoint used by collector pods to register and send data. Only used when sumologic.sourcelessMode is true.
   collectorEndpoint: ""
 
+  ## When sourcelessMode is true, setting this to true will delete the hosted collector and all HTTP/OTLP sources
+  ## managed by the setup job. Defaults to false so the hosted collector and sources are preserved and can be
+  ## cleaned up later by flipping this flag.
+  cleanupHostedCollector: false
+
   ## If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 

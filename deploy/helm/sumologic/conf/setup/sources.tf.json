@@ -1,5 +1,5 @@
-{{- if .Values.sumologic.sourcelessMode }}
-{{- /* sourcelessMode: no HTTP sources needed — all data paths use the SumoLogic extension. */ -}}
+{{- if and .Values.sumologic.sourcelessMode .Values.sumologic.cleanupHostedCollector }}
+{{- /* sourcelessMode + cleanup: remove HTTP sources from Terraform management so they are destroyed on apply. */ -}}
 {{- toPrettyJson (dict "locals" (dict "source_configs" dict "sources" dict)) | nindent 2 }}
 {{- else }}
 {{- $ctx := .Values -}}

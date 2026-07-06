@@ -4,27 +4,7 @@ exporters:
     verbosity: detailed
 {{- end }}
 
-{{- if .Values.sumologic.sourcelessMode }}
-  sumologic:
-    client: {{ include "sumologic.sumo_client" . }}
-    log_format: otlp
-    sending_queue:
-      enabled: true
-      num_consumers: 10
-{{- if eq .Values.sumologic.useExporterBatching true }}
-      queue_size: 10240000
-      batch:
-        flush_timeout: 1s
-        min_size: 1_024
-        max_size: 2_048
-{{ else }}
-      queue_size: 10_000
-{{- end }}
-{{- if .Values.metadata.persistence.enabled }}
-      storage: file_storage
-{{- end }}
-
-{{- else if eq .Values.sumologic.logs.sourceType "http" }}
+{{- if and (eq .Values.sumologic.logs.sourceType "http") (not .Values.sumologic.sourcelessMode) }}
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
@@ -114,7 +94,9 @@ exporters:
 {{ else }}
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
+{{- if not .Values.sumologic.sourcelessMode }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+{{- end }}
     log_format: otlp
     sending_queue:
       enabled: true
