@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-python-emitter
+  namespace: sumologic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-python-emitter
+  template:
+    metadata:
+      labels:
+        app: otel-python-emitter
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
+    spec:
+      containers:
+        - name: emitter
+          image: otel-python-emitter:latest
+          imagePullPolicy: Never

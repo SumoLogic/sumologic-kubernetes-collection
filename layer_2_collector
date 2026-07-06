@@ -1,0 +1,111 @@
+Name:         collection-sumologic-metrics-collector-b7949822
+Namespace:    sumologic
+Labels:       app.kubernetes.io/component=opentelemetry-collector
+              app.kubernetes.io/instance=sumologic.collection-sumologic-metrics
+              app.kubernetes.io/managed-by=opentelemetry-operator
+              app.kubernetes.io/name=collection-sumologic-metrics-collector
+              app.kubernetes.io/part-of=opentelemetry
+              app.kubernetes.io/version=0.152.0-sumo-0
+              chart=sumologic-5.1.0
+              heritage=Helm
+              release=collection
+              sumologic.com/app=otelcol
+              sumologic.com/component=metrics
+              sumologic.com/scrape=true
+Annotations:  meta.helm.sh/release-name: collection
+              meta.helm.sh/release-namespace: sumologic
+
+Data
+====
+collector.yaml:
+----
+exporters:
+    otlphttp:
+        disable_keep_alives: true
+        endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+        sending_queue:
+            num_consumers: 10
+            queue_size: 10000
+            storage: file_storage
+extensions:
+    file_storage:
+        compaction:
+            directory: /tmp
+            on_rebound: true
+        directory: /var/lib/storage/otc
+        timeout: 10s
+    health_check:
+        endpoint: ${env:MY_POD_IP}:13133
+    pprof: {}
+processors:
+    batch:
+        send_batch_max_size: 2000
+        send_batch_size: 1000
+        timeout: 1s
+    filter/drop_stale_datapoints:
+        metrics:
+            datapoint:
+                - flags == FLAG_NO_RECORDED_VALUE
+    transform/drop_unnecessary_attributes:
+        error_mode: ignore
+        metric_statements:
+            - context: resource
+              statements:
+                  - delete_key(attributes, "http.scheme")
+                  - delete_key(attributes, "net.host.name")
+                  - delete_key(attributes, "net.host.port")
+                  - delete_key(attributes, "service.instance.id")
+                  - delete_matching_keys(attributes, "k8s.*")
+    transform/extract_sum_count_from_histograms:
+        error_mode: ignore
+        metric_statements:
+            - context: metric
+              statements:
+                  - extract_sum_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+                  - extract_count_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+receivers:
+    prometheus:
+        config:
+            global:
+                scrape_interval: 30s
+        target_allocator:
+            collector_id: ${POD_NAME}
+            endpoint: http://collection-sumologic-metrics-targetallocator:80
+            interval: 30s
+service:
+    extensions:
+        - health_check
+        - pprof
+        - file_storage
+    pipelines:
+        metrics:
+            exporters:
+                - otlphttp
+            processors:
+                - batch
+                - filter/drop_stale_datapoints
+                - transform/extract_sum_count_from_histograms
+                - transform/drop_unnecessary_attributes
+            receivers:
+                - prometheus
+    telemetry:
+        logs:
+            level: info
+        metrics:
+            level: normal
+            readers:
+                - pull:
+                      exporter:
+                          prometheus:
+                              host: ${env:MY_POD_IP}
+                              port: 8888
+                              without_scope_info: true
+                              without_type_suffix: true
+                              without_units: true
+
+
+
+BinaryData
+====
+
+Events:  <none>

@@ -1,0 +1,7 @@
+sumologic:
+  useExporterBatching: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true

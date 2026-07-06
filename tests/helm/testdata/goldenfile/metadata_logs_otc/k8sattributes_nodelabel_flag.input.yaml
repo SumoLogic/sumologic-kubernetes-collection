@@ -1,0 +1,8 @@
+sumologic:
+  useExporterBatching: true
+  collector:
+    otelcol:
+      enabled: true
+metadata:
+  logs:
+    extractNodeLabels: false

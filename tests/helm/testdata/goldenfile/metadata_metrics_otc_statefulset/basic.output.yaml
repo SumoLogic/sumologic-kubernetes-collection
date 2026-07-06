@@ -61,7 +61,7 @@ spec:
         fsGroup: 999
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.153.0-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.154.0-sumo-0"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
@@ -116,51 +116,11 @@ spec:
             - name: file-storage
               mountPath: /var/lib/storage/otc
           env:
-            - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-apiserver
-            - name: SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-control_plane_metrics_source
-            - name: SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-kube-controller-manager
-            - name: SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
               valueFrom:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-metrics-otlp
-            - name: SUMO_ENDPOINT_KUBELET_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-kubelet
-            - name: SUMO_ENDPOINT_NODE_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-node-exporter
-            - name: SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-kube-scheduler
-            - name: SUMO_ENDPOINT_STATE_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-kube-state
 
             - name: NO_PROXY
               value: kubernetes.default.svc

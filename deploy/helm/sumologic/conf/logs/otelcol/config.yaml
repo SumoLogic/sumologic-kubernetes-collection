@@ -161,17 +161,12 @@ processors:
   attributes/extract_systemd_source_fields:
     actions:
       - action: extract
-        key: fluent.tag
-        pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+        key: _SYSTEMD_UNIT
+        pattern: ^(?P<_sourceName>[a-zA-Z0-9-]+)\..+$
       - action: insert
         from_attribute: _HOSTNAME
         key: _sourceHost
 {{ end }}
-
-  attributes/remove_fluent_tag:
-    actions:
-      - action: delete
-        key: fluent.tag
 
   ## The batch processor accepts spans and places them into batches grouped by node and resource
   batch:
@@ -283,16 +278,6 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  filter/include_fluent_tag_host:
-    logs:
-      include:
-        match_type: regexp
-        record_attributes:
-          - key: fluent.tag
-            value: host\..+
-{{ end }}
-
-{{ if .Values.sumologic.logs.systemd.enabled }}
   filter/include_kubelet:
     logs:
       include:
@@ -332,54 +317,25 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-{{ if .Values.metadata.logs.useSumoK8sProcessor }}
-  k8s_tagger:
-    extract:
-      annotations:
-        - key: "*"
-          tag_name: "pod_annotations_%s"
-      namespace_annotations:
-        - key: "*"
-          tag_name: namespace_annotations_%s
-      delimiter: "_"
-      labels:
-        - key: "*"
-          tag_name: "pod_labels_%s"
-      metadata:
-        ## extract the following well-known metadata fields
-        - daemonSetName
-        - deploymentName
-        - hostName
-        - namespace
-        - nodeName
-        - podName
-        - serviceName
-        - statefulSetName
-      namespace_labels:
-        - key: "*"
-          tag_name: "namespace_labels_%s"
-    # To enable fetching additional metadata using `owner` relationship
-    owner_lookup_enabled: true
-    ## Has to be false to enrich metadata
-    passthrough: false
-    pod_association:
-      - from: build_hostname
-{{ else }}
   k8sattributes:
     wait_for_metadata: {{ .Values.metadata.logs.waitForMetadata }}
     wait_for_metadata_timeout: {{ .Values.metadata.logs.waitForMetadataTimeout | quote }}
     auth_type: "serviceAccount"
     extract:
       labels:
+        {{- if .Values.metadata.logs.extractPodLabels }}
         - key_regex: "(.*)"
           tag_name: "pod_labels_$$1"
           from: pod
+        {{- end }}
         - key_regex: "(.*)"
           tag_name: "namespace_labels_$$1"
           from: namespace
+        {{- if .Values.metadata.logs.extractNodeLabels }}
         - key_regex: "(.*)" 
           tag_name: "node_labels_$$1"
           from: node
+        {{- end }}
       annotations:
         - key_regex: "(.*)"
           tag_name: "pod_annotations_$$1"
@@ -387,7 +343,7 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_annotations_$$1"
           from: namespace
-        - key_regex: "(.*)" 
+        - key_regex: "(.*)"
           tag_name: "node_annotations_$$1"
           from: node
       metadata:
@@ -421,7 +377,6 @@ processors:
           name: k8s.namespace.name
         - from: resource_attribute
           name: k8s.pod.name
-{{ end }}
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
@@ -659,11 +614,7 @@ service:
         - memory_limiter
         - filter/include_containers
         - groupbyattrs/containers
-{{ if .Values.metadata.logs.useSumoK8sProcessor }}
-        - k8s_tagger
-{{ else }}
         - k8sattributes
-{{ end }}
         - resource/add_cluster
         - resource/set_empty_source_metadata
         - resource/containers_copy_node_to_host
@@ -703,14 +654,12 @@ service:
 {{- end }}
       processors:
         - memory_limiter
-        - filter/include_fluent_tag_host
         - filter/include_kubelet
         - filter/exclude_kubelet_syslog
         - filter/exclude_kubelet_hostname
         - filter/exclude_kubelet_priority
         - filter/exclude_kubelet_unit
         - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/kubelet
@@ -740,7 +689,6 @@ service:
 {{- end }}
       processors:
         - memory_limiter
-        - filter/include_fluent_tag_host
         - filter/include_systemd
         - filter/exclude_kubelet
         - filter/exclude_systemd_syslog
@@ -748,7 +696,6 @@ service:
         - filter/exclude_systemd_priority
         - filter/exclude_systemd_unit
         - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/systemd

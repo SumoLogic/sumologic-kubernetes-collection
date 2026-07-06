@@ -10,9 +10,8 @@ include:
 - Different container runtimes
 
   OpenTelemetry Collector will automatically detect the format of and parse logs from different container runtimes. In particular, it will
-  gracefully handle clusters running docker-shim and containerd in parallel on different Nodes, which is useful for migrations. If your
-  modifications to the Fluent Bit config were only needed to deal with container runtime log formatting, you can use the default otel
-  configuration.
+  gracefully handle clusters running containerd in parallel on different Nodes, which is useful for migrations. If your modifications to the
+  Fluent Bit config were only needed to deal with container runtime log formatting, you can use the default otel configuration.
 
 - Multiline log parsing
 

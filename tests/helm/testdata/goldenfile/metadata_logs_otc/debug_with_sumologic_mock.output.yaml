@@ -55,15 +55,11 @@ data:
       attributes/extract_systemd_source_fields:
         actions:
         - action: extract
-          key: fluent.tag
-          pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+          key: _SYSTEMD_UNIT
+          pattern: ^(?P<_sourceName>[a-zA-Z0-9-]+)\..+$
         - action: insert
           from_attribute: _HOSTNAME
           key: _sourceHost
-      attributes/remove_fluent_tag:
-        actions:
-        - action: delete
-          key: fluent.tag
       batch:
         send_batch_max_size: 2048
         send_batch_size: 1024
@@ -138,13 +134,6 @@ data:
             record_attributes:
             - key: k8s.container.name
               value: .+
-      filter/include_fluent_tag_host:
-        logs:
-          include:
-            match_type: regexp
-            record_attributes:
-            - key: fluent.tag
-              value: host\..+
       filter/include_kubelet:
         logs:
           include:
@@ -354,14 +343,12 @@ data:
           - debug
           processors:
           - memory_limiter
-          - filter/include_fluent_tag_host
           - filter/include_kubelet
           - filter/exclude_kubelet_syslog
           - filter/exclude_kubelet_hostname
           - filter/exclude_kubelet_priority
           - filter/exclude_kubelet_unit
           - attributes/extract_systemd_source_fields
-          - attributes/remove_fluent_tag
           - groupbyattrs/systemd
           - resource/add_cluster
           - source/kubelet
@@ -377,7 +364,6 @@ data:
           - debug
           processors:
           - memory_limiter
-          - filter/include_fluent_tag_host
           - filter/include_systemd
           - filter/exclude_kubelet
           - filter/exclude_systemd_syslog
@@ -385,7 +371,6 @@ data:
           - filter/exclude_systemd_priority
           - filter/exclude_systemd_unit
           - attributes/extract_systemd_source_fields
-          - attributes/remove_fluent_tag
           - groupbyattrs/systemd
           - resource/add_cluster
           - source/systemd

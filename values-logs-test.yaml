@@ -1,0 +1,34 @@
+otelcolInstrumentation:
+  statefulset:
+    extraEnvVars:
+      - name: SUMO_ENDPOINT_LOGS_OTLP
+        valueFrom:
+          secretKeyRef:
+            name: sumologic
+            key: endpoint-logs-otlp
+  config:
+    merge:
+      exporters:
+        debug/logs:
+          verbosity: detailed
+        sumologic/logs:
+          endpoint: ${SUMO_ENDPOINT_LOGS_OTLP}
+          log_format: otlp
+          sending_queue:
+            enabled: true
+            num_consumers: 10
+            queue_size: 10_000
+      service:
+        pipelines:
+          logs:
+            receivers:
+              - otlp
+            processors:
+              - memory_limiter
+              - k8sattributes
+              - source
+              - resource
+              - batch
+            exporters:
+              - debug/logs
+              - sumologic/logs

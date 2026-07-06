@@ -1,0 +1,174 @@
+tracesSampler:
+  config:
+    processors:
+      cascading_filter:
+        trace_reject_filters:
+          - name: reject_healthcheck
+            name_pattern: "/healthcheck"
+          - name: reject_heartbeat
+            name_pattern: "/heartbeat"
+          - name: reject_prometheus
+            name_pattern: "/prometheus"
+          - name: remove-all-traces-with-health-span
+            name_pattern: "health.*"
+          - name: remove-all-traces-with-prometheus-span
+            name_pattern: "prometheus.*"
+          - name: remove-all-traces-with-heartbeat-span
+            name_pattern: "heartbeat.*"
+
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+          - resource/add-env-field:
+              attributes:
+                - action: insert
+                  key: env
+                  from_attribute: pod_labels_env
+          - resource/add-product-field:
+              attributes:
+                - action: insert
+                  key: product
+                  from_attribute: pod_labels_product
+          - filter/drop_health_checks:
+              error_mode: ignore
+              logs:
+                log_record:
+                  - 'IsMatch(body, ".*heartbeat.*")'
+                  - 'IsMatch(body, ".*kube-probe.*")'
+  metrics:
+    container:
+      otelcol:
+        extraProcessors:
+          - resource/add-env-field:
+              attributes:
+                - action: insert
+                  key: env
+                  from_attribute: pod_labels_env
+          - resource/add-product-field:
+              attributes:
+                - action: insert
+                  key: product
+                  from_attribute: pod_labels_product
+  traces:
+    container:
+      otelcol:
+        extraProcessors:
+          - resource/add-env-field:
+              attributes:
+                - action: insert
+                  key: env
+                  from_attribute: pod_labels_env
+          - resource/add-product-field:
+              attributes:
+                - action: insert
+                  key: product
+                  from_attribute: pod_labels_product
+
+otelcolInstrumentation:
+  statefulset:
+    extraEnvVars:
+      - name: SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE
+        valueFrom:
+          secretKeyRef:
+            name: sumologic
+            key: endpoint-logs-otlp
+  config:
+    merge:
+      processors:
+        k8sattributes:
+          pod_association:
+            - sources:
+                - from: resource_attribute
+                  name: k8s.pod.uid
+            - sources:
+                - from: resource_attribute
+                  name: k8s.namespace.name
+                - from: resource_attribute
+                  name: k8s.pod.name
+            - sources:
+                - from: resource_attribute
+                  name: k8s.pod.ip
+            - sources:
+                - from: resource_attribute
+                  name: ip
+            - sources:
+                - from: connection
+        ## NEW: Copies k8s.node.name to k8s.pod.hostname so the source processor
+        ## can populate _sourceHost correctly. Without this, _sourceHost shows as
+        ## "undefined" because the k8sattributes processor extracts k8s.node.name
+        ## but the source processor template expects k8s.pod.hostname.
+        resource/set_hostname:
+          attributes:
+            - key: k8s.pod.hostname
+              from_attribute: k8s.node.name
+              action: upsert
+      exporters:
+        sumologic/logs:
+          endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+          log_format: otlp
+          compression: gzip
+          max_request_body_size: 1_048_576
+          sending_queue:
+            enabled: true
+            num_consumers: 10
+            queue_size: 10000
+      service:
+        pipelines:
+          logs:
+            receivers:
+              - otlp
+            processors:
+              - memory_limiter
+              - k8sattributes
+              - resource/set_hostname
+              - source
+              - resource
+              - batch
+            exporters:
+              - sumologic/logs
+
+kube-prometheus-stack:
+  prometheus:
+    enabled: true
+  prometheusOperator:
+    enabled: true
+
+opentelemetry-operator:
+  enabled: true
+  crds:
+    create: true
+
+metrics:
+  collector:
+    otelcol:
+      enabled: false
+  remoteWriteProxy:
+    enabled: true
+
+instrumentation:
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ss-qa"
+  java:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+    extraEnvVars:
+      - name: OTEL_LOGS_EXPORTER
+        value: otlp
+# ============================================================================
+# Changes from original config (temp file):
+#
+# 1. Added `resource/set_hostname` processor under `otelcolInstrumentation.config.merge.processors`
+#    - Copies `k8s.node.name` → `k8s.pod.hostname`
+#    - Required because the `source` processor uses `%{k8s.pod.hostname}` to set `_sourceHost`
+#    - The `k8sattributes` processor only extracts `k8s.node.name`, not `k8s.pod.hostname`
+#    - Without this, `_sourceHost` appears as "undefined" in Sumo Logic
+#    - This mirrors what the file-based logs pipeline does via `resource/containers_copy_node_to_host`
+#
+# 2. Added `resource/set_hostname` to the logs pipeline processor chain
+#    - Placed AFTER `k8sattributes` (so k8s.node.name is available)
+#    - Placed BEFORE `source` (so _sourceHost can be set from k8s.pod.hostname)
+# ============================================================================

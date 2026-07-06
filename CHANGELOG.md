@@ -7,6 +7,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.2.0]
+
+### Released 2026-06-23
+
+### Breaking Changes
+
+- chore(SUMO-286652): Remove useSumoK8sProcessor and k8s_tagger [#4233]
+- chore(SUMO-286654): Update k8s min cluster version to 1.24 and remove docker-shim parser path [#4234]
+- Remove nginx remote-write-proxy component (sumologic.metrics.remoteWriteProxy). This was a Prometheus remote-write load balancer that is
+  no longer needed with the OTel-based pipeline. [#4242]
+
+### Added
+
+- feat: add single-layer metrics pipeline using forward connector to merge collector and metadata layers into a single pod [#4218]
+- chore(SUMO-286974): Add flag to control node and pod labels in logs [#4240]
+
+### Changed
+
+- chore(deps): bump opentelemetry-operator from 0.114.1 to 0.115.0 [#4229]
+- chore(deps): bump public.ecr.aws/sumologic/kube-state-metrics Docker tag to v2.19.1 [#4230]
+- chore(deps): bump autoinstrumentation to v0.77.0 [#4231]
+- chore(SUMO-286650): Remove fluent.tag synthetic attribute [#4236]
+- chore(deps): bump sumologic-otel-collector to v0.154.0-sumo-0 [#4237], [#4239]
+- chore(deps): bump opentelemetry-operator [#4247]
+- chore(deps): bump metrics-server from 3.13.0 to 3.13.1 [#4228]
+- chore(deps): bump autoinstrumentation [#4244]
+
+[#4233]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4233
+[#4234]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4234
+[#4242]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4242
+[#4218]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4218
+[#4240]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4240
+[#4229]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4229
+[#4230]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4230
+[#4231]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4231
+[#4236]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4236
+[#4237]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4237
+[#4239]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4239
+[#4247]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4247
+[#4228]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4228
+[#4244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4244
+[v5.2.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.2.0
+
 ## [v5.1.1]
 
 ### Released 2026-06-09

@@ -1,0 +1,19 @@
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+    sourceType: otlp
+  logs:
+    enabled: true
+  traces:
+    enabled: false
+  events:
+    enabled: false
+metadata:
+  metrics:
+    enableSumoPrometheusRemotewriteReceiver: true
+    config:
+      additionalEndpoints:
+        - /prometheus.metrics

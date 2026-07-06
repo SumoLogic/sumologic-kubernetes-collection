@@ -1,4 +1,4 @@
-{{ if eq (include "metrics.otelcol.enabled" .) "true" }}
+{{ if and (eq (include "metrics.otelcol.enabled" .) "true") (ne (include "metrics.collector.singleLayerPipeline.enabled" .) "true") }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

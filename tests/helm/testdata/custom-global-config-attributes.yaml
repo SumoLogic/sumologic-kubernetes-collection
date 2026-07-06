@@ -3,9 +3,6 @@ sumologic:
   pullSecrets:
     - name: customImagePullSecrets
     - name: customImagePullSecrets2
-  metrics:
-    remoteWriteProxy:
-      enabled: true
   podLabels:
     customLabelKey: customLabelValue
   podAnnotations:

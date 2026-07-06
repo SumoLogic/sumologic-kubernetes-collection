@@ -38,7 +38,6 @@ processors:
 {{- if .Values.sumologic.logs.systemd.enabled }}
   ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
   ## so they can be used by metadata processors same way like for fluentd
-  ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
   logstransform/systemd:
     operators:
       - from: body._SYSTEMD_UNIT
@@ -53,9 +52,6 @@ processors:
       - from: body.PRIORITY
         to: attributes.PRIORITY
         type: copy
-      - field: attributes["fluent.tag"]
-        type: add
-        value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
       - field: body.__CURSOR
         type: remove
       - field: body.__MONOTONIC_TIMESTAMP
@@ -70,8 +66,7 @@ receivers:
 {{- if .Values.sumologic.logs.systemd.enabled }}
   journald:
     directory: {{ .Values.sumologic.logs.systemd.journaldDirectory }}
-    ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
-    ## Here is filtering by `UNIT`
+    ## Filtering by unit name
     units:
 {{- if .Values.sumologic.logs.systemd.units }}
 {{ toYaml .Values.sumologic.logs.systemd.units | nindent 6 }}
