@@ -39,11 +39,6 @@ spec:
           env:
             - name: GOGC
               value: "80"
-            - name: SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-traces
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE
               valueFrom:
                 secretKeyRef:

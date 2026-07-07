@@ -84,6 +84,8 @@ spec:
                 ["test@test.lh","email@locahost.lh"]
             - name: SUMOLOGIC_DASHBOARDS_ENABLED
               value: "true"
+            - name: CLEANUP_UNUSED_SOURCES
+              value: "false"
 
             - name: NO_PROXY
               value: kubernetes.default.svc

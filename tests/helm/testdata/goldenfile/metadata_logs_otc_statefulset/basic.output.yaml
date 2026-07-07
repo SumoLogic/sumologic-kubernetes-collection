@@ -94,11 +94,6 @@ spec:
             - name: file-storage
               mountPath: /var/lib/storage/otc
           env:
-            - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-logs
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE
               valueFrom:
                 secretKeyRef:

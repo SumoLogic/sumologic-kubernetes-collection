@@ -1,0 +1,12 @@
+{{- $ctx := .Values -}}
+{{- $sourceNames := list -}}
+{{- range $type, $sources := .Values.sumologic.collector.sources -}}
+  {{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" -}}
+    {{- range $key, $source := $sources -}}
+      {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" -}}
+        {{- $sourceNames = append $sourceNames $source.name -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- dict "sources" $sourceNames | toPrettyJson | nindent 2 }}

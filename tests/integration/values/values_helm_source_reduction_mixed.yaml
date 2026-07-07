@@ -1,0 +1,9 @@
+sumologic:
+  logs:
+    sourceType: http
+  metrics:
+    sourceType: otlp
+  traces:
+    enabled: false
+  events:
+    sourceType: otlp

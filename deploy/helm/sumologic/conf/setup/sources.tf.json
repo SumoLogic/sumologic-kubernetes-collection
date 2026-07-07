@@ -5,7 +5,13 @@
 {{- range $type, $sources := .Values.sumologic.collector.sources }}
   {{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" }}
     {{- range $key, $source := $sources }}
-      {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
+      {{- $sourceType := "otlp" -}}
+      {{- if and (hasKey $ctx.sumologic $type) (hasKey (index $ctx.sumologic $type) "sourceType") -}}
+        {{- $sourceType = (index $ctx.sumologic $type "sourceType") -}}
+      {{- end -}}
+      {{- $isOtlpSource := hasSuffix "-otlp" $key -}}
+      {{- $matchesSourceType := or (and $isOtlpSource (eq $sourceType "otlp")) (and (not $isOtlpSource) (eq $sourceType "http")) -}}
+      {{- if and (eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true") $matchesSourceType }}
         {{- $resourceName := (include "terraform.sources.name" (dict "Name" $key "Type" $type)) -}}
         {{- $sourceConfig := deepCopy $source -}}
         {{- /* Ensure config-name is set for all source configurations to make things simpler. */ -}}
@@ -19,12 +25,13 @@
   {{- else if and (eq $type "metrics") $ctx.sumologic.traces.enabled }}
     {{- /*
     If traces are enabled and metrics are disabled, create default metrics source anyway.
+    Pick the source matching the configured sourceType so traces-gateway gets the right endpoint.
     */}}
-    {{- if hasKey $sources "default" }}
-        {{- $key := "default" -}}
+    {{- $metricsSourceType := $ctx.sumologic.metrics.sourceType | default "otlp" -}}
+    {{- $key := ternary "default-otlp" "default" (eq $metricsSourceType "otlp") -}}
+    {{- if hasKey $sources $key }}
         {{- $sourceConfig := deepCopy (get $sources $key) -}}
         {{- $resourceName := include "terraform.sources.name" (dict "Name" $key "Type" $type) -}}
-        {{- /* Ensure config-name is set for all source configurations to make things simpler. */ -}}
         {{- if not (hasKey $sourceConfig "config-name") }}
           {{- $configName := include "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) -}}
           {{- $_ := set $sourceConfig "config-name" $configName -}}

@@ -544,6 +544,89 @@ data:
         -var="create_fields=${CREATE_FIELDS}" \
         || { echo "Error during applying Terraform changes"; exit 1; }
 
+    # Delete sources that exist on the collector but are not in the current config.
+    # This cleans up sources that became unused after sourceType changes.
+    function cleanup_unused_sources() {
+        echo "Checking for unused sources to clean up..."
+
+        # Get expected source names from the current config
+        local EXPECTED_SOURCES
+        EXPECTED_SOURCES=$(jq -r '.resource.sumologic_http_source | to_entries[] | .value.name' sources.tf.json 2>/dev/null)
+        if [[ -z "${EXPECTED_SOURCES}" ]]; then
+            echo "No sources in config, skipping cleanup."
+            return
+        fi
+
+        # Get collector ID by looking up the collector
+        local COLLECTOR_RESPONSE
+        COLLECTOR_RESPONSE=$(curl -s -G \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            --data-urlencode "filter=${SUMOLOGIC_COLLECTOR_NAME}" \
+            "${SUMOLOGIC_BASE_URL}v1/collectors")
+
+        local COLLECTOR_ID
+        COLLECTOR_ID=$(echo "${COLLECTOR_RESPONSE}" | jq -r ".collectors[] | select(.name == \"${SUMOLOGIC_COLLECTOR_NAME}\") | .id")
+        if [[ -z "${COLLECTOR_ID}" || "${COLLECTOR_ID}" == "null" ]]; then
+            echo "Could not find collector ID, skipping source cleanup."
+            return
+        fi
+
+        # List all existing sources on the collector
+        local SOURCES_RESPONSE
+        SOURCES_RESPONSE=$(curl -s -XGET \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}/sources")
+
+        local EXISTING_SOURCES
+        EXISTING_SOURCES=$(echo "${SOURCES_RESPONSE}" | jq -r '.sources[] | "\(.id)\t\(.name)"')
+        if [[ -z "${EXISTING_SOURCES}" ]]; then
+            echo "No existing sources found on collector, skipping cleanup."
+            return
+        fi
+
+        # Get all chart-managed source names (both HTTP and OTLP variants for all signals).
+        # This list is generated from values.yaml at helm render time via
+        # chart-managed-sources.json, ensuring it stays in sync automatically.
+        # Only sources whose names appear in this list are candidates for deletion.
+        # Sources created manually (via UI or API) will never be touched.
+        local KNOWN_CHART_SOURCES
+        KNOWN_CHART_SOURCES=$(jq -r '.sources[]' /etc/terraform/chart-managed-sources.json 2>/dev/null)
+        if [[ -z "${KNOWN_CHART_SOURCES}" ]]; then
+            echo "WARNING: Could not read chart-managed-sources.json, skipping cleanup."
+            return
+        fi
+
+        # Delete sources that are chart-managed but not in the current config
+        while IFS=$'\t' read -r source_id source_name; do
+            # Only consider sources that are known chart-managed sources
+            if ! echo "${KNOWN_CHART_SOURCES}" | grep -qxF "${source_name}"; then
+                continue
+            fi
+            # Delete if not in current expected config
+            if ! echo "${EXPECTED_SOURCES}" | grep -qxF "${source_name}"; then
+                echo "Deleting unused source: ${source_name} (id: ${source_id})"
+                local DELETE_RESPONSE
+                DELETE_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -XDELETE \
+                    -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+                    "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}/sources/${source_id}")
+                if [[ "${DELETE_RESPONSE}" == "200" ]]; then
+                    echo "  Successfully deleted source: ${source_name}"
+                else
+                    echo "  WARNING: Failed to delete source ${source_name} (HTTP ${DELETE_RESPONSE})"
+                fi
+            fi
+        done <<< "${EXISTING_SOURCES}"
+
+        echo "Source cleanup complete."
+    }
+
+    # shellcheck disable=SC2154
+    if [[ "${CLEANUP_UNUSED_SOURCES}" == "true" ]]; then
+        cleanup_unused_sources
+    else
+        echo "Source cleanup skipped (cleanupUnusedSources is not enabled)."
+    fi
+
     # Setup Sumo Logic monitors if enabled
     if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" ]]; then
         bash /etc/terraform/monitors.sh
@@ -601,6 +684,25 @@ data:
       description = "The Helm Chart version."
       type        = string
     }
+  chart-managed-sources.json: |
+    {
+      "sources": [
+        "events",
+        "events-otlp",
+        "logs",
+        "logs-otlp",
+        "apiserver-metrics",
+        "control-plane-metrics",
+        "kube-controller-manager-metrics",
+        "metrics-otlp",
+        "kubelet-metrics",
+        "node-exporter-metrics",
+        "kube-scheduler-metrics",
+        "kube-state-metrics",
+        "traces",
+        "traces-otlp"
+      ]
+    }
   providers.tf.json: |
     {
       "provider": {
@@ -616,42 +718,6 @@ data:
     {
       "locals": {
         "source_configs": {
-          "apiserver_metrics_source": {
-            "config-name": "endpoint-metrics-apiserver",
-            "name": "apiserver-metrics"
-          },
-          "control_plane_metrics_source": {
-            "config-name": "endpoint-control_plane_metrics_source",
-            "name": "control-plane-metrics"
-          },
-          "controller_metrics_source": {
-            "config-name": "endpoint-metrics-kube-controller-manager",
-            "name": "kube-controller-manager-metrics"
-          },
-          "default_events_source": {
-            "config-name": "endpoint-events",
-            "name": "events",
-            "properties": {
-              "default_date_formats": [
-                {
-                  "format": "epoch",
-                  "locator": "\"timestamp\":(\\d+)"
-                }
-              ]
-            }
-          },
-          "default_logs_source": {
-            "config-name": "endpoint-logs",
-            "name": "logs",
-            "properties": {
-              "default_date_formats": [
-                {
-                  "format": "epoch",
-                  "locator": "\"timestamp\":(\\d+)"
-                }
-              ]
-            }
-          },
           "default_otlp_events_source": {
             "config-name": "endpoint-events-otlp",
             "name": "events-otlp",
@@ -679,82 +745,17 @@ data:
             "properties": {
               "content_type": "Otlp"
             }
-          },
-          "default_traces_source": {
-            "config-name": "endpoint-traces",
-            "name": "traces",
-            "properties": {
-              "content_type": "Zipkin"
-            }
-          },
-          "kubelet_metrics_source": {
-            "config-name": "endpoint-metrics-kubelet",
-            "name": "kubelet-metrics"
-          },
-          "node_metrics_source": {
-            "config-name": "endpoint-metrics-node-exporter",
-            "name": "node-exporter-metrics"
-          },
-          "scheduler_metrics_source": {
-            "config-name": "endpoint-metrics-kube-scheduler",
-            "name": "kube-scheduler-metrics"
-          },
-          "state_metrics_source": {
-            "config-name": "endpoint-metrics-kube-state",
-            "name": "kube-state-metrics"
           }
         },
         "sources": {
-          "apiserver_metrics_source": "${ sumologic_http_source.apiserver_metrics_source }",
-          "control_plane_metrics_source": "${ sumologic_http_source.control_plane_metrics_source }",
-          "controller_metrics_source": "${ sumologic_http_source.controller_metrics_source }",
-          "default_events_source": "${ sumologic_http_source.default_events_source }",
-          "default_logs_source": "${ sumologic_http_source.default_logs_source }",
           "default_otlp_events_source": "${ sumologic_http_source.default_otlp_events_source }",
           "default_otlp_logs_source": "${ sumologic_http_source.default_otlp_logs_source }",
           "default_otlp_metrics_source": "${ sumologic_http_source.default_otlp_metrics_source }",
-          "default_otlp_traces_source": "${ sumologic_http_source.default_otlp_traces_source }",
-          "default_traces_source": "${ sumologic_http_source.default_traces_source }",
-          "kubelet_metrics_source": "${ sumologic_http_source.kubelet_metrics_source }",
-          "node_metrics_source": "${ sumologic_http_source.node_metrics_source }",
-          "scheduler_metrics_source": "${ sumologic_http_source.scheduler_metrics_source }",
-          "state_metrics_source": "${ sumologic_http_source.state_metrics_source }"
+          "default_otlp_traces_source": "${ sumologic_http_source.default_otlp_traces_source }"
         }
       },
       "resource": {
         "sumologic_http_source": {
-          "apiserver_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "apiserver-metrics"
-          },
-          "control_plane_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "control-plane-metrics"
-          },
-          "controller_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kube-controller-manager-metrics"
-          },
-          "default_events_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "default_date_formats": [
-              {
-                "format": "epoch",
-                "locator": "\"timestamp\":(\\d+)"
-              }
-            ],
-            "name": "events"
-          },
-          "default_logs_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "default_date_formats": [
-              {
-                "format": "epoch",
-                "locator": "\"timestamp\":(\\d+)"
-              }
-            ],
-            "name": "logs"
-          },
           "default_otlp_events_source": {
             "collector_id": "${ sumologic_collector.collector.id }",
             "content_type": "Otlp",
@@ -774,27 +775,6 @@ data:
             "collector_id": "${ sumologic_collector.collector.id }",
             "content_type": "Otlp",
             "name": "traces-otlp"
-          },
-          "default_traces_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "content_type": "Zipkin",
-            "name": "traces"
-          },
-          "kubelet_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kubelet-metrics"
-          },
-          "node_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "node-exporter-metrics"
-          },
-          "scheduler_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kube-scheduler-metrics"
-          },
-          "state_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector.id }",
-            "name": "kube-state-metrics"
           }
         }
       }

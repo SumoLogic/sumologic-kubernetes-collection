@@ -107,11 +107,6 @@ spec:
             - name: file-storage
               mountPath: /var/lib/storage/events
           env:
-            - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-events
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE
               valueFrom:
                 secretKeyRef:
