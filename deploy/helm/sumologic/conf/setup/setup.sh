@@ -162,6 +162,31 @@ else
     echo "Please refer to https://www.sumologic.com/help/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
+# Delete hosted collector (and all its sources) via API when cleanup is requested.
+# Terraform cannot destroy resources it cannot import, so we use the API directly.
+function delete_hosted_collector() {
+    local RESPONSE COLLECTOR_ID
+    RESPONSE="$(curl -XGET -s \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        "${SUMOLOGIC_BASE_URL}v1/collectors?filter=hosted&limit=1000")"
+    local JQ_OUTPUT
+    JQ_OUTPUT=$(jq -r ".collectors[] | select(.name == \"${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${RESPONSE}")
+    COLLECTOR_ID=$(head -1 <<< "${JQ_OUTPUT}")
+    if [[ -n "${COLLECTOR_ID}" ]]; then
+        echo "Deleting hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' (${COLLECTOR_ID}) and all its sources..."
+        curl -XDELETE -s \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}"
+        echo "Hosted collector deleted."
+    else
+        echo "Hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' not found, nothing to delete."
+    fi
+}
+
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && "${SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR:-false}" == "true" ]]; then
+    delete_hosted_collector
+fi
+
 # Sumo Logic Collector and HTTP sources
 # Only import sources when collector exists.
 if terraform import 'sumologic_collector.collector[0]' "${SUMOLOGIC_COLLECTOR_NAME}"; then
