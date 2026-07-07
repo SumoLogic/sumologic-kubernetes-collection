@@ -408,10 +408,10 @@ Example:
 {{- end -}}
 
 {{/*
-Generate env vars for SumoLogic extension mode: installation token + collector ID from the sumologic secret.
+Generate env vars for SumoLogic extension mode: installation token from the sumologic secret.
 */}}
 {{/*
-Emit the api_base_url line for the SumoLogic extension when openCollectorsEndpoint is set.
+Emit the api_base_url line for the SumoLogic extension when collectorEndpoint is set.
 Renders nothing when the value is empty (uses the extension's built-in default).
 */}}
 {{- define "sumologic.extension.api_base_url" -}}
