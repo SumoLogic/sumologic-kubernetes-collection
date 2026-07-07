@@ -131,6 +131,8 @@ extensions:
 {{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
 {{- if .Values.tracesSampler.persistence.enabled }}
     collector_credentials_directory: /var/lib/storage/tracessampler/credentials
 {{- end }}

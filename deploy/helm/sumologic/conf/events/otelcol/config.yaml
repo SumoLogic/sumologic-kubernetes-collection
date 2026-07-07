@@ -60,6 +60,8 @@ extensions:
 {{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
 {{- if .Values.sumologic.events.persistence.enabled }}
     collector_credentials_directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}/credentials
 {{- end }}
