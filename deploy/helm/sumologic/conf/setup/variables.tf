@@ -36,9 +36,3 @@ variable "use_extension" {
   type        = bool
   default     = false
 }
-
-variable "cleanup_hosted_collector" {
-  description = "When use_extension is true, deletes the hosted collector and HTTP/OTLP sources created by previous installations."
-  type        = bool
-  default     = false
-}

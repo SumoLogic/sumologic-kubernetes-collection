@@ -1,5 +1,5 @@
 resource "sumologic_collector" "collector" {
-  count       = (var.use_extension && var.cleanup_hosted_collector) ? 0 : 1
+  count       = var.use_extension ? 0 : 1
   name        = var.collector_name
   description = format("Sumo Logic Kubernetes Collection\nversion: %s", var.chart_version)
   fields      = var.collector_fields

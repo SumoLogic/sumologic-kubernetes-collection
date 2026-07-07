@@ -12,7 +12,6 @@ export TF_VAR_namespace_name="${NAMESPACE}"
 export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
 export TF_VAR_use_extension="${SUMOLOGIC_USE_EXTENSION:-false}"
-export TF_VAR_cleanup_hosted_collector="${SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR:-false}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -188,11 +187,14 @@ if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && "${SUMOLOGIC_CLEANUP_HOST
 fi
 
 # Sumo Logic Collector and HTTP sources
-# Only import sources when collector exists.
-if terraform import 'sumologic_collector.collector[0]' "${SUMOLOGIC_COLLECTOR_NAME}"; then
-    jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
-        terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
-    done || true
+# In extension mode the collector is not managed by Terraform (count=0), so skip import entirely.
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" != "true" ]]; then
+    # Only import sources when collector exists.
+    if terraform import 'sumologic_collector.collector[0]' "${SUMOLOGIC_COLLECTOR_NAME}"; then
+        jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
+            terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
+        done || true
+    fi
 fi
 
 # Import existing installation token if extension mode is enabled (prevents recreation on upgrades)

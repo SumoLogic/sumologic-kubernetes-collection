@@ -1,5 +1,5 @@
-{{- if and .Values.sumologic.sourcelessMode .Values.sumologic.cleanupHostedCollector }}
-{{- /* sourcelessMode + cleanup: remove HTTP sources from Terraform management so they are destroyed on apply. */ -}}
+{{- if .Values.sumologic.sourcelessMode }}
+{{- /* sourcelessMode: HTTP sources are not managed by Terraform; collector lifecycle is handled via API. */ -}}
 {{- toPrettyJson (dict "locals" (dict "source_configs" dict "sources" dict)) | nindent 2 }}
 {{- else }}
 {{- $ctx := .Values -}}
