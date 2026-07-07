@@ -19,11 +19,11 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
     namespace = var.namespace_name
   }
 
-  data = var.use_extension ? {
+  data = var.use_extension ? tomap({
     "SUMOLOGIC_INSTALLATION_TOKEN" = sumologic_token.collection_token[0].encoded_token_and_url
-  } : {
+  }) : tomap({
     for name, config in local.source_configs : config["config-name"] => lookup(local.sources, name).url
-  }
+  })
 
   type                           = "Opaque"
   wait_for_service_account_token = false

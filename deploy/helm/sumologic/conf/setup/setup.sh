@@ -173,10 +173,10 @@ function delete_hosted_collector() {
     COLLECTOR_ID=$(head -1 <<< "${JQ_OUTPUT}")
     if [[ -n "${COLLECTOR_ID}" ]]; then
         echo "Deleting hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' (${COLLECTOR_ID}) and all its sources..."
-        curl -XDELETE -s \
+        curl -sf -XDELETE \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-            "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}"
-        echo "Hosted collector deleted."
+            "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}" \
+            && echo "Hosted collector deleted." || { echo "Failed to delete hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' (${COLLECTOR_ID})."; return 1; }
     else
         echo "Hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' not found, nothing to delete."
     fi
