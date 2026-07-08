@@ -6,7 +6,7 @@ WARNING: You defined sumologic.clusterName with spaces, which is not supported. 
 
 {{- if .Values.sumologic.sourcelessMode }}
 You can start searching collected logs, metrics, and traces in Sumo Logic using the following search query:
-  cluster={{ .Values.sumologic.clusterName }}
+  cluster="{{ .Values.sumologic.clusterName }}"
 {{- else }}
 A Collector with the name {{ .Values.sumologic.collectorName | default (include "sumologic.clusterNameReplaceSpaceWithDash" . ) | quote }} has been created in your Sumo Logic account.
 {{- end }}

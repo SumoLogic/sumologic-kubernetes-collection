@@ -137,6 +137,17 @@ extensions:
       on_rebound: true
       directory: /tmp
 {{- end }}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+{{- if .Values.metadata.persistence.enabled }}
+    collector_credentials_directory: /var/lib/storage/otc/credentials
+{{- end }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 
 processors:
   # staleness markers may simply indicate targets being moved between collector Pods, so they do more harm than good
@@ -191,6 +202,9 @@ service:
     - pprof
 {{- if .Values.metadata.persistence.enabled }}
     - file_storage
+{{- end }}
+{{- if .Values.sumologic.sourcelessMode }}
+    - sumologic
 {{- end }}
   pipelines:
     ## Pipeline 1: Collector stage — scraping + light processing → forward connector
