@@ -1,4 +1,4 @@
-{{- if eq .Values.pvcCleaner.metrics.enabled true }}
+{{- if and (eq .Values.pvcCleaner.metrics.enabled true) (ne (include "metrics.collector.singleLayerPipeline.enabled" .) "true") }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
