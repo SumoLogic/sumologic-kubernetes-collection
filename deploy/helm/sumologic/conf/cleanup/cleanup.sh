@@ -23,6 +23,11 @@ export TF_VAR_provided_installation_token="${SUMOLOGIC_INSTALLATION_TOKEN:-}"
 cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
 
+# Normalize base URL: strip trailing "v1..." so API calls can safely prepend "v1/".
+# The endpoint value from Helm may already contain a trailing "v1/" path component.
+SUMOLOGIC_BASE_URL="${SUMOLOGIC_BASE_URL%v1*}"
+export SUMOLOGIC_BASE_URL
+
 # Fall back to init -upgrade to prevent:
 # Error: Inconsistent dependency lock file
 terraform init -input=false -get=false || terraform init -input=false -upgrade
@@ -39,8 +44,6 @@ else
             "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000")"
         if ! jq -e '.data' <<< "${TOKEN_RESPONSE}" > /dev/null 2>&1; then
             echo "WARNING: Token API response does not contain .data — skipping token import. Response: ${TOKEN_RESPONSE}"
-            echo "Sleeping 60s to allow log inspection before continuing..."
-            sleep 60
         fi
         JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${TOKEN_RESPONSE}")
         TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
