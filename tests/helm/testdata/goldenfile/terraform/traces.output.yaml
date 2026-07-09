@@ -607,7 +607,11 @@ data:
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000")"
         local JQ_OUTPUT
-        JQ_OUTPUT=$(jq -r ".data[] | select(.name == \"${TOKEN_NAME}\") | .id" <<< "${RESPONSE}")
+        if ! jq -e '.data' <<< "${RESPONSE}" > /dev/null 2>&1; then
+            echo "WARNING: Token API response does not contain .data — skipping token import. Response: ${RESPONSE}"
+            return 0
+        fi
+        JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"${TOKEN_NAME}\") | .id" <<< "${RESPONSE}")
         TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
         if [[ -n "${TOKEN_ID}" ]]; then
             echo "Importing existing installation token: ${TOKEN_NAME} (${TOKEN_ID})"
