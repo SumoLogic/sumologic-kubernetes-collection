@@ -57,13 +57,6 @@ fi
 
 terraform destroy -auto-approve
 
-# Terraform only deletes the extension secret if it was successfully imported into state.
-# Delete it directly as a fallback to guarantee cleanup even when the import was skipped.
-if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && -z "${SUMOLOGIC_INSTALLATION_TOKEN:-}" ]]; then
-    kubectl delete secret "${TF_VAR_extension_secret_name}" \
-        --namespace "${NAMESPACE}" --ignore-not-found
-fi
-
 # Cleanup env variables
 export SUMOLOGIC_ACCESSKEY=
 export SUMOLOGIC_ACCESSID=
