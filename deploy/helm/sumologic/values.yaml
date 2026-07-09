@@ -16,12 +16,17 @@ sumologic:
   ### Setup
 
   ## If enabled, uses SumoLogic extension for auth/endpoint discovery instead of HTTP source URLs.
-  ## Terraform will auto-create an installation token and store it in the sumologic secret.
+  ## Terraform will auto-create an installation token and store it in the sumologic-extension secret.
   ## OTLP/HTTP sources are not created when this is enabled.
   sourcelessMode: false
 
   ## Endpoint used by collector pods to register and send data. Only used when sumologic.sourcelessMode is true.
   collectorEndpoint: ""
+
+  ## Pre-existing installation token for sourceless mode. When set, the setup job will NOT create a token
+  ## via Terraform — use this for GitOps/ArgoCD workflows where sumologic.setupEnabled=false, or to bring
+  ## your own token. Leave empty to let the setup job auto-create and manage the token.
+  installationToken: ""
 
   ## When sourcelessMode is true, setting this to true will delete the hosted collector and all HTTP/OTLP sources
   ## managed by the setup job. Defaults to false so the hosted collector and sources are preserved and can be

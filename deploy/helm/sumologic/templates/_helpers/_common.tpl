@@ -424,7 +424,7 @@ Renders nothing when the value is empty (uses the extension's built-in default).
 - name: SUMOLOGIC_INSTALLATION_TOKEN
   valueFrom:
     secretKeyRef:
-      name: sumologic
+      name: {{ include "sumologic.extension.secret.name" . }}
       key: SUMOLOGIC_INSTALLATION_TOKEN
 {{- end -}}
 

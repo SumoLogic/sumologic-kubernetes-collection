@@ -99,6 +99,12 @@ spec:
           value: "{{ .Chart.Version }}"
         - name: SUMOLOGIC_USE_EXTENSION
           value: "{{ .Values.sumologic.sourcelessMode }}"
+        - name: SUMOLOGIC_EXTENSION_SECRET_NAME
+          value: "sumologic-extension"
+{{- if .Values.sumologic.installationToken }}
+        - name: SUMOLOGIC_INSTALLATION_TOKEN
+          value: {{ .Values.sumologic.installationToken | quote }}
+{{- end }}
         - name: SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR
           value: "{{ .Values.sumologic.cleanupHostedCollector }}"
         - name: SUMOLOGIC_MONITORS_ENABLED

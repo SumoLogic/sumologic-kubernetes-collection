@@ -1,6 +1,6 @@
-{{/* Check that sourcelessMode is not enabled when setupEnabled is false */}}
-{{- if and .Values.sumologic.sourcelessMode (not .Values.sumologic.setupEnabled) -}}
-{{- fail "\nsumologic.sourcelessMode requires sumologic.setupEnabled=true.\nThe setup job creates the installation token needed for sourceless authentication." -}}
+{{/* Check that sourcelessMode is not enabled when setupEnabled is false and no installationToken is provided */}}
+{{- if and .Values.sumologic.sourcelessMode (not .Values.sumologic.setupEnabled) (not .Values.sumologic.installationToken) -}}
+{{- fail "\nsumologic.sourcelessMode requires either sumologic.setupEnabled=true (to auto-create a token via the setup job)\nor sumologic.installationToken to be set (for GitOps/ArgoCD workflows where setupEnabled=false)." -}}
 {{- end -}}
 
 {{/* Check that cleanupHostedCollector is not enabled without sourcelessMode */}}

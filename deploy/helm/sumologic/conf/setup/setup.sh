@@ -12,6 +12,8 @@ export TF_VAR_namespace_name="${NAMESPACE}"
 export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
 export TF_VAR_use_extension="${SUMOLOGIC_USE_EXTENSION:-false}"
+export TF_VAR_extension_secret_name="${SUMOLOGIC_EXTENSION_SECRET_NAME:-sumologic-extension}"
+export TF_VAR_provided_installation_token="${SUMOLOGIC_INSTALLATION_TOKEN:-}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -207,7 +209,7 @@ function import_installation_token() {
     local RESPONSE TOKEN_ID
     RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-        "${SUMOLOGIC_BASE_URL}v1/tokens")"
+        "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000")"
     local JQ_OUTPUT
     JQ_OUTPUT=$(jq -r ".data[] | select(.name == \"${TOKEN_NAME}\") | .id" <<< "${RESPONSE}")
     TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
@@ -219,12 +221,19 @@ function import_installation_token() {
     fi
 }
 
-if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" ]]; then
+# Import existing token only when extension mode is on AND Terraform manages it (no user-provided token).
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && -z "${SUMOLOGIC_INSTALLATION_TOKEN:-}" ]]; then
     import_installation_token
 fi
 
-# Kubernetes Secret
-terraform import kubernetes_secret.sumologic_collection_secret "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}"
+# Kubernetes Secrets
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" != "true" ]]; then
+    terraform import "kubernetes_secret.sumologic_collection_secret[0]" "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}" || true
+elif [[ -z "${SUMOLOGIC_INSTALLATION_TOKEN:-}" ]]; then
+    # Extension mode with Terraform-managed token: import the extension secret.
+    terraform import "kubernetes_secret.extension_secret[0]" "${NAMESPACE}/${TF_VAR_extension_secret_name}" || true
+    # When installationToken was provided via values, Helm owns the extension secret — nothing to import.
+fi
 
 # Apply planned changes
 TF_LOG_PROVIDER=DEBUG terraform apply \

@@ -36,3 +36,16 @@ variable "use_extension" {
   type        = bool
   default     = false
 }
+
+variable "extension_secret_name" {
+  description = "Name of the Kubernetes secret that stores the installation token for extension mode."
+  type        = string
+  default     = "sumologic-extension"
+}
+
+variable "provided_installation_token" {
+  description = "Pre-existing installation token from Helm values. When set, Terraform skips token creation and writes this value to the extension secret instead."
+  type        = string
+  default     = ""
+  sensitive   = true
+}

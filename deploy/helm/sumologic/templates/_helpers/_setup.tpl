@@ -11,6 +11,13 @@ Example usage:
 {{- end -}}
 
 {{/*
+Returns the name of the Kubernetes secret that holds the installation token for extension/sourceless mode.
+*/}}
+{{- define "sumologic.extension.secret.name" -}}
+{{ printf "%s" "sumologic-extension" }}
+{{- end -}}
+
+{{/*
 Convert source name to Terraform metric name:
  * converts all `-` to `_`
  * adds `_$type_source` suffix
