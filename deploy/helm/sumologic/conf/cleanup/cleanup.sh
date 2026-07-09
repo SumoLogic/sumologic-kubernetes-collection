@@ -48,16 +48,21 @@ else
         JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${TOKEN_RESPONSE}")
         TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
         if [[ -n "${TOKEN_ID}" ]]; then
-            terraform import 'sumologic_token.collection_token[0]' "${TOKEN_ID}" || true
+            terraform import 'sumologic_token.collection_token[0]' "${TOKEN_ID}" || echo "WARNING: failed to import sumologic_token.collection_token[0] (${TOKEN_ID})"
         fi
         terraform import 'kubernetes_secret.extension_secret[0]' \
-            "${NAMESPACE}/${TF_VAR_extension_secret_name}" || true
+            "${NAMESPACE}/${TF_VAR_extension_secret_name}" || echo "WARNING: failed to import kubernetes_secret.extension_secret[0] (${NAMESPACE}/${TF_VAR_extension_secret_name})"
     fi
-    # When installationToken was provided via values, Helm owns the extension secret
-    # and deletes it automatically on uninstall — nothing to import or destroy here.
 fi
 
 terraform destroy -auto-approve
+
+# Terraform only deletes the extension secret if it was successfully imported into state.
+# Delete it directly as a fallback to guarantee cleanup even when the import was skipped.
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && -z "${SUMOLOGIC_INSTALLATION_TOKEN:-}" ]]; then
+    kubectl delete secret "${TF_VAR_extension_secret_name}" \
+        --namespace "${NAMESPACE}" --ignore-not-found
+fi
 
 # Cleanup env variables
 export SUMOLOGIC_ACCESSKEY=
