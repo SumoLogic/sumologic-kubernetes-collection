@@ -48,10 +48,10 @@ else
         JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${TOKEN_RESPONSE}")
         TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
         if [[ -n "${TOKEN_ID}" ]]; then
-            terraform import 'sumologic_token.collection_token[0]' "${TOKEN_ID}" || echo "WARNING: failed to import sumologic_token.collection_token[0] (${TOKEN_ID})"
+            terraform import 'sumologic_token.collection_token[0]' "${TOKEN_ID}" || { echo "WARNING: failed to import sumologic_token.collection_token[0] (${TOKEN_ID})"; sleep 60; }
         fi
         terraform import 'kubernetes_secret.extension_secret[0]' \
-            "${NAMESPACE}/${TF_VAR_extension_secret_name}" || echo "WARNING: failed to import kubernetes_secret.extension_secret[0] (${NAMESPACE}/${TF_VAR_extension_secret_name})"
+            "${NAMESPACE}/${TF_VAR_extension_secret_name}" || { echo "WARNING: failed to import kubernetes_secret.extension_secret[0] (${NAMESPACE}/${TF_VAR_extension_secret_name})"; sleep 60; }
     fi
 fi
 
