@@ -182,10 +182,11 @@ spec:
   - metadata:
       name: file-storage
       labels:
-        sumologic.com/component: metrics-collector
+{{- $pvcLabels := dict "sumologic.com/component" "metrics-collector" }}
 {{- if .Values.metadata.persistence.pvcLabels }}
-{{ toYaml .Values.metadata.persistence.pvcLabels | indent 8 }}
+{{- $pvcLabels = merge $pvcLabels .Values.metadata.persistence.pvcLabels }}
 {{- end }}
+{{ toYaml $pvcLabels | indent 8 }}
     spec:
       accessModes: [{{ .Values.metadata.persistence.accessMode }}]
 {{- if .Values.metadata.persistence.storageClass }}
