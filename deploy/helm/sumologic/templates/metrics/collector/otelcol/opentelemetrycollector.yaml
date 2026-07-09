@@ -181,8 +181,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: file-storage
-{{- if .Values.metadata.persistence.pvcLabels }}
       labels:
+        sumologic.com/component: metrics-collector
+{{- if .Values.metadata.persistence.pvcLabels }}
 {{ toYaml .Values.metadata.persistence.pvcLabels | indent 8 }}
 {{- end }}
     spec:
