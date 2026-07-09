@@ -37,7 +37,10 @@ else
     if [[ -z "${SUMOLOGIC_INSTALLATION_TOKEN:-}" ]]; then
         TOKEN_RESPONSE="$(curl -s -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000")"
-        JQ_OUTPUT=$(jq -r ".data[] | select(.name == \"kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${TOKEN_RESPONSE}")
+        if ! jq -e '.data' <<< "${TOKEN_RESPONSE}" > /dev/null 2>&1; then
+            echo "WARNING: Token API response does not contain .data — skipping token import. Response: ${TOKEN_RESPONSE}"
+        fi
+        JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${TOKEN_RESPONSE}")
         TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
         if [[ -n "${TOKEN_ID}" ]]; then
             terraform import 'sumologic_token.collection_token[0]' "${TOKEN_ID}" || true
