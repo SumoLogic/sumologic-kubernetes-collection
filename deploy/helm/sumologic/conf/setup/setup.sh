@@ -180,12 +180,13 @@ function delete_hosted_collector() {
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             -w "\n%{http_code}" \
             "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}")"
-        local HTTP_CODE
+        local HTTP_CODE DELETE_BODY
         HTTP_CODE=$(tail -1 <<< "${DELETE_RESPONSE}")
+        DELETE_BODY=$(head -1 <<< "${DELETE_RESPONSE}")
         if [[ "${HTTP_CODE}" == "200" || "${HTTP_CODE}" == "204" ]]; then
             echo "Hosted collector deleted."
         else
-            echo "Failed to delete hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' (${COLLECTOR_ID}). HTTP ${HTTP_CODE}: $(head -1 <<< "${DELETE_RESPONSE}")"
+            echo "Failed to delete hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' (${COLLECTOR_ID}). HTTP ${HTTP_CODE}: ${DELETE_BODY}"
             return 1
         fi
     else
