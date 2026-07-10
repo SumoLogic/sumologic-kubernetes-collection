@@ -67,6 +67,8 @@ spec:
             value: "false"
           - name: SUMOLOGIC_EXTENSION_SECRET_NAME
             value: "sumologic-extension"
+          - name: SUMOLOGIC_INSTALLATION_TOKEN_PROVIDED
+            value: "false"
           
           - name: NO_PROXY
             value: kubernetes.default.svc

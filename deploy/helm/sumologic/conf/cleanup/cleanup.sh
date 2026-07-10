@@ -18,14 +18,32 @@ export TF_VAR_chart_version="${CHART_VERSION:?}"
 export TF_VAR_namespace_name="${NAMESPACE:?}"
 export TF_VAR_use_extension="${SUMOLOGIC_USE_EXTENSION:-false}"
 export TF_VAR_extension_secret_name="${SUMOLOGIC_EXTENSION_SECRET_NAME:-sumologic-extension}"
-export TF_VAR_provided_installation_token="${SUMOLOGIC_INSTALLATION_TOKEN:-}"
+export TF_VAR_provided_installation_token="${SUMOLOGIC_INSTALLATION_TOKEN_PROVIDED:-false}"
 
 cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
 
-# Normalize base URL: strip trailing "v1..." so API calls can safely prepend "v1/".
-# The endpoint value from Helm may already contain a trailing "v1/" path component.
-SUMOLOGIC_BASE_URL="${SUMOLOGIC_BASE_URL%v1*}"
+# Resolve the correct regional base URL, following any HTTP redirects.
+# Mirrors fix_sumo_base_url() in setup.sh to handle tenants on non-US deployments.
+function fix_sumo_base_url() {
+  local BASE_URL="${SUMOLOGIC_BASE_URL}"
+  if [[ "${BASE_URL}" =~ ^\s*$ ]]; then
+    BASE_URL="https://api.sumologic.com/api/"
+  fi
+  # shellcheck disable=SC2312
+  local OPTIONAL_REDIRECTION
+  OPTIONAL_REDIRECTION="$(curl -XGET -s -o /dev/null -D - \
+      -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+      "${BASE_URL}v1/collectors" \
+      | grep -Fi location)"
+  if [[ ! "${OPTIONAL_REDIRECTION}" =~ ^\s*$ ]]; then
+    BASE_URL=$(echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|kr|ch|esc|us2)?\.sumologic\.com\/api\/).*/\1/')
+  fi
+  BASE_URL="${BASE_URL%v1*}"
+  echo "${BASE_URL}"
+}
+
+SUMOLOGIC_BASE_URL="$(fix_sumo_base_url)"
 export SUMOLOGIC_BASE_URL
 
 # Fall back to init -upgrade to prevent:
@@ -37,21 +55,17 @@ if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" != "true" ]]; then
     terraform import 'sumologic_collector.collector[0]' "${SUMOLOGIC_COLLECTOR_NAME}" || true
     terraform import 'kubernetes_secret.sumologic_collection_secret[0]' "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}" || true
 else
-    # Extension mode: import token and extension secret only when Terraform owns them
-    # (i.e. installationToken was NOT provided via values — empty provided_installation_token).
-    if [[ -z "${SUMOLOGIC_INSTALLATION_TOKEN:-}" ]]; then
+    # Extension mode: import token and extension secret only when Terraform owns them (i.e., not provided by user via helm values).
+    if [[ "${SUMOLOGIC_INSTALLATION_TOKEN_PROVIDED:-false}" != "true" ]]; then
         TOKEN_RESPONSE="$(curl -s -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-            "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000")"
-        if ! jq -e '.data' <<< "${TOKEN_RESPONSE}" > /dev/null 2>&1; then
-            echo "WARNING: Token API response does not contain .data — skipping token import. Response: ${TOKEN_RESPONSE}"
-        fi
+            "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000" || echo "{}")"
         JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${TOKEN_RESPONSE}")
         TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
         if [[ -n "${TOKEN_ID}" ]]; then
-            terraform import 'sumologic_token.collection_token[0]' "${TOKEN_ID}" || { echo "WARNING: failed to import sumologic_token.collection_token[0] (${TOKEN_ID})"; sleep 60; }
+            terraform import 'sumologic_token.collection_token[0]' "${TOKEN_ID}" || true
         fi
         terraform import 'kubernetes_secret.extension_secret[0]' \
-            "${NAMESPACE}/${TF_VAR_extension_secret_name}" || { echo "WARNING: failed to import kubernetes_secret.extension_secret[0] (${NAMESPACE}/${TF_VAR_extension_secret_name})"; sleep 60; }
+            "${NAMESPACE}/${TF_VAR_extension_secret_name}" || true
     fi
 fi
 

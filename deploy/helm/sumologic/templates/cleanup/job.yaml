@@ -72,10 +72,8 @@ spec:
             value: "{{ .Values.sumologic.sourcelessMode }}"
           - name: SUMOLOGIC_EXTENSION_SECRET_NAME
             value: "sumologic-extension"
-{{- if .Values.sumologic.installationToken }}
-          - name: SUMOLOGIC_INSTALLATION_TOKEN
-            value: {{ .Values.sumologic.installationToken | quote }}
-{{- end }}
+          - name: SUMOLOGIC_INSTALLATION_TOKEN_PROVIDED
+            value: {{ if .Values.sumologic.installationToken }}"true"{{ else }}"false"{{ end }}
           {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 1000
