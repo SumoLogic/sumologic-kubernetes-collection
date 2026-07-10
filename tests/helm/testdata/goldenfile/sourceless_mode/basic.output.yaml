@@ -68,7 +68,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: SUMOLOGIC_BASE_URL
-              value: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/terraform/api/
+              value:
             - name: SUMOLOGIC_COLLECTOR_NAME
               value: kubernetes
             - name: SUMOLOGIC_SECRET_NAME
@@ -76,7 +76,7 @@ spec:
             - name: CHART_VERSION
               value: "%CURRENT_CHART_VERSION%"
             - name: SUMOLOGIC_USE_EXTENSION
-              value: "false"
+              value: "true"
             - name: SUMOLOGIC_EXTENSION_SECRET_NAME
               value: "sumologic-extension"
             - name: SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR

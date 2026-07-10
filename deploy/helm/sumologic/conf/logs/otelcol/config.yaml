@@ -4,7 +4,7 @@ exporters:
     verbosity: detailed
 {{- end }}
 
-{{- if eq .Values.sumologic.logs.sourceType "http" }}
+{{- if and (eq .Values.sumologic.logs.sourceType "http") (not .Values.sumologic.sourcelessMode) }}
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
@@ -94,7 +94,9 @@ exporters:
 {{ else }}
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
+{{- if not .Values.sumologic.sourcelessMode }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+{{- end }}
     log_format: otlp
     sending_queue:
       enabled: true
@@ -155,6 +157,17 @@ extensions:
       directory: /tmp
 {{ end }}
   pprof: {}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+{{- if .Values.metadata.persistence.enabled }}
+    collector_credentials_directory: /var/lib/storage/otc/credentials
+{{- end }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 
 processors:
 {{ if .Values.sumologic.logs.systemd.enabled }}
@@ -600,6 +613,9 @@ service:
     - file_storage
 {{ end }}
     - pprof
+{{- if .Values.sumologic.sourcelessMode }}
+    - sumologic
+{{- end }}
   pipelines:
 {{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
 {{ if .Values.sumologic.logs.container.enabled }}

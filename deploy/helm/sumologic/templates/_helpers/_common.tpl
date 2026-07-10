@@ -408,6 +408,27 @@ Example:
 {{- end -}}
 
 {{/*
+Generate env vars for SumoLogic extension mode: installation token from the extension secret.
+*/}}
+{{/*
+Emit the api_base_url line for the SumoLogic extension when collectorEndpoint is set.
+Renders nothing when the value is empty (uses the extension's built-in default).
+*/}}
+{{- define "sumologic.extension.api_base_url" -}}
+{{- if .Values.sumologic.collectorEndpoint }}
+    api_base_url: {{ .Values.sumologic.collectorEndpoint | quote }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kubernetes.extension.envs" -}}
+- name: SUMOLOGIC_INSTALLATION_TOKEN
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "sumologic.extension.secret.name" . }}
+      key: SUMOLOGIC_INSTALLATION_TOKEN
+{{- end -}}
+
+{{/*
 Generate envs for given source type:
 
 Example:

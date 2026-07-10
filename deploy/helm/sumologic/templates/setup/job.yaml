@@ -97,6 +97,16 @@ spec:
           value: "{{ template "terraform.secret.name" }}"
         - name: CHART_VERSION
           value: "{{ .Chart.Version }}"
+        - name: SUMOLOGIC_USE_EXTENSION
+          value: "{{ .Values.sumologic.sourcelessMode }}"
+        - name: SUMOLOGIC_EXTENSION_SECRET_NAME
+          value: {{ include "sumologic.extension.secret.name" . | quote }}
+{{- if .Values.sumologic.installationToken }}
+        - name: SUMOLOGIC_INSTALLATION_TOKEN
+          value: {{ .Values.sumologic.installationToken | quote }}
+{{- end }}
+        - name: SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR
+          value: "{{ .Values.sumologic.cleanupHostedCollector }}"
         - name: SUMOLOGIC_MONITORS_ENABLED
           value: "{{ .Values.sumologic.setup.monitors.enabled }}"
         - name: SUMOLOGIC_MONITORS_STATUS

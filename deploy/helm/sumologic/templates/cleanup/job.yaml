@@ -68,6 +68,12 @@ spec:
             value: "{{ .Chart.Version }}"
           - name: SUMOLOGIC_SECRET_NAME
             value: "{{ template "terraform.secret.name" }}"
+          - name: SUMOLOGIC_USE_EXTENSION
+            value: "{{ .Values.sumologic.sourcelessMode }}"
+          - name: SUMOLOGIC_EXTENSION_SECRET_NAME
+            value: {{ include "sumologic.extension.secret.name" . | quote }}
+          - name: SUMOLOGIC_INSTALLATION_TOKEN_PROVIDED
+            value: {{ if .Values.sumologic.installationToken }}"true"{{ else }}"false"{{ end }}
           {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 1000

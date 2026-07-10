@@ -19,6 +19,17 @@ extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+{{- if .Values.metadata.persistence.enabled }}
+    collector_credentials_directory: /var/lib/storage/otc/credentials
+{{- end }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 
 processors:
 {{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
@@ -63,6 +74,9 @@ service:
     - file_storage
 {{ end }}
     - pprof
+{{- if .Values.sumologic.sourcelessMode }}
+    - sumologic
+{{- end }}
   pipelines:
     metrics:
 {{ tpl (.Files.Get "conf/metrics/otelcol/pipeline.yaml") . | indent 6 }}

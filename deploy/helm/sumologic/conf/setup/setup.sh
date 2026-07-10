@@ -11,6 +11,10 @@ export TF_VAR_collector_name="${SUMOLOGIC_COLLECTOR_NAME}"
 export TF_VAR_namespace_name="${NAMESPACE}"
 export TF_VAR_secret_name="${SUMOLOGIC_SECRET_NAME}"
 export TF_VAR_chart_version="${CHART_VERSION:?}"
+export TF_VAR_use_extension="${SUMOLOGIC_USE_EXTENSION:-false}"
+export TF_VAR_extension_secret_name="${SUMOLOGIC_EXTENSION_SECRET_NAME:-sumologic-extension}"
+export TF_VAR_provided_installation_token="${SUMOLOGIC_INSTALLATION_TOKEN:+true}"
+export TF_VAR_provided_installation_token="${TF_VAR_provided_installation_token:-false}"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
@@ -160,16 +164,86 @@ else
     echo "Please refer to https://www.sumologic.com/help/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
-# Sumo Logic Collector and HTTP sources
-# Only import sources when collector exists.
-if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}"; then
-    jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
-        terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
-    done || true
+# Delete hosted collector (and all its sources) via API when cleanup is requested.
+# Terraform cannot destroy resources it cannot import, so we use the API directly.
+function delete_hosted_collector() {
+    local RESPONSE COLLECTOR_ID
+    RESPONSE="$(curl -XGET -s --retry 3 --retry-delay 5 \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        "${SUMOLOGIC_BASE_URL}v1/collectors?filter=hosted&limit=1000" || echo "{}")"
+    local JQ_OUTPUT
+    JQ_OUTPUT=$(jq -r ".collectors[]? | select(.name == \"${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${RESPONSE}")
+    COLLECTOR_ID=$(head -1 <<< "${JQ_OUTPUT}")
+    if [[ -n "${COLLECTOR_ID}" ]]; then
+        echo "Deleting hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' (${COLLECTOR_ID}) and all its sources..."
+        local DELETE_RESPONSE
+        DELETE_RESPONSE="$(curl -s -XDELETE \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            -w "\n%{http_code}" \
+            "${SUMOLOGIC_BASE_URL}v1/collectors/${COLLECTOR_ID}")"
+        local HTTP_CODE DELETE_BODY
+        HTTP_CODE=$(tail -1 <<< "${DELETE_RESPONSE}")
+        DELETE_BODY=$(head -1 <<< "${DELETE_RESPONSE}")
+        if [[ "${HTTP_CODE}" == "200" || "${HTTP_CODE}" == "204" ]]; then
+            echo "Hosted collector deleted."
+        else
+            echo "Failed to delete hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' (${COLLECTOR_ID}). HTTP ${HTTP_CODE}: ${DELETE_BODY}"
+            return 1
+        fi
+    else
+        echo "Hosted collector '${SUMOLOGIC_COLLECTOR_NAME}' not found, nothing to delete."
+    fi
+}
+
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && "${SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR:-false}" == "true" ]]; then
+    delete_hosted_collector
 fi
 
-# Kubernetes Secret
-terraform import kubernetes_secret.sumologic_collection_secret "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}"
+# Sumo Logic Collector and HTTP sources
+# In extension mode the collector is not managed by Terraform (count=0), so skip import entirely.
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" != "true" ]]; then
+    # Only import sources when collector exists.
+    if terraform import 'sumologic_collector.collector[0]' "${SUMOLOGIC_COLLECTOR_NAME}"; then
+        jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
+            terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
+        done || true
+    fi
+fi
+
+# Import existing installation token if extension mode is enabled (prevents recreation on upgrades)
+function import_installation_token() {
+    local TOKEN_NAME="kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}"
+    local RESPONSE TOKEN_ID
+    RESPONSE="$(curl -XGET -s --retry 3 --retry-delay 5 \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000" || echo "{}")"
+    local JQ_OUTPUT
+    if ! jq -e '.data' <<< "${RESPONSE}" > /dev/null 2>&1; then
+        echo "WARNING: Token API response does not contain .data — skipping token import."
+        return 0
+    fi
+    JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"${TOKEN_NAME}\") | .id" <<< "${RESPONSE}")
+    TOKEN_ID=$(head -1 <<< "${JQ_OUTPUT}")
+    if [[ -n "${TOKEN_ID}" ]]; then
+        echo "Importing existing installation token: ${TOKEN_NAME} (${TOKEN_ID})"
+        terraform import \
+            -var="use_extension=true" \
+            'sumologic_token.collection_token[0]' "${TOKEN_ID}" || echo "WARNING: failed to import sumologic_token.collection_token[0] (${TOKEN_ID})"
+    fi
+}
+
+# Import existing token only when extension mode is on AND Terraform manages it (no user-provided token).
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && "${TF_VAR_provided_installation_token}" != "true" ]]; then
+    import_installation_token
+fi
+
+# Kubernetes Secrets
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" != "true" ]]; then
+    terraform import "kubernetes_secret.sumologic_collection_secret[0]" "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}" || true
+elif [[ "${TF_VAR_provided_installation_token}" != "true" ]]; then
+    # Extension mode with Terraform-managed token: import the extension secret when token is not provided via values.
+    terraform import "kubernetes_secret.extension_secret[0]" "${NAMESPACE}/${TF_VAR_extension_secret_name}" || true
+fi
 
 # Apply planned changes
 TF_LOG_PROVIDER=DEBUG terraform apply \
