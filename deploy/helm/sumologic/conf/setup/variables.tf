@@ -44,8 +44,7 @@ variable "extension_secret_name" {
 }
 
 variable "provided_installation_token" {
-  description = "Pre-existing installation token from Helm values. When set, Terraform skips token creation."
-  type        = string
-  default     = ""
-  sensitive   = true
+  description = "Whether a pre-existing installation token was provided via Helm values. When true, Terraform skips token creation."
+  type        = bool
+  default     = false
 }

@@ -56,7 +56,7 @@ if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" != "true" ]]; then
     terraform import 'kubernetes_secret.sumologic_collection_secret[0]' "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}" || true
 else
     # Extension mode: import token and extension secret only when Terraform owns them (i.e., not provided by user via helm values).
-    if [[ "${SUMOLOGIC_INSTALLATION_TOKEN_PROVIDED:-false}" != "true" ]]; then
+    if [[ "${TF_VAR_provided_installation_token}" != "true" ]]; then
         TOKEN_RESPONSE="$(curl -s -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}v1/tokens?limit=1000" || echo "{}")"
         JQ_OUTPUT=$(jq -r ".data[]? | select(.name == \"kubernetes-collection-${SUMOLOGIC_COLLECTOR_NAME}\") | .id" <<< "${TOKEN_RESPONSE}")

@@ -6,7 +6,7 @@ resource "sumologic_collector" "collector" {
 }
 
 resource "sumologic_token" "collection_token" {
-  count       = (var.use_extension && var.provided_installation_token == "") ? 1 : 0
+  count       = (var.use_extension && !var.provided_installation_token) ? 1 : 0
   name        = format("kubernetes-collection-%s", var.collector_name)
   description = format("Installation token for Kubernetes Collection\nversion: %s", var.chart_version)
   type        = "CollectorRegistration"
@@ -32,7 +32,7 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
 # Only created when sourceless mode is on and no token was provided via Helm values.
 # When installationToken is set in values, extension-secret.yaml owns this secret instead.
 resource "kubernetes_secret" "extension_secret" {
-  count = (var.use_extension && var.provided_installation_token == "") ? 1 : 0
+  count = (var.use_extension && !var.provided_installation_token) ? 1 : 0
 
   metadata {
     name      = var.extension_secret_name

@@ -100,7 +100,7 @@ spec:
         - name: SUMOLOGIC_USE_EXTENSION
           value: "{{ .Values.sumologic.sourcelessMode }}"
         - name: SUMOLOGIC_EXTENSION_SECRET_NAME
-          value: "sumologic-extension"
+          value: {{ include "sumologic.extension.secret.name" . | quote }}
 {{- if .Values.sumologic.installationToken }}
         - name: SUMOLOGIC_INSTALLATION_TOKEN
           value: {{ .Values.sumologic.installationToken | quote }}
