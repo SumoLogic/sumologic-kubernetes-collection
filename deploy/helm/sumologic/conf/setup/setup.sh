@@ -233,14 +233,14 @@ function import_installation_token() {
 }
 
 # Import existing token only when extension mode is on AND Terraform manages it (no user-provided token).
-if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && -z "${TF_VAR_provided_installation_token:-}" ]]; then
+if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" == "true" && "${TF_VAR_provided_installation_token}" != "true" ]]; then
     import_installation_token
 fi
 
 # Kubernetes Secrets
 if [[ "${SUMOLOGIC_USE_EXTENSION:-false}" != "true" ]]; then
     terraform import "kubernetes_secret.sumologic_collection_secret[0]" "${NAMESPACE}/${SUMOLOGIC_SECRET_NAME}" || true
-elif [[ -z "${TF_VAR_provided_installation_token:-}" ]]; then
+elif [[ "${TF_VAR_provided_installation_token}" != "true" ]]; then
     # Extension mode with Terraform-managed token: import the extension secret when token is not provided via values.
     terraform import "kubernetes_secret.extension_secret[0]" "${NAMESPACE}/${TF_VAR_extension_secret_name}" || true
 fi
