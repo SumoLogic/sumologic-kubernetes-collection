@@ -1,4 +1,4 @@
-{{/* Check that sourcelessMode is not enabled when setupEnabled is false and no installationToken is provided */}}
+{{/* Check whether sourcelessMode is enabled when setupEnabled is false and no installationToken is provided */}}
 {{- if and .Values.sumologic.sourcelessMode (not .Values.sumologic.setupEnabled) (not .Values.sumologic.installationToken) -}}
 {{- fail "\nsumologic.sourcelessMode requires either sumologic.setupEnabled=true (to auto-create a token via the setup job)\nor sumologic.installationToken to be set (for GitOps/ArgoCD workflows where setupEnabled=false)." -}}
 {{- end -}}
@@ -6,6 +6,22 @@
 {{/* Check that cleanupHostedCollector is not enabled without sourcelessMode */}}
 {{- if and .Values.sumologic.cleanupHostedCollector (not .Values.sumologic.sourcelessMode) -}}
 {{- fail "\nsumologic.cleanupHostedCollector requires sumologic.sourcelessMode=true.\nHosted collector cleanup only applies when running in sourceless mode." -}}
+{{- end -}}
+
+{{/* Check that http sourceType is not used with sourcelessMode — http sources are not created in sourceless mode */}}
+{{- if .Values.sumologic.sourcelessMode -}}
+{{- if eq .Values.sumologic.logs.sourceType "http" -}}
+{{- fail "\nsumologic.logs.sourceType cannot be 'http' when sumologic.sourcelessMode is true.\nHTTP sources are not created in sourceless mode. Use 'otlp' instead." -}}
+{{- end -}}
+{{- if eq .Values.sumologic.metrics.sourceType "http" -}}
+{{- fail "\nsumologic.metrics.sourceType cannot be 'http' when sumologic.sourcelessMode is true.\nHTTP sources are not created in sourceless mode. Use 'otlp' instead." -}}
+{{- end -}}
+{{- if eq .Values.sumologic.events.sourceType "http" -}}
+{{- fail "\nsumologic.events.sourceType cannot be 'http' when sumologic.sourcelessMode is true.\nHTTP sources are not created in sourceless mode. Use 'otlp' instead." -}}
+{{- end -}}
+{{- if eq .Values.sumologic.traces.sourceType "http" -}}
+{{- fail "\nsumologic.traces.sourceType cannot be 'http' when sumologic.sourcelessMode is true.\nHTTP sources are not created in sourceless mode. Use 'otlp' instead." -}}
+{{- end -}}
 {{- end -}}
 
 {{/* Check if kubernetes version is less than 1.24 */}}
