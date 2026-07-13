@@ -29,28 +29,28 @@ spec:
           securityContext:
             runAsUser: 1000
           containers:
-          - name: pvc-cleaner
-            image: public.ecr.aws/sumologic/kubernetes-tools-kubectl:2.28.0
-            command:
-            - "bash"
-            - "/pvc-cleaner/pvc-cleaner.sh"
-            - "sumologic"
-            - "sumologic.com/component=metrics-collector"
-            imagePullPolicy: IfNotPresent
-            resources:
-              limits:
-                cpu: 2000m
-                memory: 256Mi
-              requests:
-                cpu: 100m
-                memory: 64Mi
-            volumeMounts:
             - name: pvc-cleaner
-              mountPath: /pvc-cleaner
+              image: public.ecr.aws/sumologic/kubernetes-tools-kubectl:2.28.0
+              command:
+                - "bash"
+                - "/pvc-cleaner/pvc-cleaner.sh"
+                - "sumologic"
+                - "sumologic.com/component=metrics-collector"
+              imagePullPolicy: IfNotPresent
+              resources:
+                limits:
+                  cpu: 2000m
+                  memory: 256Mi
+                requests:
+                  cpu: 100m
+                  memory: 64Mi
+              volumeMounts:
+                - name: pvc-cleaner
+                  mountPath: /pvc-cleaner
           volumes:
-          - configMap:
-              defaultMode: 420
-              name: RELEASE-NAME-sumologic-pvc-cleaner
-            name: pvc-cleaner
+            - configMap:
+                defaultMode: 420
+                name: RELEASE-NAME-sumologic-pvc-cleaner
+              name: pvc-cleaner
           restartPolicy: Never
           serviceAccountName: RELEASE-NAME-sumologic-pvc-cleaner
