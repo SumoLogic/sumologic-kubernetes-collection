@@ -2,6 +2,9 @@
 {{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.config.override }}
 {{- fail "metadata.metrics.config.override cannot be used with singleLayerPipeline.enabled. Use metadata.metrics.config.merge instead, or disable single-layer mode." }}
 {{- end }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled (or .Values.metadata.metrics.statefulset.extraEnvVars .Values.metadata.metrics.statefulset.extraVolumes .Values.metadata.metrics.statefulset.extraVolumeMounts) }}
+{{- fail "metadata.metrics.statefulset.extraEnvVars/extraVolumes/extraVolumeMounts cannot be used with singleLayerPipeline.enabled. Use sumologic.metrics.collector.otelcol.extraEnvVars/extraVolumes/extraVolumeMounts instead." }}
+{{- end }}
 {{ $baseConfig := (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | fromYaml }}
 {{ $mergeConfig := .Values.sumologic.metrics.collector.otelcol.config.merge }}
 {{ $overrideConfig := .Values.sumologic.metrics.collector.otelcol.config.override }}
@@ -130,8 +133,8 @@ spec:
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 2 -}}
 {{- end -}}
 {{- include "proxy-env-variables" . | nindent 2 -}}
-{{- if .Values.metadata.metrics.statefulset.extraEnvVars }}
-{{ toYaml .Values.metadata.metrics.statefulset.extraEnvVars | nindent 2 }}
+{{- if .Values.sumologic.metrics.collector.otelcol.extraEnvVars }}
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.extraEnvVars | nindent 2 }}
 {{- end }}
 {{- end }}
   - name: NAMESPACE
@@ -163,6 +166,18 @@ spec:
 {{- end }}
   resources:
     {{ .Values.sumologic.metrics.collector.otelcol.resources | toYaml | nindent 4 }}
+{{- if .Values.sumologic.metrics.collector.otelcol.livenessProbe }}
+  livenessProbe:
+    {{ .Values.sumologic.metrics.collector.otelcol.livenessProbe | toYaml | nindent 4 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.readinessProbe }}
+  readinessProbe:
+    {{ .Values.sumologic.metrics.collector.otelcol.readinessProbe | toYaml | nindent 4 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.startupProbe }}
+  startupProbe:
+    {{ .Values.sumologic.metrics.collector.otelcol.startupProbe | toYaml | nindent 4 }}
+{{- end }}
   volumes:
   - name: tmp
     emptyDir: {}
@@ -170,18 +185,23 @@ spec:
   - name: file-storage
     emptyDir: {}
 {{- end }}
-{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.statefulset.extraVolumes }}
-{{ toYaml .Values.metadata.metrics.statefulset.extraVolumes | nindent 2 }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.sumologic.metrics.collector.otelcol.extraVolumes }}
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.extraVolumes | nindent 2 }}
 {{- end }}
   volumeMounts:
   - name: tmp
     mountPath: /tmp
   - name: file-storage
     mountPath: /var/lib/storage/otc
-{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.statefulset.extraVolumeMounts }}
-{{ toYaml .Values.metadata.metrics.statefulset.extraVolumeMounts | nindent 2 }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.sumologic.metrics.collector.otelcol.extraVolumeMounts }}
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.extraVolumeMounts | nindent 2 }}
 {{- end }}
 {{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.persistence.enabled }}
+{{- if .Values.sumologic.persistentVolumeClaimRetentionPolicyEnabled }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: {{ .Values.sumologic.metrics.collector.otelcol.persistentVolumeClaimRetentionPolicywhenScaled }}
+{{- end }}
   volumeClaimTemplates:
   - metadata:
       name: file-storage

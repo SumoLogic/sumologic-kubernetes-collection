@@ -628,6 +628,24 @@ sumologic:
             memory: 768Mi
             cpu: 100m
 
+        ## Liveness probe configuration for the metrics collector.
+        ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
+        ## Example:
+        ##   livenessProbe:
+        ##     initialDelaySeconds: 15
+        ##     periodSeconds: 10
+        ##     timeoutSeconds: 5
+        ##     failureThreshold: 3
+        livenessProbe: {}
+
+        ## Readiness probe configuration for the metrics collector.
+        ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
+        readinessProbe: {}
+
+        ## Startup probe configuration for the metrics collector.
+        ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
+        startupProbe: {}
+
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspecprometheuscr
         ## Example
@@ -649,6 +667,34 @@ sumologic:
         tolerations: []
 
         affinity: {}
+
+        ## Persistent Volume Claim retention policy (onScale) for the metrics collector StatefulSet.
+        ## Only applies when singleLayerPipeline is enabled and persistence is used.
+        persistentVolumeClaimRetentionPolicywhenScaled: Retain
+
+        ## Extra environment variables for the metrics collector pods.
+        ## In single-layer pipeline mode, use these instead of metadata.metrics.statefulset.extraEnvVars.
+        # extraEnvVars:
+        #   - name: VALUE_FROM_SECRET
+        #     valueFrom:
+        #       secretKeyRef:
+        #         name: secret_name
+        #         key: secret_key
+
+        ## Extra volumes for the metrics collector pods.
+        ## In single-layer pipeline mode, use these instead of metadata.metrics.statefulset.extraVolumes.
+        # extraVolumes:
+        #   - name: es-certs
+        #     secret:
+        #       defaultMode: 420
+        #       secretName: es-certs
+
+        ## Extra volume mounts for the metrics collector pods.
+        ## In single-layer pipeline mode, use these instead of metadata.metrics.statefulset.extraVolumeMounts.
+        # extraVolumeMounts:
+        #   - name: es-certs
+        #     mountPath: /certs
+        #     readOnly: true
 
         ## Configuration for kubelet metrics
         kubelet:
