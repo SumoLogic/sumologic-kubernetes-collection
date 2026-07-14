@@ -47,7 +47,7 @@ spec:
             seLinuxOptions: {}
             seccompProfile:
               type: RuntimeDefault
-          image: public.ecr.aws/sumologic/metrics-server:v0.8.1
+          image: public.ecr.aws/sumologic/metrics-server:v0.9.0
           imagePullPolicy: IfNotPresent
           args:
             - --secure-port=10250
