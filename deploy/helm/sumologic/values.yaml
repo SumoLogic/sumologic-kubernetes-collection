@@ -2559,13 +2559,13 @@ opentelemetry-operator:
         tag: 2.29.0
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
-        tag: 1.15.0
+        tag: 1.16.0
       python:
         repository: public.ecr.aws/sumologic/autoinstrumentation-python
         tag: 0.48b0
       nodejs:
         repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
-        tag: 0.77.0
+        tag: 0.78.0
     env:
       {}
       # ENABLE_WEBHOOKS: "true"
