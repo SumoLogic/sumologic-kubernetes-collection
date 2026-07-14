@@ -1,0 +1,1 @@
+fix: PVC cleaner now works correctly with single-layer metrics pipeline. Note: on upgrade, existing PVCs will not have the new selector label until the metrics collector StatefulSet is recreated.

@@ -142,8 +142,8 @@ if check_pvc_amount "${PVC_AMOUNT}"; then
   echo "Found ${PVC_AMOUNT} PVC instances in the '${NAMESPACE}' namespace with '${PVC_SELECTOR}' selector."
   echo
 else
-  echo "Did not found any PVC instances in the '${NAMESPACE}' namespace with '${PVC_SELECTOR}' selector. Exiting."
-  exit 1
+  echo "Did not find any PVC instances in the '${NAMESPACE}' namespace with '${PVC_SELECTOR}' selector. Nothing to clean."
+  exit 0
 fi
 
 # shellcheck disable=SC2310

@@ -1,0 +1,12 @@
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+
+pvcCleaner:
+  metrics:
+    enabled: true
+  job:
+    schedule: "*/15 * * * *"
