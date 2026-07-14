@@ -638,13 +638,8 @@ sumologic:
         ##     failureThreshold: 3
         livenessProbe: {}
 
-        ## Readiness probe configuration for the metrics collector.
-        ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
-        readinessProbe: {}
-
-        ## Startup probe configuration for the metrics collector.
-        ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
-        startupProbe: {}
+        ## NOTE: readinessProbe and startupProbe will be supported in a follow-up release
+        ## once customers have the updated CRD deployed (which ships with this release).
 
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspecprometheuscr
