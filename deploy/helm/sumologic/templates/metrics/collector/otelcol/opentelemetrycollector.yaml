@@ -176,6 +176,16 @@ spec:
     timeoutSeconds: 10
     failureThreshold: 3
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.readinessProbe }}
+  readinessProbe:
+    {{ .Values.sumologic.metrics.collector.otelcol.readinessProbe | toYaml | nindent 4 }}
+{{- else if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+{{- end }}
   volumes:
   - name: tmp
     emptyDir: {}
