@@ -14,6 +14,7 @@ func Test_Helm_Single_Layer_Pipeline(t *testing.T) {
 
 	installChecks := []featureCheck{
 		CheckOtelcolMetricsCollectorInstall,
+		CheckMetricsCollectorPodSpec,
 	}
 
 	featInstall := GetInstallFeature(installChecks)
