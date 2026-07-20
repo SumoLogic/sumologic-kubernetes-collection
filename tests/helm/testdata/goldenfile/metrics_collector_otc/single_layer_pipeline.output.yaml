@@ -77,6 +77,16 @@ spec:
     requests:
       cpu: 100m
       memory: 768Mi
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
   volumes:
     - name: tmp
       emptyDir: {}
@@ -85,6 +95,9 @@ spec:
       mountPath: /tmp
     - name: file-storage
       mountPath: /var/lib/storage/otc
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: file-storage

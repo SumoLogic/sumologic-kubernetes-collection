@@ -29,6 +29,12 @@ if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
     done
 fi
 
+# Apply CRDs if command provided as argument
+if [[ -n "${1:-}" ]]; then
+    echo "Applying CRDs with command: $1"
+    eval "$1"
+fi
+
 function fix_sumo_base_url() {
   local BASE_URL
   BASE_URL=${SUMOLOGIC_BASE_URL}
