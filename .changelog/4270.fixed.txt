@@ -1,1 +1,0 @@
-fix: omit spec.replicas from OpenTelemetryCollector CR when autoscaling is enabled to prevent helm upgrade failures caused by field ownership conflicts with the scale subresource
