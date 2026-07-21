@@ -7,6 +7,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.3.0]
+
+### Released 2026-07-21
+
+### Added
+
+- feat: add source reduction with opt-in cleanup of unused sources [#4238]
+- feat: Use sumologic extension for authentication and move out of Hosted collector and sources [#4260]
+- feat: add configurable probes, PVC retention policy, and extraEnvVars/extraVolumes/extraVolumeMounts for metrics collector in single-layer
+  pipeline mode [#4264]
+
+### Changed
+
+- chore(deps): bump Helm release opentelemetry-operator from 0.115.1 to 0.117.0 [#4249]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.1 [#4252]
+- chore(deps): bump Helm release opentelemetry-operator from 0.117.0 to 0.118.0 [#4253]
+- chore(deps): bump sumologic-otel-collector version to v0.155.0-sumo-0 [#4255]
+- chore(deps): bump autoinstrumentation [#4256]
+- chore(deps): bump Helm release opentelemetry-operator from 0.118.0 to 0.119.0 [#4261]
+- chore(deps): bump public.ecr.aws/sumologic/metrics-server Docker tag to v0.9.0 [#4265]
+- chore(deps): bump Helm release opentelemetry-operator from 0.119.0 to 0.120.0 [#4266]
+
+### Fixed
+
+- fix: PVC cleaner now works correctly with single-layer metrics pipeline. Note: on upgrade, existing PVCs will not have the new selector
+  label until the metrics collector StatefulSet is recreated. [#4262]
+- fix: omit spec.replicas from OpenTelemetryCollector CR when autoscaling is enabled to prevent helm upgrade failures caused by field
+  ownership conflicts with the scale subresource [#4270]
+
+[#4238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4238
+[#4260]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4260
+[#4264]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4264
+[#4249]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4249
+[#4252]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4252
+[#4253]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4253
+[#4255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4255
+[#4256]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4256
+[#4261]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4261
+[#4265]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4265
+[#4266]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4266
+[#4262]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4262
+[#4270]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4270
+
+[v5.3.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.3.0
+
 ## [v5.2.0]
 
 ### Released 2026-06-23
