@@ -40,7 +40,9 @@ metadata:
 spec:
   image: {{ template "sumologic.metrics.collector.image" . }}
   mode: statefulset
+{{- if not (eq (include "metrics.collector.autoscaling.enabled" .) "true") }}
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
+{{- end }}
   serviceAccount: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
   managementState: {{ template "sumologic.metrics.collector.otelcol.managementState" . }}
   upgradeStrategy: {{ template "sumologic.metrics.collector.otelcol.upgradeStrategy" . }}
