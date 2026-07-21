@@ -618,6 +618,9 @@ sumologic:
         ## Option to define priorityClassName to assign a priority class to pods.
         priorityClassName:
 
+        ## Initial replica count for the metrics collector. Only used when autoscaling is disabled.
+        ## When autoscaling is enabled (default), the autoscaler manages replicas and this value is
+        ## omitted from the OpenTelemetryCollector CR to avoid field ownership conflicts on helm upgrade.
         replicaCount: 1
 
         resources:
