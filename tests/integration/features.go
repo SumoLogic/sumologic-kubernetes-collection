@@ -1565,6 +1565,47 @@ remote_write:
 		Feature()
 }
 
+func GetInstrumentationMetricsFeature() features.Feature {
+	return features.New("instrumentation_metrics").
+		Setup(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			release := strings_internal.ReleaseNameFromT(t)
+			namespace := ctxopts.Namespace(ctx)
+			otelagentURL := fmt.Sprintf(
+				"http://%s-sumologic-otelagent.%s.svc.cluster.local:4318/v1/metrics",
+				release, namespace,
+			)
+
+			// Create a Job that sends OTLP metrics to the otelagent service
+			jobBody := fmt.Sprintf(`{"resourceMetrics":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"instrumentation-metrics-test"}}]},"scopeMetrics":[{"scope":{"name":"integration-test"},"metrics":[{"name":"instrumentation_test_counter","description":"Integration test counter","unit":"requests","sum":{"dataPoints":[{"startTimeUnixNano":"1700000000000000000","timeUnixNano":"1700000060000000000","asInt":"42","attributes":[{"key":"test.source","value":{"stringValue":"integration"}}]}],"isMonotonic":true,"aggregationTemporality":2}}]}]}]}`)
+
+			kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
+			terrak8s.RunKubectl(t, &kubectlOpts, "run", "metrics-sender", //nolint:staticcheck
+				"--image=curlimages/curl",
+				"--restart=Never",
+				"--command", "--",
+				"curl", "-s", "-X", "POST", otelagentURL,
+				"-H", "Content-Type: application/json",
+				"-d", jobBody,
+			)
+			return ctx
+		}).
+		Assess("instrumentation metrics are present in sumologic-mock",
+			stepfuncs.WaitUntilExpectedMetricsPresentWithFilters(
+				[]string{"instrumentation_test_counter"},
+				sumologicmock.MetadataFilters{"service.name": "instrumentation-metrics-test"},
+				false,
+				3*time.Minute,
+				tickDuration,
+			),
+		).
+		Teardown(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			kubectlOpts := *ctxopts.KubectlOptions(ctx, envConf)
+			terrak8s.RunKubectl(t, &kubectlOpts, "delete", "pod", "metrics-sender", "--ignore-not-found") //nolint:staticcheck
+			return ctx
+		}).
+		Feature()
+}
+
 func CheckTailingSidecarOperatorInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
 	return builder.
 		Assess("tailing sidecar deployment is ready",

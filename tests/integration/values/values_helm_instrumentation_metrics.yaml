@@ -1,0 +1,15 @@
+sumologic:
+  logs:
+    enabled: false
+  events:
+    enabled: false
+  metrics:
+    enabled: false
+  traces:
+    enabled: true
+
+otelcolInstrumentation:
+  enabled: true
+
+tracesGateway:
+  enabled: false
