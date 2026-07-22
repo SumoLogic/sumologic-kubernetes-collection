@@ -18,7 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   queries as it is a collection-internal field subject to change. Use application-specific query parameters instead. [#4274]
 
 [#4274]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4274
-
 [v5.3.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.3.1
 
 ## [v5.3.0]
