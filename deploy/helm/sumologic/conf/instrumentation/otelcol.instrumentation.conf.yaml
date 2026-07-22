@@ -30,11 +30,13 @@ exporters:
     compression: gzip
     ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
     max_request_body_size: 1_048_576 # 1MB
-    ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
+{{- if eq (.Values.sumologic.metrics.sourceType | default "otlp") "otlp" }}
+    log_format: otlp
+    metric_format: otlp
+{{- else }}
     log_format: text
-    ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
-    ## carbon2 and graphite are going to be supported soon.
     metric_format: prometheus
+{{- end }}
     ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
     timeout: 5s
     retry_on_failure:

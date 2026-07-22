@@ -35,9 +35,9 @@ data:
         client: k8s_%CURRENT_CHART_VERSION%
         compression: gzip
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
-        log_format: text
+        log_format: otlp
         max_request_body_size: 1048576
-        metric_format: prometheus
+        metric_format: otlp
         retry_on_failure:
           enabled: true
           initial_interval: 5s
