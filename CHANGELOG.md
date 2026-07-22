@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.3.1]
+
+### Released 2026-07-22
+
+### Breaking Changes
+
+- fix: instrumentation metrics exporter now uses OTLP format when sourceType is otlp (default). If you send metrics from auto-instrumented
+  pods and your queries use `_source=metrics`, they must be updated to `_source=metrics-otlp`. We recommend not relying on `_source` in
+  queries as it is a collection-internal field subject to change. Use application-specific query parameters instead. [#4274]
+
+[#4274]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4274
+[v5.3.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.3.1
+
 ## [v5.3.0]
 
 ### Released 2026-07-21
