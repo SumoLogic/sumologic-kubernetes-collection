@@ -26,9 +26,3 @@ sumologic:
     enabled: false
   events:
     enabled: false
-metadata:
-  metrics:
-    enableSumoPrometheusRemotewriteReceiver: true
-    config:
-      additionalEndpoints:
-        - /prometheus.metrics

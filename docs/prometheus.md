@@ -247,17 +247,6 @@ are correctly added to your Kube Prometheus Stack configuration:
   - they are always in sync with the current configuration and endpoints starts with.
   - url always starts with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`
 
-  Alternatively, you can list endpoints in `metadata.metrics.config.additionalEndpoints`:
-
-  ```yaml
-  metadata:
-    metrics:
-      config:
-        additionalEndpoints:
-          - /prometheus.metrics
-          # - ...
-  ```
-
 - Env Variables configuration:
 
   - `kube-prometheus-stack.prometheus.prometheusSpec.initContainers` to `prometheus.prometheusSpec.initContainers`
