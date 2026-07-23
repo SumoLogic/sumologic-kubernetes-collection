@@ -69,7 +69,7 @@
 
 {{/* Check if removed additionalEndpoints config is still set */}}
 {{- if .Values.metadata.metrics.config.additionalEndpoints -}}
-{{- fail "\nmetadata.metrics.config.additionalEndpoints has been removed in v6.\nCustom remote write endpoints were only supported by the Telegraf compatibility receiver, which has been removed.\nPlease remove additionalEndpoints from your values file." }}
+{{- fail "\nmetadata.metrics.config.additionalEndpoints has been removed now.\nCustom remote write endpoints were only supported by the Telegraf compatibility receiver, which has been removed.\nPlease remove additionalEndpoints from your values file." }}
 {{- end -}}
 
 {{/* Check if metrics are enabled but OTel collector is explicitly disabled (v5: Prometheus Operator removed) */}}
