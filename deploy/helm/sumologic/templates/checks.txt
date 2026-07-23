@@ -37,7 +37,7 @@
 {{/* Check if removed enableSumoPrometheusRemotewriteReceiver flag is still set */}}
 {{- if hasKey .Values.metadata.metrics "enableSumoPrometheusRemotewriteReceiver" -}}
 {{- if .Values.metadata.metrics.enableSumoPrometheusRemotewriteReceiver -}}
-{{- fail "\nmetadata.metrics.enableSumoPrometheusRemotewriteReceiver has been removed in v6.\nThe Telegraf compatibility receiver is no longer available. The metrics pipeline now always uses the upstream prometheusremotewrite receiver (PRW v2 only).\nPlease remove this flag from your values file." }}
+{{- fail "\nmetadata.metrics.enableSumoPrometheusRemotewriteReceiver has been removed now.\nThe Telegraf compatibility receiver is no longer available. The metrics pipeline now always uses the upstream prometheusremotewrite receiver (PRW v2 only).\nPlease remove this flag from your values file and migrate your prometheus remote write to send v2 remote writes. For more info on v2 migration, refer https://www.sumologic.com/help/docs/send-data/kubernetes/v5/important-changes/#prometheus-remote-write" }}
 {{- end -}}
 {{- end -}}
 
