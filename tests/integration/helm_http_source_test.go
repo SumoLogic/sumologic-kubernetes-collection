@@ -16,7 +16,7 @@ func Test_Helm_Http_Source(t *testing.T) {
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(15),
+		CheckSumologicSecret(11),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,

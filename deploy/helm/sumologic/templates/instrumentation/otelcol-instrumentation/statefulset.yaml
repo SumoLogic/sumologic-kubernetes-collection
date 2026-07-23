@@ -134,7 +134,12 @@ spec:
 {{- end }}
         env:
 {{- $ctx := .Values -}}
-{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" "metrics" "Name" "default" ) | nindent 8 -}}
+{{- if .Values.sumologic.sourcelessMode -}}
+{{- include "kubernetes.extension.envs" . | nindent 8 -}}
+{{- else -}}
+{{- $metricsSourceName := ternary "default-otlp" "default" (eq ($ctx.sumologic.metrics.sourceType | default "otlp") "otlp") -}}
+{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" "metrics" "Name" $metricsSourceName ) | nindent 8 -}}
+{{- end -}}
 {{- include "pod-ip" . | nindent 8 -}}
 {{- if $otelcolInstrumentation.statefulset.extraEnvVars }}
 {{- toYaml $otelcolInstrumentation.statefulset.extraEnvVars | nindent 8 }}

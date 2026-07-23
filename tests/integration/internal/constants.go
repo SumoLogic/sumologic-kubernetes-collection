@@ -240,7 +240,7 @@ var (
 		"otelcol_exporter_requests_sent",
 		"otelcol_exporter_in_flight_requests",
 		"otelcol_exporter_sent_metric_points",
-		"otelcol_processor_accepted_metric_points",
+		"otelcol_processor_memory_limiter_accepted_metric_points",
 		// "otelcol_processor_batch_batch_send_size_count", // Deprecated
 		// "otelcol_processor_batch_batch_send_size_sum", // Deprecated
 		// "otelcol_processor_batch_timeout_trigger_send", // Deprecated
@@ -255,7 +255,7 @@ var (
 		"otelcol_exporter_sent_log_records",
 		"otelcol_receiver_accepted_log_records",
 		"otelcol_receiver_failed_log_records",
-		"otelcol_processor_accepted_log_records",
+		"otelcol_processor_memory_limiter_accepted_log_records",
 		"otelcol_receiver_refused_log_records",
 		"otelcol_processor_groupbyattrs_num_grouped_logs",
 		"otelcol_processor_groupbyattrs_log_groups_count",

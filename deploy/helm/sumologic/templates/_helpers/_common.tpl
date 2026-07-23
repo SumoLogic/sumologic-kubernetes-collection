@@ -397,17 +397,35 @@ Example:
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
 {{- range $name, $source := (index .Context.sumologic.collector.sources $type) -}}
-{{/* 
-This is a slight hack to prevent otlp sources from being added as env variables if they're not enabled.
-As a result, the user can upgrade without enabling setup until they actually enable otlp sources.
-*/}}
 {{- $signalTypeConfig := index $ctx.sumologic $type -}}
-{{- $signalSourceType := $signalTypeConfig.sourceType | default "http" -}}
+{{- $signalSourceType := $signalTypeConfig.sourceType | default "otlp" -}}
 {{- $sourceContentType := (($source).properties).content_type | default "" -}}
-{{- if or (ne $sourceContentType "Otlp") (eq $signalSourceType "otlp") -}}
+{{- $isOtlpSource := eq $sourceContentType "Otlp" -}}
+{{- if or (and $isOtlpSource (eq $signalSourceType "otlp")) (and (not $isOtlpSource) (eq $signalSourceType "http")) -}}
 {{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) -}}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Generate env vars for SumoLogic extension mode: installation token from the extension secret.
+*/}}
+{{/*
+Emit the api_base_url line for the SumoLogic extension when collectorEndpoint is set.
+Renders nothing when the value is empty (uses the extension's built-in default).
+*/}}
+{{- define "sumologic.extension.api_base_url" -}}
+{{- if .Values.sumologic.collectorEndpoint }}
+    api_base_url: {{ .Values.sumologic.collectorEndpoint | quote }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kubernetes.extension.envs" -}}
+- name: SUMOLOGIC_INSTALLATION_TOKEN
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "sumologic.extension.secret.name" . }}
+      key: SUMOLOGIC_INSTALLATION_TOKEN
 {{- end -}}
 
 {{/*

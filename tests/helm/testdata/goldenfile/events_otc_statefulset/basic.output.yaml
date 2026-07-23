@@ -72,7 +72,7 @@ spec:
       priorityClassName: "prio"
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.154.0-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.155.0-sumo-0"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
@@ -122,11 +122,6 @@ spec:
               name: es-certs
               readOnly: true
           env:
-            - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-events
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE
               valueFrom:
                 secretKeyRef:

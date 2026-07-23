@@ -5,16 +5,13 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: true
-metadata:
-  metrics:
-    statefulset:
-      extraEnvVars:
-        - name: MY_CUSTOM_KEY
-          value: secret123
-      extraVolumes:
-        - name: custom-certs
-          secret:
-            secretName: my-tls-secret
-      extraVolumeMounts:
-        - name: custom-certs
-          mountPath: /etc/ssl/custom
+        extraEnvVars:
+          - name: MY_CUSTOM_KEY
+            value: secret123
+        extraVolumes:
+          - name: custom-certs
+            secret:
+              secretName: my-tls-secret
+        extraVolumeMounts:
+          - name: custom-certs
+            mountPath: /etc/ssl/custom

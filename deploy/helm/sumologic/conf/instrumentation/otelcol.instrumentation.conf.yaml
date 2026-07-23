@@ -18,17 +18,25 @@ exporters:
 
   sumologic/metrics:
     client: '{{ include "sumologic.sumo_client" . }}'
+{{- if not .Values.sumologic.sourcelessMode }}
+{{- if eq (.Values.sumologic.metrics.sourceType | default "otlp") "otlp" }}
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
+{{- else }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+{{- end }}
+{{- end }}
     ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
     ## Empty string means no compression
     compression: gzip
     ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
     max_request_body_size: 1_048_576 # 1MB
-    ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
+{{- if eq (.Values.sumologic.metrics.sourceType | default "otlp") "otlp" }}
+    log_format: otlp
+    metric_format: otlp
+{{- else }}
     log_format: text
-    ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
-    ## carbon2 and graphite are going to be supported soon.
     metric_format: prometheus
+{{- end }}
     ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
     timeout: 5s
     retry_on_failure:
@@ -148,39 +156,6 @@ processors:
     override: false
     timeout: 10s
 
-  ## Tags spans with K8S metadata, basing on the context IP
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-  k8s_tagger:
-    ## When true, only IP is assigned and passed (so it could be tagged on another collector)
-    passthrough: false
-    ## When true, additional fields, such as serviceName are being also extracted
-    owner_lookup_enabled: true
-    ## Extracted fields and assigned names
-    extract:
-      metadata:
-        ## extract the following well-known metadata fields
-        - containerId
-        - containerName
-        - daemonSetName
-        - deploymentName
-        - hostName
-        - namespace
-        - nodeName
-        - podId
-        - podName
-        - replicaSetName
-        - serviceName
-        - statefulSetName
-      annotations:
-        - tag_name: "k8s.pod.annotation.%s"
-          key: "*"
-      namespace_labels:
-        - tag_name: "k8s.namespace.label.%s"
-          key: "*"
-      labels:
-        - tag_name: "k8s.pod.label.%s"
-          key: "*"
-{{ else }}
   k8sattributes:
     wait_for_metadata: {{ .Values.otelcolInstrumentation.waitForMetadata }}
     wait_for_metadata_timeout: {{ .Values.otelcolInstrumentation.waitForMetadataTimeout | quote }}
@@ -230,7 +205,6 @@ processors:
           name: ip
       - sources:
         - from: connection
-{{ end }}
 
   ## The memory_limiter processor is used to prevent out of memory situations on the collector.
   memory_limiter:
@@ -260,18 +234,22 @@ extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 service:
-  extensions: [health_check, pprof]
+  extensions: [health_check, pprof{{- if .Values.sumologic.sourcelessMode }}, sumologic{{- end }}]
   pipelines:
     traces:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]
       processors:
         - memory_limiter
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-        - k8s_tagger
-{{ else }}
         - k8sattributes
-{{ end }}
         - source
         - resource
 {{- if eq .Values.sumologic.useExporterBatching false }}
@@ -290,11 +268,7 @@ service:
       receivers: [otlp, otlp/deprecated]
       processors:
         - memory_limiter
-{{ if .Values.otelcolInstrumentation.useSumoK8sProcessor }}
-        - k8s_tagger
-{{ else }}
         - k8sattributes
-{{ end }}
         - source
         - resource
 {{- if eq .Values.sumologic.useExporterBatching false }}

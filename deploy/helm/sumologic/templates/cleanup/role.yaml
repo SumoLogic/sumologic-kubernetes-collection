@@ -15,5 +15,7 @@ rules:
     resources:
       - secrets
     verbs: ["get", "list", "describe", "delete"]
-    resourceNames: ["{{ template "terraform.secret.name" }}"]
+    resourceNames:
+      - "{{ template "terraform.secret.name" }}"
+      - "{{ include "sumologic.extension.secret.name" . }}"
 {{- end }}

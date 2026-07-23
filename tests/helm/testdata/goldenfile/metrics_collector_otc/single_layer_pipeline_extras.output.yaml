@@ -13,9 +13,8 @@ metadata:
     heritage: "Helm"
     sumologic.com/scrape: "true"
 spec:
-  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.154.0-sumo-0"
+  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.155.0-sumo-0"
   mode: statefulset
-  replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
   managementState: managed
   upgradeStrategy: automatic
@@ -43,51 +42,11 @@ spec:
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
   env:
-    - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-apiserver
-    - name: SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-control_plane_metrics_source
-    - name: SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kube-controller-manager
-    - name: SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics
     - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
       valueFrom:
         secretKeyRef:
           name: sumologic
           key: endpoint-metrics-otlp
-    - name: SUMO_ENDPOINT_KUBELET_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kubelet
-    - name: SUMO_ENDPOINT_NODE_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-node-exporter
-    - name: SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kube-scheduler
-    - name: SUMO_ENDPOINT_STATE_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kube-state
 
     - name: NO_PROXY
       value: kubernetes.default.svc
@@ -120,6 +79,16 @@ spec:
     requests:
       cpu: 100m
       memory: 768Mi
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
   volumes:
     - name: tmp
       emptyDir: {}
@@ -135,9 +104,14 @@ spec:
 
     - mountPath: /etc/ssl/custom
       name: custom-certs
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
   volumeClaimTemplates:
     - metadata:
         name: file-storage
+        labels:
+          sumologic.com/component: metrics-collector
       spec:
         accessModes: [ReadWriteOnce]
         resources:

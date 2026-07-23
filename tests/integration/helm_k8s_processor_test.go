@@ -17,7 +17,7 @@ func Test_Helm_K8s_Processor(t *testing.T) {
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(15),
+		CheckSumologicSecret(4),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,

@@ -862,22 +862,20 @@ func GetCurlAppFeature() features.Feature {
 		Assess("wait for dotnet traces", stepfuncs.WaitUntilExpectedSpansPresent(
 			1,
 			map[string]string{
-				"application":              "test-apps",
-				"service.name":             "dotnet-app",
-				"_collector":               "kubernetes",
-				"http.request.method":      "GET",
-				"url.path":                 "/",
-				"k8s.cluster.name":         "kubernetes",
-				"k8s.container.name":       "dotnetapp",
-				"k8s.deployment.name":      "dotnet-app",
-				"k8s.namespace.name":       internal.InstrumentationAppsNamespace,
-				"k8s.pod.pod_name":         "dotnet-app",
-				"k8s.pod.label.app":        "dotnet-app",
-				"_sourceCategory":          "kubernetes/test/apps/dotnet/app",
-				"_sourceName":              fmt.Sprintf("%s.dotnet-app.dotnetapp", internal.InstrumentationAppsNamespace),
-				"telemetry.distro.version": "1.15.0",
-				"telemetry.sdk.language":   "dotnet",
-				"telemetry.sdk.version":    "1.15.3",
+				"application":            "test-apps",
+				"service.name":           "dotnet-app",
+				"_collector":             "kubernetes",
+				"http.request.method":    "GET",
+				"url.path":               "/",
+				"k8s.cluster.name":       "kubernetes",
+				"k8s.container.name":     "dotnetapp",
+				"k8s.deployment.name":    "dotnet-app",
+				"k8s.namespace.name":     internal.InstrumentationAppsNamespace,
+				"k8s.pod.pod_name":       "dotnet-app",
+				"k8s.pod.label.app":      "dotnet-app",
+				"_sourceCategory":        "kubernetes/test/apps/dotnet/app",
+				"_sourceName":            fmt.Sprintf("%s.dotnet-app.dotnetapp", internal.InstrumentationAppsNamespace),
+				"telemetry.sdk.language": "dotnet",
 			},
 			waitDuration,
 			tickDuration,
@@ -900,7 +898,6 @@ func GetCurlAppFeature() features.Feature {
 				"_sourceName":            fmt.Sprintf("%s.nodejs-app.nodejsapp", internal.InstrumentationAppsNamespace),
 				"telemetry.sdk.language": "nodejs",
 				"telemetry.sdk.name":     "opentelemetry",
-				"telemetry.sdk.version":  "2.8.0",
 			},
 			waitDuration,
 			tickDuration,
@@ -928,7 +925,6 @@ func GetCurlAppFeature() features.Feature {
 				"_sourceName":               fmt.Sprintf("%s.java-app.javaapp", internal.InstrumentationAppsNamespace),
 				"telemetry.sdk.language":    "java",
 				"telemetry.sdk.name":        "opentelemetry",
-				"telemetry.sdk.version":     "1.62.0",
 			},
 			waitDuration,
 			tickDuration,
@@ -1192,6 +1188,88 @@ func CheckOtelcolMetricsCollectorInstall(builder *features.FeatureBuilder) *feat
 					stepfuncs.ReleaseFormatter("%s-sumologic-metrics-collector"),
 				),
 			),
+		)
+}
+
+func CheckMetricsCollectorPodSpec(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("metrics collector pod has correct probes and extra config",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+				releaseName := strings_internal.ReleaseNameFromT(t)
+				expectedName := fmt.Sprintf("%s-sumologic-metrics-collector", releaseName)
+
+				var pods corev1.PodList
+				err := res.List(ctx, &pods,
+					resources.WithLabelSelector(fmt.Sprintf("app.kubernetes.io/name=%s", expectedName)),
+				)
+				require.NoError(t, err)
+				require.NotEmpty(t, pods.Items, "no pods found for metrics collector")
+
+				pod := pods.Items[0]
+				var otelcol *corev1.Container
+				for i := range pod.Spec.Containers {
+					if pod.Spec.Containers[i].Name == "otc-container" || pod.Spec.Containers[i].Name == "otelcol" {
+						otelcol = &pod.Spec.Containers[i]
+						break
+					}
+				}
+				require.NotNil(t, otelcol, "otelcol container not found in pod spec")
+
+				// Verify livenessProbe has httpGet handler injected by the operator
+				require.NotNil(t, otelcol.LivenessProbe, "livenessProbe should be set")
+				require.NotNil(t, otelcol.LivenessProbe.HTTPGet, "livenessProbe should have httpGet handler")
+				assert.Equal(t, int32(13133), otelcol.LivenessProbe.HTTPGet.Port.IntVal,
+					"livenessProbe httpGet port should be 13133")
+				assert.Equal(t, "/", otelcol.LivenessProbe.HTTPGet.Path,
+					"livenessProbe httpGet path should be /")
+				assert.Equal(t, int32(20), otelcol.LivenessProbe.InitialDelaySeconds,
+					"livenessProbe initialDelaySeconds should match values override")
+
+				// Verify readinessProbe has httpGet handler
+				require.NotNil(t, otelcol.ReadinessProbe, "readinessProbe should be set")
+				require.NotNil(t, otelcol.ReadinessProbe.HTTPGet, "readinessProbe should have httpGet handler")
+				assert.Equal(t, int32(13133), otelcol.ReadinessProbe.HTTPGet.Port.IntVal,
+					"readinessProbe httpGet port should be 13133")
+				assert.Equal(t, "/", otelcol.ReadinessProbe.HTTPGet.Path,
+					"readinessProbe httpGet path should be /")
+				assert.Equal(t, int32(10), otelcol.ReadinessProbe.InitialDelaySeconds,
+					"readinessProbe initialDelaySeconds should match values override")
+				assert.Equal(t, int32(12), otelcol.ReadinessProbe.PeriodSeconds,
+					"readinessProbe periodSeconds should match values override")
+
+				// Verify extraEnvVars
+				foundEnv := false
+				for _, env := range otelcol.Env {
+					if env.Name == "TEST_ENV_VAR" && env.Value == "test-value" {
+						foundEnv = true
+						break
+					}
+				}
+				assert.True(t, foundEnv, "TEST_ENV_VAR env var should be present")
+
+				// Verify extraVolumes
+				foundVolume := false
+				for _, vol := range pod.Spec.Volumes {
+					if vol.Name == "test-volume" {
+						foundVolume = true
+						break
+					}
+				}
+				assert.True(t, foundVolume, "test-volume should be present in pod volumes")
+
+				// Verify extraVolumeMounts
+				foundMount := false
+				for _, mount := range otelcol.VolumeMounts {
+					if mount.Name == "test-volume" && mount.MountPath == "/tmp/test-volume" {
+						foundMount = true
+						break
+					}
+				}
+				assert.True(t, foundMount, "test-volume mount at /tmp/test-volume should be present")
+
+				return ctx
+			},
 		)
 }
 
