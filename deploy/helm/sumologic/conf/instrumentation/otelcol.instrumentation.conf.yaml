@@ -237,7 +237,7 @@ extensions:
 {{- if .Values.sumologic.sourcelessMode }}
   sumologic:
     installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
-    collector_name: ${MY_POD_NAME}
+    collector_name: ${MY_POD_NAME}-{{ .Values.sumologic.clusterName }}
     collector_fields:
       cluster: {{ .Values.sumologic.clusterName | quote }}
     ephemeral: true
