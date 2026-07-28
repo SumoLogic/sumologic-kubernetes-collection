@@ -525,6 +525,11 @@ Example Usage:
     fieldRef:
       apiVersion: v1
       fieldPath: status.podIP
+- name: MY_POD_NAME
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: metadata.name
 {{- end -}}
 
 {{/*
