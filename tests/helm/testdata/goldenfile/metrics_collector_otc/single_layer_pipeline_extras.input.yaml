@@ -5,6 +5,8 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: true
+        autoscaling:
+          minReplicas: 1
         extraEnvVars:
           - name: MY_CUSTOM_KEY
             value: secret123
