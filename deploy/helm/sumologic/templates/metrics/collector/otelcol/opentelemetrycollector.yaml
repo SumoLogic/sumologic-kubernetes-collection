@@ -107,7 +107,7 @@ spec:
   autoscaler:
     maxReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.maxReplicas }}
 {{- if eq (include "metrics.collector.singleLayerPipeline.enabled" .) "true" }}
-    minReplicas: 3
+    minReplicas: {{ max 3 (int .Values.sumologic.metrics.collector.otelcol.autoscaling.minReplicas) }}
 {{- else }}
     minReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.minReplicas }}
 {{- end }}
