@@ -5,3 +5,5 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: true
+        autoscaling:
+          minReplicas: 5
