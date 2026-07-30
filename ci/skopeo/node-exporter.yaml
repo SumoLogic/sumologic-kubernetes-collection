@@ -1,3 +1,6 @@
 quay.io:
+  images:
+    prometheus/node-exporter:
+      - latest
   images-by-semver:
     prometheus/node-exporter: ">= 0.18.0"

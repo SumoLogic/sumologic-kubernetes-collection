@@ -1,3 +1,6 @@
 docker.io:
+  images:
+    telegraf:
+      - latest
   images-by-semver:
     telegraf: ">= 0.13.1"

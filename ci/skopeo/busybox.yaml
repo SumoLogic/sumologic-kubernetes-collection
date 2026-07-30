@@ -1,3 +1,6 @@
 docker.io:
+  images:
+    busybox:
+      - latest
   images-by-semver:
     busybox: ">= 1.36.0"
