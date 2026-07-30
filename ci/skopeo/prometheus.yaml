@@ -1,3 +1,6 @@
 quay.io:
+  images:
+    prometheus/prometheus:
+      - latest
   images-by-semver:
     prometheus/prometheus: ">= 2.8.0"

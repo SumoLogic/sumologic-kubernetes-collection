@@ -1,3 +1,6 @@
 quay.io:
+  images:
+    thanos/thanos:
+      - latest
   images-by-semver:
     thanos/thanos: ">= 0.11.0"
