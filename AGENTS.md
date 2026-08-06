@@ -4,7 +4,7 @@
 
 - Build: `make`
 - Test (template): `make test`
-- Test (integration): `make test-integration` (requires Kind cluster)
+- Test (integration): `make test-integration` (uses kind by default; can reuse an existing cluster via `USE_KUBECONFIG`/`KUBECONFIG`)
 - Lint: `make lint`
 - Format: `make format`
 - Regenerate golden files: `make regenerate-goldenfiles`
