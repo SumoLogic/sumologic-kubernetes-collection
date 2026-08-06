@@ -2,34 +2,34 @@
 
 ## Commands
 - Build: `make`
-- Test: `<!-- TODO: what is the test command? -->`
+- Test (template): `make test`
+- Test (integration): `make test-integration` (requires Kind cluster)
+- Lint: `make lint`
+- Format: `make format`
+- Regenerate golden files: `make regenerate-goldenfiles`
 
 ## Tooling
 - Build system: Make
+- Helm chart linting: `helm lint` with dummy accessId/accessKey values
+- Formatting: prettier (yaml, markdown)
+- Go linting: golangci-lint
 
 ## Boundaries
 - Never: commit secrets or credentials
-- <!-- TODO: are there paths/files agents should never modify? -->
 
 ## Testing
-- <!-- TODO: what testing framework is used? Any special setup? -->
+- Framework: Go `testing` package with golden file comparison (`tests/helm/`)
+- Integration tests: Go tests against Kind clusters (`tests/integration/`)
+- After changing helm templates, run `make regenerate-goldenfiles` or template tests will fail
 
 ## Git workflow
 - Branch naming: Jira ticket prefix (e.g., SUMO-XXXXX/description)
-- <!-- TODO: any specific PR/review conventions? -->
+- Commit prefixes: `fix:` for bug fixes, `chore:` for maintenance, `feat:` for features
+- Always ask the user whether a changelog fragment file needs to be added
 
 ## Gotchas / context
-- <!-- TODO: what non-obvious things would trip up an agent? -->
+- After modifying helm templates, golden files must be regenerated: `make regenerate-goldenfiles`
+- Run `prettier -w "**/*.yaml" "**/*.yml"` or `make format` after editing yaml/md files to pass lint
+- Helm dependency update is needed before running tests: `make helm-dependency-update`
 
 <!-- See README for project overview — not duplicated here. -->
-
----
-<!-- ONBOARDING: Remove this section once all TODOs above are resolved. -->
-## Developer onboarding (temporary)
-
-This AGENTS.md was auto-scaffolded and has unresolved TODO prompts above.
-When you start a session in this repo, please help complete them:
-
-1. Run `/aidp:agents-md-generator` — it will detect the TODOs and interview you.
-2. Or just search for `<!-- TODO:` and answer the questions inline.
-3. Once all TODOs are resolved, delete this section.
