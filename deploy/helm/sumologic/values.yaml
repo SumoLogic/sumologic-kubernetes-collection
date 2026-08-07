@@ -371,6 +371,11 @@ sumologic:
         ## Add custom labels to otelcol event statefulset PVC
         pvcLabels: {}
         # storageClass:
+      ## fsync: adds write latency; monitor pod resources and consider increasing limits.
+      ## recreate: queued data in the corrupt file will be lost.
+      fileStorage:
+        fsync: false
+        recreate: false
 
     sourceType: otlp
 
@@ -391,6 +396,11 @@ sumologic:
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
+          ## fsync: adds write latency; monitor pod resources and consider increasing limits.
+          ## recreate: queued data in the corrupt file will be lost.
+          fileStorage:
+            fsync: false
+            recreate: false
         region: ""
         pollInterval: 1m
         ## A map of log group and stream prefixes
@@ -617,6 +627,9 @@ sumologic:
 
         ## Option to define priorityClassName to assign a priority class to pods.
         priorityClassName:
+        ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+        ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+        # terminationGracePeriodSeconds:
 
         ## Initial replica count for the metrics collector. Only used when autoscaling is disabled.
         ## When autoscaling is enabled (default), the autoscaler manages replicas and this value is
@@ -1578,6 +1591,11 @@ tracesSampler:
     ## where the storage is kept
     persistentVolume:
       path: /var/lib/storage/tracessampler
+    ## fsync: adds write latency; monitor pod resources and consider increasing limits.
+    ## recreate: queued data in the corrupt file will be lost.
+    fileStorage:
+      fsync: false
+      recreate: false
 
 metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
@@ -1616,6 +1634,17 @@ metadata:
     size: 10Gi
     ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
     pvcLabels: {}
+    ## file_storage extension settings for bbolt database resilience.
+    ## fsync: when true, forces OS to flush each write to disk before returning.
+    ##   Prevents corruption on ungraceful pod termination (e.g., SIGKILL from HPA scale-down).
+    ##   NOTE: enabling fsync adds write latency to the sending queue, which may increase
+    ##   end-to-end pipeline latency under high throughput. Monitor pod CPU/memory and
+    ##   consider increasing resource limits if enabling this option.
+    ## recreate: when true, automatically recreates a corrupt database file on startup
+    ##   instead of crashing. Queued data in the corrupt file will be lost.
+    fileStorage:
+      fsync: false
+      recreate: false
 
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.
@@ -1680,6 +1709,9 @@ metadata:
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
+      ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+      ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+      # terminationGracePeriodSeconds:
 
       ## Add custom labels only to metrics sts pods
       podLabels: {}
@@ -1793,6 +1825,9 @@ metadata:
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
+      ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+      ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+      # terminationGracePeriodSeconds:
 
       ## Add custom labels only to logs sts pods
       podLabels: {}
@@ -2017,6 +2052,9 @@ otelevents:
         cpu: 200m
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName:
+    ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+    ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+    # terminationGracePeriodSeconds:
 
     ## Add custom labels only to events sts pods
     podLabels: {}
