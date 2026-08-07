@@ -33,9 +33,7 @@ spec:
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator-sa
     nodeSelector:
       kubernetes.io/os: linux
-    resources:
-      
-      {}
+    resources: {}
   nodeSelector:
     kubernetes.io/os: linux
   autoscaler:
@@ -44,36 +42,34 @@ spec:
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
   env:
-  - name: METADATA_METRICS_SVC
-    valueFrom:
-      configMapKeyRef:
-        name: sumologic-configmap
-        key: metadataMetrics
-  - name: NAMESPACE
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.namespace
-  - name: MY_POD_IP
-    valueFrom:
-      fieldRef:
-        apiVersion: v1
-        fieldPath: status.podIP
-  - name: MY_POD_NAME
-    valueFrom:
-      fieldRef:
-        apiVersion: v1
-        fieldPath: metadata.name
+    - name: METADATA_METRICS_SVC
+      valueFrom:
+        configMapKeyRef:
+          name: sumologic-configmap
+          key: metadataMetrics
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: MY_POD_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
+    - name: MY_POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
   podAnnotations:
     ## The operator adds this annotation by default, but we use our own ServiceMonitor
     prometheus.io/scrape: "false"
   podSecurityContext:
-    
     fsGroup: 999
   ports:
-  - name: pprof
-    port: 1777
+    - name: pprof
+      port: 1777
   resources:
-    
     limits:
       cpu: 1000m
       memory: 2Gi
@@ -81,15 +77,15 @@ spec:
       cpu: 100m
       memory: 768Mi
   volumes:
-  - name: tmp
-    emptyDir: {}
-  - name: file-storage
-    emptyDir: {}
+    - name: tmp
+      emptyDir: {}
+    - name: file-storage
+      emptyDir: {}
   volumeMounts:
-  - name: tmp
-    mountPath: /tmp
-  - name: file-storage
-    mountPath: /var/lib/storage/otc
+    - name: tmp
+      mountPath: /tmp
+    - name: file-storage
+      mountPath: /var/lib/storage/otc
   config:
     exporters:
       otlphttp:
@@ -123,176 +119,176 @@ spec:
       filter/drop_stale_datapoints:
         metrics:
           datapoint:
-          - flags == FLAG_NO_RECORDED_VALUE
+            - flags == FLAG_NO_RECORDED_VALUE
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
-        - context: resource
-          statements:
-          - delete_key(attributes, "http.scheme")
-          - delete_key(attributes, "net.host.name")
-          - delete_key(attributes, "net.host.port")
-          - delete_key(attributes, "service.instance.id")
-          - delete_matching_keys(attributes, "k8s.*")
+          - context: resource
+            statements:
+              - delete_key(attributes, "http.scheme")
+              - delete_key(attributes, "net.host.name")
+              - delete_key(attributes, "net.host.port")
+              - delete_key(attributes, "service.instance.id")
+              - delete_matching_keys(attributes, "k8s.*")
       transform/extract_sum_count_from_histograms:
         error_mode: ignore
         metric_statements:
-        - context: metric
-          statements:
-          - extract_sum_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM
-            or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
-          - extract_count_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM
-            or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+          - context: metric
+            statements:
+              - extract_sum_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type ==
+                METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+              - extract_count_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type ==
+                METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
     receivers:
       prometheus:
         config:
           global:
             scrape_interval: 30s
           scrape_configs:
-          - job_name: pod-annotations
-            kubernetes_sd_configs:
-            - role: pod
-            relabel_configs:
-            - action: keep
-              regex: true
-              source_labels:
-              - __meta_kubernetes_pod_annotation_prometheus_io_scrape
-            - action: replace
-              regex: (.+)
-              source_labels:
-              - __meta_kubernetes_pod_annotation_prometheus_io_path
-              target_label: __metrics_path__
-            - action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              source_labels:
-              - __address__
-              - __meta_kubernetes_pod_annotation_prometheus_io_port
-              target_label: __address__
-            - action: replace
-              regex: (.*)
-              replacement: $1
-              separator: ;
-              source_labels:
-              - __metrics_path__
-              target_label: endpoint
-            - action: replace
-              source_labels:
-              - __meta_kubernetes_namespace
-              target_label: namespace
-            - action: labelmap
-              regex: __meta_kubernetes_pod_label_(.+)
-            - action: replace
-              regex: (.*)
-              replacement: $1
-              separator: ;
-              source_labels:
-              - __meta_kubernetes_pod_name
-              target_label: pod
-          - authorization:
-              credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-            honor_labels: true
-            job_name: kubelet
-            kubernetes_sd_configs:
-            - role: node
-            metric_relabel_configs:
-            - action: keep
-              regex: kubelet_running_pods
-              source_labels:
-              - __name__
-            - action: labeldrop
-              regex: id
-            relabel_configs:
-            - source_labels:
-              - __meta_kubernetes_node_name
-              target_label: node
-            - replacement: https-metrics
-              target_label: endpoint
-            - action: replace
-              source_labels:
-              - __metrics_path__
-              target_label: metrics_path
-            - action: replace
-              source_labels:
-              - __address__
-              target_label: instance
-            scheme: https
-            tls_config:
-              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-              insecure_skip_verify: true
-          - authorization:
-              credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-            honor_labels: true
-            job_name: cadvisor
-            kubernetes_sd_configs:
-            - role: node
-            metric_relabel_configs:
-            - action: replace
-              regex: .*
-              replacement: kubelet
-              source_labels:
-              - __name__
-              target_label: job
-            - action: keep
-              regex: container_cpu_usage_total
-              source_labels:
-              - __name__
-            - action: drop
-              regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
-              source_labels:
-              - __name__
-              - container
-            - action: labelmap
-              regex: container_name
-              replacement: container
-            - action: drop
-              regex: POD
-              source_labels:
-              - container
-            - action: labeldrop
-              regex: (id|name)
-            metrics_path: /metrics/cadvisor
-            relabel_configs:
-            - replacement: https-metrics
-              target_label: endpoint
-            - action: replace
-              source_labels:
-              - __metrics_path__
-              target_label: metrics_path
-            - action: replace
-              source_labels:
-              - __address__
-              target_label: instance
-            scheme: https
-            tls_config:
-              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-              insecure_skip_verify: true
+            - job_name: pod-annotations
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - action: keep
+                  regex: true
+                  source_labels:
+                    - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+                - action: replace
+                  regex: (.+)
+                  source_labels:
+                    - __meta_kubernetes_pod_annotation_prometheus_io_path
+                  target_label: __metrics_path__
+                - action: replace
+                  regex: ([^:]+)(?::\d+)?;(\d+)
+                  replacement: $1:$2
+                  source_labels:
+                    - __address__
+                    - __meta_kubernetes_pod_annotation_prometheus_io_port
+                  target_label: __address__
+                - action: replace
+                  regex: (.*)
+                  replacement: $1
+                  separator: ;
+                  source_labels:
+                    - __metrics_path__
+                  target_label: endpoint
+                - action: replace
+                  source_labels:
+                    - __meta_kubernetes_namespace
+                  target_label: namespace
+                - action: labelmap
+                  regex: __meta_kubernetes_pod_label_(.+)
+                - action: replace
+                  regex: (.*)
+                  replacement: $1
+                  separator: ;
+                  source_labels:
+                    - __meta_kubernetes_pod_name
+                  target_label: pod
+            - authorization:
+                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              honor_labels: true
+              job_name: kubelet
+              kubernetes_sd_configs:
+                - role: node
+              metric_relabel_configs:
+                - action: keep
+                  regex: kubelet_running_pods
+                  source_labels:
+                    - __name__
+                - action: labeldrop
+                  regex: id
+              relabel_configs:
+                - source_labels:
+                    - __meta_kubernetes_node_name
+                  target_label: node
+                - replacement: https-metrics
+                  target_label: endpoint
+                - action: replace
+                  source_labels:
+                    - __metrics_path__
+                  target_label: metrics_path
+                - action: replace
+                  source_labels:
+                    - __address__
+                  target_label: instance
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
+            - authorization:
+                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              honor_labels: true
+              job_name: cadvisor
+              kubernetes_sd_configs:
+                - role: node
+              metric_relabel_configs:
+                - action: replace
+                  regex: .*
+                  replacement: kubelet
+                  source_labels:
+                    - __name__
+                  target_label: job
+                - action: keep
+                  regex: container_cpu_usage_total
+                  source_labels:
+                    - __name__
+                - action: drop
+                  regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
+                  source_labels:
+                    - __name__
+                    - container
+                - action: labelmap
+                  regex: container_name
+                  replacement: container
+                - action: drop
+                  regex: POD
+                  source_labels:
+                    - container
+                - action: labeldrop
+                  regex: (id|name)
+              metrics_path: /metrics/cadvisor
+              relabel_configs:
+                - replacement: https-metrics
+                  target_label: endpoint
+                - action: replace
+                  source_labels:
+                    - __metrics_path__
+                  target_label: metrics_path
+                - action: replace
+                  source_labels:
+                    - __address__
+                  target_label: instance
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
     service:
       extensions:
-      - health_check
-      - pprof
-      - file_storage
+        - health_check
+        - pprof
+        - file_storage
       pipelines:
         metrics:
           exporters:
-          - otlphttp
+            - otlphttp
           processors:
-          - filter/drop_stale_datapoints
-          - transform/extract_sum_count_from_histograms
-          - transform/drop_unnecessary_attributes
+            - filter/drop_stale_datapoints
+            - transform/extract_sum_count_from_histograms
+            - transform/drop_unnecessary_attributes
           receivers:
-          - prometheus
+            - prometheus
       telemetry:
         logs:
           level: info
         metrics:
           level: normal
           readers:
-          - pull:
-              exporter:
-                prometheus:
-                  host: ${env:MY_POD_IP}
-                  port: 8888
-                  without_scope_info: true
-                  without_type_suffix: true
-                  without_units: true
+            - pull:
+                exporter:
+                  prometheus:
+                    host: ${env:MY_POD_IP}
+                    port: 8888
+                    without_scope_info: true
+                    without_type_suffix: true
+                    without_units: true

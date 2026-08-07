@@ -629,7 +629,7 @@ sumologic:
         priorityClassName:
         ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
         ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
-        # terminationGracePeriodSeconds: 120
+        # terminationGracePeriodSeconds:
 
         ## Initial replica count for the metrics collector. Only used when autoscaling is disabled.
         ## When autoscaling is enabled (default), the autoscaler manages replicas and this value is
@@ -1711,7 +1711,7 @@ metadata:
       priorityClassName:
       ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
       ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
-      # terminationGracePeriodSeconds: 120
+      # terminationGracePeriodSeconds:
 
       ## Add custom labels only to metrics sts pods
       podLabels: {}
@@ -1827,7 +1827,7 @@ metadata:
       priorityClassName:
       ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
       ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
-      # terminationGracePeriodSeconds: 120
+      # terminationGracePeriodSeconds:
 
       ## Add custom labels only to logs sts pods
       podLabels: {}
@@ -2054,7 +2054,7 @@ otelevents:
     priorityClassName:
     ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
     ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
-    # terminationGracePeriodSeconds: 120
+    # terminationGracePeriodSeconds:
 
     ## Add custom labels only to events sts pods
     podLabels: {}
