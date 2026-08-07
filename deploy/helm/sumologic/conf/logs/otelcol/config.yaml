@@ -152,6 +152,8 @@ extensions:
   file_storage:
     directory: /var/lib/storage/otc
     timeout: 10s
+    fsync: {{ .Values.metadata.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.metadata.persistence.fileStorage.recreate }}
     compaction:
       on_rebound: true
       directory: /tmp

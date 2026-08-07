@@ -28,6 +28,8 @@ data:
           directory: /var/lib/storage/otc
           on_rebound: true
         directory: /var/lib/storage/otc
+        fsync: false
+        recreate: false
         timeout: 10s
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
@@ -116,7 +118,7 @@ data:
           type: router
         - combine_field: body
           combine_with: |2+
-
+    
           id: merge-multiline-logs-0
           is_first_entry: body matches "@@@Log beginning"
           max_unmatched_batch_size: 1
@@ -125,7 +127,7 @@ data:
           type: recombine
         - combine_field: body
           combine_with: |2+
-
+    
           id: merge-multiline-logs-1
           is_first_entry: body matches "---Log beginning"
           max_unmatched_batch_size: 1
@@ -134,7 +136,7 @@ data:
           type: recombine
         - combine_field: body
           combine_with: |2+
-
+    
           id: merge-multiline-logs-2
           is_first_entry: 'body matches ": : : Log beginning"'
           max_unmatched_batch_size: 1
@@ -143,7 +145,7 @@ data:
           type: recombine
         - combine_field: body
           combine_with: |2+
-
+    
           id: merge-multiline-logs
           is_first_entry: body matches "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
           max_unmatched_batch_size: 1

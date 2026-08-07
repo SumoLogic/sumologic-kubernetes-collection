@@ -1,0 +1,7 @@
+sumologic:
+  useExporterBatching: true
+metadata:
+  persistence:
+    fileStorage:
+      fsync: true
+      recreate: true

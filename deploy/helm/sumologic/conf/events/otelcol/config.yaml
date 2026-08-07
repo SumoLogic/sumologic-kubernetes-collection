@@ -53,6 +53,8 @@ extensions:
   file_storage:
     directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}
     timeout: 10s
+    fsync: {{ .Values.sumologic.events.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.sumologic.events.persistence.fileStorage.recreate }}
 {{- end }}
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}

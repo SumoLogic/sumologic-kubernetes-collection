@@ -40,29 +40,19 @@ spec:
     kubernetes.io/os: linux
   autoscaler:
     maxReplicas: 10
-    minReplicas: 1
+    minReplicas: 3
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
-    behavior:
-
-      scaleDown:
-        policies:
-        - periodSeconds: 60
-          type: Percent
-          value: 100
-        stabilizationWindowSeconds: 60
-      scaleUp:
-        policies:
-        - periodSeconds: 60
-          type: Percent
-          value: 100
-        stabilizationWindowSeconds: 60
   env:
-  - name: METADATA_METRICS_SVC
+  - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
     valueFrom:
-      configMapKeyRef:
-        name: sumologic-configmap
-        key: metadataMetrics
+      secretKeyRef:
+        name: sumologic
+        key: endpoint-metrics-otlp
+  
+  
+  - name: NO_PROXY
+    value: kubernetes.default.svc
   - name: NAMESPACE
     valueFrom:
       fieldRef:
@@ -80,12 +70,15 @@ spec:
   podAnnotations:
     ## The operator adds this annotation by default, but we use our own ServiceMonitor
     prometheus.io/scrape: "false"
+  terminationGracePeriodSeconds: 120
   podSecurityContext:
     
     fsGroup: 999
   ports:
   - name: pprof
     port: 1777
+  - name: metrics-rw
+    port: 9888
   resources:
     
     limits:
@@ -94,52 +87,191 @@ spec:
     requests:
       cpu: 100m
       memory: 768Mi
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
   volumes:
   - name: tmp
-    emptyDir: {}
-  - name: file-storage
     emptyDir: {}
   volumeMounts:
   - name: tmp
     mountPath: /tmp
   - name: file-storage
     mountPath: /var/lib/storage/otc
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  volumeClaimTemplates:
+  - metadata:
+      name: file-storage
+      labels:
+        sumologic.com/component: metrics-collector
+    spec:
+      accessModes: [ReadWriteOnce]
+      resources:
+        requests:
+          storage: 10Gi
   config:
+    connectors:
+      forward: {}
     exporters:
-      debug:
-        verbosity: detailed
-      otlphttp:
-        disable_keep_alives: true
-        endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+      sumologic/default:
+        client: k8s_%CURRENT_CHART_VERSION%
+        decompose_otlp_histograms: true
+        decompose_otlp_summaries: true
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: otlp
         sending_queue:
           batch:
             flush_timeout: 1s
-            max_size: 2000
-            min_size: 1000
+            max_size: 2048
+            min_size: 1024
+          enabled: true
           num_consumers: 10
-          queue_size: 10000000
+          queue_size: 10240000
           storage: file_storage
+        timeout: 30s
     extensions:
       file_storage:
         compaction:
           directory: /tmp
           on_rebound: true
         directory: /var/lib/storage/otc
-        fsync: false
-        recreate: false
+        fsync: true
+        recreate: true
         timeout: 10s
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
     processors:
       batch:
-        send_batch_max_size: 2000
-        send_batch_size: 1000
+        send_batch_max_size: 2048
+        send_batch_size: 1024
         timeout: 1s
       filter/drop_stale_datapoints:
         metrics:
           datapoint:
           - flags == FLAG_NO_RECORDED_VALUE
+      filter/drop_unnecessary_metrics:
+        error_mode: ignore
+        metrics:
+          metric:
+          - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
+          - (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type
+            == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY
+            or IsMatch(name, ".*_bucket"))
+          - IsMatch(name, "^otelcol[._](k8s[._]pod[._]association|otelsvc_k8s_(pod_added|pod_updated|pod_table_size|pod_deleted|ip_lookup_miss))$")
+          - IsMatch(name, "^otelcol[._].*k8s.*")
+      groupbyattrs:
+        keys:
+        - container
+        - namespace
+        - pod
+        - service
+      groupbyattrs/group_by_name:
+        keys:
+        - __name__
+        - job
+      k8sattributes:
+        auth_type: serviceAccount
+        extract:
+          labels:
+          - from: pod
+            key_regex: (.*)
+            tag_name: pod_labels_$$1
+          metadata:
+          - k8s.pod.name
+          - k8s.deployment.name
+          - k8s.daemonset.name
+          - k8s.replicaset.name
+          - k8s.statefulset.name
+          - k8s.namespace.name
+          - k8s.node.name
+          - service.name
+          - service.namespace
+        passthrough: false
+        pod_association:
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.name
+          - from: resource_attribute
+            name: k8s.namespace.name
+        wait_for_metadata: true
+        wait_for_metadata_timeout: 10s
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 90
+        spike_limit_percentage: 20
+      metricstransform:
+        transforms:
+        - action: update
+          include: ^prometheus_remote_write_(.*)$$
+          match_type: regexp
+          new_name: $$1
+      resource:
+        attributes:
+        - action: upsert
+          from_attribute: namespace
+          key: k8s.namespace.name
+        - action: delete
+          key: namespace
+        - action: upsert
+          from_attribute: pod
+          key: k8s.pod.name
+        - action: delete
+          key: pod
+        - action: upsert
+          from_attribute: container
+          key: k8s.container.name
+        - action: delete
+          key: container
+        - action: upsert
+          from_attribute: node
+          key: k8s.node.name
+        - action: delete
+          key: node
+        - action: upsert
+          from_attribute: service
+          key: prometheus_service
+        - action: delete
+          key: service
+        - action: upsert
+          from_attribute: service.name
+          key: job
+        - action: delete
+          key: service.name
+        - action: upsert
+          key: _origin
+          value: kubernetes
+        - action: upsert
+          key: cluster
+          value: kubernetes
+      resource/delete_source_metadata:
+        attributes:
+        - action: delete
+          key: _sourceCategory
+        - action: delete
+          key: _sourceHost
+        - action: delete
+          key: _sourceName
+      resource/remove_k8s_pod_pod_name:
+        attributes:
+        - action: delete
+          key: k8s.pod.pod_name
+      source:
+        collector: kubernetes
+        exclude:
+          k8s.namespace.name: ""
+      sumologic:
+        add_cloud_namespace: false
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
@@ -159,6 +291,18 @@ spec:
             or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
           - extract_count_metric(true) where (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM
             or type == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY)
+      transform/remove_name:
+        error_mode: ignore
+        metric_statements:
+        - context: resource
+          statements:
+          - delete_key(attributes, "__name__")
+      transform/set_name:
+        error_mode: ignore
+        metric_statements:
+        - context: datapoint
+          statements:
+          - set(attributes["__name__"], metric.name) where IsMatch(metric.name, "^cloudprovider_.*")
     receivers:
       prometheus:
         config:
@@ -283,6 +427,10 @@ spec:
             tls_config:
               ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
               insecure_skip_verify: true
+      prometheusremotewrite:
+        endpoint: ${env:MY_POD_IP}:9888
+        read_timeout: 1m
+        write_timeout: 1m
     service:
       extensions:
       - health_check
@@ -291,8 +439,27 @@ spec:
       pipelines:
         metrics:
           exporters:
-          - debug
-          - otlphttp
+          - sumologic/default
+          processors:
+          - memory_limiter
+          - metricstransform
+          - groupbyattrs
+          - resource
+          - k8sattributes
+          - source
+          - sumologic
+          - resource/remove_k8s_pod_pod_name
+          - resource/delete_source_metadata
+          - transform/set_name
+          - groupbyattrs/group_by_name
+          - transform/remove_name
+          - filter/drop_unnecessary_metrics
+          receivers:
+          - forward
+          - prometheusremotewrite
+        metrics/collector:
+          exporters:
+          - forward
           processors:
           - filter/drop_stale_datapoints
           - transform/extract_sum_count_from_histograms
