@@ -31,6 +31,8 @@ data:
     extensions:
       file_storage:
         directory: /var/lib/storage/events
+        fsync: false
+        recreate: false
         timeout: 10s
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
