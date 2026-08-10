@@ -41,6 +41,12 @@ Perform the following steps in order to release new verions of helm chart.
 
 1. Create [new release][releases]. Copy generated changelog to release notes.
 
+## Patch releases (vx.y.z)
+
+- For patch releases on an already released minor version `vx.y`, re-use the existing `release-vx.y`
+branch and use the above same steps. Merge your changes in existing release branch and create a tag `vx.y.z` from the existing release branch instead of creating a new release branch.
+- For example, to do a minor patch release of `v4.21.2`, re-use the release branch `release-v4.21` and create the tag `v4.21.2` from it.
+
 [deploy_title]: /docs/README.md#deployment-guide-for-unreleased-version
 [changelog]: /CHANGELOG.md#unreleased
 [chart]: /deploy/helm/sumologic/Chart.yaml
