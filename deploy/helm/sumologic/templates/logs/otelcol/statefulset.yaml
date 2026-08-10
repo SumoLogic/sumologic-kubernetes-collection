@@ -71,6 +71,9 @@ spec:
       topologySpreadConstraints:
 {{ toYaml .Values.metadata.logs.statefulset.topologySpreadConstraints | indent 6 }}
 {{- end }}
+{{- if .Values.metadata.logs.statefulset.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.metadata.logs.statefulset.terminationGracePeriodSeconds }}
+{{- end }}
       volumes:
       - name: config-volume
         configMap:
