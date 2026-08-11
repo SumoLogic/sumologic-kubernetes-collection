@@ -33,6 +33,8 @@ exporters:
 {{- if eq (.Values.sumologic.metrics.sourceType | default "otlp") "otlp" }}
     log_format: otlp
     metric_format: otlp
+    decompose_otlp_histograms: true
+    decompose_otlp_summaries: true
 {{- else }}
     log_format: text
     metric_format: prometheus

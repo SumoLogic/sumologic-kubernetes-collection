@@ -51,6 +51,9 @@ const (
 	InstrumentationPythonDep = "instrumentation/python-deployment.yaml"
 	InstrumentationPythonSvc = "instrumentation/python-service.yaml"
 
+	InstrumentationPythonMetricsDep = "instrumentation/python-metrics-deployment.yaml"
+	InstrumentationPythonMetricsSvc = "instrumentation/python-metrics-service.yaml"
+
 	InstrumentationAppsNamespace = "test-apps"
 
 	MultilineLogsNamespace = "multiline-logs-generator"

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-metrics-app
+  labels:
+    app: python-metrics-app
+spec:
+  selector:
+    matchLabels:
+      app: python-metrics-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: python-metrics-app
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
+    spec:
+      containers:
+        - name: pythonapp
+          image: ghcr.io/open-telemetry/opentelemetry-operator/e2e-test-app-python:main
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
