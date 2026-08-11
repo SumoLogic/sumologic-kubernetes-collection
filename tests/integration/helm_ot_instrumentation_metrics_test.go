@@ -22,9 +22,10 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/sumologicmock"
 	strings_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/sumologicmock"
 )
 
 // Test_Helm_OT_Instrumentation_Metrics validates that auto-instrumented Python apps
@@ -50,7 +51,7 @@ func Test_Helm_OT_Instrumentation_Metrics(t *testing.T) {
 
 	featOperatorReady := features.New("opentelemetry-operator").
 		Assess("opentelemetry-operator deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources(internal.InstrumentationAppsNamespace)
+			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
 			labelSelector := "app.kubernetes.io/name=opentelemetry-operator"
 			ds := appsv1.DeploymentList{}
 
