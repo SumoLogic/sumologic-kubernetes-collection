@@ -14,9 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - feat: add file_storage fsync/recreate and terminationGracePeriodSeconds options to prevent bbolt database corruption on ungraceful pod
-  termination [#4296]
+  termination [#4298]
 
-[#4296]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4296
+[#4298]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4296
 [v4.21.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.21.2
 
 ## [v4.21.1]
