@@ -124,6 +124,9 @@ spec:
 {{- if .Values.sumologic.metrics.collector.otelcol.podAnnotations -}}
     {{ toYaml .Values.sumologic.metrics.collector.otelcol.podAnnotations | nindent 4 }}
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.terminationGracePeriodSeconds }}
+  terminationGracePeriodSeconds: {{ .Values.sumologic.metrics.collector.otelcol.terminationGracePeriodSeconds }}
+{{- end }}
   podSecurityContext:
     {{ .Values.sumologic.metrics.collector.otelcol.securityContext | toYaml | nindent 4 }}
   ports:

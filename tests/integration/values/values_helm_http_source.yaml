@@ -1,16 +1,54 @@
 sumologic:
   metrics:
     sourceType: http
+    collector:
+      otelcol:
+        terminationGracePeriodSeconds: 120
+        persistence:
+          fileStorage:
+            fsync: true
+            recreate: true
   events:
     sourceType: http
+    persistence:
+      fileStorage:
+        fsync: true
+        recreate: true
   logs:
     sourceType: http
+    collector:
+      otelcol:
+        persistence:
+          fileStorage:
+            fsync: true
+            recreate: true
+
   traces:
     sourceType: http
+
+metadata:
+  persistence:
+    fileStorage:
+      fsync: true
+      recreate: true
+  metrics:
+    statefulset:
+      terminationGracePeriodSeconds: 120
+  logs:
+    statefulset:
+      terminationGracePeriodSeconds: 120
+
+otelevents:
+  statefulset:
+    terminationGracePeriodSeconds: 120
 
 ## Adding /v1/traces just for testing purposes.
 ## Sumo HTTP Traces endpoint doesn't require "/v1/traces" path.
 tracesSampler:
+  persistence:
+    fileStorage:
+      fsync: true
+      recreate: true
   config:
     merge:
       exporters:

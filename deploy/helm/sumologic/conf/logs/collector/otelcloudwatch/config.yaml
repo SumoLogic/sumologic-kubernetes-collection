@@ -14,6 +14,8 @@ extensions:
       on_rebound: true
     directory: /var/lib/storage/otc
     timeout: 10s
+    fsync: {{ .Values.sumologic.logs.collector.otelcloudwatch.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.sumologic.logs.collector.otelcloudwatch.persistence.fileStorage.recreate }}
 {{ end }}
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
