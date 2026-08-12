@@ -123,6 +123,8 @@ extensions:
   file_storage:
     directory: /var/lib/storage/tracessampler
     timeout: 10s
+    fsync: {{ .Values.tracesSampler.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.tracesSampler.persistence.fileStorage.recreate }}
     compaction:
       on_rebound: true
       directory: /tmp

@@ -13,15 +13,6 @@ metadata:
 data:
   config.yaml: |
     exporters:
-      debug:
-        sending_queue:
-          batch:
-            flush_timeout: 1s
-            max_size: 2048
-            min_size: 1024
-          enabled: true
-          queue_size: 1024000
-        verbosity: detailed
       sumologic:
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
@@ -34,22 +25,11 @@ data:
           enabled: true
           queue_size: 1024000
           storage: file_storage
-      sumologic/sumologic-mock:
-        client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
-        log_format: otlp
-        sending_queue:
-          batch:
-            flush_timeout: 1s
-            max_size: 2048
-            min_size: 1024
-          enabled: true
-          queue_size: 1024000
     extensions:
       file_storage:
         directory: /var/lib/storage/events
-        fsync: false
-        recreate: false
+        fsync: true
+        recreate: true
         timeout: 10s
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
@@ -112,8 +92,6 @@ data:
         logs/configmaps:
           exporters:
           - sumologic
-          - debug
-          - sumologic/sumologic-mock
           processors:
           - transform/extract_configmap_name
           - filter/sumologic_configmaps
@@ -126,8 +104,6 @@ data:
         logs/events:
           exporters:
           - sumologic
-          - debug
-          - sumologic/sumologic-mock
           processors:
           - resource/add_cluster
           - source

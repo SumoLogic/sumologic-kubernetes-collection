@@ -30,6 +30,8 @@ extensions:
   file_storage:
     directory: /var/lib/storage/otc
     timeout: 10s
+    fsync: {{ .Values.sumologic.metrics.collector.otelcol.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.sumologic.metrics.collector.otelcol.persistence.fileStorage.recreate }}
     compaction:
       on_rebound: true
       directory: /tmp
@@ -133,6 +135,8 @@ extensions:
   file_storage:
     directory: /var/lib/storage/otc
     timeout: 10s
+    fsync: {{ .Values.metadata.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.metadata.persistence.fileStorage.recreate }}
     compaction:
       on_rebound: true
       directory: /tmp

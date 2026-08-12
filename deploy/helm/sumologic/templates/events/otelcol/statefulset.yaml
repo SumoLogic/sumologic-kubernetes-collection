@@ -59,6 +59,9 @@ spec:
       topologySpreadConstraints:
 {{ toYaml .Values.otelevents.statefulset.topologySpreadConstraints | indent 6 }}
 {{- end }}
+{{- if .Values.otelevents.statefulset.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.otelevents.statefulset.terminationGracePeriodSeconds }}
+{{- end }}
       volumes:
       - name: config-volume
         configMap:

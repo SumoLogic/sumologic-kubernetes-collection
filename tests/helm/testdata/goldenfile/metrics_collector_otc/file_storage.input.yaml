@@ -1,0 +1,13 @@
+sumologic:
+  useExporterBatching: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+        terminationGracePeriodSeconds: 120
+metadata:
+  persistence:
+    fileStorage:
+      fsync: true
+      recreate: true
