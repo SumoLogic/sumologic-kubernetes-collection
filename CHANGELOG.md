@@ -7,6 +7,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.4.0]
+
+### Released 2026-08-12
+
+### Breaking Changes
+
+- Remove enableSumoPrometheusRemotewriteReceiver flag and Telegraf receiver. The metrics pipeline now always uses the upstream
+  prometheusremotewrite receiver. [#4243]
+
+### Added
+
+- feat: add file_storage fsync/recreate and terminationGracePeriodSeconds options to prevent bbolt database corruption on ungraceful pod
+  termination [#4296]
+
+### Changed
+
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.2 [#4272]
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.12.7 to 0.12.8 [#4277]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.30.0 [#4278]
+- chore(deps): bump public.ecr.aws/sumologic/busybox Docker tag from 1.36.0 to 1.38.0 [#4287]
+- chore(deps): bump sumologic-otel-collector version to v0.157.0-sumo-0 [#4291]
+
+### Fixed
+
+- Fix: k8s sumologic extension - collector name format changed to podName+clusterName [#4280]
+- fix: use max(3, input) for minReplicas when singleLayerPipeline is enabled [#4284]
+
+[#4243]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4243
+[#4296]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4296
+[#4272]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4272
+[#4277]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4277
+[#4278]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4278
+[#4287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4287
+[#4291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4291
+[#4280]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4280
+[#4284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4284
+[v5.4.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.4.0
+
 ## [v5.3.1]
 
 ### Released 2026-07-22
