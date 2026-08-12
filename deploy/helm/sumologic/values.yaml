@@ -631,6 +631,15 @@ sumologic:
         ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
         # terminationGracePeriodSeconds:
 
+        persistence:
+          fileStorage:
+            ## When true, forces the bbolt database to fsync after each write for the metrics collector.
+            ## NOTE: adds write latency; monitor pod resources and consider increasing limits.
+            fsync: false
+            ## When true, automatically recreates a corrupt bbolt database file on startup for the metrics collector.
+            ## Queued data in the corrupt file will be lost.
+            recreate: false
+
         ## Initial replica count for the metrics collector. Only used when autoscaling is disabled.
         ## When autoscaling is enabled (default), the autoscaler manages replicas and this value is
         ## omitted from the OpenTelemetryCollector CR to avoid field ownership conflicts on helm upgrade.

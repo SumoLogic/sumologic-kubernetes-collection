@@ -6,8 +6,7 @@ sumologic:
         singleLayerPipeline:
           enabled: true
         terminationGracePeriodSeconds: 120
-metadata:
-  persistence:
-    fileStorage:
-      fsync: true
-      recreate: true
+        persistence:
+          fileStorage:
+            fsync: true
+            recreate: true
