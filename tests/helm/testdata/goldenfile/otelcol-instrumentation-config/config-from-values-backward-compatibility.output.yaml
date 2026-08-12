@@ -25,6 +25,8 @@ data:
       sumologic/metrics:
         client: k8s_%CURRENT_CHART_VERSION%
         compression: gzip
+        decompose_otlp_histograms: true
+        decompose_otlp_summaries: true
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         log_format: otlp
         max_request_body_size: 1048576
