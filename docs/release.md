@@ -41,7 +41,9 @@ Perform the following steps in order to release new verions of helm chart.
 
 1. Create [new release][releases]. Copy generated changelog to release notes.
 
-1. Once the release is completed, please find the PR created by the Reno bot to upgrade to the new Kubernetes Helm chart version in the collection-gitops repo. Once the PR is created, please ensure that any relevant compatibility changes are made to the configuration, if required, and proceed with the Zaidan deployment rollout.
+1. Once the release is completed, please find the PR created by the Reno bot to upgrade to the new Kubernetes Helm chart version in the
+   collection-gitops repo. Once the PR is created, please ensure that any relevant compatibility changes are made to the configuration, if
+   required, and proceed with the Zaidan deployment rollout.
 
 ## Patch releases (vx.y.z)
 
