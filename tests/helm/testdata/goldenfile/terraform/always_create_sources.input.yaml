@@ -1,0 +1,23 @@
+sumologic:
+  useExporterBatching: true
+  metrics:
+    sourceType: otlp
+  collector:
+    sources:
+      metrics:
+        default-otlp:
+          name: metrics-otlp
+          config-name: endpoint-metrics-otlp
+          properties:
+            content_type: Otlp
+        custom-http-source:
+          name: custom-http-metrics
+        custom-otlp-via-property:
+          name: custom-otlp-metrics
+          properties:
+            content_type: Otlp
+        disabled-otlp-source:
+          name: disabled-otlp-metrics
+          create: false
+          properties:
+            content_type: Otlp
