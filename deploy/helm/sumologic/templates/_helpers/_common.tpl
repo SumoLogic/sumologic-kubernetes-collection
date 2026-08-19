@@ -397,12 +397,14 @@ Example:
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
 {{- range $name, $source := (index .Context.sumologic.collector.sources $type) -}}
+{{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $name)) "true" -}}
 {{- $signalTypeConfig := index $ctx.sumologic $type -}}
 {{- $signalSourceType := $signalTypeConfig.sourceType | default "otlp" -}}
 {{- $sourceContentType := (($source).properties).content_type | default "" -}}
 {{- $isOtlpSource := eq $sourceContentType "Otlp" -}}
 {{- if or (and $isOtlpSource (eq $signalSourceType "otlp")) (and (not $isOtlpSource) (eq $signalSourceType "http")) -}}
 {{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
