@@ -92,6 +92,40 @@ function should_create_fields() {
     fi
 }
 
+# Create the Hosted Collector with its fields already assigned.
+# The Terraform provider creates a collector with only a name and then issues a
+# separate update to assign the fields. ABAC rules are evaluated on update but
+# not on creation, so that update is rejected for principals whose collector
+# permissions are scoped to the very fields being assigned.
+function create_collector() {
+    local PAYLOAD
+    PAYLOAD=$(jq -n \
+        --arg name "${SUMOLOGIC_COLLECTOR_NAME}" \
+        --arg description "Sumo Logic Kubernetes Collection
+version: ${TF_VAR_chart_version}" \
+        --argjson fields "$(jq -c '.collector_fields' terraform.tfvars.json)" \
+        '{collector: {collectorType: "Hosted", name: $name, description: $description, timeZone: "Etc/UTC", fields: $fields}}')
+    readonly PAYLOAD
+
+    local RESPONSE
+    RESPONSE=$(curl -XPOST -s -w '\n%{http_code}' \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        -H "Content-Type: application/json" \
+        -d "${PAYLOAD}" \
+        "${SUMOLOGIC_BASE_URL}"v1/collectors)
+    readonly RESPONSE
+
+    local STATUS
+    STATUS=$(tail -n1 <<< "${RESPONSE}")
+    readonly STATUS
+
+    if [[ ${STATUS} != 20* ]]; then
+        printf "Failed creating the collector, API responded with %s:\n%s\n" \
+            "${STATUS}" "$(sed '$d' <<< "${RESPONSE}")"
+        return 1
+    fi
+}
+
 cp /etc/terraform/* /terraform/
 cd /terraform || exit 1
 
@@ -144,6 +178,10 @@ if terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}";
     jq -r '.resource[] | to_entries[] | "\(.key) \(.value.name)"' sources.tf.json | while read -r resource_name source_name; do
         terraform import "sumologic_http_source.${resource_name}" "${SUMOLOGIC_COLLECTOR_NAME}/${source_name}"
     done || true
+else
+    create_collector || { echo "Error during creating the Sumo Logic collector"; exit 1; }
+    terraform import sumologic_collector.collector "${SUMOLOGIC_COLLECTOR_NAME}" \
+        || { echo "Error during importing the created Sumo Logic collector"; exit 1; }
 fi
 
 # Kubernetes Secret
