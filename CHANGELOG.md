@@ -7,6 +7,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.5.0]
+
+### Released 2026-08-24
+
+### Added
+
+- feat: use properties.content_type for OTLP source detection instead of key name suffix, and gate env var injection on create flag [#4309]
+
+### Changed
+
+- chore(deps): bump sumologic-otel-collector version to v0.158.0-sumo-0 [#4306], [#4313]
+
+[#4309]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4309
+[#4306]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4306
+[#4313]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4313
+
+[v5.5.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.5.0
+
 ## [v5.4.0]
 
 ### Released 2026-08-12
