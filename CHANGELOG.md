@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - feat: use properties.content_type for OTLP source detection instead of key name suffix, and gate env var injection on create flag [#4309]
+- Added AKS 1.36 as officially supported platform to run Sumologic K8s Helm Chart
 
 ### Changed
 
