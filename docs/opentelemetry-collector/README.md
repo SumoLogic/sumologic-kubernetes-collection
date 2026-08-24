@@ -11,7 +11,6 @@ Fluentd in our collection.
   - [Multiline Log Parsing](logs.md#multiline-log-parsing)
   - [Container Logs](logs.md#container-logs)
   - [SystemD Logs](logs.md#systemd-logs)
-  - [Running otelcol and Fluent Bit side by side](logs.md#running-otelcol-and-fluent-bit-side-by-side)
 - [Persistence](#persistence)
   - [Enabling persistence](#enabling-persistence)
     - [Enabling OpenTelemetry Collector persistence by recreating StatefulSet](#enabling-opentelemetry-collector-persistence-by-recreating-statefulset)

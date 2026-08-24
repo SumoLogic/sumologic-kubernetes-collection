@@ -4,7 +4,7 @@ exporters:
     verbosity: detailed
 {{- end }}
 
-{{- if eq .Values.sumologic.logs.sourceType "http" }}
+{{- if and (eq .Values.sumologic.logs.sourceType "http") (not .Values.sumologic.sourcelessMode) }}
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
@@ -12,7 +12,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -24,7 +32,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -39,7 +55,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -51,7 +75,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -62,12 +94,22 @@ exporters:
 {{ else }}
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
+{{- if not .Values.sumologic.sourcelessMode }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+{{- end }}
     log_format: otlp
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -80,7 +122,15 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10240000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
@@ -102,28 +152,37 @@ extensions:
   file_storage:
     directory: /var/lib/storage/otc
     timeout: 10s
+    fsync: {{ .Values.metadata.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.metadata.persistence.fileStorage.recreate }}
     compaction:
       on_rebound: true
       directory: /tmp
 {{ end }}
   pprof: {}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_name: ${MY_POD_NAME}-{{ .Values.sumologic.clusterName }}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+{{- if .Values.metadata.persistence.enabled }}
+    collector_credentials_directory: /var/lib/storage/otc/credentials
+{{- end }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 
 processors:
 {{ if .Values.sumologic.logs.systemd.enabled }}
   attributes/extract_systemd_source_fields:
     actions:
       - action: extract
-        key: fluent.tag
-        pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+        key: _SYSTEMD_UNIT
+        pattern: ^(?P<_sourceName>[a-zA-Z0-9-]+)\..+$
       - action: insert
         from_attribute: _HOSTNAME
         key: _sourceHost
 {{ end }}
-
-  attributes/remove_fluent_tag:
-    actions:
-      - action: delete
-        key: fluent.tag
 
   ## The batch processor accepts spans and places them into batches grouped by node and resource
   batch:
@@ -235,16 +294,6 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  filter/include_fluent_tag_host:
-    logs:
-      include:
-        match_type: regexp
-        record_attributes:
-          - key: fluent.tag
-            value: host\..+
-{{ end }}
-
-{{ if .Values.sumologic.logs.systemd.enabled }}
   filter/include_kubelet:
     logs:
       include:
@@ -284,54 +333,25 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-{{ if .Values.metadata.logs.useSumoK8sProcessor }}
-  k8s_tagger:
-    extract:
-      annotations:
-        - key: "*"
-          tag_name: "pod_annotations_%s"
-      namespace_annotations:
-        - key: "*"
-          tag_name: namespace_annotations_%s
-      delimiter: "_"
-      labels:
-        - key: "*"
-          tag_name: "pod_labels_%s"
-      metadata:
-        ## extract the following well-known metadata fields
-        - daemonSetName
-        - deploymentName
-        - hostName
-        - namespace
-        - nodeName
-        - podName
-        - serviceName
-        - statefulSetName
-      namespace_labels:
-        - key: "*"
-          tag_name: "namespace_labels_%s"
-    # To enable fetching additional metadata using `owner` relationship
-    owner_lookup_enabled: true
-    ## Has to be false to enrich metadata
-    passthrough: false
-    pod_association:
-      - from: build_hostname
-{{ else }}
   k8sattributes:
     wait_for_metadata: {{ .Values.metadata.logs.waitForMetadata }}
     wait_for_metadata_timeout: {{ .Values.metadata.logs.waitForMetadataTimeout | quote }}
     auth_type: "serviceAccount"
     extract:
       labels:
+        {{- if .Values.metadata.logs.extractPodLabels }}
         - key_regex: "(.*)"
           tag_name: "pod_labels_$$1"
           from: pod
+        {{- end }}
         - key_regex: "(.*)"
           tag_name: "namespace_labels_$$1"
           from: namespace
+        {{- if .Values.metadata.logs.extractNodeLabels }}
         - key_regex: "(.*)" 
           tag_name: "node_labels_$$1"
           from: node
+        {{- end }}
       annotations:
         - key_regex: "(.*)"
           tag_name: "pod_annotations_$$1"
@@ -339,7 +359,7 @@ processors:
         - key_regex: "(.*)"
           tag_name: "namespace_annotations_$$1"
           from: namespace
-        - key_regex: "(.*)" 
+        - key_regex: "(.*)"
           tag_name: "node_annotations_$$1"
           from: node
       metadata:
@@ -358,10 +378,21 @@ processors:
     ## Has to be false to enrich metadata
     passthrough: false
     pod_association:
+    ## Mirrors k8s_tagger's `build_hostname` association (pod_association.go):
+    ## build_hostname combined k8s.pod.name + k8s.namespace.name into a single
+    ## compound key "{podName}.{namespace}" for pod cache lookup.
+    ## k8sattributes two-source match achieves the same uniqueness guarantee:
+    ## both sources must match simultaneously, equivalent to the compound key.
+    ## k8s.pod.uid is prepended as a more precise fallback when set (e.g. via
+    ## the filelog receiver which parses the UID from the log file path).
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
-{{ end }}
+      - sources:
+        - from: resource_attribute
+          name: k8s.namespace.name
+        - from: resource_attribute
+          name: k8s.pod.name
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
@@ -427,38 +458,6 @@ processors:
       key: _sourceName
       value: ""
 {{ end }}
-
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-  routing/containers:
-    default_exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 6}}
-    table:
-{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
-      - statement: {{ $entry.statement }}
-        exporters:
-          - {{ $entry.exporter }}
-{{- end }}
-{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
-      - statement: route()
-        exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 12}}
-{{- end }}
-
-  routing/systemd:
-    default_exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 6 }}
-    table:
-{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
-      - statement: {{ $entry.statement }}
-        exporters:
-          - {{ $entry.exporter }}
-{{- end }}
-{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
-      - statement: route()
-        exporters:
-{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 12 }}
-{{- end }}
-{{- end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
   source/containers:
@@ -535,6 +534,12 @@ processors:
         statements:
           - limit(attributes, 0, [])
 
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+  transform/add_default_pipeline_tag:
+    log_statements:
+      - set(resource.attributes["router.default_pipeline_route"], true)
+{{- end }}
+
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{ toYaml $processor | indent 2}}
@@ -561,6 +566,49 @@ receivers:
         endpoint: {{ template "sumologic.otlp_http_endpoint" . }}
 {{ end }}
 
+{{- if (.Values.sumologic.logs.otelcol.routing.table) }}
+connectors:
+  routing/containers:
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
+    default_pipelines:
+      - logs/otlp/containers/routing/default
+{{- end }}
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: 'delete_key(resource.attributes, "router.default_pipeline_route") where {{ trimPrefix "route() where " $entry.statement }}'
+        action: copy
+        pipelines:
+{{- range $exp := $entry.exporters }}
+          - logs/otlp/containers/routing/{{ $exp }}
+{{- end }}
+{{- end }}
+{{- if not .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: 'route() where resource.attributes["router.default_pipeline_route"] != nil'
+        pipelines:
+          - logs/otlp/containers/routing/default
+{{- end }}
+
+  routing/systemd:
+{{- if .Values.sumologic.logs.otelcol.useDefaultExporters }}
+    default_pipelines:
+      - logs/otlp/systemd/routing/default
+{{- end }}
+    table:
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+      - statement: 'delete_key(resource.attributes, "router.default_pipeline_route") where {{ trimPrefix "route() where " $entry.statement }}'
+        action: copy
+        pipelines:
+{{- range $exp := $entry.exporters }}
+          - logs/otlp/systemd/routing/{{ $exp }}
+{{- end }}
+{{- end }}
+{{- if not .Values.sumologic.logs.otelcol.useDefaultExporters }}
+      - statement: 'route() where resource.attributes["router.default_pipeline_route"] != nil'
+        pipelines:
+          - logs/otlp/systemd/routing/default
+{{- end }}
+{{- end }}
+
 service:
   extensions:
     - health_check
@@ -568,21 +616,24 @@ service:
     - file_storage
 {{ end }}
     - pprof
+{{- if .Values.sumologic.sourcelessMode }}
+    - sumologic
+{{- end }}
   pipelines:
 {{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
 {{ if .Values.sumologic.logs.container.enabled }}
     logs/otlp/containers:
       exporters:
+{{- if (.Values.sumologic.logs.otelcol.routing.table) }}
+        - routing/containers
+{{- else }}
 {{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "containers") | nindent 8}}
+{{- end }}
       processors:
         - memory_limiter
         - filter/include_containers
         - groupbyattrs/containers
-{{ if .Values.metadata.logs.useSumoK8sProcessor }}
-        - k8s_tagger
-{{ else }}
         - k8sattributes
-{{ end }}
         - resource/add_cluster
         - resource/set_empty_source_metadata
         - resource/containers_copy_node_to_host
@@ -597,14 +648,16 @@ service:
         - resource/remove_pod_name
         - resource/drop_annotations
         - transform/add_timestamp
-{{- if eq .Values.sumologic.logs.container.format "text" }} 
+{{- if eq .Values.sumologic.logs.container.format "text" }}
         - transform/remove_attributes
-{{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
+{{- else if eq .Values.sumologic.logs.container.format "json_merge" }}
         - transform/flatten
 {{- end }}
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+        - transform/add_default_pipeline_tag
+{{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-        - routing/containers
 {{- end }}
       receivers:
         - otlp
@@ -613,17 +666,19 @@ service:
 {{ if .Values.sumologic.logs.systemd.enabled }}
     logs/otlp/kubelet:
       exporters:
+{{- if (.Values.sumologic.logs.otelcol.routing.table) }}
+        - routing/systemd
+{{- else }}
 {{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
+{{- end }}
       processors:
         - memory_limiter
-        - filter/include_fluent_tag_host
         - filter/include_kubelet
         - filter/exclude_kubelet_syslog
         - filter/exclude_kubelet_hostname
         - filter/exclude_kubelet_priority
         - filter/exclude_kubelet_unit
         - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/kubelet
@@ -635,19 +690,24 @@ service:
 {{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
 {{- end }}
 {{- end }}
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+        - transform/add_default_pipeline_tag
+{{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-        - routing/systemd
 {{- end }}
       receivers:
         - otlp
 
     logs/otlp/systemd:
       exporters:
+{{- if (.Values.sumologic.logs.otelcol.routing.table) }}
+        - routing/systemd
+{{- else }}
 {{ include "logs.otelcol.exporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
+{{- end }}
       processors:
         - memory_limiter
-        - filter/include_fluent_tag_host
         - filter/include_systemd
         - filter/exclude_kubelet
         - filter/exclude_systemd_syslog
@@ -655,7 +715,6 @@ service:
         - filter/exclude_systemd_priority
         - filter/exclude_systemd_unit
         - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/systemd
@@ -667,13 +726,51 @@ service:
 {{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
 {{- end }}
 {{- end }}
+{{- if and .Values.sumologic.logs.otelcol.routing.table (not .Values.sumologic.logs.otelcol.useDefaultExporters) }}
+        - transform/add_default_pipeline_tag
+{{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
-{{- if .Values.sumologic.logs.otelcol.routing.table }}
-        - routing/systemd
 {{- end }}
       receivers:
         - otlp
 {{ end }}
+
+{{- if (.Values.sumologic.logs.otelcol.routing.table) }}
+{{- if .Values.sumologic.logs.container.enabled }}
+    logs/otlp/containers/routing/default:
+      receivers:
+        - routing/containers
+      exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "containers") | nindent 8}}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+{{- range $exp := $entry.exporters }}
+    logs/otlp/containers/routing/{{ $exp }}:
+      receivers:
+        - routing/containers
+      exporters:
+        - {{ $exp }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.sumologic.logs.systemd.enabled }}
+    logs/otlp/systemd/routing/default:
+      receivers:
+        - routing/systemd
+      exporters:
+{{ include "logs.otelcol.routing.defaultExporters" (dict "Values" .Values "Type" "systemd") | nindent 8}}
+{{- range $entry := .Values.sumologic.logs.otelcol.routing.table }}
+{{- range $exp := $entry.exporters }}
+    logs/otlp/systemd/routing/{{ $exp }}:
+      receivers:
+        - routing/systemd
+      exporters:
+        - {{ $exp }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{ end }}
   telemetry:
     logs:

@@ -1,3 +1,4 @@
 sumologic:
+  useExporterBatching: true
   metrics:
     allowHistogramRegex: "^(apiserver_request_duration_seconds)$"

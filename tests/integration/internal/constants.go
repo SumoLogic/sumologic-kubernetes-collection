@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"os"
@@ -237,24 +238,24 @@ var (
 		"otelcol_exporter_requests_duration",
 		"otelcol_exporter_requests_records",
 		"otelcol_exporter_requests_sent",
+		"otelcol_exporter_in_flight_requests",
 		"otelcol_exporter_sent_metric_points",
-		"otelcol_processor_accepted_metric_points",
-		"otelcol_processor_batch_batch_send_size_count",
-		"otelcol_processor_batch_batch_send_size_sum",
-		"otelcol_processor_batch_timeout_trigger_send",
+		"otelcol_processor_memory_limiter_accepted_metric_points",
+		// "otelcol_processor_batch_batch_send_size_count", // Deprecated
+		// "otelcol_processor_batch_batch_send_size_sum", // Deprecated
+		// "otelcol_processor_batch_timeout_trigger_send", // Deprecated
 		"otelcol_processor_groupbyattrs_metric_groups_count",
 		"otelcol_processor_groupbyattrs_metric_groups_sum",
 		"otelcol_processor_groupbyattrs_num_non_grouped_metrics",
 		"otelcol_processor_outgoing_items",
 		"otelcol_processor_incoming_items",
-		"otelcol_processor_batch_metadata_cardinality",
-		"otelcol_exporter_send_failed_metric_points",
+		// "otelcol_processor_batch_metadata_cardinality", // Deprecated
 	}
 	LogsOtelcolMetrics = []string{
 		"otelcol_exporter_sent_log_records",
-		"otelcol_exporter_send_failed_log_records",
 		"otelcol_receiver_accepted_log_records",
-		"otelcol_processor_accepted_log_records",
+		"otelcol_receiver_failed_log_records",
+		"otelcol_processor_memory_limiter_accepted_log_records",
 		"otelcol_receiver_refused_log_records",
 		"otelcol_processor_groupbyattrs_num_grouped_logs",
 		"otelcol_processor_groupbyattrs_log_groups_count",
@@ -262,10 +263,7 @@ var (
 		"otelcol_fileconsumer_reading_files",
 		"otelcol_fileconsumer_open_files",
 	}
-	NodeLabelsMetrics = []string{
-		"otelcol_otelsvc_k8s_node_updated",
-		"otelcol_otelsvc_k8s_node_added",
-	}
+
 	TracingOtelcolMetrics = []string{ // not used by any App
 		"otelcol_loadbalancer_num_backend_updates",
 		"otelcol_loadbalancer_num_backends",
@@ -273,6 +271,7 @@ var (
 	}
 	MetricsCollectorOtelcolMetrics = []string{
 		"otelcol_receiver_refused_metric_points",
+		"otelcol_receiver_failed_metric_points",
 		"otelcol_processor_groupbyattrs_num_grouped_metrics",
 		"otelcol_receiver_accepted_metric_points",
 	}
@@ -325,13 +324,19 @@ var (
 		"otelcol_processor_filter_logs.filtered",
 		"otelcol_processor_filter_logs_filtered",
 		"otelcol_otelsvc_k8s_ip_lookup_miss",
+		"otelcol.k8s.pod.association",
+		// https://github.com/open-telemetry/opentelemetry-collector-contrib/pull/45940
+		"otelcol_otelcol.k8s.pod.association",
 		"otelcol_otelsvc_k8s_other_deleted",
 		"otelcol_otelsvc_k8s_pod_added",
-		"otelcol_otelsvc_k8s_replicaset_added",
-		"otelcol_otelsvc_k8s_namespace_added",
 		"otelcol_otelsvc_k8s_pod_updated",
+		"otelcol_otelcol_k8s_pod_association",
 		"otelcol_otelsvc_k8s_replicaset_updated",
 		"otelcol_otelsvc_k8s_pod_table_size",
+		"otelcol_otelsvc_k8s_node_updated",
+		"otelcol_otelsvc_k8s_node_added",
+		"otelcol_otelsvc_k8s_namespace_added",
+		"otelcol_otelsvc_k8s_replicaset_added",
 		"otelcol_exporter_enqueue_failed_metric_points",
 		"otelcol_exporter_enqueue_failed_spans",
 		"otelcol_exporter_enqueue_failed_log_records",
@@ -460,7 +465,7 @@ func InitializeConstants() error {
 func getKubernetesVersion(
 	t *testing.T,
 ) string {
-	v, err := k8s.GetKubernetesClusterVersionE(t)
+	v, err := k8s.GetKubernetesClusterVersionContextE(t, context.Background())
 	require.NoError(t, err)
 	return v
 }

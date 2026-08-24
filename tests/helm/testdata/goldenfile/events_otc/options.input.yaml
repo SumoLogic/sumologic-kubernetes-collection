@@ -1,8 +1,10 @@
 otelevents:
   logLevel: debug
   metricsLevel: detailed
+  reportConfigMaps: false
 
 sumologic:
+  useExporterBatching: true
   ipv6mode: true
   clusterName: testCluster
   collectorName: testCollector

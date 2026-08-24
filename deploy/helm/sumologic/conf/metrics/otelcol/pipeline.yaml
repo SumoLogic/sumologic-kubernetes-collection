@@ -1,4 +1,7 @@
 exporters:
+{{- if and (not .Values.sumologic.sourcelessMode) (eq .Values.sumologic.metrics.sourceType "http") }}
+  - routing/default
+{{- else }}
   - sumologic/default
 {{- if eq .Values.debug.metrics.metadata.print true }}
   - debug
@@ -6,7 +9,7 @@ exporters:
 {{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
   - sumologic/sumologic-mock-default
 {{- end }}
-{{- if eq .Values.sumologic.metrics.sourceType "http" }}
+{{- if and (not .Values.sumologic.sourcelessMode) (eq .Values.sumologic.metrics.sourceType "http") }}
   - sumologic/apiserver
   - sumologic/control_plane
   - sumologic/controller
@@ -18,16 +21,14 @@ exporters:
   - sumologic/sumologic-mock-http
 {{- end }}
 {{- end }}
+{{- end }}
+
 processors:
   - memory_limiter
   - metricstransform
   - groupbyattrs
   - resource
-{{ if .Values.metadata.metrics.useSumoK8sProcessor }}
-  - k8s_tagger
-{{ else }}
   - k8sattributes
-{{ end }}
   - source
   - sumologic
 {{- if .Values.sumologic.metrics.otelcol.extraProcessors }}
@@ -44,10 +45,9 @@ processors:
 {{- if .Values.sumologic.metrics.enableDefaultFilters }}
   - filter/app_metrics
 {{- end }}
+{{- if eq .Values.sumologic.useExporterBatching false }}
   - batch
-{{- if eq .Values.sumologic.metrics.sourceType "http" }}
-  - routing
 {{- end }}
 receivers:
-  - telegraf
+  - prometheusremotewrite
   - otlp

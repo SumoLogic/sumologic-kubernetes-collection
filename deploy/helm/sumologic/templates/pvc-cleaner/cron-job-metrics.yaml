@@ -54,8 +54,12 @@ spec:
             - "bash"
             - "/pvc-cleaner/pvc-cleaner.sh"
             - "{{ template "sumologic.namespace" . }}"
+{{- if eq (include "metrics.collector.singleLayerPipeline.enabled" .) "true" }}
+            - "sumologic.com/component=metrics-collector"
+{{- else }}
             - "app={{ template "sumologic.labels.app.metrics.statefulset" . }}"
             - "{{ template "sumologic.metadata.name.metrics.hpa" . }}"
+{{- end }}
             imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
             resources:
               {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}

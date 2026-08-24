@@ -42,7 +42,7 @@ spec:
             defaultMode: 0777
       containers:
         - name: setup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.16.0
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.18.0
           imagePullPolicy: IfNotPresent
           command: ["/etc/terraform/setup.sh", "kubectl apply --server-side -f /manifests/crds-configmaps.yaml --force-conflicts"]
           resources:
@@ -75,6 +75,12 @@ spec:
               value: "sumologic"
             - name: CHART_VERSION
               value: "%CURRENT_CHART_VERSION%"
+            - name: SUMOLOGIC_USE_EXTENSION
+              value: "false"
+            - name: SUMOLOGIC_EXTENSION_SECRET_NAME
+              value: "sumologic-extension"
+            - name: SUMOLOGIC_CLEANUP_HOSTED_COLLECTOR
+              value: "false"
             - name: SUMOLOGIC_MONITORS_ENABLED
               value: "true"
             - name: SUMOLOGIC_MONITORS_STATUS
@@ -84,6 +90,8 @@ spec:
                 ["test@test.lh","email@locahost.lh"]
             - name: SUMOLOGIC_DASHBOARDS_ENABLED
               value: "true"
+            - name: CLEANUP_UNUSED_SOURCES
+              value: "false"
 
             - name: NO_PROXY
               value: kubernetes.default.svc

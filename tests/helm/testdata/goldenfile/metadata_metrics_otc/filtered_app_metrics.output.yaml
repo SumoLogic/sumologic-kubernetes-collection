@@ -16,13 +16,18 @@ data:
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
         decompose_otlp_histograms: true
+        decompose_otlp_summaries: true
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: otlp
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 10240000
           storage: file_storage
         timeout: 30s
     extensions:
@@ -31,6 +36,8 @@ data:
           directory: /tmp
           on_rebound: true
         directory: /var/lib/storage/otc
+        fsync: false
+        recreate: false
         timeout: 10s
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
@@ -72,6 +79,8 @@ data:
           - (not IsMatch(name, "^$")) and (type == METRIC_DATA_TYPE_HISTOGRAM or type
             == METRIC_DATA_TYPE_EXPONENTIAL_HISTOGRAM or type == METRIC_DATA_TYPE_SUMMARY
             or IsMatch(name, ".*_bucket"))
+          - IsMatch(name, "^otelcol[._](k8s[._]pod[._]association|otelsvc_k8s_(pod_added|pod_updated|pod_table_size|pod_deleted|ip_lookup_miss))$")
+          - IsMatch(name, "^otelcol[._].*k8s.*")
       groupbyattrs:
         keys:
         - container
@@ -82,23 +91,32 @@ data:
         keys:
         - __name__
         - job
-      k8s_tagger:
+      k8sattributes:
+        auth_type: serviceAccount
         extract:
-          delimiter: _
           labels:
-          - key: '*'
-            tag_name: pod_labels_%s
+          - from: pod
+            key_regex: (.*)
+            tag_name: pod_labels_$$1
           metadata:
-          - daemonSetName
-          - deploymentName
-          - nodeName
-          - replicaSetName
-          - serviceName
-          - statefulSetName
-        owner_lookup_enabled: true
+          - k8s.pod.name
+          - k8s.deployment.name
+          - k8s.daemonset.name
+          - k8s.replicaset.name
+          - k8s.statefulset.name
+          - k8s.namespace.name
+          - k8s.node.name
+          - service.name
+          - service.namespace
         passthrough: false
         pod_association:
-        - from: build_hostname
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.name
+          - from: resource_attribute
+            name: k8s.namespace.name
+        wait_for_metadata: true
+        wait_for_metadata_timeout: 10s
       memory_limiter:
         check_interval: 5s
         limit_percentage: 90
@@ -182,21 +200,10 @@ data:
         protocols:
           http:
             endpoint: ${env:MY_POD_IP}:4318
-      telegraf:
-        agent_config: |
-          [agent]
-            interval = "30s"
-            flush_interval = "30s"
-            omit_hostname = true
-          [[inputs.http_listener_v2]]
-            # wait longer than prometheus
-            read_timeout = "30s"
-            write_timeout = "30s"
-            service_address = ":9888"
-            data_format = "prometheusremotewrite"
-            paths = [
-              "/prometheus.metrics"
-            ]
+      prometheusremotewrite:
+        endpoint: ${env:MY_POD_IP}:9888
+        read_timeout: 1m
+        write_timeout: 1m
     service:
       extensions:
       - health_check
@@ -211,7 +218,7 @@ data:
           - metricstransform
           - groupbyattrs
           - resource
-          - k8s_tagger
+          - k8sattributes
           - source
           - sumologic
           - resource/remove_k8s_pod_pod_name
@@ -221,9 +228,8 @@ data:
           - transform/remove_name
           - filter/drop_unnecessary_metrics
           - filter/app_metrics
-          - batch
           receivers:
-          - telegraf
+          - prometheusremotewrite
           - otlp
       telemetry:
         logs:

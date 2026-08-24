@@ -558,6 +558,30 @@ sumologic:
 	require.Equal(t, "sumologic|my_logs_namespace", otelConfig.Processors.SourceContainers.Exclude.Namespace)
 }
 
+func TestCollectorConfigmapChangeJournaldDirectory(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  logs:
+    systemd:
+      journaldDirectory: /run/log/journal
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Receivers struct {
+			Journald struct {
+				Directory string `yaml:"directory"`
+			} `yaml:"journald"`
+		} `yaml:"receivers"`
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, "/run/log/journal", otelConfig.Receivers.Journald.Directory)
+}
+
 func TestCollectorDaemonsetUpdateStrategy(t *testing.T) {
 	t.Parallel()
 
@@ -586,4 +610,59 @@ otellogs:
 	require.NoError(t, err)
 
 	require.Equal(t, "50%", logsCollectorDaemonset.Spec.UpdateStrategy.RollingUpdate.MaxUnavailable)
+}
+
+func TestJournaldDirectoryDaemonsetMounts(t *testing.T) {
+	t.Parallel()
+
+	valuesYaml := `
+sumologic:
+  logs:
+    systemd:
+      journaldDirectory: /run/log/journal
+`
+	templatePath := "templates/logs/collector/otelcol/daemonset.yaml"
+
+	renderedTemplate, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	require.NoError(t, err)
+
+	var logsCollectorDaemonset struct {
+		Spec struct {
+			Template struct {
+				Spec struct {
+					Containers []struct {
+						VolumeMounts []struct {
+							MountPath string `yaml:"mountPath"`
+							Name      string `yaml:"name"`
+						} `yaml:"volumeMounts"`
+					} `yaml:"containers"`
+					Volumes []struct {
+						HostPath struct {
+							Path string `yaml:"path"`
+						} `yaml:"hostPath"`
+						Name string `yaml:"name"`
+					} `yaml:"volumes"`
+				} `yaml:"spec"`
+			} `yaml:"template"`
+		} `yaml:"spec"`
+	}
+	err = yaml.Unmarshal([]byte(renderedTemplate), &logsCollectorDaemonset)
+	require.NoError(t, err)
+
+	volumeChangeFound := false
+	volumeMountChangeFound := false
+	for _, container := range logsCollectorDaemonset.Spec.Template.Spec.Containers {
+		for _, volumemount := range container.VolumeMounts {
+			if volumemount.Name == "runlogjournal" && volumemount.MountPath == "/run/log/journal" {
+				volumeMountChangeFound = true
+			}
+		}
+	}
+	for _, volume := range logsCollectorDaemonset.Spec.Template.Spec.Volumes {
+		if volume.Name == "runlogjournal" && volume.HostPath.Path == "/run/log/journal/" {
+			volumeChangeFound = true
+		}
+	}
+
+	require.True(t, volumeChangeFound && volumeMountChangeFound)
 }

@@ -15,22 +15,35 @@ data:
     exporters:
       otlphttp/traces:
         endpoint: http://RELEASE-NAME-sumologic-traces-gateway.sumologic:4318
+        sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
+          enabled: true
+          queue_size: 256000
       sumologic/metrics:
         client: k8s_%CURRENT_CHART_VERSION%
         compression: gzip
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
-        log_format: text
+        decompose_otlp_histograms: true
+        decompose_otlp_summaries: true
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
+        log_format: otlp
         max_request_body_size: 1048576
-        metric_format: prometheus
+        metric_format: otlp
         retry_on_failure:
           enabled: true
           initial_interval: 5s
           max_elapsed_time: 120s
           max_interval: 30s
         sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
           enabled: false
           num_consumers: 10
-          queue_size: 5000
+          queue_size: 1280000
         timeout: 5s
     extensions:
       health_check:
@@ -40,35 +53,50 @@ data:
       batch:
         send_batch_max_size: 512
         send_batch_size: 256
-        timeout: 10s
-      k8s_tagger:
+        timeout: 5s
+      k8sattributes:
+        auth_type: serviceAccount
         extract:
           annotations:
-          - key: '*'
-            tag_name: k8s.pod.annotation.%s
+          - from: pod
+            key_regex: (.*)
+            tag_name: k8s.pod.annotation.$$1
           labels:
-          - key: '*'
-            tag_name: k8s.pod.label.%s
+          - from: pod
+            key_regex: (.*)
+            tag_name: k8s.pod.label.$$1
+          - from: namespace
+            key_regex: (.*)
+            tag_name: k8s.namespace.label.$$1
           metadata:
-          - containerId
-          - containerName
-          - daemonSetName
-          - deploymentName
-          - hostName
-          - namespace
-          - nodeName
-          - podId
-          - podName
-          - replicaSetName
-          - serviceName
-          - statefulSetName
-          namespace_labels:
-          - key: '*'
-            tag_name: k8s.namespace.label.%s
-        owner_lookup_enabled: true
+          - k8s.pod.name
+          - k8s.pod.uid
+          - k8s.deployment.name
+          - k8s.daemonset.name
+          - k8s.replicaset.name
+          - k8s.statefulset.name
+          - k8s.namespace.name
+          - k8s.node.name
+          - k8s.container.name
+          - service.name
+          - service.namespace
         passthrough: false
+        pod_association:
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.uid
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.ip
+        - sources:
+          - from: resource_attribute
+            name: ip
+        - sources:
+          - from: connection
+        wait_for_metadata: true
+        wait_for_metadata_timeout: 10s
       memory_limiter:
-        check_interval: 5s
+        check_interval: 10s
         limit_percentage: 90
         spike_limit_percentage: 20
       resource:
@@ -130,10 +158,9 @@ data:
           - sumologic/metrics
           processors:
           - memory_limiter
-          - k8s_tagger
+          - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - otlp
           - otlp/deprecated
@@ -142,10 +169,9 @@ data:
           - otlphttp/traces
           processors:
           - memory_limiter
-          - k8s_tagger
+          - k8sattributes
           - source
           - resource
-          - batch
           receivers:
           - jaeger
           - otlp

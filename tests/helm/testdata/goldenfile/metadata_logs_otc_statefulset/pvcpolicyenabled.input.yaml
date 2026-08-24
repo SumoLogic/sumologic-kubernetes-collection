@@ -1,4 +1,5 @@
 sumologic:
+  useExporterBatching: true
   persistentVolumeClaimRetentionPolicyEnabled: false
   logs:
     sourceType: http

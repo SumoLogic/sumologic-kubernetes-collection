@@ -20,7 +20,7 @@ func Test_Helm_OT_Histograms(t *testing.T) {
 	expectedMetrics = append(expectedMetrics, histogramMetrics...)
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(15),
+		CheckSumologicSecret(4),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,

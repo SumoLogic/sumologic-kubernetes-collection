@@ -1,4 +1,9 @@
-# Prometheus
+# Important update from Helm chart v5
+
+Prometheus operator which used to scrape metrics has been deprecated in v4 and removed in Helm chart v5. The Opentelemetry operator was made
+the default for metrics collection in Helm chart v4 and remains the single source for metrics collection in Helm chart v5.
+
+## Prometheus (Till helm chart v4)
 
 Prometheus is crucial part of the metrics pipeline. It is also a complicated and powerful tool. In Kubernetes specifically, it's also often
 managed by Prometheus Operator and a set of custom resources. It's possible that you already have some part of the K8s Prometheus stack
@@ -9,7 +14,7 @@ installed.
 
 <!-- TOC -->
 
-- [Prometheus](#prometheus)
+- [Prometheus (Till helm chart v4)](#prometheus-till-helm-chart-v4)
   - [No Prometheus in the cluster](#no-prometheus-in-the-cluster)
   - [Prometheus Operator in the cluster](#prometheus-operator-in-the-cluster)
     - [Custom Resource Definition compatibility](#custom-resource-definition-compatibility)
@@ -29,9 +34,9 @@ installed.
 
 If you don't have Prometheus or Kube Prometheus Stack installed in your cluster there is not much you need to worry about. There is no
 special configuration required, unless you want to have
-[Custom Application Metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#filtering-metrics) or
-[Custom Kubernetes Metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics), but these steps
-can be performed after initial installation.
+[Custom Application Metrics](https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics#filtering-metrics) or
+[Custom Kubernetes Metrics](https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics), but these
+steps can be performed after initial installation.
 
 ## Prometheus Operator in the cluster
 
@@ -242,17 +247,6 @@ are correctly added to your Kube Prometheus Stack configuration:
   - they are always in sync with the current configuration and endpoints starts with.
   - url always starts with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`
 
-  Alternatively, you can list endpoints in `metadata.metrics.config.additionalEndpoints`:
-
-  ```yaml
-  metadata:
-    metrics:
-      config:
-        additionalEndpoints:
-          - /prometheus.metrics
-          # - ...
-  ```
-
 - Env Variables configuration:
 
   - `kube-prometheus-stack.prometheus.prometheusSpec.initContainers` to `prometheus.prometheusSpec.initContainers`
@@ -281,7 +275,7 @@ are correctly added to your Kube Prometheus Stack configuration:
     apiVersion: v1
     data:
       metadataLogs: collection-sumologic-metadata-logs
-      metadataMetrics: collection-sumologic-remote-write-proxy
+      metadataMetrics: collection-sumologic-metadata-metrics
       metadataNamespace: sumologic
     kind: ConfigMap
     metadata:

@@ -3,6 +3,15 @@ exporters:
 {{- if eq .Values.debug.instrumentation.tracesSampler.print true }}
   debug:
     verbosity: detailed
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- end }}
 
 {{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}
@@ -13,8 +22,36 @@ exporters:
     endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
 {{- end }}
     compression: gzip
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- end }}
 
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    client: {{ include "sumologic.sumo_client" . }}
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{ else }}
+      queue_size: 10_000
+{{- end }}
+{{- if .Values.tracesSampler.persistence.enabled }}
+      storage: file_storage
+{{- end }}
+{{- else }}
   otlphttp:
 {{- if eq .Values.sumologic.traces.sourceType "http" }}
     traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
@@ -25,9 +62,18 @@ exporters:
     sending_queue:
       enabled: true
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{ else }}
       queue_size: 10_000
+{{- end }}
 {{- if .Values.tracesSampler.persistence.enabled }}
       storage: file_storage
+{{- end }}
 {{- end }}
 receivers:
   otlp:
@@ -77,11 +123,25 @@ extensions:
   file_storage:
     directory: /var/lib/storage/tracessampler
     timeout: 10s
+    fsync: {{ .Values.tracesSampler.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.tracesSampler.persistence.fileStorage.recreate }}
     compaction:
       on_rebound: true
       directory: /tmp
 {{- end }}
   pprof: {}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_name: ${MY_POD_NAME}-{{ .Values.sumologic.clusterName }}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+{{- if .Values.tracesSampler.persistence.enabled }}
+    collector_credentials_directory: /var/lib/storage/tracessampler/credentials
+{{- end }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 service:
   extensions:
     - health_check
@@ -89,12 +149,24 @@ service:
     - file_storage
 {{- end }}
     - pprof
+{{- if .Values.sumologic.sourcelessMode }}
+    - sumologic
+{{- end }}
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, cascading_filter, batch]
+      processors:
+        - memory_limiter
+        - cascading_filter
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
       exporters:
+{{- if .Values.sumologic.sourcelessMode }}
+        - sumologic
+{{- else }}
         - otlphttp
+{{- end }}
 {{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}
         - otlphttp/sumologic-mock
 {{- end }}

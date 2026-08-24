@@ -1,0 +1,28 @@
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+        livenessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        readinessProbe:
+          initialDelaySeconds: 10
+          periodSeconds: 12
+        extraEnvVars:
+          - name: TEST_ENV_VAR
+            value: "test-value"
+        extraVolumes:
+          - name: test-volume
+            emptyDir: {}
+        extraVolumeMounts:
+          - name: test-volume
+            mountPath: /tmp/test-volume
+    sourceType: otlp
+  logs:
+    enabled: true
+  traces:
+    enabled: false
+  events:
+    enabled: false

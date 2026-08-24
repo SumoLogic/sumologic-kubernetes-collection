@@ -1,17 +1,35 @@
 exporters:
   sumologic:
     client: {{ include "sumologic.sumo_client" . }}
+{{- if not .Values.sumologic.sourcelessMode }}
     endpoint: {{ include "sumologic.events.exporter.endpoint" . }}
+{{- end }}
     log_format: {{ include "sumologic.events.exporter.format" . }}
     sending_queue:
       enabled: true
 {{- if .Values.sumologic.events.persistence.enabled }}
       storage: file_storage
 {{- end }}
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 1024000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{- end }}
 
 {{- if eq .Values.debug.events.print true }}
   debug:
     verbosity: detailed
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 1024000
+      batch:
+        flush_timeout: 1s
+        min_size: 1024
+        max_size: 2048
+{{- end }}
 {{- end }}
 
 {{- if eq (include "sumologic-mock.forward-events" .) "true" }}
@@ -21,6 +39,13 @@ exporters:
     log_format: {{ include "sumologic.events.exporter.format" . }}
     sending_queue:
       enabled: true
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 1024000
+      batch:
+        flush_timeout: 1s
+        min_size: 1_024
+        max_size: 2_048
+{{- end }}
 {{- end }}
 
 extensions:
@@ -28,10 +53,24 @@ extensions:
   file_storage:
     directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}
     timeout: 10s
+    fsync: {{ .Values.sumologic.events.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.sumologic.events.persistence.fileStorage.recreate }}
 {{- end }}
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_name: ${MY_POD_NAME}-{{ .Values.sumologic.clusterName }}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+{{- if .Values.sumologic.events.persistence.enabled }}
+    collector_credentials_directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}/credentials
+{{- end }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 
 processors:
   batch:
@@ -60,8 +99,79 @@ processors:
           - set(time, Now()) where time_unix_nano == 0
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
 
+{{- if not .Values.otelevents.useSumoK8sEventReceiver }}
+  ## Reformat body to align k8sobjects payload format with the older raw_k8s_events format
+  ## so that existing event queries continue to work
+  transform/reformat_body:
+    log_statements:
+      - context: log
+        statements:
+          # Copy 'object' from body to attributes
+          - set(attributes["object"], body["object"])
+          # Copy 'type' from body to attributes
+          - set(attributes["type"], body["type"])
+          # Lift 'message' out of 'object' and put it in 'body'
+          - set(body, attributes["object"]["message"])
+
+  ## Drop DELETED and other non-watch events (keep only ADDED and MODIFIED)
+  filter/watch_types:
+    logs:
+      log_record:
+        - attributes["type"] != "ADDED" and attributes["type"] != "MODIFIED"
+
+  ## Populate severity_text and severity_number from the event type field
+  transform/set_severity:
+    log_statements:
+      - context: log
+        statements:
+          # Warning → WARN (13)
+          - set(severity_text, "Warning") where attributes["object"]["type"] == "Warning"
+          - set(severity_number, 13) where attributes["object"]["type"] == "Warning"
+          # Normal → INFO (9)
+          - set(severity_text, "Normal") where attributes["object"]["type"] == "Normal"
+          - set(severity_number, 9) where attributes["object"]["type"] == "Normal"
+{{- end }}
+
+{{- if .Values.otelevents.reportConfigMaps }}
+  ## Extract configmap name and chart label from body
+  transform/extract_configmap_name:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["configmap_name"], body["metadata"]["name"]) where body["metadata"]["name"] != nil
+          - set(attributes["chart"], body["metadata"]["labels"]["chart"]) where body["metadata"]["labels"]["chart"] != nil
+
+  ## Filter to only include configmaps with chart label starting with "sumologic"
+  filter/sumologic_configmaps:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: chart
+            value: ^sumologic.*
+{{- end }}
+
 receivers:
+{{- if .Values.otelevents.reportConfigMaps }}
+  k8sobjects/configmaps:
+    auth_type: serviceAccount
+    objects:
+      - name: configmaps
+        # Only pull sumologic configmaps every day
+        namespaces:
+          - {{ .Release.Namespace | quote }}
+        mode: pull
+        interval: 24h
+{{- end }}
+{{- if .Values.otelevents.useSumoK8sEventReceiver }}
   raw_k8s_events: {}
+{{- else }}
+  k8sobjects/events:
+    auth_type: serviceAccount
+    objects:
+      - name: events
+        mode: watch
+{{- end }}
 
 service:
   extensions:
@@ -70,7 +180,33 @@ service:
     - file_storage
 {{- end }}
     - pprof
+{{- if .Values.sumologic.sourcelessMode }}
+    - sumologic
+{{- end }}
   pipelines:
+{{- if .Values.otelevents.reportConfigMaps }}
+    logs/configmaps:
+      exporters:
+        - sumologic
+{{- if eq .Values.debug.events.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-events" .) "true" }}
+        - sumologic/sumologic-mock
+{{- end }}
+      processors:
+        - transform/extract_configmap_name
+        - filter/sumologic_configmaps
+        - resource/add_cluster
+        - source
+        - sumologic
+        - transform/add_timestamp
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
+      receivers:
+        - k8sobjects/configmaps
+{{- end }}
     logs/events:
       exporters:
         - sumologic
@@ -81,13 +217,25 @@ service:
         - sumologic/sumologic-mock
 {{- end }}
       processors:
+{{- if not .Values.otelevents.useSumoK8sEventReceiver }}
+        - transform/reformat_body
+        - filter/watch_types
+        - transform/set_severity
+{{- end }}
         - resource/add_cluster
         - source
         - sumologic
         - transform/add_timestamp
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
+{{- end }}
       receivers:
+{{- if .Values.otelevents.useSumoK8sEventReceiver }}
         - raw_k8s_events
+{{- else }}
+        - k8sobjects/events
+{{- end }}
+
 
   telemetry:
     logs:

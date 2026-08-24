@@ -17,9 +17,13 @@ data:
         compression: gzip
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
         sending_queue:
+          batch:
+            flush_timeout: 5s
+            max_size: 512
+            min_size: 256
           enabled: true
           num_consumers: 10
-          queue_size: 10000
+          queue_size: 2560000
     extensions:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
@@ -55,7 +59,6 @@ data:
           processors:
           - memory_limiter
           - cascading_filter
-          - batch
           receivers:
           - otlp
       telemetry:

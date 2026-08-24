@@ -32,18 +32,13 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.130.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.158.0-sumo-0"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/conf/traces.sampler.conf.yaml
           env:
             - name: GOGC
               value: "80"
-            - name: SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-traces
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE
               valueFrom:
                 secretKeyRef:
@@ -57,6 +52,11 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
           resources:
             limits:
               cpu: 2000m

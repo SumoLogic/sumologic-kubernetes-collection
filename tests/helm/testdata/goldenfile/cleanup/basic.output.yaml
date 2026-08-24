@@ -32,7 +32,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: copy-files
-          image: public.ecr.aws/sumologic/busybox:latest
+          image: public.ecr.aws/sumologic/busybox:1.38.0
           command: ["sh", "-c", "cp /configmap/* /etc/terraform"]
           volumeMounts:
             - name: configmap
@@ -41,7 +41,7 @@ spec:
               mountPath: /etc/terraform
       containers:
         - name: cleanup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.16.0
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.18.0
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: cleanup
@@ -63,6 +63,12 @@ spec:
               value: "%CURRENT_CHART_VERSION%"
             - name: SUMOLOGIC_SECRET_NAME
               value: "sumologic"
+            - name: SUMOLOGIC_USE_EXTENSION
+              value: "false"
+            - name: SUMOLOGIC_EXTENSION_SECRET_NAME
+              value: "sumologic-extension"
+            - name: SUMOLOGIC_INSTALLATION_TOKEN_PROVIDED
+              value: "false"
 
             - name: NO_PROXY
               value: kubernetes.default.svc

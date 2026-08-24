@@ -1,5 +1,6 @@
 namespaceOverride: "sumologic"
 sumologic:
+  useExporterBatching: true
   nodeSelector:
     sumologic.com/kind: worker
   tolerations:

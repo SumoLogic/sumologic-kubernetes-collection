@@ -1,4 +1,4 @@
-{{- if and (eq (include "metrics.otelcol.enabled" .) "true") (eq (include "metadata.metrics.autoscaling.enabled" .) "true") }}
+{{- if and (eq (include "metrics.otelcol.enabled" .) "true") (ne (include "metrics.collector.singleLayerPipeline.enabled" .) "true") (eq (include "metadata.metrics.autoscaling.enabled" .) "true") }}
 apiVersion: {{ include "apiVersion.horizontalPodAutoscaler" . }}
 kind: HorizontalPodAutoscaler
 metadata:
@@ -14,6 +14,10 @@ spec:
     name: {{ template "sumologic.metadata.name.metrics.statefulset" . }}
   minReplicas: {{ .Values.metadata.metrics.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.metadata.metrics.autoscaling.maxReplicas }}
+{{- if .Values.metadata.metrics.autoscaling.behavior }}
+  behavior:
+    {{- toYaml .Values.metadata.metrics.autoscaling.behavior | nindent 4 }}
+{{- end }}
   metrics:
 {{- if .Values.metadata.metrics.autoscaling.targetMemoryUtilizationPercentage }}
   - type: Resource

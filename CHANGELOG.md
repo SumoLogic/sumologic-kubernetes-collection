@@ -7,6 +7,566 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.4.0]
+
+### Released 2026-08-12
+
+### Breaking Changes
+
+- Remove enableSumoPrometheusRemotewriteReceiver flag and Telegraf receiver. The metrics pipeline now always uses the upstream
+  prometheusremotewrite receiver. [#4243]
+
+### Added
+
+- feat: add file_storage fsync/recreate and terminationGracePeriodSeconds options to prevent bbolt database corruption on ungraceful pod
+  termination [#4296]
+
+### Changed
+
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.2 [#4272]
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.12.7 to 0.12.8 [#4277]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.30.0 [#4278]
+- chore(deps): bump public.ecr.aws/sumologic/busybox Docker tag from 1.36.0 to 1.38.0 [#4287]
+- chore(deps): bump sumologic-otel-collector version to v0.157.0-sumo-0 [#4291]
+
+### Fixed
+
+- Fix: k8s sumologic extension - collector name format changed to podName+clusterName [#4280]
+- fix: use max(3, input) for minReplicas when singleLayerPipeline is enabled [#4284]
+
+[#4243]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4243
+[#4296]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4296
+[#4272]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4272
+[#4277]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4277
+[#4278]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4278
+[#4287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4287
+[#4291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4291
+[#4280]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4280
+[#4284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4284
+[v5.4.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.4.0
+
+## [v5.3.1]
+
+### Released 2026-07-22
+
+### Breaking Changes
+
+- fix: instrumentation metrics exporter now uses OTLP format when sourceType is otlp (default). If you send metrics from auto-instrumented
+  pods and your queries use `_source=metrics`, they must be updated to `_source=metrics-otlp`. We recommend not relying on `_source` in
+  queries as it is a collection-internal field subject to change. Use application-specific query parameters instead. [#4274]
+
+[#4274]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4274
+[v5.3.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.3.1
+
+## [v5.3.0]
+
+### Released 2026-07-21
+
+### Added
+
+- feat: add source reduction with opt-in cleanup of unused sources [#4238]
+- feat: Use sumologic extension for authentication and move out of Hosted collector and sources [#4260]
+- feat: add configurable probes, PVC retention policy, and extraEnvVars/extraVolumes/extraVolumeMounts for metrics collector in single-layer
+  pipeline mode [#4264]
+
+### Changed
+
+- chore(deps): bump Helm release opentelemetry-operator from 0.115.1 to 0.117.0 [#4249]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.1 [#4252]
+- chore(deps): bump Helm release opentelemetry-operator from 0.117.0 to 0.118.0 [#4253]
+- chore(deps): bump sumologic-otel-collector version to v0.155.0-sumo-0 [#4255]
+- chore(deps): bump autoinstrumentation [#4256]
+- chore(deps): bump Helm release opentelemetry-operator from 0.118.0 to 0.119.0 [#4261]
+- chore(deps): bump public.ecr.aws/sumologic/metrics-server Docker tag to v0.9.0 [#4265]
+- chore(deps): bump Helm release opentelemetry-operator from 0.119.0 to 0.120.0 [#4266]
+
+### Fixed
+
+- fix: PVC cleaner now works correctly with single-layer metrics pipeline. Note: on upgrade, existing PVCs will not have the new selector
+  label until the metrics collector StatefulSet is recreated. [#4262]
+- fix: omit spec.replicas from OpenTelemetryCollector CR when autoscaling is enabled to prevent helm upgrade failures caused by field
+  ownership conflicts with the scale subresource [#4270]
+
+[#4238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4238
+[#4260]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4260
+[#4264]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4264
+[#4249]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4249
+[#4252]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4252
+[#4253]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4253
+[#4255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4255
+[#4256]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4256
+[#4261]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4261
+[#4265]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4265
+[#4266]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4266
+[#4262]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4262
+[#4270]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4270
+[v5.3.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.3.0
+
+## [v5.2.0]
+
+### Released 2026-06-23
+
+### Breaking Changes
+
+- chore(SUMO-286652): Remove useSumoK8sProcessor and k8s_tagger [#4233]
+- chore(SUMO-286654): Update k8s min cluster version to 1.24 and remove docker-shim parser path [#4234]
+- Remove nginx remote-write-proxy component (sumologic.metrics.remoteWriteProxy). This was a Prometheus remote-write load balancer that is
+  no longer needed with the OTel-based pipeline. [#4242]
+
+### Added
+
+- feat: add single-layer metrics pipeline using forward connector to merge collector and metadata layers into a single pod [#4218]
+- chore(SUMO-286974): Add flag to control node and pod labels in logs [#4240]
+
+### Changed
+
+- chore(deps): bump opentelemetry-operator from 0.114.1 to 0.115.0 [#4229]
+- chore(deps): bump public.ecr.aws/sumologic/kube-state-metrics Docker tag to v2.19.1 [#4230]
+- chore(deps): bump autoinstrumentation to v0.77.0 [#4231]
+- chore(SUMO-286650): Remove fluent.tag synthetic attribute [#4236]
+- chore(deps): bump sumologic-otel-collector to v0.154.0-sumo-0 [#4237], [#4239]
+- chore(deps): bump opentelemetry-operator [#4247]
+- chore(deps): bump metrics-server from 3.13.0 to 3.13.1 [#4228]
+- chore(deps): bump autoinstrumentation [#4244]
+
+[#4233]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4233
+[#4234]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4234
+[#4242]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4242
+[#4218]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4218
+[#4240]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4240
+[#4229]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4229
+[#4230]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4230
+[#4231]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4231
+[#4236]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4236
+[#4237]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4237
+[#4239]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4239
+[#4247]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4247
+[#4228]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4228
+[#4244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4244
+[v5.2.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.2.0
+
+## [v5.1.1]
+
+### Released 2026-06-09
+
+### Changed
+
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.28.0 [#4210]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.28.1 [#4212]
+- chore(deps): bump public.ecr.aws/sumologic/kube-state-metrics Docker tag to v2.19.0 [#4213]
+- chore(deps): bump Helm release opentelemetry-operator from 0.113.1 to 0.114.0 [#4215]
+- chore(deps): bump Helm release opentelemetry-operator from 0.114.0 to 0.114.1 [#4216]
+- chore(deps): bump sumologic-otel-collector to v0.153.0-sumo-0 [#4219]
+- chore: Upgrade sumologic mock to 2.28.0 [#4220]
+- chore(deps): bump tailing-sidecar-operator from 0.20.3 to 0.20.4 [#4221]
+- chore(deps): bump kubernetes-tools to v2.28.0 [#4222]
+- chore(deps): bump tailing-sidecar-operator from 0.20.4 to 0.20.5 [#4225]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.0 [#4226]
+
+[#4210]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4210
+[#4212]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4212
+[#4213]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4213
+[#4215]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4215
+[#4216]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4216
+[#4219]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4219
+[#4220]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4220
+[#4221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4221
+[#4222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4222
+[#4225]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4225
+[#4226]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4226
+[v5.1.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.1.1
+
+## [v5.1.0]
+
+### Released 2026-05-19
+
+### Added
+
+- feat: Allow journald directory to be overriden [#4017]
+- OSC-1274: Add export level batching [#4129]
+
+### Changed
+
+- chore(deps): bump Helm release opentelemetry-operator from 0.112.0 to 0.112.1 [#4194]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-nodejs Docker tag to v0.75.0 [#4195]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.38.4 [#4198]
+- chore(deps): bump Helm release opentelemetry-operator from 0.112.1 to 0.113.0 [#4199]
+- chore(deps): bump Helm release opentelemetry-operator from 0.113.0 to 0.113.1 [#4200]
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.12.6 to 0.12.7 [#4201]
+- chore(deps): bump sumologic-otel-collector version to v0.152.0-sumo-0 [#4203]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-nodejs Docker tag to v0.76.0 [#4204]
+
+[#4017]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4017
+[#4129]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4129
+[#4194]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4194
+[#4195]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4195
+[#4198]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4198
+[#4199]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4199
+[#4200]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4200
+[#4201]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4201
+[#4203]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4203
+[#4204]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4204
+[v5.1.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.1.0
+
+## [v5.0.0]
+
+### Released 2026-05-06
+
+### Migration from v4
+
+See the [migration guide][v5_migration_guide] for details.
+
+### Breaking
+
+- feat(helm v5): Remove prometheus operator and deprecate telegraf receiver [#4081]
+
+### Changed
+
+- chore: update OpenTelemetry collector to 0.151.0 [#4185]
+- chore(deps): bump Helm release opentelemetry-operator from 0.110.0 to 0.111.0 [#4187]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-nodejs Docker tag to v0.74.0 [#4188]
+- chore(deps): bump Helm release opentelemetry-operator from 0.111.0 to 0.112.0 [#4191]
+
+[#4081]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4081
+[#4185]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4185
+[#4187]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4187
+[#4188]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4188
+[#4191]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4191
+[v5.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.0.0
+[v5_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v5/important-changes/
+
+## [v4.28.0]
+
+### Released 2026-05-04
+
+### Breaking Changes
+
+- chore(deps): bump opentelemetry-operator from 0.109.0 to 0.110.0, removing kube-rbac-proxy sidecar in favor of built-in metrics
+  authentication. Remove any `opentelemetry-operator.kubeRBACProxy.*` overrides from custom values before upgrading. [#4166]
+- autoinstrumentation-dotnet now requires .NET 8 or newer (.NET 6 and .NET 7 are no longer supported) [#4172]
+- autoinstrumentation-nodejs now requires Node.js 18.19.0+ or 20.6.0+ (Node.js 14 and 16 are no longer supported) [#4172]
+
+### Added
+
+- Adds k8s cluster-name/helm-version fields [#4164]
+
+### Changed
+
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.3.1 to 0.12.6 [#4167]
+- chore(deps): bump public.ecr.aws/sumologic/kubernetes-setup Docker tag to v3.17.0 [#4168]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf from 1.21.2 to 1.31.0 [#4170]
+- chore(deps): bump Helm release tailing-sidecar-operator from 0.18.1 to 0.20.3 [#4171]
+- chore(deps): bump autoinstrumentation-dotnet from 1.9.0 to 1.15.0 [#4172]
+- chore(deps): bump autoinstrumentation-java from 2.20.1 to 2.27.0 [#4172]
+- chore(deps): bump autoinstrumentation-nodejs from 0.54.0 to 0.73.0 [#4172]
+- chore(deps): bump Helm release falco from 7.0.2 to 7.2.1 [#4173]
+- chore(deps): bump public.ecr.aws/sumologic/kubernetes-setup Docker tag to v3.18.0 [#4181]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.38.3 [#4182]
+
+### Fixed
+
+- ci: enable renovate bot and add more dependencies in it [#4145]
+- ci: fix changelog for renovate branches [#4149]
+
+[#4166]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4166
+[#4172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4172
+[#4164]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4164
+[#4167]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4167
+[#4168]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4168
+[#4170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4170
+[#4171]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4171
+[#4173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4173
+[#4181]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4181
+[#4182]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4182
+[#4145]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4145
+[#4149]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4149
+[v4.28.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.28.0
+
+## [v4.27.1]
+
+### Released 2026-04-14
+
+### Changed
+
+- chore: bump kubernetes-tools-kubectl and sumologic-mock from 2.26.0 to 2.27.0 [#4139]
+
+[#4139]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4139
+[v4.27.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.1
+
+## [v4.27.0]
+
+### Released 2026-04-10
+
+### Added
+
+- chore(deps): bump kube-state-metrics to 2.18.0 [#4137]
+- chore(deps): bump tailing-sidecar-operator to 0.20.3 [#4137]
+- chore(deps): bump sumologic-otel-collector to 0.149.0 [#4137]
+
+[#4137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4137
+[v4.27.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.27.0
+
+## [v4.26.0]
+
+### Released 2026-04-01
+
+### Breaking Changes
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+
+Starting from version 4.26.0, We have changed our Bitnami based metrics server to the open source Metrics Server.
+
+Refer: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/#metrics-server-source-chart-changed
+
+### Changed
+
+- feat(SUMO-275536): Migrate from bitnami metrics server to upstream metrics server [#4100]
+- feat: Updates routing connector config to use action:copy [#4116]
+
+[#4100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4100
+[#4116]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4116
+
+[v4.26.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.26.0## [v4.25.0]
+
+### Released 2026-03-24
+
+### Breaking Changes
+
+- feat(k8sattributesprocessor): Make k8sattributes processor as default and deprecate k8s_tagger for k8s metadata enrichment [#4093]
+
+For the k8sattributes processor, collection of node labels for metrics is disabled by default.
+
+This change primarily affects users who were already using the k8sattributes processor via the flag
+`metadata.metrics.useSumoK8sProcessor=false` and relying on node labels in their metrics search queries or dashboards.
+
+You can re-enable node label enrichment for metrics by setting:
+
+`metadata.metrics.extractNodeLabels=true`
+
+Enable node labels only if required for your use case, as they can significantly increase metrics cardinality.
+
+[#4093]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4093
+
+### Changed
+
+- feat: Drops k8s_attributes metrics [#4118]
+
+[#4118]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4118
+[v4.25.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.25.0
+
+## [v4.24.1]
+
+### Released 2026-03-19
+
+### Added
+
+- feat: add serviceAnnotations and trafficDistribution support to service templates [#4113]
+- chore: bump tailing sidecar to v0.20.2
+
+[#4113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4113
+[v4.24.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.1
+
+## [v4.24.0]
+
+### Released 2026-03-16
+
+### Added
+
+- feat: Feature flags configMap pull and prevents pulling non-sumo configmaps. [#4103]
+- chore: add support for ESC deployment [#4106]
+
+### Changed
+
+- chore(SUMO-278717): fix the uninstall by upgrading the upstream operator [#4107]
+- chore(SUMO-280239): Bump otel version to 0.147.0 [#4110]
+
+[#4103]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4103
+[#4106]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4106
+[#4107]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4107
+[#4110]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4110
+[v4.24.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.24.0
+
+## [v4.23.0]
+
+### Released 2026-03-06
+
+### Added
+
+- feat: Added support for internal terraform provider registries [#4091]
+
+[#4091]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4091
+[v4.23.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.23.0
+
+## [v4.22.0]
+
+### Released 2026-03-02
+
+### Changed
+
+- chore: bumping otel version from 145 to 146 [#4085]
+- chore: bump tailing sidecar to 0.20.0 [#4086]
+- chore: bump opentelemetry-operator from 0.105.1 to 0.106.0 [#4088]
+
+[#4085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4085
+[#4086]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4086
+[#4088]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4088
+[v4.22.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.22.0
+
+## [v4.21.1]
+
+### Released 2026-02-19
+
+### Added
+
+- chore: update opentelemetry-operator chart version to 0.105.1 [#4078]
+
+[#4078]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4078
+[v4.21.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.21.1
+
+## [v4.21.0]
+
+### Released 2026-02-13
+
+### Added
+
+- feat: Adds sumologic collection configmap pull every 24 hrs [#4073]
+
+### Changed
+
+- chore: bumps otel version from 0.143 to 0.145 [#4075]
+
+[#4073]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4073
+[#4075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4075
+[v4.21.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.21.0
+
+## [v4.20.0]
+
+### Released 2026-01-22
+
+### Changed
+
+- chore: upgrade tailing side to v0.19.1 [#4057]
+- chore:tailing sidecar version upgrade and documentation [#4063]
+- adding tailing-sidecar-operator.sidecar.image.tag in values.yaml [#4067]
+
+[#4057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4057
+[#4063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4063
+[#4067]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4067
+[v4.20.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.20.0
+
+## [v4.19.0]
+
+### Released 2026-01-19
+
+### Breaking Changes
+
+- chore: remove useRoutingConnectors and use routing connectors by default [#4056]. See below guide to migrate routing processor to
+  routingconnector
+
+#### Known issue
+
+- Using multiple exporters and route statements under sumologic.logs.otelcol.routing.table will route only to the first matching route and
+  won't check subsequent route conditions. Please remember this limitation while migrating and adding multiple additional routing tables
+
+For example:
+
+```shell
+routing:
+  table:
+    - statement: route() where resource.attributes["k8s.name"] == "test"
+      exporters:
+        - test
+    - statement: route() where resource.attributes["k8s.host"] == "alpha"
+      exporters:
+        - debug
+```
+
+A record where resource.attributes is {"k8s.host": "alpha", "k8s.name":"test"}, will only be routed to test exporter as it was evaluated
+first. The data will not be forwarded to debug exporter.
+
+#### How to migrate?
+
+Routing configurations are defined under sumologic.logs.otelcol.routing.table config key. If you're using custom routing configuration using
+the routing key, you need to migrate. Earlier, routing configurations were defined as the following keys:
+
+1. sumologic.logs.otelcol.routing.table.exporter
+2. sumologic.logs.otelcol.routing.table.statement
+
+```shell
+Older Config:
+sumologic:
+  logs:
+    otelcol:
+      routing:
+        table:
+          - exporter: <exporter-name>
+            statement: <routing-statement>
+
+New Config:
+sumologic:
+  logs:
+    otelcol:
+     routing:
+       table:
+         - exporters: [<exporter-name>]
+           statement: <routing-statement>
+```
+
+Please notice the older configuration used `exporter` in table entry whereas the new configuration uses `exporters`.
+
+With the new configuration, all the exporters with similar statements can be grouped under the same table entry. Internally, sumologic helm
+chart will convert this configuration into Routing connector configurations.
+
+---
+
+### Changed
+
+- chore(deps): bump metrics server to 7.4.12 [#4050]
+- chore(deps): bump falco to 7.0.2 [#4051]
+- chore: updates otelcol image from 140 to 143 [#4059]
+
+[#4056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4056
+[#4050]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4050
+[#4051]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4051
+[#4059]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4059
+[v4.19.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.19.0
+
+## [v4.18.0]
+
+### Released 2025-12-03
+
+### Breaking Changes
+
+- chore(deps): Remove opencensus receiver to upgrade otel to 0.136.1 version [#4021]
+
+### Added
+
+- feat(routing): Adds support for routing connector for logs collection [#4012]
+- fix: backfill cri-o time layout from otel helm charts [#4018]
+- chore(deps): Migrate routing processor to routing connector for metrics collection [#4025]
+- feat(HPA): Adds autoscaling config [#4026]
+- chore: add support for zurich deployment [#4030]
+
+### Changed
+
+- Updated otel-collector version from 0.130 to 0.140 [#4024]
+
+### Fixed
+
+- fix(opentelemetry-operator): Allow runtime/default profile for opentelemetry-operator deployment [#4027]
+- chore(otel operator): Update opentelemetry-operator to 0.99.1 to fix metrics collection issues in openshift clusters [#4032]
+
+[#4021]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4021
+[#4012]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4012
+[#4018]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4018
+[#4025]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4025
+[#4026]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4026
+[#4030]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4030
+[#4024]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4024
+[#4027]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4027
+[#4032]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4032
+[v4.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.18.0
+
 ## [v4.17.0]
 
 ### Released 2025-10-10
@@ -761,7 +1321,7 @@ See the [migration guide][v4_migration_guide] for details.
 [#3332]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3332
 [#3340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3340
 [v4.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0
-[v4_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v4/important-changes/
+[v4_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v4/important-changes/
 
 ## [v3.19.3]
 
@@ -1604,7 +2164,7 @@ See the [migration guide][v3_migration_guide] for details.
 [#2794]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2794
 [#2807]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2807
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
-[v3_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v3/important-changes/
+[v3_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v3/important-changes/
 [v3.0.0-rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...v3.0.0-rc.0
 
 ## [v3.0.0-beta.1]
@@ -2565,7 +3125,7 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [v0.38.1-cfp]:
   https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
-[v0.38.1-cfp-help]: https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
+[v0.38.1-cfp-help]: https://www.sumologic.com/help/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
 [#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895

@@ -13,6 +13,7 @@ trap 'err_report $LINENO' ERR
 function helm() {
   PWD="$(pwd)"
   docker run --rm \
+    -e HELM_EXPERIMENTAL_OCI=1 \
     -v "${PWD}:/chart" \
     -w /chart \
     sumologic/kubernetes-tools:2.22.0 \
@@ -32,7 +33,6 @@ function push_helm_chart() {
   local retry_count=10
 
   echo "Pushing new Helm Chart release ${version}"
-
   set -ex
   # this loop is to allow for concurent builds: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1853 
   for i in $(seq 0 $((retry_count-1)))
@@ -40,7 +40,10 @@ function push_helm_chart() {
     # due to helm repo index issue: https://github.com/helm/helm/issues/7363
     # we need to create new package in a different dir, merge the index and move the package back
     mkdir -p "${sync_dir}"
-    helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
+    # Split dependency update and package to avoid OCI registry segfault in Helm v3.7.2
+    # See: https://github.com/helm/helm/issues/9267
+    helm dependency update deploy/helm/sumologic
+    helm package deploy/helm/sumologic --version="${version}" --app-version="${version}" --destination "${sync_dir}"
 
     git fetch "${remote}" gh-pages
     git stash push

@@ -1,4 +1,9 @@
-# kube-prometheus Mixin
+# Important update from Helm chart v5
+
+Prometheus support has been removed from the Helm chart as of v5. Starting with Helm chart v4, the Opentelemetry Operator is the default and
+single source for metrics collection, and in v5 the built-in Prometheus components are removed in favor of using the Opentelemetry Operator.
+
+## kube-prometheus Mixin (Till helm chart v4)
 
 If you are already using kube-prometheus, you can use the Prometheus installation from there and send metrics to Sumo Logic using a mixin to
 add the correct remote_write configs and add the `cluster` external_label. You can generate mixin configuration using `kubectl` or `docker`:
@@ -70,7 +75,7 @@ local kp =
       clusterName: 'CLUSTER NAME HERE',
 
       // This should be the FQDN of the metadata enrichment service.
-      sumologicCollectorSvc: 'http://collection-sumologic-remote-write-proxy.sumologic.svc.cluster.local.:9888/',
+      sumologicCollectorSvc: 'http://collection-sumologic-metadata-metrics.sumologic.svc.cluster.local.:9888/',
     },
   };
 

@@ -1,7 +1,5 @@
 sumologic:
+  useExporterBatching: true
   collector:
     otelcol:
       enabled: true
-metadata:
-  logs:
-    useSumoK8sProcessor: false

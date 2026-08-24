@@ -124,7 +124,7 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"metricstransform",
 		"groupbyattrs",
 		"resource",
-		"k8s_tagger",
+		"k8sattributes",
 		"source",
 		"sumologic",
 		"filter/1",
@@ -136,7 +136,6 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"groupbyattrs/group_by_name",
 		"transform/remove_name",
 		"filter/drop_unnecessary_metrics",
-		"batch",
 	}
 
 	require.Equal(t, expectedPipelineValue, otelConfig.Service.Pipelines.Metrics.Processors)
@@ -155,6 +154,7 @@ func TestMetadataSourceTypeOTLP(t *testing.T) {
 			Rest map[string]interface{} `yaml:",inline"`
 		}
 		Processors map[string]interface{}
+		Connectors map[string]interface{}
 		Service    struct {
 			Pipelines struct {
 				Metrics struct {
@@ -179,6 +179,7 @@ sumologic:
 	assert.Equal(t, otelConfig.Exporters.Default.Endpoint, "${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}")
 	assert.Len(t, otelConfig.Exporters.Rest, 0)
 	assert.NotContains(t, otelConfig.Processors, "routing")
+	assert.NotContains(t, otelConfig.Connectors, "routing")
 	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
 	assert.Equal(t, otelConfig.Service.Pipelines.Metrics.Exporters, []string{"sumologic/default"})
 }
@@ -187,18 +188,32 @@ func TestMetadataSourceTypeHTTP(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/metrics/otelcol/configmap.yaml"
 
+	type MetricsPipeline struct {
+		Receivers []string `yaml:"receivers,omitempty"`
+		Exporters []string `yaml:"exporters,omitempty"`
+	}
+
 	type OtelConfig struct {
 		Exporters map[string]struct {
 			MetricFormat string `yaml:"metric_format"`
 			Endpoint     string
 		} `yaml:"exporters"`
 		Processors map[string]interface{}
+		Connectors map[string]interface{}
 		Service    struct {
 			Pipelines struct {
 				Metrics struct {
 					Processors []string `yaml:"processors"`
 					Exporters  []string `yaml:"exporters"`
 				}
+				MetricsApiserver        MetricsPipeline `yaml:"metrics/apiserver"`
+				MetricsControlPlane     MetricsPipeline `yaml:"metrics/control_plane"`
+				MetricsController       MetricsPipeline `yaml:"metrics/controller"`
+				MetricsKubelet          MetricsPipeline `yaml:"metrics/kubelet"`
+				MetricsNode             MetricsPipeline `yaml:"metrics/node"`
+				MetricsScheduler        MetricsPipeline `yaml:"metrics/scheduler"`
+				MetricsState            MetricsPipeline `yaml:"metrics/state"`
+				MetricsSumologicDefault MetricsPipeline `yaml:"metrics/sumologic/default"`
 			}
 		}
 	}
@@ -217,22 +232,26 @@ sumologic:
 	defaultExporter := otelConfig.Exporters["sumologic/default"]
 	assert.Equal(t, "prometheus", defaultExporter.MetricFormat)
 	assert.Equal(t, "${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}", defaultExporter.Endpoint)
-	assert.Contains(t, otelConfig.Processors, "routing")
-	assert.Contains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
-	assert.Equal(
-		t,
-		[]string{
-			"sumologic/default",
-			"sumologic/apiserver",
-			"sumologic/control_plane",
-			"sumologic/controller",
-			"sumologic/kubelet",
-			"sumologic/node",
-			"sumologic/scheduler",
-			"sumologic/state",
-		},
-		otelConfig.Service.Pipelines.Metrics.Exporters,
-	)
+	assert.Contains(t, otelConfig.Connectors, "routing/default")
+	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
+	assert.Equal(t, otelConfig.Service.Pipelines.Metrics.Exporters, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsApiserver.Receivers, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsControlPlane.Receivers, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsController.Receivers, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsKubelet.Receivers, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsNode.Receivers, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsScheduler.Receivers, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsState.Receivers, []string{"routing/default"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsSumologicDefault.Receivers, []string{"routing/default"})
+
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsApiserver.Exporters, []string{"sumologic/apiserver"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsControlPlane.Exporters, []string{"sumologic/control_plane"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsController.Exporters, []string{"sumologic/controller"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsKubelet.Exporters, []string{"sumologic/kubelet"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsNode.Exporters, []string{"sumologic/node"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsScheduler.Exporters, []string{"sumologic/scheduler"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsState.Exporters, []string{"sumologic/state"})
+	assert.Equal(t, otelConfig.Service.Pipelines.MetricsSumologicDefault.Exporters, []string{"sumologic/default"})
 }
 
 func TestNoPrometheusServiceMonitors(t *testing.T) {

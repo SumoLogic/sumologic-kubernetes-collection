@@ -40,13 +40,14 @@ func WaitUntilPodsAvailableE(
 	sleepBetweenRetries time.Duration,
 ) error {
 	retries := int(sleepDuration / sleepBetweenRetries)
-	message, err := retry.DoWithRetryE(
+	message, err := retry.DoWithRetryContextE(
 		t,
+		context.Background(),
 		fmt.Sprintf("WaitUntilPodsAvailable(%s)", formatSelectors(filters)),
 		retries,
 		sleepBetweenRetries,
 		func() (string, error) {
-			pods, err := k8s.ListPodsE(t, options, filters)
+			pods, err := k8s.ListPodsContextE(t, context.Background(), options, filters)
 			if err != nil {
 				return "", err
 			}
@@ -84,7 +85,7 @@ func WaitUntilSumologicMockAvailable(
 	tickDuration time.Duration,
 ) {
 	retries := waitDuration / tickDuration
-	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx, envConf), serviceName, int(retries), tickDuration)
+	k8s.WaitUntilServiceAvailableContext(t, ctx, ctxopts.KubectlOptions(ctx, envConf), serviceName, int(retries), tickDuration)
 }
 
 func formatSelectors(listOptions v1.ListOptions) string {

@@ -1,0 +1,56 @@
+---
+# Source: sumologic/templates/pvc-cleaner/cron-job-metrics.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: RELEASE-NAME-sumologic-pvc-cleaner-metrics
+  namespace: sumologic
+  labels:
+    app: pvc-cleaner-metrics
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: RELEASE-NAME-sumologic-pvc-cleaner-metrics
+          labels:
+            app: pvc-cleaner-metrics
+            chart: "sumologic-%CURRENT_CHART_VERSION%"
+            release: "RELEASE-NAME"
+            heritage: "Helm"
+          annotations:
+        spec:
+          nodeSelector:
+            kubernetes.io/os: linux
+          securityContext:
+            runAsUser: 1000
+          containers:
+            - name: pvc-cleaner
+              image: public.ecr.aws/sumologic/kubernetes-tools-kubectl:2.28.0
+              command:
+                - "bash"
+                - "/pvc-cleaner/pvc-cleaner.sh"
+                - "sumologic"
+                - "sumologic.com/component=metrics-collector"
+              imagePullPolicy: IfNotPresent
+              resources:
+                limits:
+                  cpu: 2000m
+                  memory: 256Mi
+                requests:
+                  cpu: 100m
+                  memory: 64Mi
+              volumeMounts:
+                - name: pvc-cleaner
+                  mountPath: /pvc-cleaner
+          volumes:
+            - configMap:
+                defaultMode: 420
+                name: RELEASE-NAME-sumologic-pvc-cleaner
+              name: pvc-cleaner
+          restartPolicy: Never
+          serviceAccountName: RELEASE-NAME-sumologic-pvc-cleaner

@@ -1,0 +1,31 @@
+name: Renovate-scheduler
+on:
+  schedule:
+    - cron: "30 18 * * *" # every day at 18:30 UTC (12:00 AM IST)
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        type: choice
+        default: "info"
+        options:
+          - "info"
+          - "debug"
+          - "warn"
+      dryRun:
+        description: "Dry-run: full (simulate PRs), lookup (check updates only), extract (parse deps only)"
+        type: choice
+        default: ""
+        options:
+          - ""
+          - "full"
+          - "lookup"
+          - "extract"
+
+jobs:
+  renovate:
+    uses: ./.github/workflows/workflow-renovate-run.yaml
+    with:
+      logLevel: ${{ github.event.inputs.logLevel || 'info' }}
+      dryRun: ${{ github.event.inputs.dryRun || '' }}
+    secrets: inherit

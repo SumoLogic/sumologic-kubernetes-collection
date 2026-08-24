@@ -2,7 +2,15 @@ exporters:
   otlphttp:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
     sending_queue:
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 10000
+      batch:
+        flush_timeout: 1s
+        min_size: 1000
+        max_size: 2000
+{{ else }}
       queue_size: 10
+{{- end }}
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
 {{- if eq .Values.debug.logs.collector.print true }}
@@ -17,6 +25,8 @@ extensions:
       on_rebound: true
     directory: /var/lib/storage/otc
     timeout: 10s
+    fsync: {{ .Values.sumologic.logs.collector.otelcol.persistence.fileStorage.fsync }}
+    recreate: {{ .Values.sumologic.logs.collector.otelcol.persistence.fileStorage.recreate }}
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
@@ -30,7 +40,6 @@ processors:
 {{- if .Values.sumologic.logs.systemd.enabled }}
   ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
   ## so they can be used by metadata processors same way like for fluentd
-  ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
   logstransform/systemd:
     operators:
       - from: body._SYSTEMD_UNIT
@@ -45,9 +54,6 @@ processors:
       - from: body.PRIORITY
         to: attributes.PRIORITY
         type: copy
-      - field: attributes["fluent.tag"]
-        type: add
-        value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
       - field: body.__CURSOR
         type: remove
       - field: body.__MONOTONIC_TIMESTAMP
@@ -61,9 +67,8 @@ receivers:
 
 {{- if .Values.sumologic.logs.systemd.enabled }}
   journald:
-    directory: /var/log/journal
-    ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
-    ## Here is filtering by `UNIT`
+    directory: {{ .Values.sumologic.logs.systemd.journaldDirectory }}
+    ## Filtering by unit name
     units:
 {{- if .Values.sumologic.logs.systemd.units }}
 {{ toYaml .Values.sumologic.logs.systemd.units | nindent 6 }}
@@ -133,7 +138,9 @@ service:
         - debug
 {{- end }}
       processors:
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
+{{- end }}
       receivers:
         - filelog/containers
 {{- end }}
@@ -146,7 +153,9 @@ service:
 {{- end }}
       processors:
         - logstransform/systemd
+{{- if eq .Values.sumologic.useExporterBatching false }}
         - batch
+{{- end }}
       receivers:
         - journald
 {{- end }}

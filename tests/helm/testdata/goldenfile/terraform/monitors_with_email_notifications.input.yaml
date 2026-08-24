@@ -1,4 +1,5 @@
 sumologic:
+  useExporterBatching: true
   setup:
     monitors:
       notificationEmails: ["test@test.lh", "email@locahost.lh"]

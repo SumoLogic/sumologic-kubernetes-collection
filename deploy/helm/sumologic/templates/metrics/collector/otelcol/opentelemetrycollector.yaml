@@ -1,4 +1,10 @@
 {{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.config.override }}
+{{- fail "metadata.metrics.config.override cannot be used with singleLayerPipeline.enabled. Use metadata.metrics.config.merge instead, or disable single-layer mode." }}
+{{- end }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled (or .Values.metadata.metrics.statefulset.extraEnvVars .Values.metadata.metrics.statefulset.extraVolumes .Values.metadata.metrics.statefulset.extraVolumeMounts) }}
+{{- fail "metadata.metrics.statefulset.extraEnvVars/extraVolumes/extraVolumeMounts cannot be used with singleLayerPipeline.enabled. Use sumologic.metrics.collector.otelcol.extraEnvVars/extraVolumes/extraVolumeMounts instead." }}
+{{- end }}
 {{ $baseConfig := (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | fromYaml }}
 {{ $mergeConfig := .Values.sumologic.metrics.collector.otelcol.config.merge }}
 {{ $overrideConfig := .Values.sumologic.metrics.collector.otelcol.config.override }}
@@ -7,6 +13,14 @@
 {{ $finalConfig = $overrideConfig }}
 {{ else }}
 {{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+{{/* In single-layer mode, also apply metadata layer config.merge so existing customers'
+     metadata-layer customizations carry over to the combined collector pipeline. */}}
+{{ $metadataMergeConfig := .Values.metadata.metrics.config.merge }}
+{{ if $metadataMergeConfig }}
+{{ $finalConfig = mergeOverwrite $finalConfig $metadataMergeConfig }}
+{{ end }}
+{{- end }}
 {{ end }}
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
@@ -26,7 +40,9 @@ metadata:
 spec:
   image: {{ template "sumologic.metrics.collector.image" . }}
   mode: statefulset
+{{- if not (eq (include "metrics.collector.autoscaling.enabled" .) "true") }}
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
+{{- end }}
   serviceAccount: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
   managementState: {{ template "sumologic.metrics.collector.otelcol.managementState" . }}
   upgradeStrategy: {{ template "sumologic.metrics.collector.otelcol.upgradeStrategy" . }}
@@ -90,18 +106,39 @@ spec:
 {{- if eq (include "metrics.collector.autoscaling.enabled" .) "true" }}
   autoscaler:
     maxReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.maxReplicas }}
+{{- if eq (include "metrics.collector.singleLayerPipeline.enabled" .) "true" }}
+    minReplicas: {{ max 3 (int .Values.sumologic.metrics.collector.otelcol.autoscaling.minReplicas) }}
+{{- else }}
     minReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.minReplicas }}
+{{- end }}
     targetCPUUtilization: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.targetCPUUtilizationPercentage }}
 {{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.targetMemoryUtilizationPercentage }}
     targetMemoryUtilization: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.targetMemoryUtilizationPercentage }}
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.behavior }}
+    behavior:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.autoscaling.behavior | nindent 6 }}
+{{- end }}
 {{- end }}
   env:
+{{- if not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
   - name: METADATA_METRICS_SVC
     valueFrom:
       configMapKeyRef:
         name: sumologic-configmap
         key: metadataMetrics
+{{- else }}
+{{- $ctx := .Values -}}
+{{- if .Values.sumologic.sourcelessMode -}}
+{{- include "kubernetes.extension.envs" . | nindent 2 -}}
+{{- else -}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 2 -}}
+{{- end -}}
+{{- include "proxy-env-variables" . | nindent 2 -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.extraEnvVars }}
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.extraEnvVars | nindent 2 }}
+{{- end }}
+{{- end }}
   - name: NAMESPACE
     valueFrom:
       fieldRef:
@@ -111,6 +148,11 @@ spec:
       fieldRef:
         apiVersion: v1
         fieldPath: status.podIP
+  - name: MY_POD_NAME
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: metadata.name
   podAnnotations:
     ## The operator adds this annotation by default, but we use our own ServiceMonitor
     prometheus.io/scrape: "false"
@@ -120,23 +162,82 @@ spec:
 {{- if .Values.sumologic.metrics.collector.otelcol.podAnnotations -}}
     {{ toYaml .Values.sumologic.metrics.collector.otelcol.podAnnotations | nindent 4 }}
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.terminationGracePeriodSeconds }}
+  terminationGracePeriodSeconds: {{ .Values.sumologic.metrics.collector.otelcol.terminationGracePeriodSeconds }}
+{{- end }}
   podSecurityContext:
     {{ .Values.sumologic.metrics.collector.otelcol.securityContext | toYaml | nindent 4 }}
   ports:
   - name: pprof
     port: 1777
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+  - name: metrics-rw
+    port: 9888
+{{- end }}
   resources:
     {{ .Values.sumologic.metrics.collector.otelcol.resources | toYaml | nindent 4 }}
+{{- if .Values.sumologic.metrics.collector.otelcol.livenessProbe }}
+  livenessProbe:
+    {{ .Values.sumologic.metrics.collector.otelcol.livenessProbe | toYaml | nindent 4 }}
+{{- else if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 3
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.readinessProbe }}
+  readinessProbe:
+    {{ .Values.sumologic.metrics.collector.otelcol.readinessProbe | toYaml | nindent 4 }}
+{{- else if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+{{- end }}
   volumes:
   - name: tmp
     emptyDir: {}
+{{- if not (and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.persistence.enabled) }}
   - name: file-storage
     emptyDir: {}
+{{- end }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.sumologic.metrics.collector.otelcol.extraVolumes }}
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.extraVolumes | nindent 2 }}
+{{- end }}
   volumeMounts:
   - name: tmp
     mountPath: /tmp
   - name: file-storage
     mountPath: /var/lib/storage/otc
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.sumologic.metrics.collector.otelcol.extraVolumeMounts }}
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.extraVolumeMounts | nindent 2 }}
+{{- end }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.persistence.enabled }}
+{{- if .Values.sumologic.persistentVolumeClaimRetentionPolicyEnabled }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: {{ .Values.sumologic.metrics.collector.otelcol.persistentVolumeClaimRetentionPolicywhenScaled }}
+{{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: file-storage
+      labels:
+{{- $pvcLabels := dict "sumologic.com/component" "metrics-collector" }}
+{{- if .Values.metadata.persistence.pvcLabels }}
+{{- $pvcLabels = merge $pvcLabels .Values.metadata.persistence.pvcLabels }}
+{{- end }}
+{{ toYaml $pvcLabels | indent 8 }}
+    spec:
+      accessModes: [{{ .Values.metadata.persistence.accessMode }}]
+{{- if .Values.metadata.persistence.storageClass }}
+      storageClassName: {{ .Values.metadata.persistence.storageClass | quote }}
+{{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.metadata.persistence.size }}
+{{- end }}
   config:
 {{- $finalConfig | toYaml | nindent 4 }}
 {{- end }}

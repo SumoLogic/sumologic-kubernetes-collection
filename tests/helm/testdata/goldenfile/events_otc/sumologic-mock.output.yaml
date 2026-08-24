@@ -14,23 +14,42 @@ data:
   config.yaml: |
     exporters:
       debug:
+        sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
+          enabled: true
+          queue_size: 1024000
         verbosity: detailed
       sumologic:
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
         log_format: otlp
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
+          queue_size: 1024000
           storage: file_storage
       sumologic/sumologic-mock:
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic.svc.cluster.local.:3000/receiver
         log_format: otlp
         sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
           enabled: true
+          queue_size: 1024000
     extensions:
       file_storage:
         directory: /var/lib/storage/events
+        fsync: false
+        recreate: false
         timeout: 10s
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
@@ -40,6 +59,13 @@ data:
         send_batch_max_size: 2048
         send_batch_size: 1024
         timeout: 1s
+      filter/sumologic_configmaps:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: chart
+              value: ^sumologic.*
       resource/add_cluster:
         attributes:
         - action: upsert
@@ -59,7 +85,23 @@ data:
           statements:
           - set(time, Now()) where time_unix_nano == 0
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+      transform/extract_configmap_name:
+        log_statements:
+        - context: log
+          statements:
+          - set(attributes["configmap_name"], body["metadata"]["name"]) where body["metadata"]["name"]
+            != nil
+          - set(attributes["chart"], body["metadata"]["labels"]["chart"]) where body["metadata"]["labels"]["chart"]
+            != nil
     receivers:
+      k8sobjects/configmaps:
+        auth_type: serviceAccount
+        objects:
+        - interval: 24h
+          mode: pull
+          name: configmaps
+          namespaces:
+          - sumologic
       raw_k8s_events: {}
     service:
       extensions:
@@ -67,6 +109,20 @@ data:
       - file_storage
       - pprof
       pipelines:
+        logs/configmaps:
+          exporters:
+          - sumologic
+          - debug
+          - sumologic/sumologic-mock
+          processors:
+          - transform/extract_configmap_name
+          - filter/sumologic_configmaps
+          - resource/add_cluster
+          - source
+          - sumologic
+          - transform/add_timestamp
+          receivers:
+          - k8sobjects/configmaps
         logs/events:
           exporters:
           - sumologic
@@ -77,7 +133,6 @@ data:
           - source
           - sumologic
           - transform/add_timestamp
-          - batch
           receivers:
           - raw_k8s_events
       telemetry:

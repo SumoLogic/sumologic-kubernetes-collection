@@ -27,63 +27,27 @@ Example Usage:
 {{ $enabled }}
 {{- end -}}
 
-{{/*
-Generate list of remoteWrite endpoints for telegraf configuration
-
-'{{ include "metric.endpoints" . }}'
-*/}}
-{{- define "metric.endpoints" -}}
-{{- $endpoints := list -}}
-{{- $kps := get .Values "kube-prometheus-stack" -}}
-{{- range $remoteWrite := $kps.prometheus.prometheusSpec.remoteWrite }}
-{{- $endpoints = append $endpoints ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888" | quote) -}}
-{{- end }}
-{{- range $remoteWrite := $kps.prometheus.prometheusSpec.additionalRemoteWrite }}
-{{- $endpoints = append $endpoints ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888" | quote) -}}
-{{- end -}}
-{{- range $endpoint := .Values.metadata.metrics.config.additionalEndpoints }}
-{{- $endpoints = append $endpoints ($endpoint | quote) -}}
-{{- end -}}
-{{- $endpoints := uniq $endpoints -}}
-{{- $endpoints := sortAlpha $endpoints -}}
-{{ $endpoints | join ",\n" }}
-{{- end -}}
-
-{{/*
-Check if remote write proxy is enabled.
-Example Usage:
-{{- if eq (include "metrics.remoteWriteProxy.enabled" .) "true" }}
-
-*/}}
-{{- define "metrics.remoteWriteProxy.enabled" -}}
-{{ and (eq (include "metrics.enabled" .) "true") (eq .Values.sumologic.metrics.remoteWriteProxy.enabled true) }}
-{{- end -}}
-
-{{- define "metrics.remoteWriteProxy.nodeSelector" -}}
-{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.sumologic.metrics.remoteWriteProxy.nodeSelector)}}
-{{- end -}}
-
-{{- define "metrics.remoteWriteProxy.tolerations" -}}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
-{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
-{{- else -}}
-{{- template "kubernetes.defaultTolerations" . -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "metrics.remoteWriteProxy.affinity" -}}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.affinity -}}
-{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.affinity -}}
-{{- else -}}
-{{- template "kubernetes.defaultAffinity" . -}}
-{{- end -}}
-{{- end -}}
 
 {{/*
 Return the otelcol metrics collector image
 */}}
 {{- define "sumologic.metrics.collector.image" -}}
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.sumologic.metrics.collector.otelcol.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
+
+{{/*
+Check if single-layer pipeline for metrics collector is enabled.
+When true, the collector handles both scraping and enrichment, eliminating the metadata layer.
+
+Example Usage:
+{{- if eq (include "metrics.collector.singleLayerPipeline.enabled" .) "true" }}
+*/}}
+{{- define "metrics.collector.singleLayerPipeline.enabled" -}}
+{{- $enabled := false -}}
+{{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
 {{- end -}}
 
 {{- define "metrics.collector.otelcol.nodeSelector" -}}
@@ -174,36 +138,12 @@ Return the otelcol metrics collector image
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.remoteWriteProxy" -}}
-{{- template "sumologic.fullname" . }}-remote-write-proxy
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.configmap" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.deployment" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.pod" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.labels.app.remoteWriteProxy.service" -}}
-{{- template "sumologic.labels.app.remoteWriteProxy" . }}
-{{- end -}}
-
 {{- define "sumologic.metadata.name.metrics" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.metrics.metadata.endpoint" -}}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy.service" . }}
-{{- else -}}
 {{ template "sumologic.metadata.name.metrics.service" . }}
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
@@ -230,21 +170,6 @@ Return the otelcol metrics collector image
 {{- template "sumologic.metadata.name.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.remoteWriteProxy" -}}
-{{ template "sumologic.fullname" . }}-remote-write-proxy
-{{- end -}}
-
-{{- define "sumologic.metadata.name.remoteWriteProxy.configmap" -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.metadata.name.remoteWriteProxy.deployment" -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
-{{- end -}}
-
-{{- define "sumologic.metadata.name.remoteWriteProxy.service" -}}
-{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
-{{- end -}}
 
 {{- define "sumologic.labels.metrics" -}}
 sumologic.com/app: otelcol-metrics
@@ -347,10 +272,10 @@ Return the metrics format for the default Sumologic exporter for metrics.
 '{{ include "metrics.otelcol.exporter.format" . }}'
 */}}
 {{- define "metrics.otelcol.exporter.format" -}}
-{{- if eq .Values.sumologic.metrics.sourceType "http" -}}
-{{- "prometheus" -}}
-{{- else if eq .Values.sumologic.metrics.sourceType "otlp" -}}
+{{- if or .Values.sumologic.sourcelessMode (eq .Values.sumologic.metrics.sourceType "otlp") -}}
 {{- "otlp" -}}
+{{- else if eq .Values.sumologic.metrics.sourceType "http" -}}
+{{- "prometheus" -}}
 {{- else -}}
 {{- fail "`sumologic.metrics.sourceType` can only be `http` or `otlp`" -}}
 {{- end -}}

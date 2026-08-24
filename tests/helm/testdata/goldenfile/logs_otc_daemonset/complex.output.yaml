@@ -96,6 +96,11 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
 
             - name: VALUE_FROM_SECRET
               valueFrom:
@@ -117,7 +122,7 @@ spec:
       initContainers: # ensure the host path is owned by the otel user group
         - name: changeowner
           # yamllint disable-line rule:line-length
-          image: public.ecr.aws/sumologic/busybox:1.36.0
+          image: public.ecr.aws/sumologic/busybox:1.38.0
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:

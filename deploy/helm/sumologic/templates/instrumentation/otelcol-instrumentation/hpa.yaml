@@ -16,6 +16,10 @@ spec:
     name: {{ template "sumologic.metadata.name.otelcolinstrumentation.statefulset" . }}
   minReplicas: {{ $otelcolInstrumentation.autoscaling.minReplicas }}
   maxReplicas: {{ $otelcolInstrumentation.autoscaling.maxReplicas }}
+{{- if $otelcolInstrumentation.autoscaling.behavior }}
+  behavior:
+    {{- toYaml $otelcolInstrumentation.autoscaling.behavior | nindent 4 }}
+{{- end }}
   metrics:
 {{- if $otelcolInstrumentation.autoscaling.targetMemoryUtilizationPercentage }}
   - type: Resource

@@ -32,7 +32,7 @@ const (
 func HelmVersionOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{})
-		_, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "version")
+		_, err := helm.RunHelmCommandAndGetOutputContextE(t, ctx, helmOptions, "version")
 		require.NoError(t, err)
 
 		return ctx
@@ -54,7 +54,7 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 			return ctx
 		}
 		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{})
-		_, err := helm.RunHelmCommandAndGetOutputE(t, helmOptions, "dependency", "update", path)
+		_, err := helm.RunHelmCommandAndGetOutputContextE(t, ctx, helmOptions, "dependency", "update", path)
 		require.NoError(t, err)
 
 		return ctx
@@ -71,24 +71,24 @@ func HelmInstallOpt(path string, releaseName string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{"--wait"})
 
-		err := helm.InstallE(t, helmOptions, path, releaseName)
+		err := helm.InstallContextE(t, ctx, helmOptions, path, releaseName)
 		if err != nil {
 			kubectlOptions := ctxopts.KubectlOptions(ctx, envConf)
 
 			// Print setup job logs if installation failed.
-			k8s.RunKubectl(t, kubectlOptions,
+			k8s.RunKubectlContext(t, ctx, kubectlOptions,
 				"logs", fmt.Sprintf("-ljob-name=%s-sumologic-setup", releaseName),
 			)
 
 			// Print the status of all Pods
 			kubectlOptions.Namespace = ""
-			k8s.RunKubectl(t, kubectlOptions,
+			k8s.RunKubectlContext(t, ctx, kubectlOptions,
 				"get", "pods", "--all-namespaces",
 			)
 
 			// Get the non-running Pods, we need to do this separately because describe doesn't allow filtering by field
 			// There's also no filtering over readiness, so we need to iterate over the list ourselves
-			pods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{})
+			pods := k8s.ListPodsContext(t, ctx, kubectlOptions, metav1.ListOptions{})
 			notReadyPods := []corev1.Pod{}
 			for _, pod := range pods {
 				if !k8s_internal.IsPodReady(&pod) {
@@ -100,9 +100,9 @@ func HelmInstallOpt(path string, releaseName string) features.Func {
 			for _, pod := range notReadyPods {
 				kubectlOptions.Namespace = pod.Namespace
 				log.InfoS("Describing Pod", "pod name", pod.Name)
-				k8s.RunKubectl(t, kubectlOptions, "describe", "pod", pod.Name)
+				k8s.RunKubectlContext(t, ctx, kubectlOptions, "describe", "pod", pod.Name)
 				log.InfoS("Printing logs for Pod", "pod name", pod.Name)
-				k8s.RunKubectl(t, kubectlOptions, "logs", pod.Name)
+				k8s.RunKubectlContext(t, ctx, kubectlOptions, "logs", pod.Name)
 			}
 			require.NoError(t, err)
 		}
@@ -129,7 +129,7 @@ func HelmInstallTestOpt(path string) features.Func {
 func HelmDeleteOpt(release string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		helmOptions := HelmOptionsFromT(t, ctxopts.KubectlOptions(ctx, envConf), []string{"--wait"})
-		helm.Delete(t, helmOptions, release, true)
+		helm.DeleteContext(t, ctx, helmOptions, release, true)
 		return ctx
 	}
 }

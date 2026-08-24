@@ -2,5 +2,6 @@ otelcolInstrumentation:
   enabled: true
 
 sumologic:
+  useExporterBatching: true
   traces:
     enabled: true

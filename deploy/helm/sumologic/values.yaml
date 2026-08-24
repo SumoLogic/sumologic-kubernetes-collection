@@ -7,7 +7,31 @@ fullnameOverride: ""
 namespaceOverride: ""
 
 sumologic:
+  ## flag to switch the implementation between batch processor and export level batching
+  useExporterBatching: false
+
+  ## used for helm checks to verify that customer has cautiously read the docs and enabled the export level batching
+  customBatchingConfigured: false
+
   ### Setup
+
+  ## If enabled, uses SumoLogic extension for auth/endpoint discovery instead of HTTP source URLs.
+  ## Terraform will auto-create an installation token and store it in the sumologic-extension secret.
+  ## OTLP/HTTP sources are not created when this is enabled.
+  sourcelessMode: false
+
+  ## Endpoint used by collector pods to register and send data. Only used when sumologic.sourcelessMode is true.
+  collectorEndpoint: ""
+
+  ## Pre-existing installation token for sourceless mode. When set, the setup job will NOT create a token
+  ## via Terraform — use this for GitOps/ArgoCD workflows where sumologic.setupEnabled=false, or to bring
+  ## your own token. Leave empty to let the setup job auto-create and manage the token.
+  installationToken: ""
+
+  ## When sourcelessMode is true, setting this to true will delete the hosted collector and all HTTP/OTLP sources
+  ## managed by the setup job. Defaults to false so the hosted collector and sources are preserved and can be
+  ## cleaned up later by flipping this flag.
+  cleanupHostedCollector: false
 
   ## If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
@@ -30,7 +54,7 @@ sumologic:
   # accessKey: ""
 
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
-  ## ref: https://help.sumologic.com/docs/api/getting-started#sumo-logic-endpoints-by-deployment-and-firewall-security
+  ## ref: https://www.sumologic.com/help/docs/api/getting-started#sumo-logic-endpoints-by-deployment-and-firewall-security
   endpoint: ""
 
   ## proxy urls
@@ -117,17 +141,29 @@ sumologic:
     create: false
 
   setup:
+    ## When true, the setup job will delete chart-managed sources that
+    ## don't match the configured sourceType.
+    ## When false (default), existing sources are preserved on the collector.
+    ## Example: if sumologic.logs.sourceType is "http", then the "logs-otlp"
+    ## source will be deleted from the collector on the next helm upgrade.
+    ## NOTE: Cleanup is name-based. If you manually created a source on the
+    ## collector with the same name as a chart-managed source (e.g. "logs-otlp",
+    ## "metrics-otlp"), it will be deleted when this flag is enabled.
+    ## WARNING: Only set to true after confirming no external systems
+    ## (Prometheus remote write, FluentD, custom apps) are sending data
+    ## to the source endpoints that will be removed.
+    cleanupUnusedSources: false
     ## uncomment to force collection installation (disables k8s version verification)
     # force: true
     job:
       restartPolicy: OnFailure # or Never
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.16.0
+        tag: 3.18.0
         pullPolicy: IfNotPresent
       initContainerImage:
         repository: public.ecr.aws/sumologic/busybox
-        tag: latest
+        tag: "1.38.0"
       ## Optionally specify an array of pullSecrets.
       ## They will be added to serviceaccount that is used for Sumo Logic's
       ## setup job.
@@ -171,6 +207,37 @@ sumologic:
     ## uncomment for the debug mode (disables the automatic run of the setup.sh script)
     # debug: true
 
+    ## Add custom files to override terraform configuration
+    ##
+    ## Example: Pre-download Terraform providers from internal file server (Nexus, Artifactory, etc.)
+    ##
+    ## additionalFiles:
+    ##   terraform:
+    ##     pre-init.sh: |
+    ##       #!/bin/bash
+    ##       set -e
+    ##       PROVIDER_DIR="/terraform/terraform-plugins/registry.terraform.io/sumologic/sumologic/3.0.0/linux_amd64"
+    ##       mkdir -p "$PROVIDER_DIR"
+    ##       wget -O /tmp/terraform-provider-sumologic.zip \
+    ##         "https://your-nexus.com/repository/files/terraform-provider-sumologic_3.0.0_linux_amd64.zip"
+    ##       unzip -o /tmp/terraform-provider-sumologic.zip -d "$PROVIDER_DIR"
+    ##       chmod +x "$PROVIDER_DIR"/terraform-provider-sumologic_v*
+    ##       rm /tmp/terraform-provider-sumologic.zip
+    ##     terraformrc: |
+    ##       provider_installation {
+    ##         filesystem_mirror {
+    ##           path = "/terraform/terraform-plugins"
+    ##           include = ["registry.terraform.io/sumologic/*"]
+    ##         }
+    ##         direct {
+    ##           exclude = ["registry.terraform.io/sumologic/*"]
+    ##         }
+    ##       }
+    ##
+    ## For more details, see: docs/terraform.md
+    ##
+    additionalFiles: {}
+
     monitors:
       ## If enabled, a pre-install hook will create k8s monitors in Sumo Logic
       enabled: true
@@ -187,7 +254,7 @@ sumologic:
 
   collector:
     ## Configuration of additional collector fields
-    ## https://help.sumologic.com/docs/manage/fields/#http-source-fields
+    ## https://www.sumologic.com/help/docs/manage/fields/#http-source-fields
     fields: {}
 
     ## Configuration of http sources
@@ -273,7 +340,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.130.1-sumo-0"
+    tag: "0.158.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -304,6 +371,11 @@ sumologic:
         ## Add custom labels to otelcol event statefulset PVC
         pvcLabels: {}
         # storageClass:
+      ## fsync: adds write latency; monitor pod resources and consider increasing limits.
+      ## recreate: queued data in the corrupt file will be lost.
+      fileStorage:
+        fsync: false
+        recreate: false
 
     sourceType: otlp
 
@@ -315,6 +387,14 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+        persistence:
+          fileStorage:
+            ## When true, forces the bbolt database to fsync after each write for the logs collector.
+            ## NOTE: adds write latency; monitor pod resources and consider increasing limits.
+            fsync: false
+            ## When true, automatically recreates a corrupt bbolt database file on startup for the logs collector.
+            ## Queued data in the corrupt file will be lost.
+            recreate: false
       ## Experimental
       otellogswindows:
         enabled: false
@@ -324,6 +404,11 @@ sumologic:
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
+          ## fsync: adds write latency; monitor pod resources and consider increasing limits.
+          ## recreate: queued data in the corrupt file will be lost.
+          fileStorage:
+            fsync: false
+            recreate: false
         region: ""
         pollInterval: 1m
         ## A map of log group and stream prefixes
@@ -345,7 +430,7 @@ sumologic:
       ##   condition: 'attributes["k8s.container.name"] matches "^bar-.*'
       ##
       ## NOTE: See below link for full reference:
-      ## https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/#conditional-multiline-log-parsing
+      ## https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/#conditional-multiline-log-parsing
       additional: []
 
     container:
@@ -353,14 +438,14 @@ sumologic:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: json is an alias for fields
       ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/#text-log-format
+      ## https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/#text-log-format
       format: fields
 
       ## When set to `true`, preserves the `time` attribute, which is a string representation of the `timestamp` attribute.
       keep_time_attribute: false
 
       otelcol:
-        ## Extra processors for container logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
+        ## Extra processors for container logs. See https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceHost metadata field in Sumo Logic.
@@ -398,8 +483,11 @@ sumologic:
       # units:
       #   - docker.service
 
+      ## Behavior specified by journald.conf
+      journaldDirectory: /var/log/journal
+
       otelcol:
-        ## Extra processors for systemd logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
+        ## Extra processors for systemd logs. See https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceName metadata field in Sumo Logic.
@@ -426,7 +514,7 @@ sumologic:
 
     kubelet:
       otelcol:
-        ## Extra processors for kubelet logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
+        ## Extra processors for kubelet logs. See https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceName metadata field in Sumo Logic.
@@ -462,16 +550,20 @@ sumologic:
         fallbackExporters: []
         table: []
         ## -
-        ##  ## exporter is name of the exporter
-        ##  exporter: sumologic/otlp
-        ##  ## statement is an OTTL condition which defines what data should be send to the exporter
-        ##  ## see routing processor documentation for more details:
-        ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/processor/routingprocessor/README.md#tech-preview-opentelemetry-transformation-language-statements-as-routing-conditions
+        ##  ## exporters is an array of the exporter.
+        ##  exporters:
+        ##    - sumologic/otlp
+        ##    - debug
+        ##  ## statement is an OTTL condition which defines what data should be sent to the exporters
+        ##  ## see routing connector documentation for more details:
+        ##  ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/aee4b75100530bce7edbf736fbcf76ac4f6ced6d/connector/routingconnector
+        ## routing connector expects you to define a pipeline, but here the user can just mention the exporter.
+        ## The helm deployment would convert exporters into correct pipelines and configure the connectors.
         ##  statement: ""
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
-    ## https://help.sumologic.com/docs/manage/fields/#manage-fields
+    ## https://www.sumologic.com/help/docs/manage/fields/#manage-fields
     fields:
       - cluster
       - container
@@ -485,7 +577,7 @@ sumologic:
       - statefulset
 
     ## Additional fields to be created in Sumo Logic.
-    ## https://help.sumologic.com/docs/manage/fields/#manage-fields
+    ## https://www.sumologic.com/help/docs/manage/fields/#manage-fields
     additionalFields: []
 
     sourceType: otlp
@@ -500,6 +592,20 @@ sumologic:
       ## To enable, you need opentelemetry-operator enabled as well.
       otelcol:
         enabled: true
+
+        ## Single-layer pipeline merges metadata enrichment into the collector,
+        ## eliminating the need for a separate metadata StatefulSet.
+        ## WARNING: When enabling single-layer pipeline, the collector pod handles
+        ## both scraping AND enrichment/export (previously done by metadata pods).
+        ## You MUST increase collector resources to account for:
+        ##   - k8sattributes processor cache (holds all pod/namespace objects in memory)
+        ##   - Sumo Logic export sending queues (previously on metadata PVCs)
+        ##   - Additional CPU for enrichment processors
+        ##
+        ## Recommended: set collector memory request >= (current collector memory) + (current metadata memory)
+        ## Recommended: set collector CPU request >= (current collector CPU) + (current metadata CPU / replica count)
+        singleLayerPipeline:
+          enabled: false # opt-in; set true to merge enrichment into collector
 
         ## Configure image for Opentelemetry Collector
         image:
@@ -518,6 +624,7 @@ sumologic:
           maxReplicas: 10
           targetCPUUtilizationPercentage: 70
           targetMemoryUtilizationPercentage: 70
+          behavior: {}
 
         nodeSelector: {}
 
@@ -528,7 +635,22 @@ sumologic:
 
         ## Option to define priorityClassName to assign a priority class to pods.
         priorityClassName:
+        ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+        ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+        # terminationGracePeriodSeconds:
 
+        persistence:
+          fileStorage:
+            ## When true, forces the bbolt database to fsync after each write for the metrics collector.
+            ## NOTE: adds write latency; monitor pod resources and consider increasing limits.
+            fsync: false
+            ## When true, automatically recreates a corrupt bbolt database file on startup for the metrics collector.
+            ## Queued data in the corrupt file will be lost.
+            recreate: false
+
+        ## Initial replica count for the metrics collector. Only used when autoscaling is disabled.
+        ## When autoscaling is enabled (default), the autoscaler manages replicas and this value is
+        ## omitted from the OpenTelemetryCollector CR to avoid field ownership conflicts on helm upgrade.
         replicaCount: 1
 
         resources:
@@ -538,6 +660,20 @@ sumologic:
           requests:
             memory: 768Mi
             cpu: 100m
+
+        ## Liveness probe configuration for the metrics collector.
+        ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
+        ## Example:
+        ##   livenessProbe:
+        ##     initialDelaySeconds: 15
+        ##     periodSeconds: 10
+        ##     timeoutSeconds: 5
+        ##     failureThreshold: 3
+        livenessProbe: {}
+
+        ## Readiness probe configuration for the metrics collector.
+        ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
+        readinessProbe: {}
 
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api/targetallocators.md#targetallocatorspecprometheuscr
@@ -561,6 +697,34 @@ sumologic:
 
         affinity: {}
 
+        ## Persistent Volume Claim retention policy (onScale) for the metrics collector StatefulSet.
+        ## Only applies when singleLayerPipeline is enabled and persistence is used.
+        persistentVolumeClaimRetentionPolicywhenScaled: Retain
+
+        ## Extra environment variables for the metrics collector pods.
+        ## In single-layer pipeline mode, use these instead of metadata.metrics.statefulset.extraEnvVars.
+        # extraEnvVars:
+        #   - name: VALUE_FROM_SECRET
+        #     valueFrom:
+        #       secretKeyRef:
+        #         name: secret_name
+        #         key: secret_key
+
+        ## Extra volumes for the metrics collector pods.
+        ## In single-layer pipeline mode, use these instead of metadata.metrics.statefulset.extraVolumes.
+        # extraVolumes:
+        #   - name: es-certs
+        #     secret:
+        #       defaultMode: 420
+        #       secretName: es-certs
+
+        ## Extra volume mounts for the metrics collector pods.
+        ## In single-layer pipeline mode, use these instead of metadata.metrics.statefulset.extraVolumeMounts.
+        # extraVolumeMounts:
+        #   - name: es-certs
+        #     mountPath: /certs
+        #     readOnly: true
+
         ## Configuration for kubelet metrics
         kubelet:
           enabled: true
@@ -572,7 +736,7 @@ sumologic:
           metricRegex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
 
         ## Enable collection of metrics from Pods annotated with prometheus.io/* keys.
-        ## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#application-metrics-are-exposed-one-endpoint-scenario for more information.
+        ## See https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-metrics#application-metrics-are-exposed-one-endpoint-scenario for more information.
         annotatedPods:
           enabled: true
 
@@ -585,10 +749,11 @@ sumologic:
           ## be directly merged with the generated configuration, overriding existing values.
           ## For example:
           # override:
-          #   processors:
-          #     batch:
-          #       send_batch_size: 512
-          ## will change the batch size of the pipeline.
+          #   exporters:
+          #     otlphttp:
+          #       sending_queue:
+          #         queue_size: 10000
+          ## will change the queue size of the otlphttp exporter.
           ##
           ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
           ## of this chart. It involves implementation details that may change even in minor versions.
@@ -629,64 +794,6 @@ sumologic:
       ##           - hello_world
       ##           - hello/world
       extraProcessors: []
-
-    ### Enable a load balancing proxy for Prometheus remote writes.
-    ## Prometheus remote write uses a single persistent HTTP connection per target,
-    ## which interacts poorly with TCP load balancing with iptables that K8s Services do.
-    ## Use a real HTTP load balancer for this instead.
-    ## This is an advanced feature, enable only if you're experiencing performance
-    ## issues with metrics metadata enrichment.
-    remoteWriteProxy:
-      enabled: false
-      config:
-        ## Increase this if you've increased samples_per_send in Prometheus to prevent nginx
-        ## from spilling proxied request bodies to disk
-        clientBodyBufferSize: "64k"
-        ## This feature autodetects how much CPU is assigned to the nginx instance and sets
-        ## the right amount of workers based on that. Disable to use the default of 8 workers.
-        workerCountAutotune: true
-        ## Nginx listen port
-        port: 8080
-        ## Nginx access logs
-        enableAccessLogs: false
-      replicaCount: 3
-      image:
-        repository: public.ecr.aws/sumologic/nginx-unprivileged
-        ## This is simply 1.26.0-alpine with a newer version of Alpine
-        ## In the nginx repo, this a moving tag, so I've chosen to add a -sumo-1 suffix to indicate the change
-        tag: 1.26.0-alpine-sumo-0
-        pullPolicy: IfNotPresent
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
-      livenessProbe:
-        initialDelaySeconds: 30
-        periodSeconds: 10
-        timeoutSeconds: 5
-        successThreshold: 1
-        failureThreshold: 6
-      readinessProbe:
-        initialDelaySeconds: 5
-        periodSeconds: 5
-        timeoutSeconds: 3
-        successThreshold: 1
-        failureThreshold: 3
-
-      securityContext: {}
-      nodeSelector: {}
-      tolerations: []
-      affinity: {}
-      ## Option to define priorityClassName to assign a priority class to pods.
-      priorityClassName:
-
-      ## Add custom labels only to metrics sts pods
-      podLabels: {}
-      ## Add custom annotations only to metrics sts pods
-      podAnnotations: {}
 
     ## Prometheus serviceMonitors related to Sumo Logic services
     ## They are applied only if kube-prometheus-stack is enabled
@@ -773,18 +880,25 @@ sumologic:
     spans_per_request: 100
     sourceType: otlp
 
+## ref: https://github.com/bitnami/charts/issues/30850
+global:
+  security:
+    allowInsecureImages: true
 ## Configure metrics-server
-## ref: https://github.com/bitnami/charts/blob/master/bitnami/metrics-server/values.yaml
+## ref: https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml
 metrics-server:
   image:
-    registry: public.ecr.aws
-    repository: sumologic/metrics-server
+    repository: public.ecr.aws/sumologic/metrics-server
+    tag: v0.9.0
+  updateStrategy:
+    type: RollingUpdate
+
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
-  #   pullSecrets:
-  #     - imagepullsecret
+  # imagePullSecrets:
+  #   - name: myRegistryKeySecretName
 
   ## Set the enabled flag to true for enabling metrics-server.
   ## This is required before enabling autoscaling unless you have an existing metrics-server in the cluster.
@@ -794,9 +908,62 @@ metrics-server:
 
   apiService:
     create: true
-  extraArgs:
+  args:
     - --kubelet-insecure-tls=true
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+
+  ## https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+  podDisruptionBudget:
+    enabled: true
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 50Mi
+    limits:
+      cpu: 150m
+      memory: 192Mi
+      ephemeral-storage: 2Gi
+
+  livenessProbe:
+    httpGet:
+      path: /livez
+      port: https
+      scheme: HTTPS
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    failureThreshold: 3
+    successThreshold: 1
+
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: https
+      scheme: HTTPS
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    failureThreshold: 3
+    successThreshold: 1
+
+  securityContext:
+    seLinuxOptions: {}
+    runAsUser: 1001
+    runAsGroup: 1001
+    runAsNonRoot: true
+    privileged: false
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: "RuntimeDefault"
+
+  podSecurityContext:
+    fsGroupChangePolicy: Always
+    sysctls: []
+    supplementalGroups: []
+    fsGroup: 1001
 
 ## Configure kube-prometheus-stack
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
@@ -804,10 +971,9 @@ kube-prometheus-stack:
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
   ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
-  ## see https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#using-newer-kube-prometheus-stack.
+  ## see https://www.sumologic.com/help/docs/send-data/kubernetes/best-practices/#using-newer-kube-prometheus-stack.
   ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
-  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
-  ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
+  ## Do not enable prometheusOperator from this chart, as this will make Prometheus try to write to an non-existent remote write endpoint.
   # enabled: false
 
   # global:
@@ -1052,36 +1218,9 @@ kube-prometheus-stack:
   grafana:
     enabled: false
     defaultDashboardsEnabled: false
+  ## Don't enable this, prometheus not supported. Use Otel operator instead
   prometheusOperator:
     enabled: false
-    image:
-      repository: public.ecr.aws/sumologic/prometheus-operator
-    ## Labels to add to the operator pod
-    podLabels: {}
-    ## Annotations to add to the operator pod
-    podAnnotations: {}
-    ## Resource limits for prometheus operator
-    resources:
-      {}
-      # limits:
-      #   cpu: 200m
-      #   memory: 200Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 100Mi
-    ## ServiceMonitor for the Prometheus operator
-    serviceMonitor:
-      selfMonitor: false
-    admissionWebhooks:
-      enabled: false
-    tls:
-      enabled: false
-    prometheusConfigReloader:
-      image:
-        repository: public.ecr.aws/sumologic/prometheus-config-reloader
-
-    thanosImage:
-      repository: public.ecr.aws/sumologic/thanos
 
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
@@ -1109,7 +1248,7 @@ kube-prometheus-stack:
     ## so we bump the image manually.
     image:
       repository: public.ecr.aws/sumologic/kube-state-metrics
-      tag: "v2.14.0"
+      tag: "v2.19.1"
     prometheus:
       monitor:
         ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -1224,109 +1363,6 @@ kube-prometheus-stack:
             sourceLabels: [__name__]
   prometheus:
     enabled: false
-    additionalServiceMonitors: []
-    prometheusSpec:
-      image:
-        repository: public.ecr.aws/sumologic/prometheus
-      ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
-      ## NOTE changing the scrape interval to be >1m can result in metrics
-      ## from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
-      scrapeInterval: "30s"
-      ## Prometheus data retention period
-      retention: "1d"
-      ## Add custom pod annotations and labels to prometheus pods
-      podMetadata:
-        labels: {}
-        annotations: {}
-      nodeSelector:
-        kubernetes.io/os: linux
-      ## Define resources requests and limits for single Pods.
-      resources:
-        limits:
-          cpu: 2000m
-          memory: 8Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      initContainers:
-        - name: "init-config-reloader"
-          env:
-            - name: METADATA_METRICS_SVC
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataMetrics
-            - name: NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataNamespace
-      containers:
-        - name: "config-reloader"
-          env:
-            - name: METADATA_METRICS_SVC
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataMetrics
-            - name: NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: metadataNamespace
-
-      ## Enable WAL compression to reduce Prometheus memory consumption
-      walCompression: true
-
-      ## prometheus scrape config
-      ## rel: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
-      additionalScrapeConfigs:
-        ## scraping metrics basing on annotations:
-        ##   - prometheus.io/scrape: true - to scrape metrics from the pod
-        ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
-        ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
-        ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-        - job_name: "pod-annotations"
-          kubernetes_sd_configs:
-            - role: pod
-          relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-              action: keep
-              regex: true
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-              action: replace
-              target_label: __metrics_path__
-              regex: (.+)
-            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-              action: replace
-              regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
-              target_label: __address__
-            - source_labels: [__metrics_path__]
-              separator: ;
-              regex: (.*)
-              target_label: endpoint
-              replacement: $1
-              action: replace
-            - source_labels: [__meta_kubernetes_namespace]
-              action: replace
-              target_label: namespace
-            - action: labelmap
-              regex: __meta_kubernetes_pod_label_(.+)
-            - source_labels: [__meta_kubernetes_pod_name]
-              separator: ;
-              regex: (.*)
-              target_label: pod
-              replacement: $1
-              action: replace
-      remoteWrite:
-        ## infrastructure metrics
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888/prometheus.metrics
-          remoteTimeout: 5s
-
-    serviceMonitor:
-      selfMonitor: false
-
 ## Configuration for prometheus-windows-exporter
 ## ref: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-windows-exporter
 ## This is an experimental feature
@@ -1380,6 +1416,9 @@ otelcolInstrumentation:
     ## Matching pods will be excluded from Sumo. The logs will still be sent to otelcol.
     excludePodRegex: ""
 
+  waitForMetadata: true
+  waitForMetadataTimeout: 10s
+
   ## Option to turn autoscaling on for otelcol and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
@@ -1388,6 +1427,7 @@ otelcolInstrumentation:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
     # targetMemoryUtilizationPercentage: 50
+    behavior: {}
 
   statefulset:
     nodeSelector: {}
@@ -1468,10 +1508,11 @@ otelcolInstrumentation:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 10000
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1539,10 +1580,11 @@ tracesSampler:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 10000
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1566,6 +1608,11 @@ tracesSampler:
     ## where the storage is kept
     persistentVolume:
       path: /var/lib/storage/tracessampler
+    ## fsync: adds write latency; monitor pod resources and consider increasing limits.
+    ## recreate: queued data in the corrupt file will be lost.
+    fileStorage:
+      fsync: false
+      recreate: false
 
 metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
@@ -1588,6 +1635,14 @@ metadata:
   ## Add custom labels to all otelcol svc (logs and metrics)
   serviceLabels: {}
 
+  ## Add custom annotations to all otelcol svc (logs and metrics)
+  ## Useful for topology-aware routing, e.g.: service.kubernetes.io/topology-mode: "Auto"
+  serviceAnnotations: {}
+
+  ## Set trafficDistribution on all otelcol svc (logs and metrics)
+  ## Use "PreferClose" with topology-mode annotation to reduce cross-zone traffic
+  trafficDistribution: ""
+
   ## Configure persistence for Opentelemetry Collector
   persistence:
     enabled: true
@@ -1596,32 +1651,52 @@ metadata:
     size: 10Gi
     ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
     pvcLabels: {}
+    ## file_storage extension settings for bbolt database resilience.
+    ## fsync: when true, forces OS to flush each write to disk before returning.
+    ##   Prevents corruption on ungraceful pod termination (e.g., SIGKILL from HPA scale-down).
+    ##   NOTE: enabling fsync adds write latency to the sending queue, which may increase
+    ##   end-to-end pipeline latency under high throughput. Monitor pod CPU/memory and
+    ##   consider increasing resource limits if enabling this option.
+    ## recreate: when true, automatically recreates a corrupt database file on startup
+    ##   instead of crashing. Queued data in the corrupt file will be lost.
+    fileStorage:
+      fsync: false
+      recreate: false
 
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.
   metrics:
     enabled: true
+
     logLevel: info
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
 
-    ## Use the sumologic k8s processor to add metadata to the logs.
-    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
-    useSumoK8sProcessor: true
-
-    ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true
     waitForMetadataTimeout: 10s
+
+    ## Extract pod labels as resource attributes
+    ## Pod labels include: app, version, tier, component, etc.
+    ## Default: true
+    extractPodLabels: true
+
+    ## Extract node labels as resource attributes
+    ## WARNING: Node labels significantly increase metric cardinality
+    ## Cloud providers add 50-100 labels per node (instance-type, zone, etc.)
+    ## Example impact: 100 nodes × 50 labels = 5,000+ additional label combinations
+    ## Default: false
+    extractNodeLabels: false
 
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
       ## be directly merged with the generated configuration, overriding existing values.
       ## For example:
       # override:
-      #   processors:
-      #     batch:
-      #       send_batch_size: 512
-      ## will change the batch size of the pipeline.
+      #   exporters:
+      #     otlphttp:
+      #       sending_queue:
+      #         queue_size: 10000
+      ## will change the queue size of the otlphttp exporter
       ##
       ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
       ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1631,9 +1706,6 @@ metadata:
       ## The value of this key should be a dictionary, that will replace the normal configuration.
       ## This is an advanced feature, use with caution, and review the generated configuration first.
       override: {}
-
-      ## List of additional endpoints to be handled by Metrics Metadata Pods
-      additionalEndpoints: []
 
     statefulset:
       nodeSelector: {}
@@ -1654,6 +1726,9 @@ metadata:
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
+      ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+      ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+      # terminationGracePeriodSeconds:
 
       ## Add custom labels only to metrics sts pods
       podLabels: {}
@@ -1706,6 +1781,7 @@ metadata:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 50
+      behavior: {}
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -1722,23 +1798,22 @@ metadata:
     ## Metrics Level (basic, normal, detailed)
     metricsLevel: normal
 
-    ## Use the sumologic k8s processor to add metadata to the logs.
-    ## This is enabled by default, but can be disabled if you want to use the upstream processor.
-    useSumoK8sProcessor: true
-
-    ## Only used if useSumoK8sProcessor is set to false
     waitForMetadata: true
     waitForMetadataTimeout: 10s
+
+    extractNodeLabels: true
+    extractPodLabels: true
 
     config:
       ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
       ## be directly merged with the generated configuration, overriding existing values.
       ## For example:
       # override:
-      #   processors:
-      #     batch:
-      #       send_batch_size: 512
-      ## will change the batch size of the pipeline.
+      #   exporters:
+      #     otlphttp:
+      #       sending_queue:
+      #         queue_size: 10000
+      ## will change the queue size of the otlphttp exporter
       ##
       ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
       ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1767,6 +1842,9 @@ metadata:
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
+      ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+      ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+      # terminationGracePeriodSeconds:
 
       ## Add custom labels only to logs sts pods
       podLabels: {}
@@ -1824,6 +1902,7 @@ metadata:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 50
+      behavior: {}
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -1845,6 +1924,7 @@ tracesGateway:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
     # targetMemoryUtilizationPercentage: 50
+    behavior: {}
 
   deployment:
     replicas: 1
@@ -1914,10 +1994,11 @@ tracesGateway:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 10000
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1929,7 +2010,7 @@ tracesGateway:
     override: {}
 
 ## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
-## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-events/.
+## See https://www.sumologic.com/help/docs/send-data/kubernetes/collecting-events/.
 otelevents:
   ## Configure image for Opentelemetry Collector
   image:
@@ -1941,16 +2022,25 @@ otelevents:
   ## Metrics Level (basic, normal, detailed)
   metricsLevel: normal
 
+  ## When true (default), use the in-house raw_k8s_events receiver for Kubernetes event collection.
+  ## When false, use the upstream k8sobjects receiver with additional transform and filter processors.
+  ## Note: k8sobjects receiver does not de-duplicate events on collector restarts.
+  useSumoK8sEventReceiver: true
+
+  ## Enable reporting of ConfigMaps. Only Sumologic collection configmaps are reported for now.
+  reportConfigMaps: true
+
   ## Customize the Opentelemetry Collector configuration beyond the exposed options
   config:
     ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 10000
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -1979,6 +2069,9 @@ otelevents:
         cpu: 200m
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName:
+    ## Maximum time (in seconds) given to the pod to shut down gracefully before SIGKILL.
+    ## Increase when using persistent queues with autoscaling to prevent bbolt corruption.
+    # terminationGracePeriodSeconds:
 
     ## Add custom labels only to events sts pods
     podLabels: {}
@@ -2079,6 +2172,14 @@ otellogs:
   ## Add custom labels to otelcol svc
   serviceLabels: {}
 
+  ## Add custom annotations to otelcol logs collector svc
+  ## Useful for topology-aware routing, e.g.: service.kubernetes.io/topology-mode: "Auto"
+  serviceAnnotations: {}
+
+  ## Set trafficDistribution on otelcol logs collector svc
+  ## Use "PreferClose" with topology-mode annotation to reduce cross-zone traffic
+  trafficDistribution: ""
+
   ## Configure image for Opentelemetry Collector
   image:
     # repository: ""
@@ -2094,10 +2195,11 @@ otellogs:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 10000
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -2152,7 +2254,7 @@ otellogs:
       changeowner:
         image:
           repository: "public.ecr.aws/sumologic/busybox"
-          tag: "1.36.0"
+          tag: "1.38.0"
           pullPolicy: IfNotPresent
         securityContext:
           capabilities:
@@ -2246,10 +2348,11 @@ otellogswindows:
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
-    #   processors:
-    #     batch:
-    #       send_batch_size: 512
-    ## will change the batch size of the pipeline.
+    #   exporters:
+    #     otlphttp:
+    #       sending_queue:
+    #         queue_size: 10000
+    ## will change the queue size of the otlphttp exporter
     ##
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
@@ -2375,7 +2478,7 @@ telegraf-operator:
   ## Put here the new name if you want to override the full name used for Telegraf Operator components.
   # fullnameOverride: ""
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.21.2
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.39.2
     repository: public.ecr.aws/sumologic/telegraf-operator
   replicaCount: 1
   classes:
@@ -2421,7 +2524,7 @@ falco:
     initContainers:
       ## Add initContainer to wait until kernel-devel is installed on host
       - name: init-falco
-        image: public.ecr.aws/sumologic/busybox:1.36.0
+        image: public.ecr.aws/sumologic/busybox:1.38.0
         command:
           - "sh"
           - "-c"
@@ -2440,7 +2543,7 @@ falco:
 
   driver:
     ## Set to epbf to enable eBPF support for Falco instead of falco-probe kernel module.
-    ## https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection#falco-and-google-kubernetes-engine-gke
+    ## https://www.sumologic.com/help/docs/send-data/kubernetes/troubleshoot-collection#falco-and-google-kubernetes-engine-gke
     kind: module
     loader:
       initContainer:
@@ -2499,6 +2602,9 @@ falco:
 ## ref: https://github.com/SumoLogic/tailing-sidecar/blob/main/helm/tailing-sidecar-operator/values.yaml
 tailing-sidecar-operator:
   enabled: false
+  sidecar:
+    image:
+      tag: ""
 
   ## Put here the new name if you want to override the full name used for tailing-sidecar-operator components.
   # fullnameOverride: ""
@@ -2538,20 +2644,20 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.130.1-sumo-0"
+      tag: "0.158.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
-        tag: 2.20.1
+        tag: 2.30.0
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
-        tag: 1.9.0
+        tag: 1.16.0
       python:
         repository: public.ecr.aws/sumologic/autoinstrumentation-python
         tag: 0.48b0
       nodejs:
         repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
-        tag: 0.54.0
+        tag: 0.78.0
     env:
       {}
       # ENABLE_WEBHOOKS: "true"
@@ -2565,13 +2671,10 @@ opentelemetry-operator:
     podLabels: {}
     podAnnotations: {}
 
-  kubeRBACProxy:
-    image:
-      repository: public.ecr.aws/sumologic/kube-rbac-proxy
-
   testFramework:
     image:
       repository: public.ecr.aws/sumologic/busybox
+      tag: "1.38.0"
 
 ## pvcCleaner deletes unused PVCs
 pvcCleaner:
@@ -2583,7 +2686,7 @@ pvcCleaner:
   job:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.26.0
+      tag: 2.28.0
       pullPolicy: IfNotPresent
 
     resources:
@@ -2624,7 +2727,7 @@ instrumentation:
   instrumentationJobImage:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.26.0
+      tag: 2.28.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
@@ -2680,7 +2783,7 @@ debug:
     enabled: false
     image:
       repository: public.ecr.aws/sumologic/sumologic-mock
-      tag: 2.26.0
+      tag: 2.28.0
       pullPolicy: IfNotPresent
     deployment:
       nodeSelector: {}

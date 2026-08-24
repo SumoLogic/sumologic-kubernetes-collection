@@ -37,29 +37,24 @@ spec:
       restartPolicy: Always
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.130.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.158.0-sumo-0"
           imagePullPolicy: IfNotPresent
           args:
             - "--config=/conf/traces.gateway.conf.yaml"
           env:
             - name: GOGC
               value: "80"
-            - name: SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-traces
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE
               valueFrom:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-traces-otlp
 
-            - name: SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE
+            - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
               valueFrom:
                 secretKeyRef:
                   name: sumologic
-                  key: endpoint-metrics
+                  key: endpoint-metrics-otlp
 
             - name: NO_PROXY
               value: kubernetes.default.svc
@@ -68,6 +63,11 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
           resources:
             limits:
               cpu: 1000m

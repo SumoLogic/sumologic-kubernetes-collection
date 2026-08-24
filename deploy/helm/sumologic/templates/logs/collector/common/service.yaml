@@ -11,7 +11,14 @@ metadata:
 {{- if .Values.otellogs.serviceLabels }}
 {{ toYaml .Values.otellogs.serviceLabels | indent 4 }}
 {{- end }}
+{{- if .Values.otellogs.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.otellogs.serviceAnnotations | indent 4 }}
+{{- end }}
 spec:
+{{- if .Values.otellogs.trafficDistribution }}
+  trafficDistribution: {{ .Values.otellogs.trafficDistribution }}
+{{- end }}
   selector:
     app.kubernetes.io/app-name: {{ (include "sumologic.labels.app.logs.collector.pod"  .) | trunc 63 | trimSuffix "-" }}
   ports:

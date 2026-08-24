@@ -1,0 +1,13 @@
+sumologic:
+  useExporterBatching: true
+  ipv6mode: true
+  metrics:
+    sourceType: http
+metadata:
+  metrics:
+    autoscaling:
+      enabled: false
+debug:
+  metrics:
+    metadata:
+      print: true

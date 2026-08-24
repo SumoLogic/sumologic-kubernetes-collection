@@ -5,6 +5,7 @@ debug:
   enableLocalMode: true
 
 sumologic:
+  useExporterBatching: true
   cleanupEnabled: true
   setup:
     job:

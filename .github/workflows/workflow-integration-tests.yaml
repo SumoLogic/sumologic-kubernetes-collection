@@ -13,11 +13,11 @@ jobs:
       test_names_onlylatest: ${{ steps.set_test_names.outputs.test_names_onlylatest }}
       test_names_allversions: ${{ steps.set_test_names.outputs.test_names_allversions }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache-dependency-path: "**/go.sum"
       - id: set_kind_images
         name: Set kind images
@@ -42,15 +42,15 @@ jobs:
     name: Lint integration tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache: false
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: v1.63.4
+          version: v2.11.4
           working-directory: ./tests/integration/
           # Optional: golangci-lint command line arguments.
           args: --timeout=10m
@@ -66,11 +66,11 @@ jobs:
           - ${{ needs.setup-integration-tests.outputs.default_kind_image }}
         test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names_onlylatest) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache-dependency-path: "**/go.sum"
       - name: Setup kind
         run: |
@@ -91,11 +91,11 @@ jobs:
         kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
         test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names_allversions) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
-          go-version: "1.22"
+          go-version: "1.26"
           cache-dependency-path: "**/go.sum"
       - name: Setup kind
         run: |

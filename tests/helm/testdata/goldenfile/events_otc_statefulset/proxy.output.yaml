@@ -60,7 +60,7 @@ spec:
         fsGroup: 999
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.130.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.158.0-sumo-0"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
@@ -107,11 +107,6 @@ spec:
             - name: file-storage
               mountPath: /var/lib/storage/events
           env:
-            - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-events
             - name: SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE
               valueFrom:
                 secretKeyRef:
@@ -129,6 +124,11 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
   volumeClaimTemplates:
     - metadata:
         name: file-storage

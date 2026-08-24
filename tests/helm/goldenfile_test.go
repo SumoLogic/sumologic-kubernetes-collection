@@ -105,7 +105,7 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 				}
 				yamlDocuments = append(yamlDocuments, document)
 			}
-			yamlDoc := "---" + yamlDocuments[objectIndex]
+			yamlDoc := "---" + yamlDocuments[objectIndex] + "\n"
 			outputFile, err := os.OpenFile(outputFileName, os.O_WRONLY, os.ModePerm)
 			require.NoError(t, err)
 			err = outputFile.Truncate(0)
@@ -140,6 +140,7 @@ func fixupRenderedYaml(yaml string, chartVersion string) string {
 		"chart: sumologic-%s",
 		"client: k8s_%s",
 		"value: %q",
+		"\"sumo.helm.release\": %q",
 	}
 	output := yaml
 	output = strings.ReplaceAll(output, releaseName, "RELEASE-NAME")

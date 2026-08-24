@@ -1,0 +1,127 @@
+---
+# Source: sumologic/templates/events/otelcol/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-events
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-events
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  config.yaml: |
+    exporters:
+      sumologic:
+        client: k8s_%CURRENT_CHART_VERSION%
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
+        log_format: otlp
+        sending_queue:
+          batch:
+            flush_timeout: 1s
+            max_size: 2048
+            min_size: 1024
+          enabled: true
+          queue_size: 1024000
+          storage: file_storage
+    extensions:
+      file_storage:
+        directory: /var/lib/storage/events
+        fsync: true
+        recreate: true
+        timeout: 10s
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 2048
+        send_batch_size: 1024
+        timeout: 1s
+      filter/sumologic_configmaps:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: chart
+              value: ^sumologic.*
+      resource/add_cluster:
+        attributes:
+        - action: upsert
+          key: cluster
+          value: kubernetes
+      source:
+        collector: kubernetes
+        source_category: kubernetes/events
+        source_category_prefix: ""
+        source_category_replace_dash: /
+        source_name: events
+      sumologic:
+        add_cloud_namespace: false
+      transform/add_timestamp:
+        log_statements:
+        - context: log
+          statements:
+          - set(time, Now()) where time_unix_nano == 0
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+      transform/extract_configmap_name:
+        log_statements:
+        - context: log
+          statements:
+          - set(attributes["configmap_name"], body["metadata"]["name"]) where body["metadata"]["name"]
+            != nil
+          - set(attributes["chart"], body["metadata"]["labels"]["chart"]) where body["metadata"]["labels"]["chart"]
+            != nil
+    receivers:
+      k8sobjects/configmaps:
+        auth_type: serviceAccount
+        objects:
+        - interval: 24h
+          mode: pull
+          name: configmaps
+          namespaces:
+          - sumologic
+      raw_k8s_events: {}
+    service:
+      extensions:
+      - health_check
+      - file_storage
+      - pprof
+      pipelines:
+        logs/configmaps:
+          exporters:
+          - sumologic
+          processors:
+          - transform/extract_configmap_name
+          - filter/sumologic_configmaps
+          - resource/add_cluster
+          - source
+          - sumologic
+          - transform/add_timestamp
+          receivers:
+          - k8sobjects/configmaps
+        logs/events:
+          exporters:
+          - sumologic
+          processors:
+          - resource/add_cluster
+          - source
+          - sumologic
+          - transform/add_timestamp
+          receivers:
+          - raw_k8s_events
+      telemetry:
+        logs:
+          level: info
+        metrics:
+          level: normal
+          readers:
+          - pull:
+              exporter:
+                prometheus:
+                  host: ${env:MY_POD_IP}
+                  port: 8888
+                  without_scope_info: true
+                  without_type_suffix: true
+                  without_units: true

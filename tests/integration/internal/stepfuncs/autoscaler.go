@@ -19,8 +19,8 @@ func ChangeMinMaxStatefulsetPods(app string, newMin uint64, newMax uint64) featu
 		strings_internal.ReleaseNameFromT(t)
 		appName := fmt.Sprintf("%s-%s", strings_internal.ReleaseNameFromT(t), app)
 
-		k8s.RunKubectl(t, kubectlOptions, "delete", "hpa", appName)
-		k8s.RunKubectl(t, kubectlOptions, "autoscale", "statefulset", appName,
+		k8s.RunKubectlContext(t, ctx, kubectlOptions, "delete", "hpa", appName)
+		k8s.RunKubectlContext(t, ctx, kubectlOptions, "autoscale", "statefulset", appName,
 			"--min", strconv.FormatUint(newMin, 10),
 			"--max", strconv.FormatUint(newMax, 10),
 		)

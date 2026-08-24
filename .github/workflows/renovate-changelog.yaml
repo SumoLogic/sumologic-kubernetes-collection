@@ -1,0 +1,59 @@
+name: Add Changelog Entry for Renovate PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+
+jobs:
+  add-changelog:
+    if: startsWith(github.head_ref, 'renovate/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          ref: ${{ github.head_ref }}
+
+      - name: Create changelog entry
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          CHANGELOG_FILE=".changelog/${PR_NUMBER}.changed.txt"
+          mkdir -p .changelog
+
+          # Skip if any changelog fragment already exists for this PR (changed, fixed, breaking, added)
+          if ls .changelog/${PR_NUMBER}.*.txt 1>/dev/null 2>&1; then
+            echo "Changelog entry already exists for PR #${PR_NUMBER}, skipping"
+          else
+            echo "$PR_TITLE" > "$CHANGELOG_FILE"
+            echo "Created changelog file: $CHANGELOG_FILE with content: $PR_TITLE"
+          fi
+
+      - name: Commit changelog
+        run: |
+          # Configure git
+          git config --local user.email "279692411+renovatebot-sumologic[bot]@users.noreply.github.com"
+          git config --local user.name "renovatebot-sumologic[bot]"
+
+          # Add and commit changelog if there are changes
+          git add .changelog/
+          if git diff --cached --quiet; then
+            echo "Changelog entry already exists, nothing to commit"
+          else
+            git commit -m "chore: Add changelog entry for dependency update"
+            git push origin ${{ github.head_ref }}
+          fi

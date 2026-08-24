@@ -6,6 +6,7 @@
 ##   on CI runners' machines
 
 sumologic:
+  useExporterBatching: true
   setupEnabled: true
   # This is set in yamls/cluster.yaml to check if we work correctly with a custom domain
   clusterDNSDomain: "my.cluster"
@@ -18,11 +19,6 @@ sumologic:
           requests:
             memory: 128Mi
             cpu: 50m
-    remoteWriteProxy:
-      resources:
-        requests:
-          cpu: 5m
-          memory: 16Mi
     autoscaling:
       minReplicas: 1
 

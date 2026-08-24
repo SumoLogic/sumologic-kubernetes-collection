@@ -1,0 +1,6 @@
+registry.k8s.io:
+  images:
+    metrics-server/metrics-server:
+      - latest
+  images-by-semver:
+    metrics-server/metrics-server: ">= 0.8.0"

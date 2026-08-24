@@ -1,5 +1,6 @@
 namespaceOverride: "sumologic"
 sumologic:
+  useExporterBatching: true
   logs:
     collector:
       otelcol:

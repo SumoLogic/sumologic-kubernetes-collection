@@ -28,24 +28,15 @@ filelog/containers:
     {{- if eq .Values.debug.events.stopLogsIngestion true }}
     {{ include "events.collector.files.list" . }}
     {{- end }}
-
-{{ if lt (int (include "kubernetes.minor" .)) 24 }}
-  ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
-  ## we want to include timestamp, which is at the end of the line
-  ## Not necessary in 1.24 and later, as docker-shim is not present anymore
-  fingerprint_size: 17408
-{{ end }}
   include:
     - /var/log/pods/*/*/*.log
   include_file_name: false
   include_file_path: true
   operators:
     ## Detect the container runtime log format
-    ## Can be: docker-shim, CRI-O and containerd
+    ## Can be: CRI-O and containerd
     - id: get-format
       routes:
-        - expr: 'body matches "^\\{"'
-          output: parser-docker
         - expr: 'body matches "^[^ Z]+ "'
           output: parser-crio
         - expr: 'body matches "^[^ Z]+Z"'
@@ -73,35 +64,6 @@ filelog/containers:
         parse_from: body.time
       type: regex_parser
 
-    ## Parse docker-shim format
-    ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
-    ## record.
-    ## Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
-    ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
-    ## Input Timestamp: _empty_
-    ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
-    - id: parser-docker
-      output: merge-docker-lines
-      parse_to: body
-      timestamp:
-        layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-        parse_from: body.time
-      type: json_parser
-
-    ## merge-docker-lines stitches back together log lines split by Docker logging driver.
-    ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
-    ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
-    ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n","stream":"stdout"}
-    - id: merge-docker-lines
-      combine_field: body.log
-      combine_with: ""
-      is_last_entry: body.log matches "\n$"
-      output: strip-trailing-newline
-      source_identifier: attributes["log.file.path"]
-      type: recombine
-      ## Ensure we combine everything up to `is_last_entry` even on the file beginning
-      max_unmatched_batch_size: 0
-
     ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
     ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
     ## Input Body (JSON): { "log": "ne that was split by the logging driver", "logtag": "F" }
@@ -116,16 +78,6 @@ filelog/containers:
       type: recombine
       ## Ensure we combine everything up to `is_last_entry` even on the file beginning
       max_unmatched_batch_size: 0
-
-    ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
-    ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
-    ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "stream": "stdout" }
-    - id: strip-trailing-newline
-      output: extract-metadata-from-filepath
-      parse_from: body.log
-      parse_to: body
-      regex: "^(?P<log>.*)\n$"
-      type: regex_parser
 
     ## extract-metadata-from-filepath extracts data from the `log.file.path` Attribute into the Attributes
     ## Input Attributes:

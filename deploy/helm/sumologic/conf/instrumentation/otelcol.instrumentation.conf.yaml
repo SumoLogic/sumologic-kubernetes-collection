@@ -5,21 +5,40 @@ exporters:
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
   debug:
     verbosity: detailed
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 2560000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- end }}
 
   sumologic/metrics:
     client: '{{ include "sumologic.sumo_client" . }}'
+{{- if not .Values.sumologic.sourcelessMode }}
+{{- if eq (.Values.sumologic.metrics.sourceType | default "otlp") "otlp" }}
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
+{{- else }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+{{- end }}
+{{- end }}
     ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
     ## Empty string means no compression
     compression: gzip
     ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
     max_request_body_size: 1_048_576 # 1MB
-    ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
+{{- if eq (.Values.sumologic.metrics.sourceType | default "otlp") "otlp" }}
+    log_format: otlp
+    metric_format: otlp
+    decompose_otlp_histograms: true
+    decompose_otlp_summaries: true
+{{- else }}
     log_format: text
-    ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
-    ## carbon2 and graphite are going to be supported soon.
     metric_format: prometheus
+{{- end }}
     ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
     timeout: 5s
     retry_on_failure:
@@ -34,14 +53,31 @@ exporters:
       enabled: false
       ## Number of consumers that dequeue batches
       num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+      queue_size: 1280000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{ else }}
       ## Maximum number of batches kept in memory before data
       ## User should calculate this as num_seconds * requests_per_second where:
       ## num_seconds is the number of seconds to buffer in case of a backend outage
       ## requests_per_second is the average number of requests per seconds.
       queue_size: 5000
+{{- end }}
 {{- if eq .Values.tracesGateway.enabled true }}
   otlphttp/traces:
     endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
+{{- if eq .Values.sumologic.useExporterBatching true }}
+    sending_queue:
+      enabled: true
+      queue_size: 256000
+      batch:
+        flush_timeout: 5s
+        min_size: 256
+        max_size: 512
+{{- end }}
 {{- else }}
   loadbalancing:
     protocol:
@@ -52,7 +88,15 @@ exporters:
         sending_queue:
           enabled: true
           num_consumers: 10
+{{- if eq .Values.sumologic.useExporterBatching true }}
+          queue_size: 2560000
+          batch:
+            flush_timeout: 5s
+            min_size: 256
+            max_size: 512
+{{ else }}
           queue_size: 10_000
+{{- end }}
     resolver:
       dns:
         hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
@@ -114,37 +158,55 @@ processors:
     override: false
     timeout: 10s
 
-  ## Tags spans with K8S metadata, basing on the context IP
-  k8s_tagger:
-    ## When true, only IP is assigned and passed (so it could be tagged on another collector)
-    passthrough: false
-    ## When true, additional fields, such as serviceName are being also extracted
-    owner_lookup_enabled: true
-    ## Extracted fields and assigned names
+  k8sattributes:
+    wait_for_metadata: {{ .Values.otelcolInstrumentation.waitForMetadata }}
+    wait_for_metadata_timeout: {{ .Values.otelcolInstrumentation.waitForMetadataTimeout | quote }}
+    auth_type: "serviceAccount"
     extract:
+      labels:
+        - key_regex: "(.*)"
+          tag_name: "k8s.pod.label.$$1"
+          from: pod
+        - key_regex: "(.*)"
+          tag_name: "k8s.namespace.label.$$1"
+          from: namespace
+      annotations:
+        - key_regex: "(.*)"
+          tag_name: "k8s.pod.annotation.$$1"
+          from: pod
       metadata:
         ## extract the following well-known metadata fields
-        - containerId
-        - containerName
-        - daemonSetName
-        - deploymentName
-        - hostName
-        - namespace
-        - nodeName
-        - podId
-        - podName
-        - replicaSetName
-        - serviceName
-        - statefulSetName
-      annotations:
-        - tag_name: "k8s.pod.annotation.%s"
-          key: "*"
-      namespace_labels:
-        - tag_name: "k8s.namespace.label.%s"
-          key: "*"
-      labels:
-        - tag_name: "k8s.pod.label.%s"
-          key: "*"
+        - k8s.pod.name
+        - k8s.pod.uid
+        - k8s.deployment.name
+        - k8s.daemonset.name
+        - k8s.replicaset.name
+        - k8s.statefulset.name
+        - k8s.namespace.name
+        - k8s.node.name
+        - k8s.container.name
+        - service.name
+        - service.namespace
+    ## Has to be false to enrich metadata
+    passthrough: false
+    pod_association:
+    ## Mirrors the k8s_tagger default association order (pod_association.go)
+    ## https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/processor/k8sprocessor/pod_association.go#L44
+    ## k8sIPLabelName (k8s.pod.ip) → clientIPLabelName (ip) → connection → host.name (if IP)
+    ## We prepend k8s.pod.uid as the most explicit match, then follow k8s_tagger's order.
+    ## k8s.pod.ip and ip survive gateway hops (forwarded as resource attributes);
+    ## connection uses the TCP source IP and only works for direct pod→collector connections.
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.uid
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.ip
+      - sources:
+        - from: resource_attribute
+          name: ip
+      - sources:
+        - from: connection
 
   ## The memory_limiter processor is used to prevent out of memory situations on the collector.
   memory_limiter:
@@ -174,12 +236,28 @@ extensions:
   health_check:
     endpoint: {{ template "sumologic.healthEndpoint" . }}
   pprof: {}
+{{- if .Values.sumologic.sourcelessMode }}
+  sumologic:
+    installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
+    collector_name: ${MY_POD_NAME}-{{ .Values.sumologic.clusterName }}
+    collector_fields:
+      cluster: {{ .Values.sumologic.clusterName | quote }}
+    ephemeral: true
+    clobber: true
+{{ include "sumologic.extension.api_base_url" . }}{{- end }}
 service:
-  extensions: [health_check, pprof]
+  extensions: [health_check, pprof{{- if .Values.sumologic.sourcelessMode }}, sumologic{{- end }}]
   pipelines:
     traces:
       receivers: [jaeger, otlp, otlp/deprecated, zipkin]
-      processors: [memory_limiter, k8s_tagger, source, resource, batch]
+      processors:
+        - memory_limiter
+        - k8sattributes
+        - source
+        - resource
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
       exporters:
 {{- if eq .Values.tracesGateway.enabled true }}
         - otlphttp/traces
@@ -191,7 +269,14 @@ service:
 {{- end }}
     metrics:
       receivers: [otlp, otlp/deprecated]
-      processors: [memory_limiter, k8s_tagger, source, resource, batch]
+      processors:
+        - memory_limiter
+        - k8sattributes
+        - source
+        - resource
+{{- if eq .Values.sumologic.useExporterBatching false }}
+        - batch
+{{- end }}
       exporters:
         - sumologic/metrics
 {{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
