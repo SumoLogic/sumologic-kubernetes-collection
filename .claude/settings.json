@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(helm list *)",
+      "Bash(find /Users/himanshu.singh -name \"*.yaml\" -not -path \"*/node_modules/*\" 2>/dev/null | xargs grep -l \"sumologic.accessId\\\\|accessKey\\\\|endpoint\" 2>/dev/null | head -10)",
+      "Read(//Users/himanshu.singh/**)",
+      "Bash(grep -E \"accessId|accessKey|endpoint|sumologic.endpoint\" /Users/himanshu.singh/sumo-local-values.yaml | head -5)",
+      "Bash(grep -E \"endpoint\" /Users/himanshu.singh/sumo-local-values.yaml | head -5)",
+      "Bash(cat /Users/himanshu.singh/sumo-local-values.yaml 2>&1)",
+      "Bash(helm delete *)",
+      "Bash(kubectl create *)",
+      "Bash(helm repo *)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(helm upgrade *)"
+    ]
+  }
+}
