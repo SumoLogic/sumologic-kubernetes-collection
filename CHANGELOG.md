@@ -19,10 +19,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - chore(deps): bump sumologic-otel-collector version to v0.158.0-sumo-0 [#4306], [#4313]
+- chore: update supported Kubernetes versions for GKE, EKS, EKS Fargate to 1.34-1.36 and OpenShift to 4.19-4.21 [#4321]
 
 [#4309]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4309
 [#4306]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4306
 [#4313]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4313
+[#4321]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4321
 
 [v5.5.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.5.0
 
