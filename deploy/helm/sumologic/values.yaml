@@ -2478,7 +2478,7 @@ telegraf-operator:
   ## Put here the new name if you want to override the full name used for Telegraf Operator components.
   # fullnameOverride: ""
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.39.2
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.39.3
     repository: public.ecr.aws/sumologic/telegraf-operator
   replicaCount: 1
   classes:
@@ -2648,7 +2648,7 @@ opentelemetry-operator:
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
-        tag: 2.30.0
+        tag: 2.31.1
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
         tag: 1.16.0
