@@ -7,6 +7,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.6.0]
+
+### Released 2026-08-31
+
+### Changed
+
+- chore(deps): bump Helm release opentelemetry-operator from 0.120.0 to 0.121.0 [#4293]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.39.3 [#4304]
+- chore(deps): bump Helm release tailing-sidecar-operator from 0.20.5 to 0.20.6 [#4311]
+- chore(deps): bump public.ecr.aws/sumologic/kube-state-metrics Docker tag to v2.20.0 [#4312]
+- chore(deps): bump Helm release metrics-server from 3.13.1 to 3.14.0 [#4314]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.31.0 [#4315]
+- chore: bump kubernetes-tools and sumologic-mock to 2.29.0 [#4324]
+
+### Fixed
+
+- fix: bump Sumo Logic Terraform provider to `>= 3.2.5` so collector fields are assigned in the initial create request, fixing collector creation for principals whose ABAC permissions are scoped to those fields [#4319]
+
+[#4293]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4293
+[#4304]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4304
+[#4311]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4311
+[#4312]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4312
+[#4314]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4314
+[#4315]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4315
+[#4319]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4319
+[#4324]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4324
+[v5.6.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.6.0
+
 ## [v5.5.0]
 
 ### Released 2026-08-24
