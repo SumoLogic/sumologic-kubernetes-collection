@@ -30,7 +30,7 @@ spec:
             runAsUser: 1000
           containers:
             - name: pvc-cleaner
-              image: public.ecr.aws/sumologic/kubernetes-tools-kubectl:2.28.0
+              image: public.ecr.aws/sumologic/kubernetes-tools-kubectl:2.29.0
               command:
                 - "bash"
                 - "/pvc-cleaner/pvc-cleaner.sh"
