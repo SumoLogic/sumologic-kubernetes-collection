@@ -23,7 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- fix: bump Sumo Logic Terraform provider to `>= 3.2.5` so collector fields are assigned in the initial create request, fixing collector creation for principals whose ABAC permissions are scoped to those fields [#4319]
+- fix: bump Sumo Logic Terraform provider to `>= 3.2.5` so collector fields are assigned in the initial create request, fixing collector
+  creation for principals whose ABAC permissions are scoped to those fields [#4319]
 
 [#4293]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4293
 [#4304]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4304
