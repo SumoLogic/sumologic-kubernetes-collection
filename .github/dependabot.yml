@@ -8,6 +8,11 @@ updates:
     labels:
       - skip-changelog
 
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-patch"
+
   - package-ecosystem: "gomod"
     directory: "/tests/"
     schedule:
@@ -20,3 +25,8 @@ updates:
 
     labels:
       - skip-changelog
+
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-patch"
