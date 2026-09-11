@@ -12,6 +12,7 @@ metadata:
     heritage: "Helm"
 spec:
   schedule: "*/2 * * * *"
+  startingDeadlineSeconds: 200
   jobTemplate:
     spec:
       template:
