@@ -2717,6 +2717,12 @@ pvcCleaner:
     ## Schedule for cronJobs
     schedule: "*/15 * * * *"
 
+    ## Optional deadline in seconds for starting the job if it misses its scheduled time.
+    ## Runs which the CronJob controller could not start within that many seconds of their
+    ## scheduled time are skipped and counted as failed. Unset means no deadline.
+    ## Ref: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#cron-job-limitations
+    startingDeadlineSeconds: null
+
     ## securityContext for pvcCleaner pods
     securityContext:
       runAsUser: 1000
