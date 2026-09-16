@@ -1,0 +1,1 @@
+fix(pvc-cleaner): do not fail the cleanup job when the HPA is temporarily missing, for example while `helm upgrade` recreates it

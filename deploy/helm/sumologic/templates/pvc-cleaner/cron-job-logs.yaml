@@ -9,6 +9,9 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   schedule: {{ .Values.pvcCleaner.job.schedule | quote }}
+{{- if not (kindIs "invalid" .Values.pvcCleaner.job.startingDeadlineSeconds) }}
+  startingDeadlineSeconds: {{ .Values.pvcCleaner.job.startingDeadlineSeconds }}
+{{- end }}
   jobTemplate:
     spec:
       template:

@@ -129,7 +129,9 @@ fi
 # shellcheck disable=SC2310
 if ! delete_all && ! check_hpa_exists; then
   echo "Provided HPA ${HPA_NAME} not found."
-  exit 1
+  echo "The HPA can be temporarily absent, for example while a 'helm upgrade' recreates it."
+  echo "Without it the replica count to keep is unknown, so there is nothing to clean. The next run will retry."
+  exit 0
 fi
 
 PVC_LIST="$(get_sorted_pvcs)"
