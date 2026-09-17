@@ -341,7 +341,8 @@ else
 fi
 
 # Setup Sumo Logic monitors if enabled
-if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" ]]; then
+# Monitors are skipped when using v2 app — v2 provides monitor templates instead
+if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" && "${SUMOLOGIC_USE_V2_APP:-false}" != "true" ]]; then
     bash /etc/terraform/monitors.sh
 else
     echo "Installation of the Sumo Logic monitors is disabled."

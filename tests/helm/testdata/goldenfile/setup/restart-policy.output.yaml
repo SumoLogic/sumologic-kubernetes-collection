@@ -87,6 +87,8 @@ spec:
               value: "enabled"
             - name: SUMOLOGIC_DASHBOARDS_ENABLED
               value: "true"
+            - name: SUMOLOGIC_USE_V2_APP
+              value: "false"
             - name: CLEANUP_UNUSED_SOURCES
               value: "false"
 

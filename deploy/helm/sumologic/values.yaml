@@ -252,6 +252,11 @@ sumologic:
       ## If enabled, a pre-install hook will install k8s dashboards in Sumo Logic
       enabled: true
 
+      ## If enabled, installs the v2 K8s app instead of the v1 app.
+      ## v2 apps are not GA yet; keep this false until the feature is ready.
+      ## When true, monitors installation is also skipped (v2 app provides monitor templates instead).
+      useV2App: false
+
   collector:
     ## Configuration of additional collector fields
     ## https://www.sumologic.com/help/docs/manage/fields/#http-source-fields
