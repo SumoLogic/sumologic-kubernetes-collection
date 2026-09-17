@@ -340,10 +340,12 @@ else
     echo "Source cleanup skipped (cleanupUnusedSources is not enabled)."
 fi
 
-# Setup Sumo Logic monitors if enabled
-# Monitors are skipped when using v2 app — v2 provides monitor templates instead
+# Setup Sumo Logic monitors if enabled.
+# Monitors are skipped when using v2 app — v2 provides monitor templates instead.
 if [[ "${SUMOLOGIC_MONITORS_ENABLED:?}" = "true" && "${SUMOLOGIC_USE_V2_APP:-false}" != "true" ]]; then
     bash /etc/terraform/monitors.sh
+elif [[ "${SUMOLOGIC_USE_V2_APP:-false}" == "true" ]]; then
+    echo "Skipping monitor installation: using v2 app, which provides monitor templates."
 else
     echo "Installation of the Sumo Logic monitors is disabled."
     echo "You can install them manually later with:"

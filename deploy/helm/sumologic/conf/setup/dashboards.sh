@@ -19,15 +19,25 @@ K8S_V2_APP_UUID="47006dc5-8e64-4a28-bfa4-2d820fe76a3d"
 # ──────────────────────────────────────────────────────────────────────────────
 
 function install_v2_app() {
-  # Check if the v2 app is already installed by listing app instances
+  # Check if the v2 app is already installed by listing app instances.
+  # Validate that the response is valid JSON before trusting it — a proxy
+  # error or network blip returns non-JSON, and || true would silently treat
+  # that as "not installed", causing a spurious duplicate install attempt.
   local INSTANCES_RESPONSE
   INSTANCES_RESPONSE="$(curl -XGET -s \
           -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
           "${SUMOLOGIC_BASE_URL}"v2/apps/instances)"
 
+  if ! jq -e '.' <<< "${INSTANCES_RESPONSE}" > /dev/null 2>&1; then
+    echo "Failed to list v2 app instances — unexpected response:"
+    echo "${INSTANCES_RESPONSE}"
+    echo "You can install the app manually from the Sumo Logic App Catalog."
+    exit 2
+  fi
+
   local EXISTING_INSTANCE
   EXISTING_INSTANCE="$(echo "${INSTANCES_RESPONSE}" | jq -r \
-          ".data[]? | select(.uuid == \"${K8S_V2_APP_UUID}\") | .uuid" 2>/dev/null || true)"
+          ".data[]? | select(.uuid == \"${K8S_V2_APP_UUID}\") | .uuid")"
 
   if [[ -n "${EXISTING_INSTANCE}" ]]; then
     echo "The K8s v2 App is already installed."
@@ -52,16 +62,22 @@ function install_v2_app() {
     exit 2
   fi
 
-  # Poll until the install job completes
-  local JOB_STATUS
+  # Poll until the install job completes, with a 120-second deadline.
+  local JOB_STATUS POLL_ATTEMPTS=0 MAX_POLL_ATTEMPTS=120
   JOB_STATUS="InProgress"
   while [[ "${JOB_STATUS}" == "InProgress" ]]; do
+    if [[ "${POLL_ATTEMPTS}" -ge "${MAX_POLL_ATTEMPTS}" ]]; then
+      echo "Timed out waiting for K8s v2 App installation (last status: ${JOB_STATUS})."
+      echo "You can install the app manually from the Sumo Logic App Catalog."
+      exit 2
+    fi
     local STATUS_RESPONSE
     STATUS_RESPONSE="$(curl -XGET -s \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v2/apps/install/"${JOB_ID}"/status)"
 
     JOB_STATUS="$(echo "${STATUS_RESPONSE}" | jq -r '.status' | tr -d '"')"
+    POLL_ATTEMPTS=$(( POLL_ATTEMPTS + 1 ))
     sleep 1
   done
 
