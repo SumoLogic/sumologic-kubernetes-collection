@@ -239,7 +239,10 @@ sumologic:
     additionalFiles: {}
 
     monitors:
-      ## If enabled, a pre-install hook will create k8s monitors in Sumo Logic
+      ## If enabled, a pre-install hook will create k8s monitors in Sumo Logic.
+      ## Note: when dashboards.useV2App is true, monitors will not be created here.
+      ## Instead, the v2 Kubernetes App includes monitor templates that users can
+      ## use to create monitors manually from the Sumo Logic UI.
       enabled: true
 
       ## The installed monitors default status: enabled/disabled
@@ -251,6 +254,12 @@ sumologic:
     dashboards:
       ## If enabled, a pre-install hook will install k8s dashboards in Sumo Logic
       enabled: true
+
+      ## If enabled, installs the v2 K8s app instead of the v1 app.
+      ## v2 apps are not GA yet; keep this false until the feature is ready.
+      ## Only takes effect when dashboards.enabled is true.
+      ## When true, monitors installation is also skipped (v2 app provides monitor templates instead).
+      useV2App: false
 
   collector:
     ## Configuration of additional collector fields

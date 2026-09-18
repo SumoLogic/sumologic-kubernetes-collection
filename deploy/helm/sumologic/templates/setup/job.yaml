@@ -118,6 +118,8 @@ spec:
 {{- end }}
         - name: SUMOLOGIC_DASHBOARDS_ENABLED
           value: "{{ .Values.sumologic.setup.dashboards.enabled }}"
+        - name: SUMOLOGIC_USE_V2_APP
+          value: "{{ .Values.sumologic.setup.dashboards.useV2App }}"
         - name: CLEANUP_UNUSED_SOURCES
           value: "{{ .Values.sumologic.setup.cleanupUnusedSources }}"
         {{- include "proxy-env-variables" . | nindent 8 -}}
