@@ -5,6 +5,7 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: true
+          migrationDocAcknowledged: true
         terminationGracePeriodSeconds: 120
 metadata:
   persistence:
