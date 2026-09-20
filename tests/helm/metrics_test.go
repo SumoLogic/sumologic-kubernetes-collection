@@ -435,3 +435,64 @@ sumologic:
 
 	require.Equal(t, "sumologic|my_metrics_namespace", otelConfig.Processors.Source.Exclude.K8sNamespaceName)
 }
+
+func TestSingleLayerPipelineRequiresMigrationDocAcknowledged(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/collector/otelcol/opentelemetrycollector.yaml"
+	valuesYaml := `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+`
+	_, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	assert.ErrorContains(t, err, "singleLayerPipeline is enabled but migrationDocAcknowledged is not set to true")
+}
+
+func TestSingleLayerPipelineMigrationDetectsMetadataKeys(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/collector/otelcol/opentelemetrycollector.yaml"
+	valuesYaml := `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+metadata:
+  metrics:
+    statefulset:
+      nodeSelector:
+        disktype: ssd
+      podLabels:
+        team: observability
+`
+	_, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	assert.ErrorContains(t, err, "migrationDocAcknowledged is not set to true")
+	assert.ErrorContains(t, err, "metadata.metrics.statefulset.nodeSelector -> sumologic.metrics.collector.otelcol.nodeSelector")
+	assert.ErrorContains(t, err, "metadata.metrics.statefulset.podLabels -> sumologic.metrics.collector.otelcol.podLabels")
+}
+
+func TestSingleLayerPipelineMigrationWarnsAboutConfigMerge(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/collector/otelcol/opentelemetrycollector.yaml"
+	valuesYaml := `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+        config:
+          merge:
+            processors:
+              my_custom_processor:
+                enabled: true
+`
+	_, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	assert.ErrorContains(t, err, "migrationDocAcknowledged is not set to true")
+	assert.ErrorContains(t, err, "sumologic.metrics.collector.otelcol.config.merge is set")
+	assert.ErrorContains(t, err, "metrics/collector")
+}

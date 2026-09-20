@@ -1,4 +1,51 @@
 {{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled }}
+{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled (not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged) }}
+{{- $migrationKeys := list -}}
+{{- if .Values.metadata.metrics.statefulset.nodeSelector }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.nodeSelector -> sumologic.metrics.collector.otelcol.nodeSelector" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.tolerations }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.tolerations -> sumologic.metrics.collector.otelcol.tolerations" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.affinity }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.affinity -> sumologic.metrics.collector.otelcol.affinity" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.podLabels }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.podLabels -> sumologic.metrics.collector.otelcol.podLabels" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.podAnnotations }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.podAnnotations -> sumologic.metrics.collector.otelcol.podAnnotations" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.priorityClassName }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.priorityClassName -> sumologic.metrics.collector.otelcol.priorityClassName" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.containers.otelcol.securityContext }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.containers.otelcol.securityContext -> sumologic.metrics.collector.otelcol.securityContext" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.extraEnvVars }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.extraEnvVars -> sumologic.metrics.collector.otelcol.extraEnvVars" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.extraVolumes }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.extraVolumes -> sumologic.metrics.collector.otelcol.extraVolumes" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.statefulset.extraVolumeMounts }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.extraVolumeMounts -> sumologic.metrics.collector.otelcol.extraVolumeMounts" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.autoscaling.enabled }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.autoscaling.* -> sumologic.metrics.collector.otelcol.autoscaling.*" -}}
+{{- end -}}
+{{- if .Values.metadata.metrics.config.override }}
+{{- $migrationKeys = append $migrationKeys "  - metadata.metrics.config.override (INCOMPATIBLE: use metadata.metrics.config.merge instead, or disable single-layer mode)" -}}
+{{- end -}}
+{{- $msg := "singleLayerPipeline is enabled but migrationDocAcknowledged is not set to true.\nPlease read the migration guide at https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md and set\nsumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged=true to proceed." -}}
+{{- if $migrationKeys }}
+{{- $msg = printf "%s\n\nThe following metadata.metrics.* keys are set and must be migrated to their collector equivalents:\n%s" $msg (join "\n" $migrationKeys) -}}
+{{- end -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.config.merge }}
+{{- $msg = printf "%s\n\nWARNING: sumologic.metrics.collector.otelcol.config.merge is set. The collector pipeline is renamed from 'metrics' to 'metrics/collector' in single-layer mode. If your merge references service.pipelines.metrics, update it to service.pipelines.metrics/collector. See https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md#pipeline-rename-metricscollector." $msg -}}
+{{- end }}
+{{- fail $msg }}
+{{- end }}
 {{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.config.override }}
 {{- fail "metadata.metrics.config.override cannot be used with singleLayerPipeline.enabled. Use metadata.metrics.config.merge instead, or disable single-layer mode." }}
 {{- end }}

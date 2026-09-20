@@ -4,6 +4,7 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: true
+          migrationDocAcknowledged: true
         livenessProbe:
           initialDelaySeconds: 20
           periodSeconds: 15
