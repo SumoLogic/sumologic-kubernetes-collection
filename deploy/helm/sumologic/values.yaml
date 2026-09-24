@@ -2670,6 +2670,12 @@ opentelemetry-operator:
     env:
       {}
       # ENABLE_WEBHOOKS: "true"
+    featureGatesMap:
+      ## operator.networkpolicy causes crashes in Helm deployments because the upstream operator
+      ## hardcodes the deployment name 'opentelemetry-operator-controller-manager', which doesn't
+      ## match our Helm-prefixed deployment name. Also causes blockOwnerDeletion RBAC failures on
+      ## OpenShift. See: https://github.com/open-telemetry/opentelemetry-operator/issues/5493
+      operator.networkpolicy: false
     resources:
       limits:
         cpu: 250m
