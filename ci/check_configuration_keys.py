@@ -58,7 +58,6 @@ SKIP_DEFAULTS = {
     'sumologic.events.sourceCategory',
     'sumologic.useExporterBatching',
     'sumologic.customBatchingConfigured',
-    # Key contains a literal dot, which breaks the dot-splitting navigation in get_value()
     'opentelemetry-operator.manager.featureGatesMap.operator.networkpolicy',
 }
 
