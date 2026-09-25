@@ -35,7 +35,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator1
       dotnet:
-        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:1.16.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:1.17.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
@@ -101,7 +101,7 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator2
       dotnet:
-        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:1.16.0
+        image: public.ecr.aws/sumologic/autoinstrumentation-dotnet:1.17.0
         env:
           - name: OTEL_METRICS_EXPORTER
             value: otlp
