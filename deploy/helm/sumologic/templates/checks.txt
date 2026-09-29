@@ -3,9 +3,9 @@
 {{- fail "\nsumologic.sourcelessMode requires either sumologic.setupEnabled=true (to auto-create a token via the setup job)\nor sumologic.installationToken to be set (for GitOps/ArgoCD workflows where setupEnabled=false)." -}}
 {{- end -}}
 
-{{/* Require explicit ack when upgrading with sourcelessMode enabled */}}
-{{- if and .Release.IsUpgrade .Values.sumologic.sourcelessMode (not .Values.sumologic.sourcelessModeAck) -}}
-{{- fail "\nsumologic.sourcelessMode is enabled on an existing release.\nThis removes the Hosted Collector and all HTTP sources, migrating to installation-token authentication.\nPlease review the migration guide, then set sumologic.sourcelessModeAck=true to confirm and proceed with the upgrade." -}}
+{{/* Require sourcelessModeAck when sourcelessMode is enabled */}}
+{{- if and .Values.sumologic.sourcelessMode (not .Values.sumologic.sourcelessModeAck) -}}
+{{- fail "\nsumologic.sourcelessMode is enabled but sumologic.sourcelessModeAck is not set.\nEnabling sourcelessMode removes the Hosted Collector and all HTTP sources, migrating to installation-token authentication.\nPlease review the migration guide, then set sumologic.sourcelessModeAck=true to confirm." -}}
 {{- end -}}
 
 {{/* Check that cleanupHostedCollector is not enabled without sourcelessMode */}}
