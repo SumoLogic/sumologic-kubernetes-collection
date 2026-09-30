@@ -1,4 +1,6 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
 otelevents:
   useSumoK8sEventReceiver: false

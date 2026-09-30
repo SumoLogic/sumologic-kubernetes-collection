@@ -1,5 +1,7 @@
 namespaceOverride: "sumologic"
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   nodeSelector:
     sumologic.com/kind: worker

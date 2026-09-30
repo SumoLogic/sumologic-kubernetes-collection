@@ -1,5 +1,7 @@
 namespaceOverride: "collection"
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
 debug:
   sumologicMock:

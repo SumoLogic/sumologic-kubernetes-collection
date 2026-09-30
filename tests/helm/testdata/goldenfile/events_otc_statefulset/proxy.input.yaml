@@ -1,4 +1,6 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   httpProxy: http://proxy.internal
   httpsProxy: https://proxy.internal

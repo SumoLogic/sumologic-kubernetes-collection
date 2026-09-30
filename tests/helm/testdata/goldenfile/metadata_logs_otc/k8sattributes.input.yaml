@@ -1,4 +1,6 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   collector:
     otelcol:

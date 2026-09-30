@@ -13,9 +13,8 @@ metadata:
 data:
   traces.sampler.conf.yaml: |
     exporters:
-      otlphttp:
-        compression: gzip
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
+      sumologic:
+        client: k8s_%CURRENT_CHART_VERSION%
         sending_queue:
           batch:
             flush_timeout: 5s
@@ -28,6 +27,13 @@ data:
       health_check:
         endpoint: '[${env:MY_POD_IP}]:13133'
       pprof: {}
+      sumologic:
+        clobber: true
+        collector_fields:
+          cluster: kubernetes
+        collector_name: ${MY_POD_NAME}-kubernetes
+        ephemeral: true
+        installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     processors:
       batch:
         send_batch_max_size: 512
@@ -50,10 +56,11 @@ data:
       extensions:
       - health_check
       - pprof
+      - sumologic
       pipelines:
         traces:
           exporters:
-          - otlphttp
+          - sumologic
           processors:
           - memory_limiter
           - cascading_filter
@@ -73,3 +80,4 @@ data:
                   without_scope_info: true
                   without_type_suffix: true
                   without_units: true
+

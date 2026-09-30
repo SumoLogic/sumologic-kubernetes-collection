@@ -5,6 +5,8 @@ debug:
       stopLogsIngestion: true
 
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   metrics:
     collector:

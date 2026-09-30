@@ -27,7 +27,6 @@ data:
         compression: gzip
         decompose_otlp_histograms: true
         decompose_otlp_summaries: true
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         log_format: otlp
         max_request_body_size: 1048576
         metric_format: otlp
@@ -49,6 +48,13 @@ data:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
+      sumologic:
+        clobber: true
+        collector_fields:
+          cluster: kubernetes
+        collector_name: ${MY_POD_NAME}-kubernetes
+        ephemeral: true
+        installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     processors:
       batch:
         send_batch_max_size: 512
@@ -152,6 +158,7 @@ data:
       extensions:
       - health_check
       - pprof
+      - sumologic
       pipelines:
         metrics:
           exporters:
@@ -191,3 +198,4 @@ data:
                   without_scope_info: true
                   without_type_suffix: true
                   without_units: true
+

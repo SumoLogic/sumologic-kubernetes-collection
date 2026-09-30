@@ -5,6 +5,8 @@ debug:
   enableLocalMode: true
 
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   cleanupEnabled: true
   setup:

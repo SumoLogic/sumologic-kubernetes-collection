@@ -36,7 +36,6 @@ data:
         verbosity: detailed
       sumologic:
         client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
         log_format: otlp
         sending_queue:
           batch:
@@ -61,6 +60,14 @@ data:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
+      sumologic:
+        clobber: true
+        collector_credentials_directory: /var/lib/storage/otc/credentials
+        collector_fields:
+          cluster: kubernetes
+        collector_name: ${MY_POD_NAME}-kubernetes
+        ephemeral: true
+        installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     processors:
       attributes/extract_systemd_source_fields:
         actions:
@@ -324,6 +331,7 @@ data:
       - health_check
       - file_storage
       - pprof
+      - sumologic
       pipelines:
         logs/otlp/containers:
           exporters:
@@ -417,3 +425,4 @@ data:
                   without_scope_info: true
                   without_type_suffix: true
                   without_units: true
+
