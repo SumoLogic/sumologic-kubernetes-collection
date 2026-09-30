@@ -7,6 +7,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v5.7.0]
+
+### Released 2026-09-30
+
+### Added
+
+- feat(pvc-cleaner): add `pvcCleaner.job.startingDeadlineSeconds` to configure the CronJob starting deadline [#4334]
+
+### Changed
+
+- chore(deps): bump Helm release tailing-sidecar-operator from 0.20.6 to 0.20.7 [#4326]
+- chore(deps): bump sumologic-otel-collector version to v0.160.0-sumo-0 [#4330]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.40.0 [#4331]
+- chore(deps): bump Helm release opentelemetry-operator from 0.122.0 to 0.122.1 [#4337]
+- feat: add v2 K8s app installation support behind useV2App feature flag [#4338]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.40.1 [#4345]
+- chore(deps): bump Helm release opentelemetry-operator from 0.123.0 to 0.123.1 [#4347]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-dotnet Docker tag to v1.17.0 [#4349]
+- chore(deps): bump sumologic-otel-collector version to v0.161.0-sumo-0 [#4351]
+- chore(deps): bump Helm release tailing-sidecar-operator from 0.20.7 to 0.20.8 [#4352]
+- chore(deps): bump Helm release opentelemetry-operator from 0.123.1 to 0.124.0 [#4353]
+
+### Fixed
+
+- fix(pvc-cleaner): do not fail the cleanup job when the HPA is temporarily missing, for example while `helm upgrade` recreates it [#4334]
+
+[#4334]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4334
+[#4326]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4326
+[#4330]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4330
+[#4331]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4331
+[#4337]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4337
+[#4338]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4338
+[#4345]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4345
+[#4347]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4347
+[#4349]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4349
+[#4351]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4351
+[#4352]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4352
+[#4353]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4353
+[v5.7.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v5.7.0
+
 ## [v5.6.0]
 
 ### Released 2026-08-31
