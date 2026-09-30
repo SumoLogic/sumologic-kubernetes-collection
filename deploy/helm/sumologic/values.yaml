@@ -615,6 +615,10 @@ sumologic:
         ## Recommended: set collector CPU request >= (current collector CPU) + (current metadata CPU / replica count)
         singleLayerPipeline:
           enabled: false # opt-in; set true to merge enrichment into collector
+          ## Set to true to acknowledge that you have read the single-layer pipeline
+          ## migration guide and have adjusted collector resources accordingly.
+          ## See: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md
+          migrationDocAcknowledged: false
 
         ## Configure image for Opentelemetry Collector
         image:
