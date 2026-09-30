@@ -12,9 +12,9 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
     sumologic.com/scrape: "true"
-    
+
     podLabelKey: podLabelValue
-    
+
     podKey: podValue
 spec:
   image: "my_repository:my_tag"
@@ -43,7 +43,6 @@ spec:
       kubernetes.io/os: linux
       workingGroup: production
     resources:
-      
       limits:
         cpu: 2000m
         memory: 3Gi
@@ -57,62 +56,60 @@ spec:
     affinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
-        - matchExpressions:
-          - key: topology.kubernetes.io/zone
-            operator: In
-            values:
-            - sumo-east1
-            - sumo-west1
+          - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                  - sumo-east1
+                  - sumo-west1
   nodeSelector:
     kubernetes.io/os: linux
     workingGroup: production
   tolerations:
-      - effect: NoSchedule
-        key: null
-        operator: Exists
+    - effect: NoSchedule
+      key: null
+      operator: Exists
   affinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
         - matchExpressions:
-          - key: topology.kubernetes.io/zone
-            operator: In
-            values:
-            - sumo-east1
-            - sumo-west1
+            - key: topology.kubernetes.io/zone
+              operator: In
+              values:
+                - sumo-east1
+                - sumo-west1
   priorityClassName: "customPriority"
   env:
-  - name: METADATA_METRICS_SVC
-    valueFrom:
-      configMapKeyRef:
-        name: sumologic-configmap
-        key: metadataMetrics
-  - name: NAMESPACE
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.namespace
-  - name: MY_POD_IP
-    valueFrom:
-      fieldRef:
-        apiVersion: v1
-        fieldPath: status.podIP
-  - name: MY_POD_NAME
-    valueFrom:
-      fieldRef:
-        apiVersion: v1
-        fieldPath: metadata.name
+    - name: METADATA_METRICS_SVC
+      valueFrom:
+        configMapKeyRef:
+          name: sumologic-configmap
+          key: metadataMetrics
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: MY_POD_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
+    - name: MY_POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
   podAnnotations:
     ## The operator adds this annotation by default, but we use our own ServiceMonitor
     prometheus.io/scrape: "false"
     podAnnotationKey: podAnnotationValue
     annotationKey: annotationValue
   podSecurityContext:
-    
     fsGroup: 999
   ports:
-  - name: pprof
-    port: 1777
+    - name: pprof
+      port: 1777
   resources:
-    
     limits:
       cpu: 3000m
       memory: 2Gi
@@ -120,15 +117,15 @@ spec:
       cpu: 1000m
       memory: 1Gi
   volumes:
-  - name: tmp
-    emptyDir: {}
-  - name: file-storage
-    emptyDir: {}
+    - name: tmp
+      emptyDir: {}
+    - name: file-storage
+      emptyDir: {}
   volumeMounts:
-  - name: tmp
-    mountPath: /tmp
-  - name: file-storage
-    mountPath: /var/lib/storage/otc
+    - name: tmp
+      mountPath: /tmp
+    - name: file-storage
+      mountPath: /var/lib/storage/otc
   config:
     exporters:
       otlphttp:
@@ -152,7 +149,7 @@ spec:
         recreate: false
         timeout: 10s
       health_check:
-        endpoint: '[${env:MY_POD_IP}]:13133'
+        endpoint: "[${env:MY_POD_IP}]:13133"
       pprof: {}
     processors:
       batch:
@@ -162,17 +159,17 @@ spec:
       filter/drop_stale_datapoints:
         metrics:
           datapoint:
-          - flags == FLAG_NO_RECORDED_VALUE
+            - flags == FLAG_NO_RECORDED_VALUE
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
-        - context: resource
-          statements:
-          - delete_key(attributes, "http.scheme")
-          - delete_key(attributes, "net.host.name")
-          - delete_key(attributes, "net.host.port")
-          - delete_key(attributes, "service.instance.id")
-          - delete_matching_keys(attributes, "k8s.*")
+          - context: resource
+            statements:
+              - delete_key(attributes, "http.scheme")
+              - delete_key(attributes, "net.host.name")
+              - delete_key(attributes, "net.host.port")
+              - delete_key(attributes, "service.instance.id")
+              - delete_matching_keys(attributes, "k8s.*")
     receivers:
       prometheus:
         config:
@@ -181,30 +178,29 @@ spec:
           scrape_configs: []
     service:
       extensions:
-      - health_check
-      - pprof
-      - file_storage
+        - health_check
+        - pprof
+        - file_storage
       pipelines:
         metrics:
           exporters:
-          - otlphttp
+            - otlphttp
           processors:
-          - filter/drop_stale_datapoints
-          - transform/drop_unnecessary_attributes
+            - filter/drop_stale_datapoints
+            - transform/drop_unnecessary_attributes
           receivers:
-          - prometheus
+            - prometheus
       telemetry:
         logs:
           level: info
         metrics:
           level: normal
           readers:
-          - pull:
-              exporter:
-                prometheus:
-                  host: ${env:MY_POD_IP}
-                  port: 8888
-                  without_scope_info: true
-                  without_type_suffix: true
-                  without_units: true
-
+            - pull:
+                exporter:
+                  prometheus:
+                    host: ${env:MY_POD_IP}
+                    port: 8888
+                    without_scope_info: true
+                    without_type_suffix: true
+                    without_units: true
