@@ -5,7 +5,7 @@
 
 {{/* Require sourcelessModeAck when sourcelessMode is enabled */}}
 {{- if and .Values.sumologic.sourcelessMode (not .Values.sumologic.sourcelessModeAck) -}}
-{{- fail "\nsumologic.sourcelessMode is enabled but sumologic.sourcelessModeAck is not set.\nEnabling sourcelessMode removes the Hosted Collector and all HTTP sources, migrating to installation-token authentication.\nPlease review the migration guide, then set sumologic.sourcelessModeAck=true to confirm." -}}
+{{- fail "\nsumologic.sourcelessMode is enabled but sumologic.sourcelessModeAck is not set.\nPlease review the migration guide, then set sumologic.sourcelessModeAck=true to confirm. \nIf you're onboarding to sumologic kubernetes collection for the first time, you can skip reading migration and just add sumologic.sourcelessModeAck=true to your values.yaml" -}}
 {{- end -}}
 
 {{/* Check that cleanupHostedCollector is not enabled without sourcelessMode */}}
