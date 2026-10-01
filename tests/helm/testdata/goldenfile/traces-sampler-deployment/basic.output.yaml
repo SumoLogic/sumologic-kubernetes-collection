@@ -39,11 +39,11 @@ spec:
           env:
             - name: GOGC
               value: "80"
-            - name: SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE
+            - name: SUMOLOGIC_INSTALLATION_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: sumologic
-                  key: endpoint-traces-otlp
+                  name: sumologic-extension
+                  key: SUMOLOGIC_INSTALLATION_TOKEN
 
             - name: NO_PROXY
               value: kubernetes.default.svc

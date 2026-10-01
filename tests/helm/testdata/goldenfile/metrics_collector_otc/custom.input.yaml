@@ -1,5 +1,8 @@
-sumologic:sumologic:
+sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
+  customBatchingConfigured: true
   ipv6mode: true
   nodeSelector:
     workingGroup: testing

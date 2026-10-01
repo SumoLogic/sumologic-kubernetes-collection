@@ -42,11 +42,11 @@ spec:
     targetCPUUtilization: 70
     targetMemoryUtilization: 70
   env:
-    - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
+    - name: SUMOLOGIC_INSTALLATION_TOKEN
       valueFrom:
         secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-otlp
+          name: sumologic-extension
+          key: SUMOLOGIC_INSTALLATION_TOKEN
 
     - name: NO_PROXY
       value: kubernetes.default.svc
@@ -130,7 +130,6 @@ spec:
         client: k8s_%CURRENT_CHART_VERSION%
         decompose_otlp_histograms: true
         decompose_otlp_summaries: true
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: otlp
         sending_queue:
@@ -155,6 +154,14 @@ spec:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
       pprof: {}
+      sumologic:
+        clobber: true
+        collector_credentials_directory: /var/lib/storage/otc/credentials
+        collector_fields:
+          cluster: kubernetes
+        collector_name: ${MY_POD_NAME}-kubernetes
+        ephemeral: true
+        installation_token: ${SUMOLOGIC_INSTALLATION_TOKEN}
     processors:
       batch:
         send_batch_max_size: 2048
@@ -440,6 +447,7 @@ spec:
         - health_check
         - pprof
         - file_storage
+        - sumologic
       pipelines:
         metrics:
           exporters:

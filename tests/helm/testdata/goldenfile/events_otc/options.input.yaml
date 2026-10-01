@@ -4,6 +4,8 @@ otelevents:
   reportConfigMaps: false
 
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   ipv6mode: true
   clusterName: testCluster

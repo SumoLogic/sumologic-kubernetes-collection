@@ -3,6 +3,11 @@
 {{- fail "\nsumologic.sourcelessMode requires either sumologic.setupEnabled=true (to auto-create a token via the setup job)\nor sumologic.installationToken to be set (for GitOps/ArgoCD workflows where setupEnabled=false)." -}}
 {{- end -}}
 
+{{/* Require sourcelessModeAck and metrics single layer pipeline migrationDocAcknowledged */}}
+{{- if or (not .Values.sumologic.sourcelessModeAck) (not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged) -}}
+{{- fail "\nsumologic.sourcelessModeAck and sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged are not set.\nPlease review the migration guide, then set both values to true to confirm. \nIf you're onboarding to sumologic kubernetes collection for the first time, you can skip reading migration doc and just set sumologic.sourcelessModeAck and sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged to true in your values.yaml" -}}
+{{- end -}}
+
 {{/* Check that cleanupHostedCollector is not enabled without sourcelessMode */}}
 {{- if and .Values.sumologic.cleanupHostedCollector (not .Values.sumologic.sourcelessMode) -}}
 {{- fail "\nsumologic.cleanupHostedCollector requires sumologic.sourcelessMode=true.\nHosted collector cleanup only applies when running in sourceless mode." -}}

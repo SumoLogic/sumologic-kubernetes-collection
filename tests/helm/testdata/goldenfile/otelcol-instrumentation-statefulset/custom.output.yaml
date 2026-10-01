@@ -112,12 +112,11 @@ spec:
             - name: otelcolinstrumentation-config-vol
               mountPath: /conf
           env:
-            - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
+            - name: SUMOLOGIC_INSTALLATION_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-otlp
-
+                  name: sumologic-extension
+                  key: SUMOLOGIC_INSTALLATION_TOKEN
             - name: MY_POD_IP
               valueFrom:
                 fieldRef:

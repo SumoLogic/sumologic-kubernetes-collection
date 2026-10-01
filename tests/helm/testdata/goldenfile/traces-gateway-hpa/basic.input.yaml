@@ -2,6 +2,8 @@ tracesGateway:
   enabled: true
 
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   traces:
     enabled: true
