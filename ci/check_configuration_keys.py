@@ -34,6 +34,11 @@ SKIP_DEFAULTS = {
     'sumologic.metrics.collector.otelcol.extraEnvVars',
     'sumologic.metrics.collector.otelcol.extraVolumeMounts',
     'sumologic.metrics.collector.otelcol.extraVolumes',
+    # Defaulted to unset so the target allocator inherits the collector's values; the commented-out
+    # values.yaml entries exist only to document the keys, so their parsed default is misleading.
+    'sumologic.metrics.collector.otelcol.targetAllocator.affinity',
+    'sumologic.metrics.collector.otelcol.targetAllocator.nodeSelector',
+    'sumologic.metrics.collector.otelcol.targetAllocator.tolerations',
     'metadata.persistence.storageClass',
     'instrumentation.dotnet.extraEnvVars',
     'instrumentation.java.extraEnvVars',

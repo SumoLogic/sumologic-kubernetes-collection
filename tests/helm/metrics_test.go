@@ -435,3 +435,205 @@ sumologic:
 
 	require.Equal(t, "sumologic|my_metrics_namespace", otelConfig.Processors.Source.Exclude.K8sNamespaceName)
 }
+
+// metricsCollectorCR is a minimal view of the OpenTelemetryCollector CR rendered for the metrics
+// collector, covering the scheduling fields that the collector StatefulSet (spec) and the target
+// allocator Deployment (spec.targetAllocator) each receive.
+type metricsCollectorCR struct {
+	Spec struct {
+		NodeSelector    map[string]string        `yaml:"nodeSelector"`
+		Tolerations     []map[string]interface{} `yaml:"tolerations"`
+		Affinity        map[string]interface{}   `yaml:"affinity"`
+		TargetAllocator struct {
+			NodeSelector map[string]string        `yaml:"nodeSelector"`
+			Tolerations  []map[string]interface{} `yaml:"tolerations"`
+			Affinity     map[string]interface{}   `yaml:"affinity"`
+		} `yaml:"targetAllocator"`
+	} `yaml:"spec"`
+}
+
+func renderMetricsCollectorCR(t *testing.T, valuesYaml string) metricsCollectorCR {
+	t.Helper()
+	renderedYaml := RenderTemplateFromValuesString(
+		t,
+		valuesYaml,
+		"templates/metrics/collector/otelcol/opentelemetrycollector.yaml",
+	)
+
+	var collector metricsCollectorCR
+	err := yaml.Unmarshal([]byte(renderedYaml), &collector)
+	require.NoError(t, err)
+	return collector
+}
+
+// collectorAntiAffinity is the kind of hard pod anti-affinity an operator would set to keep
+// metrics collector replicas on separate nodes.
+const collectorAntiAffinity = `
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    sumologic.com/component: metrics
+`
+
+func TestMetricsCollectorTargetAllocatorInheritsSchedulingByDefault(t *testing.T) {
+	t.Parallel()
+	collector := renderMetricsCollectorCR(t, `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        nodeSelector:
+          workingGroup: metrics
+        tolerations:
+          - key: dedicated
+            operator: Equal
+            value: metrics
+            effect: NoSchedule
+`+collectorAntiAffinity)
+
+	require.Equal(t, collector.Spec.Affinity, collector.Spec.TargetAllocator.Affinity)
+	require.Equal(t, collector.Spec.NodeSelector, collector.Spec.TargetAllocator.NodeSelector)
+	require.Equal(t, collector.Spec.Tolerations, collector.Spec.TargetAllocator.Tolerations)
+}
+
+func TestMetricsCollectorTargetAllocatorSchedulingOverride(t *testing.T) {
+	t.Parallel()
+	collector := renderMetricsCollectorCR(t, `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        nodeSelector:
+          workingGroup: metrics
+        tolerations:
+          - key: dedicated
+            operator: Equal
+            value: metrics
+            effect: NoSchedule
+        targetAllocator:
+          nodeSelector:
+            workingGroup: control
+          tolerations:
+            - key: dedicated
+              operator: Equal
+              value: control
+              effect: NoSchedule
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: topology.kubernetes.io/zone
+                        operator: In
+                        values:
+                          - sumo-east1
+`+collectorAntiAffinity)
+
+	// the collector keeps its own anti-affinity
+	require.Contains(t, collector.Spec.Affinity, "podAntiAffinity")
+
+	// the target allocator gets its own, independent constraints
+	require.NotContains(t, collector.Spec.TargetAllocator.Affinity, "podAntiAffinity")
+	require.Contains(t, collector.Spec.TargetAllocator.Affinity, "nodeAffinity")
+	require.Equal(t, "control", collector.Spec.TargetAllocator.NodeSelector["workingGroup"])
+	require.Equal(t, "metrics", collector.Spec.NodeSelector["workingGroup"])
+	require.Len(t, collector.Spec.TargetAllocator.Tolerations, 1)
+	require.Equal(t, "control", collector.Spec.TargetAllocator.Tolerations[0]["value"])
+	require.Equal(t, "metrics", collector.Spec.Tolerations[0]["value"])
+}
+
+// Setting the target allocator keys to empty is the escape hatch from the issue: the collector
+// keeps a hard anti-affinity while the allocator is left unconstrained, so it stays schedulable.
+func TestMetricsCollectorTargetAllocatorSchedulingExplicitlyEmpty(t *testing.T) {
+	t.Parallel()
+	collector := renderMetricsCollectorCR(t, `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        tolerations:
+          - key: dedicated
+            operator: Equal
+            value: metrics
+            effect: NoSchedule
+        targetAllocator:
+          affinity: {}
+          tolerations: []
+`+collectorAntiAffinity)
+
+	require.Contains(t, collector.Spec.Affinity, "podAntiAffinity")
+	require.Nil(t, collector.Spec.TargetAllocator.Affinity)
+	require.Nil(t, collector.Spec.TargetAllocator.Tolerations)
+}
+
+// Emptying a target allocator key must not let the chart-wide sumologic.* scheduling values back
+// in: a user emptying it wants the allocator unconstrained, not moved onto the global pool.
+// nodeSelector is the exception to "empty renders nothing" — every workload in this chart keeps an
+// unconditional kubernetes.io/os floor, which is what keeps linux pods off Windows nodes.
+func TestMetricsCollectorTargetAllocatorSchedulingEmptyIgnoresGlobals(t *testing.T) {
+	t.Parallel()
+	collector := renderMetricsCollectorCR(t, `
+sumologic:
+  nodeSelector:
+    globalPool: shared
+  tolerations:
+    - key: global
+      operator: Exists
+      effect: NoSchedule
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: globalKey
+                operator: Exists
+  metrics:
+    collector:
+      otelcol:
+        targetAllocator:
+          nodeSelector: {}
+          tolerations: []
+          affinity: {}
+`)
+
+	require.Equal(
+		t,
+		map[string]string{"kubernetes.io/os": "linux"},
+		collector.Spec.TargetAllocator.NodeSelector,
+		"an emptied target allocator nodeSelector must keep only the OS floor, not fall back to sumologic.nodeSelector",
+	)
+	require.Nil(t, collector.Spec.TargetAllocator.Tolerations)
+	require.Nil(t, collector.Spec.TargetAllocator.Affinity)
+
+	// the collector itself still picks the chart-wide values up
+	require.Equal(t, "shared", collector.Spec.NodeSelector["globalPool"])
+	require.Contains(t, collector.Spec.Affinity, "nodeAffinity")
+	require.Len(t, collector.Spec.Tolerations, 1)
+}
+
+// A non-empty target allocator nodeSelector replaces the chart-wide one, the same way a non-empty
+// component nodeSelector does everywhere else in the chart.
+func TestMetricsCollectorTargetAllocatorNodeSelectorReplacesGlobal(t *testing.T) {
+	t.Parallel()
+	collector := renderMetricsCollectorCR(t, `
+sumologic:
+  nodeSelector:
+    globalPool: shared
+  metrics:
+    collector:
+      otelcol:
+        targetAllocator:
+          nodeSelector:
+            workingGroup: control
+`)
+
+	require.Equal(
+		t,
+		map[string]string{"kubernetes.io/os": "linux", "workingGroup": "control"},
+		collector.Spec.TargetAllocator.NodeSelector,
+	)
+	require.Equal(t, "shared", collector.Spec.NodeSelector["globalPool"])
+}

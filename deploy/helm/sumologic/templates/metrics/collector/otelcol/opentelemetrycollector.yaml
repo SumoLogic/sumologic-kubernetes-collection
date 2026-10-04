@@ -74,19 +74,19 @@ spec:
           release: {{ .Release.Name }}
 {{- end }}
     serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
-{{- if not (empty (include "metrics.collector.otelcol.nodeSelector" .)) }}
+{{- if not (empty (include "metrics.collector.otelcol.targetAllocator.nodeSelector" .)) }}
     nodeSelector:
-{{ include "metrics.collector.otelcol.nodeSelector" . | indent 6 }}
+{{ include "metrics.collector.otelcol.targetAllocator.nodeSelector" . | indent 6 }}
 {{- end }}
     resources:
       {{ .Values.sumologic.metrics.collector.otelcol.targetAllocator.resources | toYaml | nindent 6 }}
-{{- if not (empty (include "metrics.collector.otelcol.tolerations" .)) }}
+{{- if not (empty (include "metrics.collector.otelcol.targetAllocator.tolerations" .)) }}
     tolerations:
-{{ include "metrics.collector.otelcol.tolerations" . | indent 6 }}
+{{ include "metrics.collector.otelcol.targetAllocator.tolerations" . | indent 6 }}
 {{- end }}
-{{- if not (empty (include "metrics.collector.otelcol.affinity" .)) }}
+{{- if not (empty (include "metrics.collector.otelcol.targetAllocator.affinity" .)) }}
     affinity:
-{{ include "metrics.collector.otelcol.affinity" . | indent 6 }}
+{{ include "metrics.collector.otelcol.targetAllocator.affinity" . | indent 6 }}
 {{- end }}
 {{- if not (empty (include "metrics.collector.otelcol.nodeSelector" .)) }}
   nodeSelector:
