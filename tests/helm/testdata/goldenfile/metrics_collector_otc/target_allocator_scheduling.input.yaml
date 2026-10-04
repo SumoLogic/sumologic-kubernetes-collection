@@ -1,0 +1,32 @@
+## Reproduction of https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/4356:
+## the collector keeps a hard pod anti-affinity so its replicas land on separate nodes, while the
+## target allocator is given its own, independent scheduling constraints so it stays schedulable.
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        nodeSelector:
+          workingGroup: metrics
+        tolerations:
+          - key: dedicated
+            operator: Equal
+            value: metrics
+            effect: NoSchedule
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    sumologic.com/component: metrics
+        autoscaling:
+          minReplicas: 2
+        targetAllocator:
+          nodeSelector:
+            workingGroup: control
+          tolerations:
+            - key: dedicated
+              operator: Equal
+              value: control
+              effect: NoSchedule
+          affinity: {}

@@ -90,6 +90,53 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{/*
+Scheduling constraints for the metrics collector's target allocator.
+
+The target allocator runs as its own Deployment, separate from the collector StatefulSet, so it
+needs scheduling constraints of its own. For backwards compatibility it inherits the collector's
+when `sumologic.metrics.collector.otelcol.targetAllocator.<key>` is not set at all; when the key is
+present it is used verbatim, so setting it empty leaves the allocator unconstrained — it does not
+fall back to the collector's value or to the chart-wide `sumologic.<key>`. That matters for hard
+collector pod anti-affinity: inheriting it would forbid the allocator from every node already
+running a collector replica, leaving it permanently unschedulable.
+
+`nodeSelector` is the one exception to "empty means nothing rendered": like every other workload in
+this chart the allocator keeps an unconditional `kubernetes.io/os` floor, so an empty nodeSelector
+renders that floor alone. Without it the allocator could be scheduled onto a node running another
+OS and never start.
+*/}}
+{{- define "metrics.collector.otelcol.targetAllocator.nodeSelector" -}}
+{{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
+{{- if hasKey $targetAllocator "nodeSelector" -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" $targetAllocator.nodeSelector "skipGlobal" true) -}}
+{{- else -}}
+{{- template "metrics.collector.otelcol.nodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metrics.collector.otelcol.targetAllocator.tolerations" -}}
+{{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
+{{- if hasKey $targetAllocator "tolerations" -}}
+{{- if $targetAllocator.tolerations -}}
+{{- toYaml $targetAllocator.tolerations -}}
+{{- end -}}
+{{- else -}}
+{{- template "metrics.collector.otelcol.tolerations" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metrics.collector.otelcol.targetAllocator.affinity" -}}
+{{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
+{{- if hasKey $targetAllocator "affinity" -}}
+{{- if $targetAllocator.affinity -}}
+{{- toYaml $targetAllocator.affinity -}}
+{{- end -}}
+{{- else -}}
+{{- template "metrics.collector.otelcol.affinity" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "metadata.metrics.statefulset.nodeSelector" -}}
 {{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.metadata.metrics.statefulset.nodeSelector)}}
 {{- end -}}
