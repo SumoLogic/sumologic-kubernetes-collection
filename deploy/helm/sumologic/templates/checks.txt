@@ -5,7 +5,7 @@
 
 {{/* Require sourcelessModeAck and metrics single layer pipeline migrationDocAcknowledged */}}
 {{- if or
-    (not .Values.sumologic.sourcelessModeAck)
+    (and .Values.sumologic.sourcelessMode (not .Values.sumologic.sourcelessModeAck))
     (and
         (eq (include "metrics.otelcol.enabled" .) "true")
         .Values.sumologic.metrics.collector.otelcol.enabled
