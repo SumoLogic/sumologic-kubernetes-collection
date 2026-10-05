@@ -41,6 +41,7 @@ metadata:
               periodSeconds: 60
 
 sumologic:
+  sourcelessMode: false
   autoscaling:
     enabled: true
   events:
