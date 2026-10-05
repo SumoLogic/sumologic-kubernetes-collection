@@ -180,6 +180,7 @@ func TestMetadataSourceTypeOTLP(t *testing.T) {
 	var otelConfig OtelConfig
 	valuesYaml := `
 sumologic:
+  sourcelessMode: false
   metrics:
     sourceType: otlp
     collector:
@@ -237,6 +238,7 @@ func TestMetadataSourceTypeHTTP(t *testing.T) {
 	var otelConfig OtelConfig
 	valuesYaml := `
 sumologic:
+  sourcelessMode: false
   metrics:
     sourceType: http
     collector:

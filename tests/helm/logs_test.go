@@ -167,6 +167,7 @@ func TestMetadataLogFormatHTTP(t *testing.T) {
 			var otelConfig OtelConfig
 			valuesYamlTemplate := `
 sumologic:
+  sourcelessMode: false
   logs:
     container:
       format: %s
@@ -393,8 +394,10 @@ func TestCollectorOtelConfigNoDockerShim(t *testing.T) {
 		&helm.Options{
 			ValuesFiles: []string{},
 			SetStrValues: map[string]string{
-				"sumologic.accessId":  "accessId",
-				"sumologic.accessKey": "accessKey",
+				"sumologic.accessId":    "accessId",
+				"sumologic.accessKey":   "accessKey",
+				"sumologic.sourcelessModeAck": "true",
+				"sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged": "true",
 			},
 			Logger: logger.Discard, // the log output is noisy and doesn't help much
 		},
