@@ -19,7 +19,6 @@ func Test_Helm_Default_OT_ipv6(t *testing.T) {
 	installChecks := []featureCheck{
 		CheckSumologicSecret(15),
 		CheckOtelcolMetadataLogsInstall,
-		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
 		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,

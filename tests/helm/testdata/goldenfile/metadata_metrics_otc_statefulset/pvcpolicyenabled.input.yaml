@@ -1,5 +1,12 @@
 sumologic:
   useExporterBatching: true
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
+          migrationDocAcknowledged: true
   persistentVolumeClaimRetentionPolicyEnabled: false
   logs:
     sourceType: http
@@ -10,12 +17,6 @@ sumologic:
       operator: "NotEqual"
       value: arbeiter
       effect: "TestFail"
-  sourcelessModeAck: true
-  metrics:
-    collector:
-      otelcol:
-        singleLayerPipeline:
-          migrationDocAcknowledged: true
 metadata:
   image:
     repository: my_repository

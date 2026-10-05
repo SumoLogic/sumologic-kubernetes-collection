@@ -8,6 +8,7 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           migrationDocAcknowledged: true
+          enabled: false
   collector:
     sources:
       metrics:

@@ -51,6 +51,8 @@ sumologic:
     enabled: true
     collector:
       otelcol:
+        singleLayerPipeline:
+          enabled: false
         autoscaling:
           enabled: true
           minReplicas: 1

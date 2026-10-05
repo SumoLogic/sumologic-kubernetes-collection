@@ -6,6 +6,7 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           migrationDocAcknowledged: true
+          enabled: false
   nodeSelector:
     sumologic.com/kind: co-worker
   tolerations:

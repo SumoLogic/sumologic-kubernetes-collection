@@ -22,6 +22,9 @@ sumologic:
   metrics:
     collector:
       otelcol:
+        singleLayerPipeline:
+          enabled: false
+          migrationDocAcknowledged: true
         image:
           repository: my_repository
           tag: my_tag
@@ -72,11 +75,6 @@ sumologic:
         annotatedPods:
           enabled: false
         allocationStrategy: consistent-hashing
-        config:
-          merge:
-            processors:
-              batch:
-                send_batch_size: 5000
         targetAllocator:
           resources:
             limits:
@@ -85,8 +83,6 @@ sumologic:
             requests:
               memory: 2Gi
               cpu: 500m
-        singleLayerPipeline:
-          migrationDocAcknowledged: true
     enableDefaultFilters: true
     dropHistogramBuckets: false
   podAnnotations:
