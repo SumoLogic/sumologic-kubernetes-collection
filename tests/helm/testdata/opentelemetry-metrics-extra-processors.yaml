@@ -28,3 +28,8 @@ sumologic:
                   - set(attributes["k8s.pod.pod_name_new"], attributes["k8s.pod.pod_name"])
                   - delete_key(attributes, "k8s.pod.pod_name")
                   - set(attributes["my.static.value"], "<static_value>")
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
+  sourcelessModeAck: true
