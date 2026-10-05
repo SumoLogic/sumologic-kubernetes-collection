@@ -6,3 +6,8 @@ sumologic:
       useV2App: true
     monitors:
       enabled: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

@@ -13,7 +13,11 @@ sumologic:
       enabled: true
     container:
       enabled: false
-
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otellogs:
   logLevel: debug
   metricsLevel: detailed

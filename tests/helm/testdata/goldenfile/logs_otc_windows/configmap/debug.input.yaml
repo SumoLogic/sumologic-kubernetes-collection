@@ -6,6 +6,11 @@ sumologic:
     collector:
       otellogswindows:
         enabled: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 debug:
   logs:
     otellogswindows:
@@ -29,7 +34,6 @@ debug:
       stopLogsIngestion: true
   events:
     stopLogsIngestion: true
-
 otellogswindows:
   daemonset:
     nameservers:

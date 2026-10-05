@@ -65,7 +65,6 @@ sumologic:
                       - sumo-west1
         securityContext:
           fsGroup: 999
-
         kubelet:
           enabled: false
         cAdvisor:
@@ -86,14 +85,14 @@ sumologic:
             requests:
               memory: 2Gi
               cpu: 500m
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
     enableDefaultFilters: true
     dropHistogramBuckets: false
-
   podAnnotations:
     podAnnotationKey: podAnnotationValue
   podLabels:
     podLabelKey: podLabelValue
-
 metadata:
   metrics:
     statefulset:

@@ -17,3 +17,9 @@ sumologic:
           - exporters:
               - sumologic/test
             statement: route() where resource.attributes["exporter"] == "test"
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

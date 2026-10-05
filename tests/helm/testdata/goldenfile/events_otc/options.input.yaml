@@ -2,7 +2,6 @@ otelevents:
   logLevel: debug
   metricsLevel: detailed
   reportConfigMaps: false
-
 sumologic:
   sourcelessMode: true
   sourcelessModeAck: true
@@ -16,3 +15,8 @@ sumologic:
     sourceCategoryReplaceDash: ";"
     persistence:
       enabled: false
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

@@ -3,6 +3,11 @@ sumologic:
   ipv6mode: true
   metrics:
     sourceType: http
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
+  sourcelessModeAck: true
 metadata:
   metrics:
     autoscaling:

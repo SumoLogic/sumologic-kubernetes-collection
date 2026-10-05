@@ -1,9 +1,7 @@
 debug:
   sumologicMock:
     enabled: true
-
   enableLocalMode: true
-
 sumologic:
   sourcelessMode: true
   sourcelessModeAck: true
@@ -14,3 +12,8 @@ sumologic:
       initContainerImage:
         repository: myrepo
         tag: mytag
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

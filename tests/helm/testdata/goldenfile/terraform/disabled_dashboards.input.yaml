@@ -5,3 +5,8 @@ sumologic:
   setup:
     dashboards:
       enabled: false
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

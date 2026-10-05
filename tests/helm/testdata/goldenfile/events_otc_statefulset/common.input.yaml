@@ -18,3 +18,8 @@ sumologic:
       operator: "NotEqual"
       value: arbeiter
       effect: "FailTest"
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

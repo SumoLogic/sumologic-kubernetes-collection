@@ -2,6 +2,11 @@ sumologic:
   sourcelessMode: true
   sourcelessModeAck: true
   useExporterBatching: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otellogs:
   additionalDaemonSets:
     linux:
@@ -28,7 +33,6 @@ otellogs:
               drop:
                 - ALL
             privileged: true
-
       ## Set securityContext for initContainers running in pods in log collector daemonset
       initContainers:
         changeowner:
@@ -58,14 +62,12 @@ otellogs:
           operator: "Equal"
           value: worker
           effect: "NoSchedule"
-
       extraEnvVars:
         - name: VALUE_FROM_SECRET
           valueFrom:
             secretKeyRef:
               name: secret_name
               key: secret_key
-
       extraVolumes:
         - name: es-certs
           secret:

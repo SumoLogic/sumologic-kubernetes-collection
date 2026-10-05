@@ -14,3 +14,8 @@ sumologic:
           condition: attributes["k8s.namespace.name"] == "bar"
         - first_line_regex: ": : : Log beginning"
           condition: attributes["k8s.namespace.name"] == "foo"
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

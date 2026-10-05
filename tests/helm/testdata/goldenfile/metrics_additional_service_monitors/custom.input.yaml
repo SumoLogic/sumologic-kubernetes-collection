@@ -16,3 +16,7 @@ sumologic:
           matchLabels:
             label-key-a: label-value-a
             label-key-b: label-value-b
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

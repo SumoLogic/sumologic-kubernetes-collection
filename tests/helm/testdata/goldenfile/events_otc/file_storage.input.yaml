@@ -7,3 +7,8 @@ sumologic:
       fileStorage:
         fsync: true
         recreate: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

@@ -30,7 +30,6 @@ sumologic:
               attributes:
                 - action: delete
                   key: redundant-attribute
-
     kubelet:
       sourceName: my_kubelet_sourceName
       sourceCategory: my_kubelet_sourceCategory
@@ -51,7 +50,6 @@ sumologic:
               attributes:
                 - action: delete
                   key: redundant-attribute
-
     systemd:
       sourceName: my_systemd_sourceName
       sourceCategory: my_systemd_sourceCategory
@@ -72,3 +70,8 @@ sumologic:
               attributes:
                 - action: delete
                   key: redundant-attribute
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

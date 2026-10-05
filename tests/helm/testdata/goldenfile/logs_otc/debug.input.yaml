@@ -6,6 +6,11 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 debug:
   logs:
     collector:

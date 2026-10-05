@@ -12,3 +12,8 @@ sumologic:
           endpoint: https://test-endpoint
         debug:
           verbosity: detailed
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

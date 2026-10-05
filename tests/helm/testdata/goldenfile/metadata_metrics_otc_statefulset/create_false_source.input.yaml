@@ -4,6 +4,10 @@ sumologic:
   useExporterBatching: true
   metrics:
     sourceType: otlp
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
   collector:
     sources:
       metrics:

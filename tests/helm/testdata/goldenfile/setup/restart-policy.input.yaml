@@ -5,3 +5,8 @@ sumologic:
   setup:
     job:
       restartPolicy: Never # or OnFailure (default)
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

@@ -7,6 +7,11 @@ sumologic:
       fileStorage:
         fsync: true
         recreate: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otelevents:
   statefulset:
     terminationGracePeriodSeconds: 120

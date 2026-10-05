@@ -6,7 +6,12 @@ sumologic:
     sumoAnnotation: sumoValue
   podLabels:
     sumoLabel: sumoValue
-
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otelevents:
   image:
     repository: my_repository

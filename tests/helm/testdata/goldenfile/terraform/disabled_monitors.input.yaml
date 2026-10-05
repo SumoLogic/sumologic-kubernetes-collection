@@ -6,3 +6,8 @@ sumologic:
     monitors:
       enabled: false
       monitorStatus: disabled
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

@@ -40,3 +40,8 @@ sumologic:
             test_list:
               - point_1
               - point_2
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

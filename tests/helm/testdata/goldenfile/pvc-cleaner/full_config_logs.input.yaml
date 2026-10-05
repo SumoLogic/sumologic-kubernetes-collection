@@ -21,7 +21,11 @@ sumologic:
                 operator: In
                 values:
                   - a-correct-affinity
-
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 pvcCleaner:
   metrics:
     enabled: true
@@ -52,7 +56,6 @@ pvcCleaner:
       - key: null
         operator: Exists
         effect: "NoSchedule"
-
     ## Affinity and anti-affinity
     ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
     ##
@@ -71,12 +74,10 @@ pvcCleaner:
                   values:
                     - prometheus-operator-prometheus
             topologyKey: "kubernetes.io/hostname"
-
     podLabels:
       some: label
     ## Add custom annotations only to setup job pod
     podAnnotations:
       some: annotation
-
     schedule: "*/2 * * * *"
     startingDeadlineSeconds: 200

@@ -6,3 +6,8 @@ sumologic:
     additionalFields:
       - addfield1
       - addfield2
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

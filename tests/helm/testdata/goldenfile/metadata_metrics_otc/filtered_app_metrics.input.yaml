@@ -6,3 +6,7 @@ sumologic:
     metadata:
       provider: otelcol
     enableDefaultFilters: true
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

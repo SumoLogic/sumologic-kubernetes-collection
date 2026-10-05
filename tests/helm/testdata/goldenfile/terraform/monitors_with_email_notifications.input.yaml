@@ -5,3 +5,8 @@ sumologic:
   setup:
     monitors:
       notificationEmails: ["test@test.lh", "email@locahost.lh"]
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

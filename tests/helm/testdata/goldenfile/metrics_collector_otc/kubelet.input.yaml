@@ -9,3 +9,5 @@ sumologic:
           metricRegex: kubelet_running_pods
         cAdvisor:
           metricRegex: container_cpu_usage_total
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

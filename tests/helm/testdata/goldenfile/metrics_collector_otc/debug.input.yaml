@@ -3,7 +3,6 @@ debug:
     collector:
       print: true
       stopLogsIngestion: true
-
 sumologic:
   sourcelessMode: true
   sourcelessModeAck: true
@@ -27,3 +26,5 @@ sumologic:
                 - type: Percent
                   value: 100
                   periodSeconds: 60
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

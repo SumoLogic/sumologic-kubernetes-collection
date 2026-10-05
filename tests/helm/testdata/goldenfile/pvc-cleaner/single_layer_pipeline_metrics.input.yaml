@@ -6,7 +6,7 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: true
-
+          migrationDocAcknowledged: true
 pvcCleaner:
   metrics:
     enabled: true

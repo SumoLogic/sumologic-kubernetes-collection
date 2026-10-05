@@ -3,3 +3,8 @@ sumologic:
   sourcelessModeAck: true
   useExporterBatching: true
   ipv6mode: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

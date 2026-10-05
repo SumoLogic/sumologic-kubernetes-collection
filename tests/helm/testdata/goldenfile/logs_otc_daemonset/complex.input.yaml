@@ -14,7 +14,11 @@ sumologic:
     collector:
       otelcol:
         enabled: true
-
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otellogs:
   image:
     repository: my_repository
@@ -26,23 +30,18 @@ otellogs:
       fsGroup: 0
       runAsUser: 0
       runAsGroup: 0
-
     ## Add custom labels to the otelcol daemonset
     labels:
       someDaemonsetLabel: someValue
-
     ## Add custom annotations to the otelcol daemonset
     annotations:
       someDaemonsetAnnotation: someValue
-
     ## Add custom labels to all otelcol daemonset pods
     podLabels:
       someLabel: someValue
-
     ## Add custom annotations to all otelcol daemonset pods
     podAnnotations:
       someAnnotation: someValue
-
     resources:
       limits:
         memory: 1Gi
@@ -50,10 +49,8 @@ otellogs:
       requests:
         memory: 32Mi
         cpu: 100m
-
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName: "prio"
-
     ## Set securityContext for containers running in pods in log collector daemonset
     containers:
       otelcol:
@@ -62,7 +59,6 @@ otellogs:
             drop:
               - ALL
           privileged: true
-
     ## Set securityContext for initContainers running in pods in log collector daemonset
     initContainers:
       changeowner:
@@ -73,21 +69,18 @@ otellogs:
             add:
               - CAP_CHOWN
           privileged: true
-
     tolerations:
       - key: "worker"
         operator: "Equal"
         value: worker
         effect: "NoSchedule"
     affinity: {}
-
     extraEnvVars:
       - name: VALUE_FROM_SECRET
         valueFrom:
           secretKeyRef:
             name: secret_name
             key: secret_key
-
     extraVolumes:
       - name: es-certs
         secret:

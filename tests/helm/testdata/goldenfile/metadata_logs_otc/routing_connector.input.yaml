@@ -22,3 +22,8 @@ sumologic:
               - sumologic/test
               - debug
             statement: route() where resource.attributes["exporter"] == "test"
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
