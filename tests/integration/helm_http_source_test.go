@@ -18,7 +18,6 @@ func Test_Helm_Http_Source(t *testing.T) {
 	installChecks := []featureCheck{
 		CheckSumologicSecret(11),
 		CheckOtelcolMetadataLogsInstall,
-		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
 		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,

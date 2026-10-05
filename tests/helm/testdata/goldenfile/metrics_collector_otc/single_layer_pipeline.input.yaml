@@ -5,5 +5,6 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: true
+          migrationDocAcknowledged: true
         autoscaling:
           minReplicas: 5

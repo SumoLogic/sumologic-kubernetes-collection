@@ -1,3 +1,10 @@
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
+
 metadata:
   metrics:
     autoscaling:

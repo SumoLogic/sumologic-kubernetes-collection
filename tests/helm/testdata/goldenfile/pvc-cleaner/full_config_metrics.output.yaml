@@ -60,8 +60,7 @@ spec:
                 - "bash"
                 - "/pvc-cleaner/pvc-cleaner.sh"
                 - "sumologic"
-                - "app=RELEASE-NAME-sumologic-otelcol-metrics"
-                - "RELEASE-NAME-sumologic-otelcol-metrics"
+                - "sumologic.com/component=metrics-collector"
               imagePullPolicy: Always
               resources:
                 limits:
