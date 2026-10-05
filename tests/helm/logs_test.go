@@ -394,8 +394,8 @@ func TestCollectorOtelConfigNoDockerShim(t *testing.T) {
 		&helm.Options{
 			ValuesFiles: []string{},
 			SetStrValues: map[string]string{
-				"sumologic.accessId":    "accessId",
-				"sumologic.accessKey":   "accessKey",
+				"sumologic.accessId":          "accessId",
+				"sumologic.accessKey":         "accessKey",
 				"sumologic.sourcelessModeAck": "true",
 				"sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged": "true",
 			},
