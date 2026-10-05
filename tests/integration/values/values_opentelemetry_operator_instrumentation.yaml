@@ -1,6 +1,5 @@
 # Request less resources so that this fits on Github actions runners environment
 sumologic:
-  sourcelessMode: false
   events:
     enabled: false
   logs:
