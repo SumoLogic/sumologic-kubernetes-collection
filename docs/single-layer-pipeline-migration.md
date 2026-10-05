@@ -37,7 +37,7 @@ connector. The metadata StatefulSet, HPA, Services, and PDB are no longer render
 > **Note:** If you do not have any custom configs applied to your existing Sumo Logic Kubernetes Collection Helm chart (i.e., you are using
 > the default values), you can skip the migration steps below and directly set
 > `sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged: true` in your values file.
-
+>
 > **Note:** If it is not possible to migrate your metrics pipeline to single-layer at this time, you can disable it and continue using the
 > existing 2-layer pipeline. See [Rollback](#rollback) for instructions.
 
