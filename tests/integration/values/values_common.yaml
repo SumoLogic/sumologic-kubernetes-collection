@@ -8,6 +8,7 @@
 sumologic:
   useExporterBatching: true
   setupEnabled: true
+  sourcelessModeAck: true
   # This is set in yamls/cluster.yaml to check if we work correctly with a custom domain
   clusterDNSDomain: "my.cluster"
 
