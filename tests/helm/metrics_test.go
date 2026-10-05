@@ -436,7 +436,7 @@ sumologic:
 	require.Equal(t, "sumologic|my_metrics_namespace", otelConfig.Processors.Source.Exclude.K8sNamespaceName)
 }
 
-func TestSingleLayerPipelineRequiresMigrationDocAcknowledged(t *testing.T) {
+func TestSingleLayerPipelineSucceedsWithNoConflictingConfig(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/metrics/collector/otelcol/opentelemetrycollector.yaml"
 	valuesYaml := `
@@ -448,10 +448,10 @@ sumologic:
           enabled: true
 `
 	_, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
-	assert.ErrorContains(t, err, "singleLayerPipeline is enabled but migrationDocAcknowledged is not set to true")
+	require.NoError(t, err)
 }
 
-func TestSingleLayerPipelineMigrationDetectsMetadataKeys(t *testing.T) {
+func TestSingleLayerPipelineFailsOnConflictingMetadataKeys(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/metrics/collector/otelcol/opentelemetrycollector.yaml"
 	valuesYaml := `
@@ -470,12 +470,32 @@ metadata:
         team: observability
 `
 	_, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
-	assert.ErrorContains(t, err, "migrationDocAcknowledged is not set to true")
 	assert.ErrorContains(t, err, "metadata.metrics.statefulset.nodeSelector -> sumologic.metrics.collector.otelcol.nodeSelector")
 	assert.ErrorContains(t, err, "metadata.metrics.statefulset.podLabels -> sumologic.metrics.collector.otelcol.podLabels")
 }
 
-func TestSingleLayerPipelineMigrationWarnsAboutConfigMerge(t *testing.T) {
+func TestSingleLayerPipelineFailsOnConfigOverride(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/collector/otelcol/opentelemetrycollector.yaml"
+	valuesYaml := `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: true
+metadata:
+  metrics:
+    config:
+      override:
+        exporters:
+          custom_exporter: {}
+`
+	_, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	assert.ErrorContains(t, err, "metadata.metrics.config.override")
+}
+
+func TestSingleLayerPipelineFailsOnStaleConfigMergePipelineName(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/metrics/collector/otelcol/opentelemetrycollector.yaml"
 	valuesYaml := `
@@ -487,12 +507,13 @@ sumologic:
           enabled: true
         config:
           merge:
-            processors:
-              my_custom_processor:
-                enabled: true
+            service:
+              pipelines:
+                metrics:
+                  receivers:
+                    - prometheus
 `
 	_, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
-	assert.ErrorContains(t, err, "migrationDocAcknowledged is not set to true")
-	assert.ErrorContains(t, err, "sumologic.metrics.collector.otelcol.config.merge is set")
+	assert.ErrorContains(t, err, "config.merge references service.pipelines.metrics")
 	assert.ErrorContains(t, err, "metrics/collector")
 }

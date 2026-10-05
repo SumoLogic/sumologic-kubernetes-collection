@@ -1,4 +1,8 @@
-# Single-Layer Metrics Pipeline Migration Guide
+# Single-Layer Metrics Pipeline Migration Guide (v6)
+
+> **Fresh installation or using default values?** If you are not using any additional `metadata.metrics.*` configuration overrides, you can
+> simply set `sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged: true` in your values file and proceed with
+> the installation. The rest of this guide is only needed if you have custom configuration that must be migrated.
 
 ## Table of Contents
 
@@ -32,7 +36,6 @@ connector. The metadata StatefulSet, HPA, Services, and PDB are no longer render
 
 > **Note:** If you do not have any custom configs applied to your existing Sumo Logic Kubernetes Collection Helm chart (i.e., you are using
 > the default values), you can skip the migration steps below and directly set
-> `sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled: true` and
 > `sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged: true` in your values file.
 
 > **Note:** If it is not possible to migrate your metrics pipeline to single-layer at this time, you can disable it and continue using the
@@ -113,15 +116,15 @@ customizations:
 | `metadata.metrics.statefulset.podLabels`                          | `sumologic.metrics.collector.otelcol.podLabels`                                     |
 | `metadata.metrics.statefulset.podAnnotations`                     | `sumologic.metrics.collector.otelcol.podAnnotations`                                |
 | `metadata.metrics.statefulset.containers.otelcol.securityContext` | `sumologic.metrics.collector.otelcol.securityContext`                               |
+| `metadata.metrics.statefulset.extraEnvVars`                       | `sumologic.metrics.collector.otelcol.extraEnvVars`                                  |
+| `metadata.metrics.statefulset.extraVolumes`                       | `sumologic.metrics.collector.otelcol.extraVolumes`                                  |
+| `metadata.metrics.statefulset.extraVolumeMounts`                  | `sumologic.metrics.collector.otelcol.extraVolumeMounts`                             |
 | `metadata.metrics.autoscaling.enabled`                            | `sumologic.metrics.collector.otelcol.autoscaling.enabled`                           |
 | `metadata.metrics.autoscaling.minReplicas`                        | `sumologic.metrics.collector.otelcol.autoscaling.minReplicas`                       |
 | `metadata.metrics.autoscaling.maxReplicas`                        | `sumologic.metrics.collector.otelcol.autoscaling.maxReplicas`                       |
 | `metadata.metrics.autoscaling.targetCPUUtilizationPercentage`     | `sumologic.metrics.collector.otelcol.autoscaling.targetCPUUtilizationPercentage`    |
 | `metadata.metrics.autoscaling.targetMemoryUtilizationPercentage`  | `sumologic.metrics.collector.otelcol.autoscaling.targetMemoryUtilizationPercentage` |
 | `metadata.metrics.autoscaling.behavior`                           | `sumologic.metrics.collector.otelcol.autoscaling.behavior`                          |
-| `metadata.metrics.statefulset.extraEnvVars`                       | `sumologic.metrics.collector.otelcol.extraEnvVars`                                  |
-| `metadata.metrics.statefulset.extraVolumes`                       | `sumologic.metrics.collector.otelcol.extraVolumes`                                  |
-| `metadata.metrics.statefulset.extraVolumeMounts`                  | `sumologic.metrics.collector.otelcol.extraVolumeMounts`                             |
 
 ### Incompatible
 

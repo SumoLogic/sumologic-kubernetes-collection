@@ -1,5 +1,5 @@
 {{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled }}
-{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled (not .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged) }}
+{{- if .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled }}
 {{- $migrationKeys := list -}}
 {{- if .Values.metadata.metrics.statefulset.nodeSelector }}
 {{- $migrationKeys = append $migrationKeys "  - metadata.metrics.statefulset.nodeSelector -> sumologic.metrics.collector.otelcol.nodeSelector" -}}
@@ -37,20 +37,16 @@
 {{- if .Values.metadata.metrics.config.override }}
 {{- $migrationKeys = append $migrationKeys "  - metadata.metrics.config.override (INCOMPATIBLE: use metadata.metrics.config.merge instead, or disable single-layer mode)" -}}
 {{- end -}}
-{{- $msg := "singleLayerPipeline is enabled but migrationDocAcknowledged is not set to true.\nPlease read the migration guide at https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md and set\nsumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged=true to proceed." -}}
-{{- if $migrationKeys }}
-{{- $msg = printf "%s\n\nThe following metadata.metrics.* keys are set and must be migrated to their collector equivalents:\n%s" $msg (join "\n" $migrationKeys) -}}
-{{- end -}}
 {{- if .Values.sumologic.metrics.collector.otelcol.config.merge }}
-{{- $msg = printf "%s\n\nWARNING: sumologic.metrics.collector.otelcol.config.merge is set. The collector pipeline is renamed from 'metrics' to 'metrics/collector' in single-layer mode. If your merge references service.pipelines.metrics, update it to service.pipelines.metrics/collector. See https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md#pipeline-rename-metricscollector." $msg -}}
-{{- end }}
+{{- $pipelines := dig "service" "pipelines" "metrics" nil .Values.sumologic.metrics.collector.otelcol.config.merge }}
+{{- if $pipelines }}
+{{- $migrationKeys = append $migrationKeys "  - sumologic.metrics.collector.otelcol.config.merge references service.pipelines.metrics, which is renamed to service.pipelines.metrics/collector in single-layer mode (see docs/single-layer-pipeline-migration.md#pipeline-rename-metricscollector)" -}}
+{{- end -}}
+{{- end -}}
+{{- if $migrationKeys }}
+{{- $msg := printf "singleLayerPipeline is enabled but the following metadata.metrics.* keys are set and must be migrated to their collector equivalents:\n%s\n\nPlease migrate these settings and remove the metadata.metrics.* overrides, or disable single-layer mode.\nSee: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md" (join "\n" $migrationKeys) -}}
 {{- fail $msg }}
-{{- end }}
-{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.config.override }}
-{{- fail "metadata.metrics.config.override cannot be used with singleLayerPipeline.enabled. Use metadata.metrics.config.merge instead, or disable single-layer mode." }}
-{{- end }}
-{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled (or .Values.metadata.metrics.statefulset.extraEnvVars .Values.metadata.metrics.statefulset.extraVolumes .Values.metadata.metrics.statefulset.extraVolumeMounts) }}
-{{- fail "metadata.metrics.statefulset.extraEnvVars/extraVolumes/extraVolumeMounts cannot be used with singleLayerPipeline.enabled. Use sumologic.metrics.collector.otelcol.extraEnvVars/extraVolumes/extraVolumeMounts instead." }}
+{{- end -}}
 {{- end }}
 {{ $baseConfig := (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | fromYaml }}
 {{ $mergeConfig := .Values.sumologic.metrics.collector.otelcol.config.merge }}
