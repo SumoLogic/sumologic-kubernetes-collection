@@ -934,40 +934,8 @@ data:
   sources.tf.json: |
     {
       "locals": {
-        "source_configs": {
-          "default_otlp_metrics_source": {
-            "config-name": "endpoint-metrics-otlp",
-            "name": "metrics-otlp",
-            "properties": {
-              "content_type": "Otlp"
-            }
-          },
-          "default_otlp_traces_source": {
-            "config-name": "endpoint-traces-otlp",
-            "name": "traces-otlp",
-            "properties": {
-              "content_type": "Otlp"
-            }
-          }
-        },
-        "sources": {
-          "default_otlp_metrics_source": "${ sumologic_http_source.default_otlp_metrics_source }",
-          "default_otlp_traces_source": "${ sumologic_http_source.default_otlp_traces_source }"
-        }
-      },
-      "resource": {
-        "sumologic_http_source": {
-          "default_otlp_metrics_source": {
-            "collector_id": "${ sumologic_collector.collector[0].id }",
-            "content_type": "Otlp",
-            "name": "metrics-otlp"
-          },
-          "default_otlp_traces_source": {
-            "collector_id": "${ sumologic_collector.collector[0].id }",
-            "content_type": "Otlp",
-            "name": "traces-otlp"
-          }
-        }
+        "source_configs": {},
+        "sources": {}
       }
     }
   terraform.tfvars.json: |

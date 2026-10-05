@@ -7,10 +7,13 @@ debug:
       forwardToSumologicMock: true
       stopLogsIngestion: true
 sumologic:
+  sourcelessMode: false
   useExporterBatching: true
   metrics:
     sourceType: http
     collector:
       otelcol:
         singleLayerPipeline:
+          migrationDocAcknowledged: true
           enabled: false
+  sourcelessModeAck: true

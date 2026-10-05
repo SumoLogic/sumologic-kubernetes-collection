@@ -1,10 +1,13 @@
 sumologic:
+  sourcelessMode: false
   useExporterBatching: true
+  sourcelessModeAck: true
   metrics:
     collector:
       otelcol:
         singleLayerPipeline:
           enabled: false
+          migrationDocAcknowledged: true
   persistentVolumeClaimRetentionPolicyEnabled: false
   logs:
     sourceType: http
@@ -15,7 +18,6 @@ sumologic:
       operator: "NotEqual"
       value: arbeiter
       effect: "TestFail"
-
 metadata:
   image:
     repository: my_repository
@@ -46,19 +48,16 @@ metadata:
           cpu: 100m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName: "prio"
-
       ## Add custom labels only to logs sts pods
       podLabels:
         someLabel: someValue
       ## Add custom annotations only to logs sts pods
       podAnnotations:
         someAnnotation: someValue
-
       ## Set securityContext for containers running in pods in logs statefulset.
       containers:
         otelcol:
           securityContext: {}
-
       ## Extra Environment Values - allows yaml definitions
       extraEnvVars:
         - name: VALUE_FROM_SECRET
@@ -66,7 +65,6 @@ metadata:
             secretKeyRef:
               name: secret_name
               key: secret_key
-
       extraVolumes:
         - name: es-certs
           secret:
@@ -85,7 +83,6 @@ metadata:
           protocol: TCP
       extraArgs:
         - --config=/etc/otel/test-config.yaml
-
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
@@ -94,7 +91,6 @@ metadata:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       # targetMemoryUtilizationPercentage: 50
-
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
     podDisruptionBudget:

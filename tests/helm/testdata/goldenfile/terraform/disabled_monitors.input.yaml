@@ -1,6 +1,13 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   setup:
     monitors:
       enabled: false
       monitorStatus: disabled
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

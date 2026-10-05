@@ -1,6 +1,13 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   setup:
     monitors:
       enabled: "true"
       notificationEmails: ["test@test.lh", "email@locahost.lh"]
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

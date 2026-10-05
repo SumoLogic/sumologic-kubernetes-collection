@@ -1,10 +1,17 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   events:
     persistence:
       fileStorage:
         fsync: true
         recreate: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otelevents:
   statefulset:
     terminationGracePeriodSeconds: 120

@@ -1,4 +1,11 @@
 sumologic:
+  sourcelessMode: false
   useExporterBatching: true
   traces:
     sourceType: http
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

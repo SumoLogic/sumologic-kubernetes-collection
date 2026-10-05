@@ -1,8 +1,11 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   metrics:
     allowHistogramRegex: "^(apiserver_request_duration_seconds)$"
     collector:
       otelcol:
         singleLayerPipeline:
+          migrationDocAcknowledged: true
           enabled: false

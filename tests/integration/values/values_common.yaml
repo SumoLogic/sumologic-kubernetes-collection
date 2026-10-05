@@ -8,12 +8,16 @@
 sumologic:
   useExporterBatching: true
   setupEnabled: true
+  sourcelessMode: false
+  sourcelessModeAck: true
   # This is set in yamls/cluster.yaml to check if we work correctly with a custom domain
   clusterDNSDomain: "my.cluster"
 
   metrics:
     collector:
       otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
         scrapeInterval: 15s
         resources:
           requests:

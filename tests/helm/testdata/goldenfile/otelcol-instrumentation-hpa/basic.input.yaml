@@ -1,7 +1,13 @@
 otelcolInstrumentation:
   enabled: true
-
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   traces:
     enabled: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

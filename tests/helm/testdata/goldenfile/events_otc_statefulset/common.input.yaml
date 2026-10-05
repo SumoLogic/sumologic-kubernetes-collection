@@ -1,4 +1,6 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   nodeSelector:
     kubernetes.io/os: linux
@@ -16,3 +18,8 @@ sumologic:
       operator: "NotEqual"
       value: arbeiter
       effect: "FailTest"
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

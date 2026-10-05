@@ -1,15 +1,20 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otelcolInstrumentation:
   sourceMetadata:
     excludeNamespaceRegex: "kube\\s+"
     excludePodRegex: "^foo.*"
     excludeContainerRegex: "[123+]bar$|xyz"
     excludeHostRegex: hhh123
-
 tracesGateway:
   enabled: false
-
 debug:
   instrumentation:
     otelcolInstrumentation:

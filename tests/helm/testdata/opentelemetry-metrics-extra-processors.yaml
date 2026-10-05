@@ -1,10 +1,12 @@
 sumologic:
   useExporterBatching: true
+  sourcelessModeAck: true
   metrics:
     collector:
       otelcol:
         singleLayerPipeline:
           enabled: false
+          migrationDocAcknowledged: true
     otelcol:
       extraProcessors:
         - filter/1:

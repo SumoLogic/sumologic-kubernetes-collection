@@ -1,5 +1,8 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
+  customBatchingConfigured: true
   ipv6mode: true
   nodeSelector:
     workingGroup: testing
@@ -21,6 +24,7 @@ sumologic:
       otelcol:
         singleLayerPipeline:
           enabled: false
+          migrationDocAcknowledged: true
         image:
           repository: my_repository
           tag: my_tag
@@ -64,7 +68,6 @@ sumologic:
                       - sumo-west1
         securityContext:
           fsGroup: 999
-
         kubelet:
           enabled: false
         cAdvisor:
@@ -82,12 +85,10 @@ sumologic:
               cpu: 500m
     enableDefaultFilters: true
     dropHistogramBuckets: false
-
   podAnnotations:
     podAnnotationKey: podAnnotationValue
   podLabels:
     podLabelKey: podLabelValue
-
 metadata:
   metrics:
     statefulset:

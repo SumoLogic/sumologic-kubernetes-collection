@@ -204,8 +204,10 @@ func RenderTemplateFromValuesFile(t *testing.T, valuesYaml string, templatePath 
 		&helm.Options{
 			ValuesFiles: []string{valuesYaml},
 			SetStrValues: map[string]string{
-				"sumologic.accessId":  "accessId",
-				"sumologic.accessKey": "accessKey",
+				"sumologic.accessId":          "accessId",
+				"sumologic.accessKey":         "accessKey",
+				"sumologic.sourcelessModeAck": "true",
+				"sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged": "true",
 			},
 			Logger: logger.Discard, // the log output is noisy and doesn't help much
 		},

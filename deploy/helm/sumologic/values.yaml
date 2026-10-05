@@ -17,8 +17,11 @@ sumologic:
 
   ## If enabled, uses SumoLogic extension for auth/endpoint discovery instead of HTTP source URLs.
   ## Terraform will auto-create an installation token and store it in the sumologic-extension secret.
-  ## OTLP/HTTP sources are not created when this is enabled.
-  sourcelessMode: false
+  ## OTLP/HTTP sources are not created/used when this is enabled.
+  sourcelessMode: true
+  ## Set to true to acknowledge that you understand the implications of enabling sourcelessMode
+  ## Required for upgrades when sumologic.sourcelessMode: true.
+  sourcelessModeAck: false
 
   ## Endpoint used by collector pods to register and send data. Only used when sumologic.sourcelessMode is true.
   collectorEndpoint: ""
