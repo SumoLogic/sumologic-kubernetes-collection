@@ -2,6 +2,10 @@ sumologic:
   useExporterBatching: true
   metrics:
     sourceType: http
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
   nodeSelector:
     sumologic.com/kind: co-worker
   tolerations:

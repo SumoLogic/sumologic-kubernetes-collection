@@ -4,3 +4,7 @@ sumologic:
     metadata:
       provider: otelcol
     enableDefaultFilters: true
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false

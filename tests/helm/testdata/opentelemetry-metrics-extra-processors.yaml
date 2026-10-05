@@ -1,6 +1,10 @@
 sumologic:
   useExporterBatching: true
   metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
     otelcol:
       extraProcessors:
         - filter/1:

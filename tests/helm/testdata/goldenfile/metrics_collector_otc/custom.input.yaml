@@ -1,4 +1,4 @@
-sumologic:sumologic:
+sumologic:
   useExporterBatching: true
   ipv6mode: true
   nodeSelector:
@@ -19,6 +19,8 @@ sumologic:sumologic:
   metrics:
     collector:
       otelcol:
+        singleLayerPipeline:
+          enabled: false
         image:
           repository: my_repository
           tag: my_tag
@@ -70,11 +72,6 @@ sumologic:sumologic:
         annotatedPods:
           enabled: false
         allocationStrategy: consistent-hashing
-        config:
-          merge:
-            processors:
-              batch:
-                send_batch_size: 5000
         targetAllocator:
           resources:
             limits:

@@ -13,6 +13,12 @@ func TestMetadataMetricsOtelConfigMerge(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/metrics/otelcol/configmap.yaml"
 	valuesYaml := `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
 metadata:
   metrics:
     config:
@@ -40,6 +46,12 @@ func TestMetadataMetricsOtelConfigOverride(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/metrics/otelcol/configmap.yaml"
 	valuesYaml := `
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
 metadata:
   metrics:
     config:
@@ -170,6 +182,10 @@ func TestMetadataSourceTypeOTLP(t *testing.T) {
 sumologic:
   metrics:
     sourceType: otlp
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
@@ -223,6 +239,10 @@ func TestMetadataSourceTypeHTTP(t *testing.T) {
 sumologic:
   metrics:
     sourceType: http
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
@@ -367,6 +387,11 @@ func TestMetricsCollectionMonitoring(t *testing.T) {
 	valuesYaml := `
 sumologic:
   collectionMonitoring: false
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
@@ -392,6 +417,10 @@ func TestMetricsExcludeNamespaceRegex(t *testing.T) {
 sumologic:
   metrics:
     excludeNamespaceRegex: my_metrics_namespace
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
@@ -418,6 +447,10 @@ sumologic:
   collectionMonitoring: false
   metrics:
     excludeNamespaceRegex: my_metrics_namespace
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          enabled: false
 `
 	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
