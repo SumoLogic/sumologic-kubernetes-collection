@@ -48,6 +48,7 @@ data:
       pprof: {}
       sumologic:
         clobber: true
+        collector_credentials_directory: /tmp/.sumologic-otel-collector
         collector_fields:
           cluster: kubernetes
         collector_name: ${MY_POD_NAME}-kubernetes
@@ -101,3 +102,4 @@ data:
                   without_scope_info: true
                   without_type_suffix: true
                   without_units: true
+
