@@ -66,6 +66,8 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.metadata.name.events.configmap" . }}
+      - name: tmp
+        emptyDir: {}
 {{- if .Values.otelevents.statefulset.extraVolumes }}
 {{ toYaml .Values.otelevents.statefulset.extraVolumes | indent 6 }}
 {{- end }}
@@ -112,6 +114,8 @@ spec:
         - name: config-volume
           mountPath: /etc/otel/config.yaml
           subPath: config.yaml
+        - name: tmp
+          mountPath: /tmp
 {{- if .Values.sumologic.events.persistence.enabled }}
         - name: file-storage
           mountPath: {{ .Values.sumologic.events.persistence.persistentVolume.path }}
