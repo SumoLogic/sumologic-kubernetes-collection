@@ -620,7 +620,9 @@ sumologic:
           enabled: true
           ## Set to true to acknowledge that you have read the single-layer pipeline
           ## migration guide and have adjusted collector resources accordingly.
-          ## See: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md
+          ## Required whenever the metrics OTel pipeline is enabled, regardless of
+          ## whether singleLayerPipeline is enabled.
+          ## See: https://www.sumologic.com/help/docs/send-data/kubernetes/v6/how-to-upgrade/
           migrationDocAcknowledged: false
 
         ## Configure image for Opentelemetry Collector
