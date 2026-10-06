@@ -1,8 +1,9 @@
 # Single-Layer Metrics Pipeline Migration Guide (v6)
 
-> **Fresh installation or using default values?** If you are not using any additional `metadata.metrics.*` configuration overrides, you can
-> simply set `sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged: true` in your values file and proceed with
-> the installation. The rest of this guide is only needed if you have custom configuration that must be migrated.
+> **Fresh installation or using default values?** In v6, `sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged`
+> must be set to `true` whenever metrics collection is enabled. If you are not using any additional `metadata.metrics.*` configuration
+> overrides, you can simply set this flag to `true` in your values file and proceed with the installation. The rest of this guide is only
+> needed if you have custom configuration that must be migrated.
 
 ## Table of Contents
 
@@ -17,7 +18,7 @@
   - [Incompatible](#incompatible)
   - [Prometheus Remote Write](#prometheus-remote-write)
   - [Pipeline Rename: metrics/collector](#pipeline-rename-metricscollector)
-- [How to Enable](#how-to-enable)
+- [Migration Steps](#migration-steps)
 - [Rollback](#rollback)
 
 ## Overview
@@ -38,8 +39,10 @@ connector. The metadata StatefulSet, HPA, Services, and PDB are no longer render
 > the default values), you can skip the migration steps below and directly set
 > `sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged: true` in your values file.
 >
-> **Note:** If it is not possible to migrate your metrics pipeline to single-layer at this time, you can disable it and continue using the
-> existing 2-layer pipeline. See [Rollback](#rollback) for instructions.
+> **Note:** In v6, `migrationDocAcknowledged` must be set to `true` whenever metrics collection is enabled, regardless of whether
+> `singleLayerPipeline.enabled` is `true` or `false`. If it is not possible to migrate your metrics pipeline to single-layer at this time,
+> you can disable it and continue using the existing 2-layer pipeline (see [Rollback](#rollback)), but you must still set
+> `migrationDocAcknowledged: true`.
 
 ### Benefits
 
@@ -49,7 +52,7 @@ connector. The metadata StatefulSet, HPA, Services, and PDB are no longer render
 
 ## What Changes
 
-When `sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled` is set to `true`:
+In v6, the single-layer pipeline is enabled by default (`singleLayerPipeline.enabled: true`). When enabled:
 
 1. The **metadata metrics StatefulSet, HPA, Services, and PDB are not rendered**
 2. The **collector config** includes all enrichment processors (k8sattributes, source, sumologic, etc.) and Sumo Logic exporters
@@ -207,7 +210,9 @@ sumologic:
                     - filter/drop_stale_datapoints
 ```
 
-## How to Enable
+## Migration Steps
+
+In v6, the single-layer pipeline is enabled by default. Follow these steps when upgrading:
 
 1. **Review your current resource usage.** Check `container_memory_working_set_bytes` and CPU usage for both collector and metadata pods.
 
@@ -215,12 +220,16 @@ sumologic:
 
 3. **Migrate metadata configuration keys** from the table above to their collector equivalents.
 
-4. **Run `helm upgrade`** and monitor collector pods for memory pressure.
+4. **Set `sumologic.metrics.collector.otelcol.singleLayerPipeline.migrationDocAcknowledged: true`** in your values file to confirm you have
+   reviewed this guide.
+
+5. **Run `helm upgrade`** and monitor collector pods for memory pressure.
 
 ## Rollback
 
 To restore the 2-layer pipeline, set `singleLayerPipeline.enabled: false` in your values file and run `helm upgrade`. The metadata
-StatefulSet, HPA, Services, and PDB will be re-created.
+StatefulSet, HPA, Services, and PDB will be re-created. Note that `migrationDocAcknowledged` must still be set to `true` even when rolling
+back to the 2-layer pipeline.
 
 **PVC cleanup:** PVCs from the previous pipeline mode are not automatically deleted when switching between modes. After switching:
 

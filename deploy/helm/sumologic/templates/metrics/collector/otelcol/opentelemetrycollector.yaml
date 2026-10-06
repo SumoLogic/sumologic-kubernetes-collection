@@ -44,7 +44,7 @@
 {{- end -}}
 {{- end -}}
 {{- if $migrationKeys }}
-{{- $msg := printf "singleLayerPipeline is enabled but the following metadata.metrics.* keys are set and must be migrated to their collector equivalents:\n%s\n\nPlease migrate these settings and remove the metadata.metrics.* overrides, or disable single-layer mode.\nSee: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/single-layer-pipeline-migration.md" (join "\n" $migrationKeys) -}}
+{{- $msg := printf "singleLayerPipeline is enabled but the following metadata.metrics.* keys are set and must be migrated to their collector equivalents:\n%s\n\nPlease migrate these settings and remove the metadata.metrics.* overrides, or disable single-layer mode.\nSee: https://www.sumologic.com/help/docs/send-data/kubernetes/v6/how-to-upgrade/" (join "\n" $migrationKeys) -}}
 {{- fail $msg }}
 {{- end -}}
 {{- end }}
