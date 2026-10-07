@@ -39,7 +39,6 @@ See the [migration guide][v6_migration_guide] for details.
 [#4358]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4358
 [#4360]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4360
 [#4362]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4362
-
 [v6.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.0.0
 [v6_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v6/how-to-upgrade/
 
