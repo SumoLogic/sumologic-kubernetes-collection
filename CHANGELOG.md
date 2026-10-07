@@ -7,7 +7,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v5.7.0]
+## [v6.0.0]
+
+### Released 2026-10-07
+
+### Added
+
+- feat: Enable sourceless mode by default [#4350]
+
+### Changed
+
+- feat: enable single-layer metrics pipeline by default and add migration guide with acknowledgment flag [#4344]
+- chore(deps): bump Helm release opentelemetry-operator from 0.124.0 to 0.124.1 [#4358]
+- chore(deps): bump public.ecr.aws/sumologic/autoinstrumentation-java Docker tag to v2.32.0 [#4360]
+
+### Fixed
+
+- Fix: use sourceless mode credentials dir fallback as /tmp/ when persistence is disabled [#4362]
+
+[#4350]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4350
+[#4344]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4344
+[#4358]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4358
+[#4360]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4360
+[#4362]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4362
+
+[v6.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.0.0## [v5.7.0]
 
 ### Released 2026-09-30
 
