@@ -29,6 +29,7 @@ data:
       pprof: {}
       sumologic:
         clobber: true
+        collector_credentials_directory: /tmp/.sumologic-otel-collector
         collector_fields:
           cluster: testCluster
         collector_name: ${MY_POD_NAME}-testCluster

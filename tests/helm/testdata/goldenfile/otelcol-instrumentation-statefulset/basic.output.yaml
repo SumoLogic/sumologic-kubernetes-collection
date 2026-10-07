@@ -53,6 +53,8 @@ spec:
         - configMap:
             name: RELEASE-NAME-sumologic-otelcol-instrumentation
           name: otelcolinstrumentation-config-vol
+        - name: tmp
+          emptyDir: {}
       securityContext:
         fsGroup: 999
       containers:
@@ -110,6 +112,8 @@ spec:
           volumeMounts:
             - name: otelcolinstrumentation-config-vol
               mountPath: /conf
+            - name: tmp
+              mountPath: /tmp
           env:
             - name: SUMOLOGIC_INSTALLATION_TOKEN
               valueFrom:

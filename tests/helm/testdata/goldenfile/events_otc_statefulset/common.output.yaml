@@ -69,6 +69,8 @@ spec:
         - name: config-volume
           configMap:
             name: RELEASE-NAME-sumologic-otelcol-events
+        - name: tmp
+          emptyDir: {}
       securityContext:
         fsGroup: 999
       containers:
@@ -117,6 +119,8 @@ spec:
             - name: config-volume
               mountPath: /etc/otel/config.yaml
               subPath: config.yaml
+            - name: tmp
+              mountPath: /tmp
             - name: file-storage
               mountPath: /var/lib/storage/events
           env:

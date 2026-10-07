@@ -97,6 +97,8 @@ spec:
           volumeMounts:
             - name: tracesgateway-config-vol
               mountPath: /conf
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /
@@ -122,3 +124,5 @@ spec:
         - configMap:
             name: RELEASE-NAME-sumologic-traces-gateway
           name: tracesgateway-config-vol
+        - name: tmp
+          emptyDir: {}
