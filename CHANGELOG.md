@@ -11,6 +11,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Released 2026-10-07
 
+### Migration from v5
+
+See the [migration guide][v6_migration_guide] for details.
+
+### Breaking Changes
+
+- feat: Enable sourceless mode by default [#4350]
+- feat: enable single-layer metrics pipeline by default and add migration guide with acknowledgment flag [#4344]
+
 ### Added
 
 - feat: Enable sourceless mode by default [#4350]
@@ -31,7 +40,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [#4360]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4360
 [#4362]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4362
 
-[v6.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.0.0## [v5.7.0]
+[v6.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.0.0
+[v6_migration_guide]: https://www.sumologic.com/help/docs/send-data/kubernetes/v6/how-to-upgrade/
+
+## [v5.7.0]
 
 ### Released 2026-09-30
 
