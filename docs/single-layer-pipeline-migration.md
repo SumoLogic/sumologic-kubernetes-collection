@@ -96,7 +96,6 @@ These keys are consumed directly in the single-layer collector config template:
 | ----------------------------------------- | -------------------------------------------------- |
 | `metadata.metrics.logLevel`               | OTel Collector log verbosity                       |
 | `metadata.metrics.metricsLevel`           | Internal metrics verbosity                         |
-| `metadata.metrics.useSumoK8sProcessor`    | k8s_tagger vs k8sattributes processor selection    |
 | `metadata.metrics.waitForMetadata`        | Wait for K8s API cache before processing           |
 | `metadata.metrics.waitForMetadataTimeout` | Timeout for the above                              |
 | `metadata.metrics.extractPodLabels`       | Extract pod labels as resource attributes          |
