@@ -248,11 +248,7 @@ service:
         - metricstransform
         - groupbyattrs
         - resource
-{{ if .Values.metadata.metrics.useSumoK8sProcessor }}
-        - k8s_tagger
-{{ else }}
         - k8sattributes
-{{ end }}
         - source
         - sumologic
 {{- if .Values.sumologic.metrics.otelcol.extraProcessors }}
