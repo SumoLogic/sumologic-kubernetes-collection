@@ -1,4 +1,6 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   logs:
     multiline:
@@ -15,7 +17,11 @@ sumologic:
     collector:
       otellogswindows:
         enabled: true
-
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 otellogswindows:
   daemonset:
     nameservers:

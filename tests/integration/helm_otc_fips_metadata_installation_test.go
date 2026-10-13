@@ -19,7 +19,6 @@ func Test_Helm_Default_OT_FIPS(t *testing.T) {
 	installChecks := []featureCheck{
 		CheckSumologicSecret(4),
 		CheckOtelcolMetadataLogsInstall,
-		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
 		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,

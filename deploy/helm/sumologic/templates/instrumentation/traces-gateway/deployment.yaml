@@ -105,6 +105,8 @@ spec:
         volumeMounts:
         - name: tracesgateway-config-vol
           mountPath: /conf
+        - name: tmp
+          mountPath: /tmp
 {{- if $tracesGateway.deployment.extraVolumeMounts }}
 {{- toYaml $tracesGateway.deployment.extraVolumeMounts | nindent 8 }}
 {{- end }}
@@ -127,6 +129,8 @@ spec:
         - configMap:
             name: {{ template "sumologic.metadata.name.tracesgateway.configmap" . }}
           name: tracesgateway-config-vol
+        - name: tmp
+          emptyDir: {}
 {{- if $tracesGateway.deployment.extraVolumes }}
 {{- toYaml $tracesGateway.deployment.extraVolumes | nindent 8 }}
 {{- end }}

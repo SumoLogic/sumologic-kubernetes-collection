@@ -1,4 +1,6 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   metrics:
     additionalServiceMonitors:
@@ -10,3 +12,7 @@ sumologic:
           matchLabels:
             label-key-a: label-value-a
             label-key-b: label-value-b
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

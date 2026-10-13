@@ -1,6 +1,13 @@
 namespaceOverride: "collection"
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 debug:
   sumologicMock:
     enabled: true
@@ -40,7 +47,6 @@ debug:
         requests:
           memory: 1Gi
           cpu: 1000m
-
       extraArgs:
         - --print-logs
         - --print-metrics

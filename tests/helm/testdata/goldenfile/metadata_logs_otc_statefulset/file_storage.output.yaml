@@ -95,11 +95,11 @@ spec:
             - name: file-storage
               mountPath: /var/lib/storage/otc
           env:
-            - name: SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE
+            - name: SUMOLOGIC_INSTALLATION_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: sumologic
-                  key: endpoint-logs-otlp
+                  name: sumologic-extension
+                  key: SUMOLOGIC_INSTALLATION_TOKEN
 
             - name: NO_PROXY
               value: kubernetes.default.svc

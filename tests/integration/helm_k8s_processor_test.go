@@ -19,7 +19,6 @@ func Test_Helm_K8s_Processor(t *testing.T) {
 	installChecks := []featureCheck{
 		CheckSumologicSecret(4),
 		CheckOtelcolMetadataLogsInstall,
-		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
 		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,

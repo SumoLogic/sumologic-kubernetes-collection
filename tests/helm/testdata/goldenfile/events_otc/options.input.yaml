@@ -2,8 +2,9 @@ otelevents:
   logLevel: debug
   metricsLevel: detailed
   reportConfigMaps: false
-
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   ipv6mode: true
   clusterName: testCluster
@@ -14,3 +15,8 @@ sumologic:
     sourceCategoryReplaceDash: ";"
     persistence:
       enabled: false
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

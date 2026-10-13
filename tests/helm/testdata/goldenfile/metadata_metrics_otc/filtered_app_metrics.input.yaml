@@ -1,6 +1,13 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   metrics:
     metadata:
       provider: otelcol
     enableDefaultFilters: true
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
+          enabled: false

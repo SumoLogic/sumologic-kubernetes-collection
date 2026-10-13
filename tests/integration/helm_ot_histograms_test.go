@@ -22,7 +22,6 @@ func Test_Helm_OT_Histograms(t *testing.T) {
 	installChecks := []featureCheck{
 		CheckSumologicSecret(4),
 		CheckOtelcolMetadataLogsInstall,
-		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
 		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,

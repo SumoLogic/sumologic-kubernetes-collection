@@ -16,7 +16,12 @@ sumologic:
                 operator: NotIn
                 values:
                   - linux
-
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 # Override these to satisfy the tests
 otellogs:
   daemonset:

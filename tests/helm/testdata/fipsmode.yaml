@@ -2,3 +2,9 @@ sumologic:
   useExporterBatching: true
   otelcolImage:
     addFipsSuffix: true
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

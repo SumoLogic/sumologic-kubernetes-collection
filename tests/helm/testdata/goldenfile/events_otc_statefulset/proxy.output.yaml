@@ -56,6 +56,8 @@ spec:
         - name: config-volume
           configMap:
             name: RELEASE-NAME-sumologic-otelcol-events
+        - name: tmp
+          emptyDir: {}
       securityContext:
         fsGroup: 999
       containers:
@@ -104,14 +106,16 @@ spec:
             - name: config-volume
               mountPath: /etc/otel/config.yaml
               subPath: config.yaml
+            - name: tmp
+              mountPath: /tmp
             - name: file-storage
               mountPath: /var/lib/storage/events
           env:
-            - name: SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE
+            - name: SUMOLOGIC_INSTALLATION_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: sumologic
-                  key: endpoint-events-otlp
+                  name: sumologic-extension
+                  key: SUMOLOGIC_INSTALLATION_TOKEN
 
             - name: HTTP_PROXY
               value: http://proxy.internal

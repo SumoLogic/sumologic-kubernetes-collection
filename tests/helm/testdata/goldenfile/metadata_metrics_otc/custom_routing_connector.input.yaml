@@ -1,8 +1,15 @@
 sumologic:
+  sourcelessMode: false
   useExporterBatching: true
   ipv6mode: true
   metrics:
     sourceType: http
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
+          enabled: false
+  sourcelessModeAck: true
 metadata:
   metrics:
     autoscaling:

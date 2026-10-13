@@ -1,10 +1,4 @@
 {{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled }}
-{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled .Values.metadata.metrics.config.override }}
-{{- fail "metadata.metrics.config.override cannot be used with singleLayerPipeline.enabled. Use metadata.metrics.config.merge instead, or disable single-layer mode." }}
-{{- end }}
-{{- if and .Values.sumologic.metrics.collector.otelcol.singleLayerPipeline.enabled (or .Values.metadata.metrics.statefulset.extraEnvVars .Values.metadata.metrics.statefulset.extraVolumes .Values.metadata.metrics.statefulset.extraVolumeMounts) }}
-{{- fail "metadata.metrics.statefulset.extraEnvVars/extraVolumes/extraVolumeMounts cannot be used with singleLayerPipeline.enabled. Use sumologic.metrics.collector.otelcol.extraEnvVars/extraVolumes/extraVolumeMounts instead." }}
-{{- end }}
 {{ $baseConfig := (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | fromYaml }}
 {{ $mergeConfig := .Values.sumologic.metrics.collector.otelcol.config.merge }}
 {{ $overrideConfig := .Values.sumologic.metrics.collector.otelcol.config.override }}

@@ -67,6 +67,8 @@ extensions:
       cluster: {{ .Values.sumologic.clusterName | quote }}
 {{- if .Values.sumologic.events.persistence.enabled }}
     collector_credentials_directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}/credentials
+{{- else }}
+    collector_credentials_directory: /tmp/.sumologic-otel-collector
 {{- end }}
     ephemeral: true
     clobber: true

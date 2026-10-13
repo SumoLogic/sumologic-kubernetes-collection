@@ -17,8 +17,11 @@ sumologic:
 
   ## If enabled, uses SumoLogic extension for auth/endpoint discovery instead of HTTP source URLs.
   ## Terraform will auto-create an installation token and store it in the sumologic-extension secret.
-  ## OTLP/HTTP sources are not created when this is enabled.
-  sourcelessMode: false
+  ## OTLP/HTTP sources are not created/used when this is enabled.
+  sourcelessMode: true
+  ## Set to true to acknowledge that you understand the implications of enabling sourcelessMode
+  ## Required for upgrades when sumologic.sourcelessMode: true.
+  sourcelessModeAck: false
 
   ## Endpoint used by collector pods to register and send data. Only used when sumologic.sourcelessMode is true.
   collectorEndpoint: ""
@@ -614,7 +617,13 @@ sumologic:
         ## Recommended: set collector memory request >= (current collector memory) + (current metadata memory)
         ## Recommended: set collector CPU request >= (current collector CPU) + (current metadata CPU / replica count)
         singleLayerPipeline:
-          enabled: false # opt-in; set true to merge enrichment into collector
+          enabled: true
+          ## Set to true to acknowledge that you have read the single-layer pipeline
+          ## migration guide and have adjusted collector resources accordingly.
+          ## Required whenever the metrics OTel pipeline is enabled, regardless of
+          ## whether singleLayerPipeline is enabled.
+          ## See: https://www.sumologic.com/help/docs/send-data/kubernetes/v6/how-to-upgrade/
+          migrationDocAcknowledged: false
 
         ## Configure image for Opentelemetry Collector
         image:
@@ -668,7 +677,7 @@ sumologic:
             cpu: 1000m
           requests:
             memory: 768Mi
-            cpu: 100m
+            cpu: 768m
 
         ## Liveness probe configuration for the metrics collector.
         ## When empty, the OpenTelemetry Operator sets its defaults (health_check extension on port 13133).
@@ -2676,7 +2685,7 @@ opentelemetry-operator:
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
-        tag: 2.31.1
+        tag: 2.32.0
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
         tag: 1.17.0

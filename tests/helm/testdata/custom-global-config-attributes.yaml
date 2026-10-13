@@ -15,7 +15,12 @@ sumologic:
       pullSecrets:
         - name: customImagePullSecrets
         - name: customImagePullSecrets2
-
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 kube-prometheus-stack:
   global:
     imagePullSecrets:
@@ -49,7 +54,6 @@ kube-prometheus-stack:
       customLabelKey: customLabelValue
     podAnnotations:
       customAnnotationsKey: customAnnotationsValue
-
 opentelemetry-operator:
   crds:
     create: true
@@ -61,7 +65,6 @@ opentelemetry-operator:
   imagePullSecrets:
     - name: customImagePullSecrets
     - name: customImagePullSecrets2
-
 falco:
   enabled: true
   imagePullSecrets:
@@ -71,7 +74,6 @@ falco:
     customLabelKey: customLabelValue
   podAnnotations:
     customAnnotationsKey: customAnnotationsValue
-
 prometheus-windows-exporter:
   enabled: true
   podLabels:

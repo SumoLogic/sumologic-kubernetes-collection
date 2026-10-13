@@ -138,6 +138,8 @@ extensions:
       cluster: {{ .Values.sumologic.clusterName | quote }}
 {{- if .Values.tracesSampler.persistence.enabled }}
     collector_credentials_directory: /var/lib/storage/tracessampler/credentials
+{{- else }}
+    collector_credentials_directory: /tmp/.sumologic-otel-collector
 {{- end }}
     ephemeral: true
     clobber: true

@@ -1,4 +1,5 @@
 sumologic:
+  sourcelessMode: false
   useExporterBatching: true
   logs:
     sourceType: http
@@ -17,3 +18,9 @@ sumologic:
           - exporters:
               - sumologic/test
             statement: route() where resource.attributes["exporter"] == "test"
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

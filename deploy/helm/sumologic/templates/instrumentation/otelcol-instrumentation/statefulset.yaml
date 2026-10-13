@@ -73,6 +73,8 @@ spec:
         - configMap:
             name: {{ template "sumologic.metadata.name.otelcolinstrumentation.configmap" . }}
           name: otelcolinstrumentation-config-vol
+        - name: tmp
+          emptyDir: {}
 {{- if $otelcolInstrumentation.statefulset.extraVolumes }}
 {{ toYaml $otelcolInstrumentation.statefulset.extraVolumes | indent 6 }}
 {{- end }}
@@ -128,7 +130,8 @@ spec:
         volumeMounts:
         - name: otelcolinstrumentation-config-vol
           mountPath: /conf
-
+        - name: tmp
+          mountPath: /tmp
 {{- if $otelcolInstrumentation.statefulset.extraVolumeMounts }}
 {{ toYaml $otelcolInstrumentation.statefulset.extraVolumeMounts | indent 8 }}
 {{- end }}

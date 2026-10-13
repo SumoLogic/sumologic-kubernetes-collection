@@ -242,6 +242,7 @@ extensions:
     collector_name: ${MY_POD_NAME}-{{ .Values.sumologic.clusterName }}
     collector_fields:
       cluster: {{ .Values.sumologic.clusterName | quote }}
+    collector_credentials_directory: /tmp/.sumologic-otel-collector
     ephemeral: true
     clobber: true
 {{ include "sumologic.extension.api_base_url" . }}{{- end }}

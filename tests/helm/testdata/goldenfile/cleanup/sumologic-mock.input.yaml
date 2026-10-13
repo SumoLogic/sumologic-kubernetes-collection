@@ -1,10 +1,10 @@
 debug:
   sumologicMock:
     enabled: true
-
   enableLocalMode: true
-
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   useExporterBatching: true
   cleanupEnabled: true
   setup:
@@ -12,3 +12,8 @@ sumologic:
       initContainerImage:
         repository: myrepo
         tag: mytag
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true

@@ -11,18 +11,19 @@ sumologic:
       allowSideBySide: true
       otelcloudwatch:
         enabled: true
-
+  sourcelessModeAck: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
 metrics-server:
   enabled: true
-
 telegraf-operator:
   enabled: true
-
 falco:
   enabled: true
-
 opentelemetry-operator:
   enabled: true
-
 tailing-sidecar-operator:
   enabled: true

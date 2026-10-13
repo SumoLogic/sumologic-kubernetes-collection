@@ -1,10 +1,12 @@
 sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
   metrics:
     collector:
       otelcol:
         singleLayerPipeline:
           enabled: true
-
+          migrationDocAcknowledged: true
 pvcCleaner:
   metrics:
     enabled: true
