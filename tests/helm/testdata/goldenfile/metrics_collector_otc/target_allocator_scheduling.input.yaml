@@ -2,9 +2,12 @@
 ## the collector keeps a hard pod anti-affinity so its replicas land on separate nodes, while the
 ## target allocator is given its own, independent scheduling constraints so it stays schedulable.
 sumologic:
+  sourcelessModeAck: true
   metrics:
     collector:
       otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
         nodeSelector:
           workingGroup: metrics
         tolerations:

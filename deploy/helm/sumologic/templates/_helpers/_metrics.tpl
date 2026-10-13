@@ -109,7 +109,7 @@ OS and never start.
 {{- define "metrics.collector.otelcol.targetAllocator.nodeSelector" -}}
 {{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
 {{- if hasKey $targetAllocator "nodeSelector" -}}
-{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" $targetAllocator.nodeSelector "skipGlobal" true) -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" $targetAllocator.nodeSelector "skipMetricCol_nodeSelector" true) -}}
 {{- else -}}
 {{- template "metrics.collector.otelcol.nodeSelector" . -}}
 {{- end -}}
