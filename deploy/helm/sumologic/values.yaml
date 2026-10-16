@@ -790,17 +790,13 @@ sumologic:
           ## The target allocator runs as its own Deployment, separate from the collector
           ## StatefulSet. When these keys are not set, it inherits the collector's
           ## nodeSelector/tolerations/affinity above. Set a key to give the allocator its own
-          ## constraints; set it empty to leave the allocator unconstrained, which falls back
-          ## neither to the collector's value nor to the chart-wide sumologic.<key>.
+          ## constraints. Set it empty to drop the collector's value and fall back to the
+          ## chart-wide sumologic.<key>, as an empty value does for every other component.
           ##
           ## Setting `affinity: {}` matters when the collector uses a hard pod anti-affinity to
           ## keep its replicas on separate nodes: inheriting that rule would forbid the allocator
           ## from every node already running a collector replica, leaving it unschedulable.
-          ##
-          ## `nodeSelector: {}` is the exception to "empty means no constraint": as for every
-          ## workload in this chart the allocator always keeps `kubernetes.io/os: linux`, so an
-          ## empty nodeSelector renders that key alone. Without it the allocator could be
-          ## scheduled onto a node running another OS and never start.
+          ## If sumologic.affinity itself carries such a rule, set a non-empty affinity here.
           # affinity: {}
           # nodeSelector: {}
           # tolerations: []

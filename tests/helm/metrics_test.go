@@ -663,7 +663,8 @@ sumologic:
 }
 
 // Setting the target allocator keys to empty is the escape hatch from the issue: the collector
-// keeps a hard anti-affinity while the allocator is left unconstrained, so it stays schedulable.
+// keeps a hard anti-affinity while the allocator, with no chart-wide values to fall back to, is
+// left unconstrained, so it stays schedulable.
 func TestMetricsCollectorTargetAllocatorSchedulingExplicitlyEmpty(t *testing.T) {
 	t.Parallel()
 	collector := renderMetricsCollectorCR(t, `
@@ -686,11 +687,10 @@ sumologic:
 	require.Nil(t, collector.Spec.TargetAllocator.Tolerations)
 }
 
-// Emptying a target allocator key must not let the chart-wide sumologic.* scheduling values back
-// in: a user emptying it wants the allocator unconstrained, not moved onto the global pool.
-// nodeSelector is the exception to "empty renders nothing" — every workload in this chart keeps an
-// unconditional kubernetes.io/os floor, which is what keeps linux pods off Windows nodes.
-func TestMetricsCollectorTargetAllocatorSchedulingEmptyIgnoresGlobals(t *testing.T) {
+// Emptying a target allocator key drops the collector's value but still honours the chart-wide
+// sumologic.* default, the same thing an empty value means for every other component in the chart.
+// The collector here has its own values, so a fallback to them would show up as a failure.
+func TestMetricsCollectorTargetAllocatorSchedulingEmptyFallsBackToGlobals(t *testing.T) {
 	t.Parallel()
 	collector := renderMetricsCollectorCR(t, `
 sumologic:
@@ -710,25 +710,34 @@ sumologic:
   metrics:
     collector:
       otelcol:
+        nodeSelector:
+          workingGroup: metrics
+        tolerations:
+          - key: dedicated
+            operator: Equal
+            value: metrics
+            effect: NoSchedule
         targetAllocator:
           nodeSelector: {}
           tolerations: []
           affinity: {}
-`)
+`+collectorAntiAffinity)
 
+	// the target allocator gets the chart-wide values, not the collector's
 	require.Equal(
 		t,
-		map[string]string{"kubernetes.io/os": "linux"},
+		map[string]string{"kubernetes.io/os": "linux", "globalPool": "shared"},
 		collector.Spec.TargetAllocator.NodeSelector,
-		"an emptied target allocator nodeSelector must keep only the OS floor, not fall back to sumologic.nodeSelector",
 	)
-	require.Nil(t, collector.Spec.TargetAllocator.Tolerations)
-	require.Nil(t, collector.Spec.TargetAllocator.Affinity)
+	require.Len(t, collector.Spec.TargetAllocator.Tolerations, 1)
+	require.Equal(t, "global", collector.Spec.TargetAllocator.Tolerations[0]["key"])
+	require.Contains(t, collector.Spec.TargetAllocator.Affinity, "nodeAffinity")
+	require.NotContains(t, collector.Spec.TargetAllocator.Affinity, "podAntiAffinity")
 
-	// the collector itself still picks the chart-wide values up
-	require.Equal(t, "shared", collector.Spec.NodeSelector["globalPool"])
-	require.Contains(t, collector.Spec.Affinity, "nodeAffinity")
-	require.Len(t, collector.Spec.Tolerations, 1)
+	// the collector keeps its own values
+	require.Equal(t, map[string]string{"kubernetes.io/os": "linux", "workingGroup": "metrics"}, collector.Spec.NodeSelector)
+	require.Equal(t, "metrics", collector.Spec.Tolerations[0]["value"])
+	require.Contains(t, collector.Spec.Affinity, "podAntiAffinity")
 }
 
 // A non-empty target allocator nodeSelector replaces the chart-wide one, the same way a non-empty

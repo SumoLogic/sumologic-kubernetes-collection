@@ -95,21 +95,18 @@ Scheduling constraints for the metrics collector's target allocator.
 
 The target allocator runs as its own Deployment, separate from the collector StatefulSet, so it
 needs scheduling constraints of its own. For backwards compatibility it inherits the collector's
-when `sumologic.metrics.collector.otelcol.targetAllocator.<key>` is not set at all; when the key is
-present it is used verbatim, so setting it empty leaves the allocator unconstrained — it does not
-fall back to the collector's value or to the chart-wide `sumologic.<key>`. That matters for hard
-collector pod anti-affinity: inheriting it would forbid the allocator from every node already
-running a collector replica, leaving it permanently unschedulable.
+when `sumologic.metrics.collector.otelcol.targetAllocator.<key>` is not set at all. A non-empty key
+is used as-is. An empty key drops the collector's value and falls back to the chart-wide
+`sumologic.<key>`, which is what an empty value means for every other component in the chart.
 
-`nodeSelector` is the one exception to "empty means nothing rendered": like every other workload in
-this chart the allocator keeps an unconditional `kubernetes.io/os` floor, so an empty nodeSelector
-renders that floor alone. Without it the allocator could be scheduled onto a node running another
-OS and never start.
+That fallback is enough to get the allocator out from under a hard collector pod anti-affinity,
+which would otherwise forbid it from every node already running a collector replica and leave it
+permanently unschedulable.
 */}}
 {{- define "metrics.collector.otelcol.targetAllocator.nodeSelector" -}}
 {{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
 {{- if hasKey $targetAllocator "nodeSelector" -}}
-{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" $targetAllocator.nodeSelector "skipMetricCol_nodeSelector" true) -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" $targetAllocator.nodeSelector) -}}
 {{- else -}}
 {{- template "metrics.collector.otelcol.nodeSelector" . -}}
 {{- end -}}
@@ -117,23 +114,23 @@ OS and never start.
 
 {{- define "metrics.collector.otelcol.targetAllocator.tolerations" -}}
 {{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
-{{- if hasKey $targetAllocator "tolerations" -}}
-{{- if $targetAllocator.tolerations -}}
-{{- toYaml $targetAllocator.tolerations -}}
-{{- end -}}
-{{- else -}}
+{{- if not (hasKey $targetAllocator "tolerations") -}}
 {{- template "metrics.collector.otelcol.tolerations" . -}}
+{{- else if $targetAllocator.tolerations -}}
+{{- toYaml $targetAllocator.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "metrics.collector.otelcol.targetAllocator.affinity" -}}
 {{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
-{{- if hasKey $targetAllocator "affinity" -}}
-{{- if $targetAllocator.affinity -}}
-{{- toYaml $targetAllocator.affinity -}}
-{{- end -}}
-{{- else -}}
+{{- if not (hasKey $targetAllocator "affinity") -}}
 {{- template "metrics.collector.otelcol.affinity" . -}}
+{{- else if $targetAllocator.affinity -}}
+{{- toYaml $targetAllocator.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
 {{- end -}}
 {{- end -}}
 

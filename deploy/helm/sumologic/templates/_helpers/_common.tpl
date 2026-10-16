@@ -612,12 +612,6 @@ Example usage:
 {{- end }}
 {{- end -}}
 
-{{/*
-Returns a node selector, always including the `kubernetes.io/os` floor that keeps a workload off
-nodes running another OS. An empty `.nodeSelector` falls back to the chart-wide
-`sumologic.nodeSelector`; pass `skipMetricCol_nodeSelector` to opt out of that fallback, which is how a component
-expresses "no constraints of my own beyond the OS floor" rather than "use the chart-wide default".
-*/}}
 {{- define "nodeSelector" -}}
 {{- $nodeSelector := dict "kubernetes.io/os" "linux" -}}
 {{- if .defaultOs -}}
@@ -625,7 +619,7 @@ expresses "no constraints of my own beyond the OS floor" rather than "use the ch
 {{- end -}}
 {{- if .nodeSelector -}}
 {{- $nodeSelector = mergeOverwrite $nodeSelector .nodeSelector -}}
-{{- else if and (not .skipMetricCol_nodeSelector) .Values.sumologic.nodeSelector -}}
+{{- else if .Values.sumologic.nodeSelector -}}
 {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.sumologic.nodeSelector -}}
 {{- end -}}
 {{- toYaml $nodeSelector -}}
