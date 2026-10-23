@@ -7,6 +7,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v6.1.0]
+
+### Released 2026-10-23
+
+### Changed
+
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.12.8 to 0.12.9 [#4367]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.40.2 [#4370]
+- chore(deps): bump sumologic-otel-collector version to v0.163.0-sumo-0 [#4373]
+
+### Fixed
+
+- fix(metrics): use metrics key for metadata StatefulSet PVC whenScaled policy [#4369]
+
+[#4367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4367
+[#4370]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4370
+[#4373]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4373
+[#4369]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4369
+[v6.1.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.1.0
+
 ## [v6.0.0]
 
 ### Released 2026-10-07
