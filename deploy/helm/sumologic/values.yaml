@@ -162,7 +162,7 @@ sumologic:
       restartPolicy: OnFailure # or Never
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.18.0
+        tag: 3.19.0
         pullPolicy: IfNotPresent
       initContainerImage:
         repository: public.ecr.aws/sumologic/busybox
@@ -2710,7 +2710,7 @@ pvcCleaner:
   job:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.29.0
+      tag: 2.30.0
       pullPolicy: IfNotPresent
 
     resources:
@@ -2757,7 +2757,7 @@ instrumentation:
   instrumentationJobImage:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.29.0
+      tag: 2.30.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
