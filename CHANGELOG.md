@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v6.2.0]
+
+### Released 2026-10-27
+
+### Fixed
+
+- fix(deps): bump kubernetes-setup to 3.19.0, kubernetes-tools-kubectl to 2.30.0 and tailing-sidecar-operator to 0.21.0 (eMudhra CA
+  compromise) [#4378]
+
+[#4378]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4378
+[v6.2.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.2.0
+
 ## [v6.1.0]
 
 ### Released 2026-10-23
