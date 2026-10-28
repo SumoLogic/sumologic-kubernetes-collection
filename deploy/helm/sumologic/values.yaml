@@ -2666,16 +2666,16 @@ opentelemetry-operator:
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
-        tag: 2.32.0
+        tag: 2.33.1
       dotnet:
         repository: public.ecr.aws/sumologic/autoinstrumentation-dotnet
-        tag: 1.17.0
+        tag: 1.18.0
       python:
         repository: public.ecr.aws/sumologic/autoinstrumentation-python
         tag: 0.48b0
       nodejs:
         repository: public.ecr.aws/sumologic/autoinstrumentation-nodejs
-        tag: 0.78.0
+        tag: 0.82.0
     env:
       {}
       # ENABLE_WEBHOOKS: "true"
