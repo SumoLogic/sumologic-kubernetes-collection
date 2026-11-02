@@ -259,10 +259,10 @@ sumologic:
       enabled: true
 
       ## If enabled, installs the v2 K8s app instead of the v1 app.
-      ## v2 apps are not GA yet; keep this false until the feature is ready.
+      ## Set to false to install the v1 app and monitors instead.
       ## Only takes effect when dashboards.enabled is true.
       ## When true, monitors installation is also skipped (v2 app provides monitor templates instead).
-      useV2App: false
+      useV2App: true
 
   collector:
     ## Configuration of additional collector fields
