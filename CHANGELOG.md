@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v6.3.0]
+
+### Released 2026-11-03
+
+### Changed
+
+- feat: enable useV2App by default; set sumologic.setup.dashboards.useV2App=false to keep the v1 app and monitors [#4385]
+
+[#4385]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4385
+
+[v6.3.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.3.0
+
 ## [v6.2.0]
 
 ### Released 2026-10-27
