@@ -1,0 +1,16 @@
+sumologic:
+  sourcelessMode: true
+  sourcelessModeAck: true
+  useExporterBatching: true
+  metrics:
+    collector:
+      otelcol:
+        singleLayerPipeline:
+          migrationDocAcknowledged: true
+metadata:
+  logs:
+    statefulset:
+      persistentVolumeClaimRetentionPolicywhenScaled: Delete
+  metrics:
+    statefulset:
+      persistentVolumeClaimRetentionPolicywhenScaled: Retain

@@ -42,7 +42,7 @@ spec:
             defaultMode: 0777
       containers:
         - name: setup
-          image: public.ecr.aws/sumologic/kubernetes-setup:3.18.0
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.19.0
           imagePullPolicy: IfNotPresent
           command: ["/etc/terraform/setup.sh", "kubectl apply --server-side -f /manifests/crds-configmaps.yaml --force-conflicts"]
           resources:
@@ -88,7 +88,7 @@ spec:
             - name: SUMOLOGIC_DASHBOARDS_ENABLED
               value: "true"
             - name: SUMOLOGIC_USE_V2_APP
-              value: "false"
+              value: "true"
             - name: CLEANUP_UNUSED_SOURCES
               value: "false"
 

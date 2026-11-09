@@ -107,13 +107,13 @@ The following table displays the currently used software versions for our Helm c
 
 | Name                                      | Version |
 | ----------------------------------------- | ------- |
-| OpenTelemetry Collector                   | 0.151.0 |
-| OpenTelemetry Operator                    | 0.124.1 |
+| OpenTelemetry Collector                   | 0.163.0 |
+| OpenTelemetry Operator                    | 0.129.0 |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
 | Falco                                     | 7.2.1   |
 | Metrics Server                            | 3.14.0  |
 | Telegraf Operator                         | 1.4.0   |
-| Tailing Sidecar Operator                  | 0.20.8  |
+| Tailing Sidecar Operator                  | 0.21.0  |
 
 ### Kubernetes Attributes Processor support
 

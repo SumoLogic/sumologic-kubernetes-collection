@@ -162,7 +162,7 @@ sumologic:
       restartPolicy: OnFailure # or Never
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.18.0
+        tag: 3.19.0
         pullPolicy: IfNotPresent
       initContainerImage:
         repository: public.ecr.aws/sumologic/busybox
@@ -259,10 +259,10 @@ sumologic:
       enabled: true
 
       ## If enabled, installs the v2 K8s app instead of the v1 app.
-      ## v2 apps are not GA yet; keep this false until the feature is ready.
+      ## Set to false to install the v1 app and monitors instead.
       ## Only takes effect when dashboards.enabled is true.
       ## When true, monitors installation is also skipped (v2 app provides monitor templates instead).
-      useV2App: false
+      useV2App: true
 
   collector:
     ## Configuration of additional collector fields
@@ -352,7 +352,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.161.0-sumo-0"
+    tag: "0.163.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -922,7 +922,7 @@ global:
 metrics-server:
   image:
     repository: public.ecr.aws/sumologic/metrics-server
-    tag: v0.9.0
+    tag: v0.9.1
   updateStrategy:
     type: RollingUpdate
 
@@ -2511,7 +2511,7 @@ telegraf-operator:
   ## Put here the new name if you want to override the full name used for Telegraf Operator components.
   # fullnameOverride: ""
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.40.1
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.40.3
     repository: public.ecr.aws/sumologic/telegraf-operator
   replicaCount: 1
   classes:
@@ -2677,7 +2677,7 @@ opentelemetry-operator:
       repository: public.ecr.aws/sumologic/opentelemetry-operator
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.161.0-sumo-0"
+      tag: "0.163.0-sumo-0"
     autoInstrumentationImage:
       java:
         repository: public.ecr.aws/sumologic/autoinstrumentation-java
@@ -2725,7 +2725,7 @@ pvcCleaner:
   job:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.29.0
+      tag: 2.30.0
       pullPolicy: IfNotPresent
 
     resources:
@@ -2772,7 +2772,7 @@ instrumentation:
   instrumentationJobImage:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.29.0
+      tag: 2.30.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""

@@ -19,7 +19,7 @@ spec:
 {{- if .Values.sumologic.persistentVolumeClaimRetentionPolicyEnabled}}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
-    whenScaled: {{ .Values.metadata.logs.statefulset.persistentVolumeClaimRetentionPolicywhenScaled }}
+    whenScaled: {{ .Values.metadata.metrics.statefulset.persistentVolumeClaimRetentionPolicywhenScaled }}
 {{- end }}
   template:
     metadata:
