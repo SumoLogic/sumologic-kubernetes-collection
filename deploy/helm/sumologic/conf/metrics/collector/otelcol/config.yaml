@@ -21,7 +21,8 @@ exporters:
       queue_size: 10000
 {{- end }}
     # this improves load balancing at the cost of more network traffic
-    disable_keep_alives: true
+    keepalive:
+      enabled: false
 
 extensions:
   health_check:

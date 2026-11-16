@@ -12,7 +12,9 @@ exporters:
       queue_size: 10
 {{- end }}
     # this improves load balancing at the cost of more network traffic
-    disable_keep_alives: true
+    # this improves load balancing at the cost of more network traffic
+    keepalive:
+      enabled: false
 {{- if eq .Values.debug.logs.collector.print true }}
   debug:
     verbosity: detailed
