@@ -893,7 +893,6 @@ func GetCurlAppFeature() features.Feature {
 				"k8s.namespace.name":     internal.InstrumentationAppsNamespace,
 				"k8s.pod.pod_name":       "nodejs-app",
 				"k8s.pod.label.app":      "nodejs-app",
-				"server.port":            "3000",
 				"_sourceCategory":        "kubernetes/test/apps/nodejs/app",
 				"_sourceName":            fmt.Sprintf("%s.nodejs-app.nodejsapp", internal.InstrumentationAppsNamespace),
 				"telemetry.sdk.language": "nodejs",
