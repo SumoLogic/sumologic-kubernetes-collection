@@ -7,7 +7,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [v6.3.0]
+## [v6.4.0]
+
+### Released 2026-11-17
+
+### Changed
+
+- chore(deps): bump Helm release opentelemetry-operator from 0.124.1 to 0.128.0 [#4371]
+- chore(deps): bump Helm release prometheus-windows-exporter from 0.12.9 to 0.13.2 [#4372]
+- chore(deps): bump autoinstrumentation and metadata for traces changed [#4374]
+- chore(deps): bump public.ecr.aws/sumologic/sumologic-mock Docker tag to v2.30.0 [#4383]
+- chore(deps): bump public.ecr.aws/sumologic/metrics-server Docker tag to v0.9.1 [#4384]
+- chore(deps): bump public.ecr.aws/sumologic/telegraf Docker tag to v1.40.3 [#4387]
+- chore(deps): bump sumologic-otel-collector [#4390]
+
+[#4371]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4371
+[#4372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4372
+[#4374]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4374
+[#4383]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4383
+[#4384]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4384
+[#4387]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4387
+[#4390]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4390
+
+[v6.4.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v6.4.0## [v6.3.0]
 
 ### Released 2026-11-03
 
