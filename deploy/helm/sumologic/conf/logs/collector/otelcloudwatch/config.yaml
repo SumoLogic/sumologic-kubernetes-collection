@@ -12,7 +12,8 @@ exporters:
       queue_size: 10
 {{- end }}
     # this improves load balancing at the cost of more network traffic
-    disable_keep_alives: true
+    keepalive:
+      enabled: false
 
 extensions:
 {{ if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}

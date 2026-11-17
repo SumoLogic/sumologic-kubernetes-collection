@@ -129,8 +129,9 @@ spec:
   config:
     exporters:
       otlphttp:
-        disable_keep_alives: true
         endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+        keepalive:
+          enabled: false
         sending_queue:
           batch:
             flush_timeout: 1s
