@@ -90,6 +90,50 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{/*
+Scheduling constraints for the metrics collector's target allocator.
+
+The target allocator runs as its own Deployment, separate from the collector StatefulSet, so it
+needs scheduling constraints of its own. For backwards compatibility it inherits the collector's
+when `sumologic.metrics.collector.otelcol.targetAllocator.<key>` is not set at all. A non-empty key
+is used as-is. An empty key drops the collector's value and falls back to the chart-wide
+`sumologic.<key>`, which is what an empty value means for every other component in the chart.
+
+That fallback is enough to get the allocator out from under a hard collector pod anti-affinity,
+which would otherwise forbid it from every node already running a collector replica and leave it
+permanently unschedulable.
+*/}}
+{{- define "metrics.collector.otelcol.targetAllocator.nodeSelector" -}}
+{{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
+{{- if hasKey $targetAllocator "nodeSelector" -}}
+{{- template "nodeSelector" (dict "Values" .Values "nodeSelector" $targetAllocator.nodeSelector) -}}
+{{- else -}}
+{{- template "metrics.collector.otelcol.nodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metrics.collector.otelcol.targetAllocator.tolerations" -}}
+{{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
+{{- if not (hasKey $targetAllocator "tolerations") -}}
+{{- template "metrics.collector.otelcol.tolerations" . -}}
+{{- else if $targetAllocator.tolerations -}}
+{{- toYaml $targetAllocator.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metrics.collector.otelcol.targetAllocator.affinity" -}}
+{{- $targetAllocator := .Values.sumologic.metrics.collector.otelcol.targetAllocator | default dict -}}
+{{- if not (hasKey $targetAllocator "affinity") -}}
+{{- template "metrics.collector.otelcol.affinity" . -}}
+{{- else if $targetAllocator.affinity -}}
+{{- toYaml $targetAllocator.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "metadata.metrics.statefulset.nodeSelector" -}}
 {{- template "nodeSelector" (dict "Values" .Values "nodeSelector" .Values.metadata.metrics.statefulset.nodeSelector)}}
 {{- end -}}
